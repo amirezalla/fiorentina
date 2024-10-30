@@ -13,8 +13,11 @@ use Botble\Blog\Models\Post;
 use Botble\Blog\Services\StoreCategoryService;
 use Botble\Blog\Services\StoreTagService;
 use Botble\Blog\Tables\PostTable;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class PostController extends BaseController
 {
@@ -76,6 +79,10 @@ class PostController extends BaseController
     {
         $this->pageTitle(trans('core/base::forms.edit_item', ['name' => $post->name]));
 
+        Schema::table('posts', function (Blueprint $table) {
+            $table->timestamp('published_at')->nullable();
+        });
+
         return PostForm::createFromModel($post)->renderForm();
     }
 
@@ -89,6 +96,10 @@ class PostController extends BaseController
             ->setRequest($request)
             ->saving(function (PostForm $form) use ($categoryService, $tagService) {
                 $request = $form->getRequest();
+
+                $request->merge([
+                    'published_at' => $request->filled('published_at') ? Carbon::parse($request->published_at) : null,
+                ]);
 
                 $post = $form->getModel();
                 $post->fill($request->input());

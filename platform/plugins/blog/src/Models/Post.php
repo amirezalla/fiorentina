@@ -37,6 +37,7 @@ class Post extends BaseModel
         'status',
         'author_id',
         'author_type',
+        'published_at',
     ];
 
     protected static function booted(): void
@@ -51,6 +52,7 @@ class Post extends BaseModel
         'status' => BaseStatusEnum::class,
         'name' => SafeContent::class,
         'description' => SafeContent::class,
+        'published_at' => 'datetime',
     ];
 
     public function tags(): BelongsToMany
@@ -96,5 +98,29 @@ class Post extends BaseModel
                 return number_format(ceil(str_word_count(strip_tags($this->content)) / 200));
             }
         );
+    }
+
+    /**
+     * @param $q
+     * @return mixed
+     */
+    public function scopePublished($q): mixed
+    {
+        return $q->where(function ($q) {
+            $q->whereNull('published_at')
+                ->where('published_at', '<=', now());
+        });
+    }
+
+    /**
+     * @param $q
+     * @return mixed
+     */
+    public function scopeUnpublished($q): mixed
+    {
+        return $q->where(function ($q) {
+            $q->whereNotNull('published_at')
+                ->where('published_at', '>', now());
+        });
     }
 }

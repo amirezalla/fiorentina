@@ -3,6 +3,7 @@
 namespace Botble\Blog\Forms;
 
 use Botble\Base\Forms\FieldOptions\ContentFieldOption;
+use Botble\Base\Forms\FieldOptions\DatePickerFieldOption;
 use Botble\Base\Forms\FieldOptions\DescriptionFieldOption;
 use Botble\Base\Forms\FieldOptions\IsFeaturedFieldOption;
 use Botble\Base\Forms\FieldOptions\NameFieldOption;
@@ -10,6 +11,7 @@ use Botble\Base\Forms\FieldOptions\RadioFieldOption;
 use Botble\Base\Forms\FieldOptions\SelectFieldOption;
 use Botble\Base\Forms\FieldOptions\StatusFieldOption;
 use Botble\Base\Forms\FieldOptions\TagFieldOption;
+use Botble\Base\Forms\Fields\DatetimeField;
 use Botble\Base\Forms\Fields\EditorField;
 use Botble\Base\Forms\Fields\MediaImageField;
 use Botble\Base\Forms\Fields\OnOffField;
@@ -41,6 +43,9 @@ class PostForm extends FormAbstract
                 IsFeaturedFieldOption::make()
                     ->toArray()
             )
+            ->add('published_at', DatetimeField::class, DatePickerFieldOption::make()
+                ->label(trans('plugins/blog::posts.form.scheduled_publishing'))
+                ->defaultValue(null))
             ->add('content', EditorField::class, ContentFieldOption::make()->allowedShortcodes()->toArray())
             ->add('status', SelectField::class, StatusFieldOption::make()->toArray())
             ->when(get_post_formats(true), function (PostForm $form, array $postFormats) {
