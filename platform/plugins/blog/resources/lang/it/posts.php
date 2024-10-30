@@ -14,6 +14,7 @@ return [
         'is_featured' => 'È in evidenza?',
         'note' => 'Contenuto della nota',
         'format_type' => 'Formato',
+        'scheduled_publishing' => 'Pubblicazione programmata',
     ],
     'cannot_delete' => 'Il post non può essere eliminato',
     'post_deleted' => 'Post eliminato',
