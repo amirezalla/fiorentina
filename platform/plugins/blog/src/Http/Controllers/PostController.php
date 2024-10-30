@@ -2,6 +2,7 @@
 
 namespace Botble\Blog\Http\Controllers;
 
+use App\Jobs\PostPublishingJob;
 use Botble\ACL\Models\User;
 use Botble\Base\Http\Actions\DeleteResourceAction;
 use Botble\Base\Http\Controllers\BaseController;
@@ -50,16 +51,24 @@ class PostController extends BaseController
         $postForm = PostForm::create();
 
         $postForm->saving(function (PostForm $form) use ($request, $tagService, $categoryService) {
+
+            $published_at = $request->filled('published_at') ? Carbon::parse($request->published_at) : null;
+
             $form
                 ->getModel()
                 ->fill([
                     ...$request->input(),
                     'author_id' => Auth::guard()->id(),
                     'author_type' => User::class,
+                    'published_at' => $published_at ?? null,
                 ])
                 ->save();
 
             $post = $form->getModel();
+
+            if ($published_at){
+                PostPublishingJob::dispatch($post->id,$post->published_at)->delay($published_at);
+            }
 
             $form->fireModelEvents($post);
 
@@ -93,13 +102,19 @@ class PostController extends BaseController
             ->saving(function (PostForm $form) use ($categoryService, $tagService) {
                 $request = $form->getRequest();
 
+                $published_at = $request->filled('published_at') ? Carbon::parse($request->published_at) : null;
+
                 $request->merge([
-                    'published_at' => $request->filled('published_at') ? Carbon::parse($request->published_at) : null,
+                    'published_at' => $published_at ?? null,
                 ]);
 
                 $post = $form->getModel();
                 $post->fill($request->input());
                 $post->save();
+
+                if ($published_at){
+                    PostPublishingJob::dispatch($post->id,$post->published_at)->delay($published_at);
+                }
 
                 $form->fireModelEvents($post);
 
