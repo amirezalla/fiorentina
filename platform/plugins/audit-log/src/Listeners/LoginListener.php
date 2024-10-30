@@ -21,7 +21,7 @@ class LoginListener
             return;
         }
 
-        /*AuditHistory::query()->create([
+        AuditHistory::query()->create([
             'user_agent' => $this->request->userAgent(),
             'ip_address' => $this->request->ip(),
             'module' => 'to the system',
@@ -31,6 +31,6 @@ class LoginListener
             'reference_id' => $user->getKey(),
             'reference_name' => $user->name,
             'type' => 'info',
-        ]);*/
+        ]);
     }
 }
