@@ -79,10 +79,6 @@ class PostController extends BaseController
     {
         $this->pageTitle(trans('core/base::forms.edit_item', ['name' => $post->name]));
 
-        Schema::table('posts', function (Blueprint $table) {
-            $table->timestamp('published_at')->nullable();
-        });
-
         return PostForm::createFromModel($post)->renderForm();
     }
 
