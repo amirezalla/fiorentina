@@ -113,7 +113,7 @@ class PostController extends BaseController
                 $post->save();
 
                 if ($published_at){
-                    PostPublishingJob::dispatch($post->id,$post->published_at)->delay($published_at);
+                    PostPublishingJob::dispatch($post->id,$post->published_at);
                 }
 
                 $form->fireModelEvents($post);
