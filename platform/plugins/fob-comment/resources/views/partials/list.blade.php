@@ -12,15 +12,20 @@
         margin-bottom: 12px;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container{
-        width: 54px;
-        height: 54px;
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container{
         border-radius: 50%;
         border: 1px solid #f0f0f0;
+        padding: 4px;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container img{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img{
+        width: 54px;
+        height: 54px;
+    }
 
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img img{
+        width: 100%;
+        height: 100%;
     }
 </style>
 
@@ -36,8 +41,10 @@
                             <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
                         </a>
                     @else
-                        <div class="fob-comment-item-avatar__image-container">
-                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                        <div class="fob-comment-item-img-container">
+                            <div class="fob-comment-item-img">
+                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                            </div>
                         </div>
                     @endif
                 </div>
