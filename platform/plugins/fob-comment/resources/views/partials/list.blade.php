@@ -120,7 +120,9 @@
                             @if($comment->is_admin)
                                 {!! BaseHelper::clean($comment->formatted_content) !!}
                             @else
-                                <p>{{ $comment->formatted_content }}</p>
+                                @foreach(range(1,12) as $i)
+                                        <p>{{ $comment->formatted_content }}</p>
+                                @endforeach
                             @endif
                         </div>
                     </div>
