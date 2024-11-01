@@ -21,6 +21,9 @@
         border: 1px solid #f0f0f0;
         padding: 4px;
         overflow: hidden;
+        position: absolute;
+        left: 0;
+        top: 0;
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img{
