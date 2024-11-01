@@ -17,7 +17,7 @@
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container {
-        border: 1px solid #f7f7f7;
+        border: 1px solid #f1f1f1;
         border-radius: 50%;
         padding: 4px;
         position: absolute;
@@ -50,7 +50,7 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
         width: 100%;
         padding-left: 42px;
-        background-color: #f7f7f7;
+        background-color: #f1f1f1;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info .fob-comment-item-author{
@@ -70,8 +70,8 @@
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside{
         padding-left: 42px;
-        border-left: 1px solid #f7f7f7;
-        border-bottom: 1px solid #f7f7f7;
+        border-left: 1px solid #f1f1f1;
+        border-bottom: 1px solid #f1f1f1;
     }
 </style>
 
