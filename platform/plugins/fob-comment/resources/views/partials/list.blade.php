@@ -12,11 +12,11 @@
         margin-bottom: 12px;
     }
 
-    .fob-comment-item .fob-comment-item-inner{
+    .fob-comment-item .fob-comment-item-inner {
         position: relative;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container {
         border: 1px solid #f0f0f0;
         border-radius: 50%;
         padding: 4px;
@@ -25,7 +25,7 @@
         top: 0;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img {
         width: 60px;
         height: 60px;
         display: flex;
@@ -33,16 +33,16 @@
         overflow: hidden;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img img{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img img {
         width: 100%;
         height: 100%;
     }
 
-    .fob-comment-item .fob-comment-item-content{
+    .fob-comment-item .fob-comment-item-content {
         padding-left: 34px;
     }
 
-    .fob-comment-item .fob-comment-item-content .fob-comment-item-info{
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
         padding-left: 42px;
     }
 </style>
@@ -68,19 +68,21 @@
                 @endif
                 <div class="fob-comment-item-content">
                     <div class="fob-comment-item-footer">
-                        <div class="fob-comment-item-info">
-                            @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
-                                <span class="fob-comment-item-admin-badge">
+                        <div class="d-block">
+                            <div class="fob-comment-item-info">
+                                @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
+                                    <span class="fob-comment-item-admin-badge">
                                     {{ trans('plugins/fob-comment::comment.front.admin_badge') }}
                                 </span>
-                            @endif
-                            @if ($comment->website)
-                                <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
+                                @endif
+                                @if ($comment->website)
+                                    <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
+                                        <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
+                                    </a>
+                                @else
                                     <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                </a>
-                            @else
-                                <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                            @endif
+                                @endif
+                            </div>
                             <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
                         </div>
                     </div>
