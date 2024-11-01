@@ -19,8 +19,8 @@
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img{
-        width: 54px;
-        height: 54px;
+        width: 64px;
+        height: 64px;
         display: flex;
     }
 
