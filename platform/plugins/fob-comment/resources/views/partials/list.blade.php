@@ -18,6 +18,7 @@
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container{
         border: 1px solid #f0f0f0;
+        border-radius: 50%;
         padding: 4px;
         position: absolute;
         left: 0;
