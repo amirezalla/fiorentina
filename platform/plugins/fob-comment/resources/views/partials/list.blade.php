@@ -11,6 +11,12 @@
     .fob-comment-item {
         border: 1px solid #ececec;
     }
+
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar img{
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+    }
 </style>
 
 <div class="fob-comment-list">

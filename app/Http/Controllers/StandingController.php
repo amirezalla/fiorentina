@@ -30,7 +30,7 @@ class StandingController extends Controller
             $standings = $response->json()['standings'][0]['table']; // Adjust depending on the actual JSON structure
 
             foreach ($standings as $standing) {
-                Standing::updateOrCreate(
+                /*Standing::updateOrCreate(
                     ['team_id' => $standing['team']['id']], // Assuming team_id is unique and consistent
                     [
                         'position' => $standing['position'],
@@ -48,7 +48,7 @@ class StandingController extends Controller
                         'goals_against' => $standing['goalsAgainst'],
                         'goal_difference' => $standing['goalDifference']
                     ]
-                );
+                );*/
             }
             return "Standings updated successfully.";
         }
