@@ -42,6 +42,11 @@
         padding-left: 34px;
     }
 
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-footer{
+        width: 100%;
+        display: block;
+    }
+
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
         padding-left: 42px;
     }
