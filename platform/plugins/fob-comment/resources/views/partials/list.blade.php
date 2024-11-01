@@ -36,6 +36,10 @@
         width: 100%;
         height: 100%;
     }
+
+    .fob-comment-item .fob-comment-item-content{
+        padding-left: 32px;
+    }
 </style>
 
 <div class="fob-comment-list">
