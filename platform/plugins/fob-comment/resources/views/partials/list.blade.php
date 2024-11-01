@@ -49,6 +49,10 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
         padding-left: 42px;
     }
+
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside{
+        padding-left: 42px;
+    }
 </style>
 
 <div class="fob-comment-list">
@@ -90,17 +94,19 @@
                             <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
                         </div>
                     </div>
-                    <div class="fob-comment-item-body">
-                        @if (! $comment->is_approved)
-                            <em class="fob-comment-item-pending">
-                                {{ trans('plugins/fob-comment::comment.front.list.waiting_for_approval_message') }}
-                            </em>
-                        @endif
-                        @if($comment->is_admin)
-                            {!! BaseHelper::clean($comment->formatted_content) !!}
-                        @else
-                            <p>{{ $comment->formatted_content }}</p>
-                        @endif
+                    <div class="fob-comment-item-content-inside">
+                        <div class="fob-comment-item-body">
+                            @if (! $comment->is_approved)
+                                <em class="fob-comment-item-pending">
+                                    {{ trans('plugins/fob-comment::comment.front.list.waiting_for_approval_message') }}
+                                </em>
+                            @endif
+                            @if($comment->is_admin)
+                                {!! BaseHelper::clean($comment->formatted_content) !!}
+                            @else
+                                <p>{{ $comment->formatted_content }}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
