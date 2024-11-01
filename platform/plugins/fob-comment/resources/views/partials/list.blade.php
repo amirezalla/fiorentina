@@ -51,8 +51,12 @@
         width: 100%;
         padding-left: 42px;
         background-color: #fafafa;
-        padding-top: 2px;
-        padding-bottom: 2px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-info .fob-comment-item-author{
+        font-size: 18px;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
