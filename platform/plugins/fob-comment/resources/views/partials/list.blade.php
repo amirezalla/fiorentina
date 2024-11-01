@@ -8,7 +8,9 @@
 
 <style>
 
-
+    .fob-comment-item-reply {
+        border: 1px solid #ececec;
+    }
 </style>
 
 <div class="fob-comment-list">
