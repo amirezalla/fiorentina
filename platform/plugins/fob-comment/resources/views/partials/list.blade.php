@@ -8,7 +8,7 @@
 
 <style>
 
-    .fob-comment-item-reply {
+    .fob-comment-item {
         border: 1px solid #ececec;
     }
 </style>
