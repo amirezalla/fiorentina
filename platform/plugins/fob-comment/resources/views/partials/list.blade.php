@@ -65,7 +65,7 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
         width: 100%;
         padding-left: 42px;
-        font-size: 16px;
+        font-size: 12px;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside{
