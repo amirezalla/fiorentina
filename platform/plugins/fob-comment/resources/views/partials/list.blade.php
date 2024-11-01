@@ -78,6 +78,13 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body {
         position: relative;
     }
+
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply {
+        border-bottom: none;
+        position: absolute;
+        left: 42px;
+        bottom: 0;
+    }
 </style>
 
 <div class="fob-comment-list">
