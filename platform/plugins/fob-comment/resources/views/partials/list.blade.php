@@ -43,7 +43,7 @@
         padding-left: 34px;
     }
 
-    .fob-comment-item .fob-comment-item-content .fob-comment-item-footer{
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-footer {
         width: 100%;
         display: block;
     }
@@ -54,7 +54,7 @@
         background-color: #f3f3f3;
     }
 
-    .fob-comment-item .fob-comment-item-content .fob-comment-item-info .fob-comment-item-author{
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-info .fob-comment-item-author {
         width: 100%;
         font-size: 18px;
         padding-top: 5px;
@@ -69,10 +69,14 @@
         font-size: 12px;
     }
 
-    .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside{
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside {
         padding-left: 42px;
         border-left: 1px solid #eaeaea;
         border-bottom: 1px solid #eaeaea;
+    }
+
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body {
+        position: relative;
     }
 </style>
 
@@ -124,8 +128,20 @@
                                 {!! BaseHelper::clean($comment->formatted_content) !!}
                             @else
                                 @foreach(range(1,12) as $i)
-                                        <p>{{ $comment->formatted_content }}</p>
+                                    <p>{{ $comment->formatted_content }}</p>
                                 @endforeach
+                            @endif
+                            @if ($comment->is_approved)
+                                <a
+                                    href="{{ route('fob-comment.public.comments.reply', $comment) }}"
+                                    class="fob-comment-item-reply"
+                                    data-comment-id="{{ $comment->getKey() }}"
+                                    data-reply-to="{{ $replyLabel = trans('plugins/fob-comment::comment.front.list.reply_to', ['name' => $comment->name]) }}"
+                                    data-cancel-reply="{{ trans('plugins/fob-comment::comment.front.list.cancel_reply') }}"
+                                    aria-label="{{ $replyLabel }}"
+                                ><i class="fa fa-reply" style="margin-right: 5px; font-size: 14px;"></i>
+                                    {{ trans('plugins/fob-comment::comment.front.list.reply') }}
+                                </a>
                             @endif
                         </div>
                     </div>
