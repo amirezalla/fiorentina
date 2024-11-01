@@ -7,7 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'voku\\' => array($vendorDir . '/voku/portable-ascii/src/voku'),
-    'romanzipp\\Turnstile\\' => array($vendorDir . '/romanzipp/laravel-turnstile/src'),
     'phpseclib3\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
     'bcmath_compat\\' => array($vendorDir . '/phpseclib/bcmath_compat/src'),
     'ZipStream\\' => array($vendorDir . '/maennchen/zipstream-php/src'),

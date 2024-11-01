@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '965b9c0dcc7290721a1ee67499865e00a7e55ec6',
+        'reference' => 'fa6fc0b5578988dd5a41f2612bb47bba7dd6a2a3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -793,7 +793,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '965b9c0dcc7290721a1ee67499865e00a7e55ec6',
+            'reference' => 'fa6fc0b5578988dd5a41f2612bb47bba7dd6a2a3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1486,15 +1486,6 @@
             'replaced' => array(
                 0 => '4.7.5',
             ),
-        ),
-        'romanzipp/laravel-turnstile' => array(
-            'pretty_version' => '1.3.0',
-            'version' => '1.3.0.0',
-            'reference' => 'f377d8a889c0c70512e4eb1f90229fed8b15430b',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../romanzipp/laravel-turnstile',
-            'aliases' => array(),
-            'dev_requirement' => false,
         ),
         'ryangjchandler/laravel-cloudflare-turnstile' => array(
             'pretty_version' => 'v1.1.0',
