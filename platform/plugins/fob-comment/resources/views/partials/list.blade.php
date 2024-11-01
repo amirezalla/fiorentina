@@ -17,7 +17,6 @@
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container{
-        border-radius: 50%;
         border: 1px solid #f0f0f0;
         padding: 4px;
         position: absolute;
@@ -29,6 +28,8 @@
         width: 64px;
         height: 64px;
         display: flex;
+        border-radius: 50%;
+        overflow: hidden;
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img img{
