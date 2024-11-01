@@ -21,6 +21,7 @@
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img{
         width: 54px;
         height: 54px;
+        display: flex;
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img img{
@@ -37,9 +38,11 @@
             <div class="fob-comment-item-inner">
                 <div class="fob-comment-item-avatar">
                     @if ($comment->website)
-                        <a href="{{ $comment->website }}" target="_blank">
-                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
-                        </a>
+                        <div class="fob-comment-item-img-container">
+                            <a href="{{ $comment->website }}" class="fob-comment-item-img" target="_blank">
+                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                            </a>
+                        </div>
                     @else
                         <div class="fob-comment-item-img-container">
                             <div class="fob-comment-item-img">
