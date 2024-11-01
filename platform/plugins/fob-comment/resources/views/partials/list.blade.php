@@ -48,10 +48,12 @@
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
+        width: 100%;
         padding-left: 42px;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
+        width: 100%;
         padding-left: 42px;
     }
 
@@ -81,23 +83,21 @@
                 @endif
                 <div class="fob-comment-item-content">
                     <div class="fob-comment-item-footer">
-                        <div class="d-block">
-                            <div class="fob-comment-item-info">
-                                @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
-                                    <span class="fob-comment-item-admin-badge">
+                        <div class="fob-comment-item-info">
+                            @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
+                                <span class="fob-comment-item-admin-badge">
                                     {{ trans('plugins/fob-comment::comment.front.admin_badge') }}
                                 </span>
-                                @endif
-                                @if ($comment->website)
-                                    <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
-                                        <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                    </a>
-                                @else
+                            @endif
+                            @if ($comment->website)
+                                <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
                                     <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                @endif
-                            </div>
-                            <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
+                                </a>
+                            @else
+                                <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
+                            @endif
                         </div>
+                        <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
                     </div>
                     <div class="fob-comment-item-content-inside">
                         <div class="fob-comment-item-body">
