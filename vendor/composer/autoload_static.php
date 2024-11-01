@@ -58,6 +58,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         array (
             'voku\\' => 5,
         ),
+        'r' => 
+        array (
+            'romanzipp\\Turnstile\\' => 20,
+        ),
         'p' => 
         array (
             'phpseclib3\\' => 11,
@@ -328,6 +332,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
+        ),
+        'romanzipp\\Turnstile\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/romanzipp/laravel-turnstile/src',
         ),
         'phpseclib3\\' => 
         array (
@@ -13369,6 +13377,11 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'phpseclib3\\System\\SSH\\Agent' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/System/SSH/Agent.php',
         'phpseclib3\\System\\SSH\\Agent\\Identity' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/System/SSH/Agent/Identity.php',
         'phpseclib3\\System\\SSH\\Common\\Traits\\ReadBytes' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/System/SSH/Common/Traits/ReadBytes.php',
+        'romanzipp\\Turnstile\\Captcha' => __DIR__ . '/..' . '/romanzipp/laravel-turnstile/src/Captcha.php',
+        'romanzipp\\Turnstile\\Providers\\TurnstileServiceProvider' => __DIR__ . '/..' . '/romanzipp/laravel-turnstile/src/Providers/TurnstileServiceProvider.php',
+        'romanzipp\\Turnstile\\Rules\\TurnstileCaptcha' => __DIR__ . '/..' . '/romanzipp/laravel-turnstile/src/Rules/TurnstileCaptcha.php',
+        'romanzipp\\Turnstile\\ValidationResponse' => __DIR__ . '/..' . '/romanzipp/laravel-turnstile/src/ValidationResponse.php',
+        'romanzipp\\Turnstile\\Validator' => __DIR__ . '/..' . '/romanzipp/laravel-turnstile/src/Validator.php',
         'voku\\helper\\ASCII' => __DIR__ . '/..' . '/voku/portable-ascii/src/voku/helper/ASCII.php',
         '©' => __DIR__ . '/..' . '/symfony/cache/Traits/ValueWrapper.php',
     );

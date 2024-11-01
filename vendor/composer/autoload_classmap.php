@@ -12231,6 +12231,11 @@ return array(
     'phpseclib3\\System\\SSH\\Agent' => $vendorDir . '/phpseclib/phpseclib/phpseclib/System/SSH/Agent.php',
     'phpseclib3\\System\\SSH\\Agent\\Identity' => $vendorDir . '/phpseclib/phpseclib/phpseclib/System/SSH/Agent/Identity.php',
     'phpseclib3\\System\\SSH\\Common\\Traits\\ReadBytes' => $vendorDir . '/phpseclib/phpseclib/phpseclib/System/SSH/Common/Traits/ReadBytes.php',
+    'romanzipp\\Turnstile\\Captcha' => $vendorDir . '/romanzipp/laravel-turnstile/src/Captcha.php',
+    'romanzipp\\Turnstile\\Providers\\TurnstileServiceProvider' => $vendorDir . '/romanzipp/laravel-turnstile/src/Providers/TurnstileServiceProvider.php',
+    'romanzipp\\Turnstile\\Rules\\TurnstileCaptcha' => $vendorDir . '/romanzipp/laravel-turnstile/src/Rules/TurnstileCaptcha.php',
+    'romanzipp\\Turnstile\\ValidationResponse' => $vendorDir . '/romanzipp/laravel-turnstile/src/ValidationResponse.php',
+    'romanzipp\\Turnstile\\Validator' => $vendorDir . '/romanzipp/laravel-turnstile/src/Validator.php',
     'voku\\helper\\ASCII' => $vendorDir . '/voku/portable-ascii/src/voku/helper/ASCII.php',
     '©' => $vendorDir . '/symfony/cache/Traits/ValueWrapper.php',
 );

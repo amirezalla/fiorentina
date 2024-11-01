@@ -2,11 +2,6 @@
 
 return [
 
-    'turnstile' => [
-        'key' => env('TURNSTILE_SITE_KEY'),
-        'secret' => env('TURNSTILE_SECRET_KEY'),
-    ],
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
