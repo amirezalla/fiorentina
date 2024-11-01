@@ -9,7 +9,7 @@
 <style>
 
     .fob-comment-item {
-        border: 1px solid #ececec;
+        margin-bottom: 12px;
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar img{
