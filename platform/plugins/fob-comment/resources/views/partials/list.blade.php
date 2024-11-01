@@ -59,7 +59,7 @@
         padding-top: 5px;
         padding-bottom: 5px;
         color: var(--bs-purple);
-        border-bottom: 1px solid var(--bs-purple);
+        border-bottom: 1px dashed var(--bs-purple);
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
