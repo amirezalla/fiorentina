@@ -8,22 +8,7 @@
 
 <style>
 
-    .fob-comment-item-reply {
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        border-radius: 20px;
-        color: #333;
-        padding: 5px 10px;
-        font-size: 12px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        margin: 10px;
-    }
-.fob-comment-item-inner{
-border: 1px solid gray;
-    border-radius: 20px;
-}
+    
 </style>
 
 <div class="fob-comment-list">
