@@ -132,6 +132,7 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Cache\\' => 24,
             'Svg\\' => 4,
+            'Spatie\\LaravelPackageTools\\' => 27,
             'Spatie\\LaravelIgnition\\' => 23,
             'Spatie\\Ignition\\' => 16,
             'Spatie\\FlareClient\\' => 19,
@@ -143,6 +144,8 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         ),
         'R' => 
         array (
+            'RyanChandler\\LaravelCloudflareTurnstile\\Database\\Factories\\' => 59,
+            'RyanChandler\\LaravelCloudflareTurnstile\\' => 40,
             'Ramsey\\Uuid\\' => 12,
             'Ramsey\\Collection\\' => 18,
         ),
@@ -532,6 +535,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         array (
             0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
         ),
+        'Spatie\\LaravelPackageTools\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spatie/laravel-package-tools/src',
+        ),
         'Spatie\\LaravelIgnition\\' => 
         array (
             0 => __DIR__ . '/..' . '/spatie/laravel-ignition/src',
@@ -563,6 +570,14 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'Sabberworm\\CSS\\' => 
         array (
             0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
+        ),
+        'RyanChandler\\LaravelCloudflareTurnstile\\Database\\Factories\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ryangjchandler/laravel-cloudflare-turnstile/database/factories',
+        ),
+        'RyanChandler\\LaravelCloudflareTurnstile\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ryangjchandler/laravel-cloudflare-turnstile/src',
         ),
         'Ramsey\\Uuid\\' => 
         array (
@@ -1153,9 +1168,12 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'AWS\\CRT\\OptionValue' => __DIR__ . '/..' . '/aws/aws-crt-php/src/AWS/CRT/Options.php',
         'AWS\\CRT\\Options' => __DIR__ . '/..' . '/aws/aws-crt-php/src/AWS/CRT/Options.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Events\\MessageSent' => __DIR__ . '/../..' . '/app/Events/MessageSent.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AdController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdController.php',
+        'App\\Http\\Controllers\\ChatController' => __DIR__ . '/../..' . '/app/Http/Controllers/ChatController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\DirettaController' => __DIR__ . '/../..' . '/app/Http/Controllers/DirettaController.php',
         'App\\Http\\Controllers\\MatchCommentaryController' => __DIR__ . '/../..' . '/app/Http/Controllers/MatchCommentaryController.php',
         'App\\Http\\Controllers\\MatchLineupsController' => __DIR__ . '/../..' . '/app/Http/Controllers/MatchLineupsController.php',
         'App\\Http\\Controllers\\MatchStaticsController' => __DIR__ . '/../..' . '/app/Http/Controllers/MatchStaticsController.php',
@@ -1164,6 +1182,7 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'App\\Http\\Controllers\\PlayerController' => __DIR__ . '/../..' . '/app/Http/Controllers/PlayerController.php',
         'App\\Http\\Controllers\\PollController' => __DIR__ . '/../..' . '/app/Http/Controllers/PollController.php',
         'App\\Http\\Controllers\\StandingController' => __DIR__ . '/../..' . '/app/Http/Controllers/StandingController.php',
+        'App\\Http\\Controllers\\VideoController' => __DIR__ . '/../..' . '/app/Http/Controllers/VideoController.php',
         'App\\Http\\Controllers\\VoteController' => __DIR__ . '/../..' . '/app/Http/Controllers/VoteController.php',
         'App\\Http\\Forms\\AdForms' => __DIR__ . '/../..' . '/app/Http/Forms/AdForms.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
@@ -1176,28 +1195,35 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\ValidateSignature' => __DIR__ . '/../..' . '/app/Http/Middleware/ValidateSignature.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Jobs\\PostPublishingJob' => __DIR__ . '/../..' . '/app/Jobs/PostPublishingJob.php',
         'App\\Models\\Ad' => __DIR__ . '/../..' . '/app/Models/Ad.php',
         'App\\Models\\AdPosition' => __DIR__ . '/../..' . '/app/Models/AdPosition.php',
         'App\\Models\\AdType' => __DIR__ . '/../..' . '/app/Models/AdType.php',
         'App\\Models\\Calendario' => __DIR__ . '/../..' . '/app/Models/Calendario.php',
+        'App\\Models\\LiveChat' => __DIR__ . '/../..' . '/app/Models/LiveChat.php',
         'App\\Models\\MatchCommentary' => __DIR__ . '/../..' . '/app/Models/MatchCommentary.php',
         'App\\Models\\MatchLineups' => __DIR__ . '/../..' . '/app/Models/MatchLineups.php',
         'App\\Models\\MatchStatics' => __DIR__ . '/../..' . '/app/Models/MatchStatics.php',
         'App\\Models\\MatchSummary' => __DIR__ . '/../..' . '/app/Models/MatchSummary.php',
         'App\\Models\\Matches' => __DIR__ . '/../..' . '/app/Models/Matches.php',
+        'App\\Models\\Message' => __DIR__ . '/../..' . '/app/Models/Message.php',
         'App\\Models\\Notifica' => __DIR__ . '/../..' . '/app/Models/Notifica.php',
         'App\\Models\\Player' => __DIR__ . '/../..' . '/app/Models/Player.php',
+        'App\\Models\\PlayerStats' => __DIR__ . '/../..' . '/app/Models/PlayerStats.php',
         'App\\Models\\PlayerVotes' => __DIR__ . '/../..' . '/app/Models/PlayerVotes.php',
         'App\\Models\\Poll' => __DIR__ . '/../..' . '/app/Models/Poll.php',
         'App\\Models\\PollOption' => __DIR__ . '/../..' . '/app/Models/PollOption.php',
         'App\\Models\\Standing' => __DIR__ . '/../..' . '/app/Models/Standing.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\Video' => __DIR__ . '/../..' . '/app/Models/Video.php',
+        'App\\Models\\VideoAd' => __DIR__ . '/../..' . '/app/Models/VideoAd.php',
         'App\\Models\\Vote' => __DIR__ . '/../..' . '/app/Models/Vote.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
+        'App\\Rules\\ValidateMediaFileIds' => __DIR__ . '/../..' . '/app/Rules/ValidateMediaFileIds.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Aws\\AbstractConfigurationProvider' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/AbstractConfigurationProvider.php',
         'Aws\\Api\\AbstractModel' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Api/AbstractModel.php',
@@ -10980,6 +11006,11 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'Ramsey\\Uuid\\UuidInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidInterface.php',
         'Ramsey\\Uuid\\Validator\\GenericValidator' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/GenericValidator.php',
         'Ramsey\\Uuid\\Validator\\ValidatorInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/ValidatorInterface.php',
+        'RyanChandler\\LaravelCloudflareTurnstile\\LaravelCloudflareTurnstileServiceProvider' => __DIR__ . '/..' . '/ryangjchandler/laravel-cloudflare-turnstile/src/LaravelCloudflareTurnstileServiceProvider.php',
+        'RyanChandler\\LaravelCloudflareTurnstile\\Responses\\SiteverifyResponse' => __DIR__ . '/..' . '/ryangjchandler/laravel-cloudflare-turnstile/src/Responses/SiteverifyResponse.php',
+        'RyanChandler\\LaravelCloudflareTurnstile\\Rules\\Turnstile' => __DIR__ . '/..' . '/ryangjchandler/laravel-cloudflare-turnstile/src/Rules/Turnstile.php',
+        'RyanChandler\\LaravelCloudflareTurnstile\\TurnstileClient' => __DIR__ . '/..' . '/ryangjchandler/laravel-cloudflare-turnstile/src/TurnstileClient.php',
+        'RyanChandler\\LaravelCloudflareTurnstile\\View\\Components\\Turnstile' => __DIR__ . '/..' . '/ryangjchandler/laravel-cloudflare-turnstile/src/View/Components/Turnstile.php',
         'SQLite3Exception' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/SQLite3Exception.php',
         'Sabberworm\\CSS\\CSSList\\AtRuleBlockList' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/CSSList/AtRuleBlockList.php',
         'Sabberworm\\CSS\\CSSList\\CSSBlockList' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/CSSList/CSSBlockList.php',
@@ -11429,6 +11460,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'Spatie\\LaravelIgnition\\Support\\StringComparator' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/Support/StringComparator.php',
         'Spatie\\LaravelIgnition\\Views\\BladeSourceMapCompiler' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/Views/BladeSourceMapCompiler.php',
         'Spatie\\LaravelIgnition\\Views\\ViewExceptionMapper' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/Views/ViewExceptionMapper.php',
+        'Spatie\\LaravelPackageTools\\Commands\\InstallCommand' => __DIR__ . '/..' . '/spatie/laravel-package-tools/src/Commands/InstallCommand.php',
+        'Spatie\\LaravelPackageTools\\Exceptions\\InvalidPackage' => __DIR__ . '/..' . '/spatie/laravel-package-tools/src/Exceptions/InvalidPackage.php',
+        'Spatie\\LaravelPackageTools\\Package' => __DIR__ . '/..' . '/spatie/laravel-package-tools/src/Package.php',
+        'Spatie\\LaravelPackageTools\\PackageServiceProvider' => __DIR__ . '/..' . '/spatie/laravel-package-tools/src/PackageServiceProvider.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Svg\\CssLength' => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg/CssLength.php',
         'Svg\\DefaultStyle' => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg/DefaultStyle.php',
