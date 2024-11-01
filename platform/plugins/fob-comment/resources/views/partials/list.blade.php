@@ -17,7 +17,8 @@
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container {
-        border: 1px solid #f1f1f1;
+        border: 1px solid #eaeaea;
+        color: #ffffff;
         border-radius: 50%;
         padding: 4px;
         position: absolute;
@@ -70,8 +71,8 @@
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside{
         padding-left: 42px;
-        border-left: 1px solid #f1f1f1;
-        border-bottom: 1px solid #f1f1f1;
+        border-left: 1px solid #eaeaea;
+        border-bottom: 1px solid #eaeaea;
     }
 </style>
 
