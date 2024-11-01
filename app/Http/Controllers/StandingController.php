@@ -30,7 +30,7 @@ class StandingController extends Controller
             $standings = $response->json()['standings'][0]['table']; // Adjust depending on the actual JSON structure
 
             foreach ($standings as $standing) {
-                /*Standing::updateOrCreate(
+                Standing::updateOrCreate(
                     ['team_id' => $standing['team']['id']], // Assuming team_id is unique and consistent
                     [
                         'position' => $standing['position'],
@@ -48,7 +48,7 @@ class StandingController extends Controller
                         'goals_against' => $standing['goalsAgainst'],
                         'goal_difference' => $standing['goalDifference']
                     ]
-                );*/
+                );
             }
             return "Standings updated successfully.";
         }
@@ -72,7 +72,7 @@ class StandingController extends Controller
         if (!empty($matches)) {
             $match = $matches[0];  // Get the first match
             $matchDate = Carbon::parse($match['utcDate'])->format('Y-m-d H:i:s');
-            /*Matches::updateOrCreate(
+            Matches::updateOrCreate(
                 ['match_id' => $match['id']],
                 [
                     'venue' => $match['venue'] ?? null,
@@ -91,7 +91,7 @@ class StandingController extends Controller
                     'odds' => !empty($match['odds']) ? json_encode($match['odds']) : null,
                     'referees' => !empty($match['referees']) ? json_encode($match['referees']) : null,
                 ]
-            );*/
+            );
             return "First timed match updated successfully.";
         }
         }
