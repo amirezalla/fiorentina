@@ -58,6 +58,7 @@
         font-size: 18px;
         padding-top: 4px;
         padding-bottom: 4px;
+        color: var(--bs-purple);
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
