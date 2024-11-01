@@ -74,6 +74,7 @@
         border-left: 1px solid #eaeaea;
         border-bottom: 1px solid #eaeaea;
         position: relative;
+        padding-bottom: 8px;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply {
@@ -83,7 +84,8 @@
         transform: translateY(50%);
         background-color: #ffffff;
         border: 1px solid #eaeaea;
-        padding: 2px 4px;
+        padding: 2px 8px;
+        border-radius: 9999px;
     }
 </style>
 
