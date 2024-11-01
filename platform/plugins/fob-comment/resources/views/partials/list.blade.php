@@ -73,9 +73,6 @@
         padding-left: 42px;
         border-left: 1px solid #eaeaea;
         border-bottom: 1px solid #eaeaea;
-    }
-
-    .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body {
         position: relative;
     }
 
