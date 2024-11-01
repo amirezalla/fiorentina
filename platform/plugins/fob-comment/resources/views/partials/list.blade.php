@@ -134,7 +134,7 @@
                             @if($comment->is_admin)
                                 {!! BaseHelper::clean($comment->formatted_content) !!}
                             @else
-                                <p>{{ str_repeat($comment->formatted_content,30) }}</p>
+                                <p>{{ $comment->formatted_content }}</p>
                             @endif
                             @if ($comment->is_approved)
                                 <a
