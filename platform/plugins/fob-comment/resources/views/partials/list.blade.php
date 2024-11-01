@@ -18,7 +18,7 @@
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container {
         border: 1px solid #eaeaea;
-        color: #ffffff;
+        background-color: #ffffff;
         border-radius: 50%;
         padding: 4px;
         position: absolute;
@@ -51,7 +51,7 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
         width: 100%;
         padding-left: 42px;
-        background-color: #f1f1f1;
+        background-color: #f3f3f3;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info .fob-comment-item-author{
