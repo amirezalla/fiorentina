@@ -26,8 +26,8 @@
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img{
-        width: 64px;
-        height: 64px;
+        width: 60px;
+        height: 60px;
         display: flex;
         border-radius: 50%;
         overflow: hidden;
@@ -39,11 +39,11 @@
     }
 
     .fob-comment-item .fob-comment-item-content{
-        padding-left: 32px;
+        padding-left: 34px;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside{
-        padding-left: 32px;
+        padding-left: 34px;
     }
 </style>
 
