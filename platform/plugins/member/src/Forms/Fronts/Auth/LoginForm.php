@@ -14,6 +14,7 @@ use Botble\Member\Forms\Fronts\Auth\FieldOptions\EmailFieldOption;
 use Botble\Member\Forms\Fronts\Auth\FieldOptions\TextFieldOption;
 use Botble\Member\Http\Requests\Fronts\Auth\LoginRequest;
 use Botble\Member\Models\Member;
+use Illuminate\Support\Facades\Blade;
 use RyanChandler\LaravelCloudflareTurnstile\View\Components\Turnstile;
 
 class LoginForm extends AuthForm
@@ -80,7 +81,7 @@ class LoginForm extends AuthForm
                 'recaptcha',
                 HtmlField::class,
                 [
-                    'html' => (new Turnstile())->render(),
+                    'html' => Blade::renderComponent(new Turnstile()),
                 ]
             )
             ->add('closeRow', HtmlField::class, [
