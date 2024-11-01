@@ -75,6 +75,13 @@ class LoginForm extends AuthForm
                     ],
                 ]
             )
+            ->add(
+                'recaptcha',
+                HtmlField::class,
+                [
+                    'html' => '<x-turnstile />',
+                ]
+            )
             ->add('closeRow', HtmlField::class, [
                 'html' => '</div>',
             ])
