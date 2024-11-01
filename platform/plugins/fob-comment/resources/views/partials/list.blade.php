@@ -50,6 +50,9 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
         width: 100%;
         padding-left: 42px;
+        background-color: #fafafa;
+        padding-top: 2px;
+        padding-bottom: 2px;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
