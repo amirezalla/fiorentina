@@ -40,6 +40,7 @@
 
     .fob-comment-item .fob-comment-item-content {
         padding-left: 34px;
+        border-left: 1px solid #fafafa;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-footer{
