@@ -77,12 +77,13 @@
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply {
-        border-bottom: none;
         position: absolute;
         left: 42px;
         bottom: 0;
         transform: translateY(50%);
         background-color: #ffffff;
+        border: 1px solid #eaeaea;
+        padding: 2px 4px;
     }
 </style>
 
