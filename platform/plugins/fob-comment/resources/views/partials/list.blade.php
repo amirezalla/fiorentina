@@ -20,7 +20,6 @@
         border-radius: 50%;
         border: 1px solid #f0f0f0;
         padding: 4px;
-        overflow: hidden;
         position: absolute;
         left: 0;
         top: 0;
