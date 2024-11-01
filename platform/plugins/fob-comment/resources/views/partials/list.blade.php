@@ -45,6 +45,10 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
         padding-left: 42px;
     }
+
+    .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
+        padding-left: 42px;
+    }
 </style>
 
 <div class="fob-comment-list">
