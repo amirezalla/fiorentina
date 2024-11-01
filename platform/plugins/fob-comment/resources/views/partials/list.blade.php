@@ -58,37 +58,25 @@
                 </div>
                 <div class="fob-comment-item-content">
                     <div class="fob-comment-item-footer">
-                        <div class="fob-comment-item-info bg-blue" >
-                            <!-- Admin Badge -->
+                        <div class="d-flex flex-column">
+                            <div class="fob-comment-item-info" >
+                                <!-- Admin Badge -->
 
-                            @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
-                                <span class="fob-comment-item-admin-badge">
+                                @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
+                                    <span class="fob-comment-item-admin-badge">
                                     {{ trans('plugins/fob-comment::comment.front.admin_badge') }}
                                 </span>
-                            @endif
-                            @if ($comment->website)
-                                <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
+                                @endif
+                                @if ($comment->website)
+                                    <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
+                                        <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
+                                    </a>
+                                @else
                                     <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                </a>
-                            @else
-                                <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                            @endif
+                                @endif
+                            </div>
                             <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
                         </div>
-
-                        @if ($comment->is_approved)
-                            <a
-                                href="{{ route('fob-comment.public.comments.reply', $comment) }}"
-                                class="fob-comment-item-reply"
-
-                                data-comment-id="{{ $comment->getKey() }}"
-                                data-reply-to="{{ $replyLabel = trans('plugins/fob-comment::comment.front.list.reply_to', ['name' => $comment->name]) }}"
-                                data-cancel-reply="{{ trans('plugins/fob-comment::comment.front.list.cancel_reply') }}"
-                                aria-label="{{ $replyLabel }}"
-                            ><i class="fa fa-reply" style="margin-right: 5px; font-size: 14px;"></i>
-                                {{ trans('plugins/fob-comment::comment.front.list.reply') }}
-                            </a>
-                        @endif
                     </div>
                     <div class="fob-comment-item-body">
                         @if (! $comment->is_approved)
