@@ -13,13 +13,14 @@
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container{
+        width: 54px;
+        height: 54px;
         border-radius: 50%;
         border: 1px solid #f0f0f0;
-        padding: 8px;
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container img{
-        
+
     }
 </style>
 
