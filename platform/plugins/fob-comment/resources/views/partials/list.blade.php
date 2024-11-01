@@ -12,6 +12,11 @@
         margin-bottom: 12px;
     }
 
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar{
+        margin: 0;
+        padding: 0;
+    }
+
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container{
         border-radius: 50%;
         border: 1px solid #f0f0f0;
