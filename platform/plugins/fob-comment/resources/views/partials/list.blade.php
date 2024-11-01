@@ -10,21 +10,25 @@
 
     .fob-comment-item {
         margin-bottom: 12px;
+        position: relative;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container{
         border-radius: 50%;
         border: 1px solid #f0f0f0;
         padding: 4px;
+        position: absolute;
+        left: 0;
+        top: 0;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img{
         width: 64px;
         height: 64px;
         display: flex;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img img{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img img{
         width: 100%;
         height: 100%;
     }
@@ -36,21 +40,19 @@
 
         <div id="comment-{{ $comment->getKey() }}" class="fob-comment-item">
             <div class="fob-comment-item-inner">
-                <div class="fob-comment-item-avatar">
-                    @if ($comment->website)
-                        <div class="fob-comment-item-img-container">
-                            <a href="{{ $comment->website }}" class="fob-comment-item-img" target="_blank">
-                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
-                            </a>
+                @if ($comment->website)
+                    <div class="fob-comment-item-img-container">
+                        <a href="{{ $comment->website }}" class="fob-comment-item-img" target="_blank">
+                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                        </a>
+                    </div>
+                @else
+                    <div class="fob-comment-item-img-container">
+                        <div class="fob-comment-item-img">
+                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
                         </div>
-                    @else
-                        <div class="fob-comment-item-img-container">
-                            <div class="fob-comment-item-img">
-                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
-                            </div>
-                        </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
                 <div class="fob-comment-item-content">
                     <div class="fob-comment-item-footer">
                         <div class="fob-comment-item-info bg-blue" >
