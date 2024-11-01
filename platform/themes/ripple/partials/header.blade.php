@@ -23,7 +23,7 @@
     @php(Theme::set('headerMeta', Theme::partial('header-meta')))
 
     {!! Theme::header() !!}
-    @turnstileScripts()
+    {{ romanzipp\Turnstile\Captcha::getScript() }}
 </head>
 
 <body {!! Theme::bodyAttributes() !!}>

@@ -79,7 +79,7 @@ class LoginForm extends AuthForm
                 'recaptcha',
                 HtmlField::class,
                 [
-                    'html' => '<x-turnstile />',
+                    'html' => romanzipp\Turnstile\Captcha::getChallenge(),
                 ]
             )
             ->add('closeRow', HtmlField::class, [
