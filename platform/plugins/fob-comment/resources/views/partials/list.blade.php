@@ -56,9 +56,10 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info .fob-comment-item-author{
         width: 100%;
         font-size: 18px;
-        padding-top: 4px;
-        padding-bottom: 4px;
+        padding-top: 5px;
+        padding-bottom: 5px;
         color: var(--bs-purple);
+        border-bottom: 1px solid var(--bs-purple);
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-date {
