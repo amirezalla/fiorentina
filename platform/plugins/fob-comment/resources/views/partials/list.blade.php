@@ -12,10 +12,14 @@
         margin-bottom: 12px;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar img{
-        width: 48px;
-        height: 48px;
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container{
         border-radius: 50%;
+        border: 1px solid #f0f0f0;
+    }
+
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container img{
+        width: 52px;
+        height: 52px;
     }
 </style>
 
@@ -31,7 +35,9 @@
                             <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
                         </a>
                     @else
-                        <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                        <div class="fob-comment-item-avatar__image-container">
+                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                        </div>
                     @endif
                 </div>
                 <div class="fob-comment-item-content">
