@@ -12,24 +12,24 @@
         margin-bottom: 12px;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar{
-        margin: 0;
-        padding: 0;
+    .fob-comment-item .fob-comment-item-inner{
+        position: relative;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container{
         border-radius: 50%;
         border: 1px solid #f0f0f0;
         padding: 4px;
+        overflow: hidden;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img{
         width: 64px;
         height: 64px;
         display: flex;
     }
 
-    .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-img-container .fob-comment-item-img img{
+    .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img img{
         width: 100%;
         height: 100%;
     }
@@ -41,42 +41,52 @@
 
         <div id="comment-{{ $comment->getKey() }}" class="fob-comment-item">
             <div class="fob-comment-item-inner">
-                <div class="fob-comment-item-avatar">
-                    @if ($comment->website)
-                        <div class="fob-comment-item-img-container">
-                            <a href="{{ $comment->website }}" class="fob-comment-item-img" target="_blank">
-                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
-                            </a>
+                @if ($comment->website)
+                    <div class="fob-comment-item-img-container">
+                        <a href="{{ $comment->website }}" class="fob-comment-item-img" target="_blank">
+                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                        </a>
+                    </div>
+                @else
+                    <div class="fob-comment-item-img-container">
+                        <div class="fob-comment-item-img">
+                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
                         </div>
-                    @else
-                        <div class="fob-comment-item-img-container">
-                            <div class="fob-comment-item-img">
-                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
-                            </div>
-                        </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
                 <div class="fob-comment-item-content">
                     <div class="fob-comment-item-footer">
-                        <div class="d-flex flex-column">
-                            <div class="fob-comment-item-info" >
-                                <!-- Admin Badge -->
+                        <div class="fob-comment-item-info bg-blue" >
+                            <!-- Admin Badge -->
 
-                                @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
-                                    <span class="fob-comment-item-admin-badge">
+                            @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
+                                <span class="fob-comment-item-admin-badge">
                                     {{ trans('plugins/fob-comment::comment.front.admin_badge') }}
                                 </span>
-                                @endif
-                                @if ($comment->website)
-                                    <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
-                                        <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                    </a>
-                                @else
+                            @endif
+                            @if ($comment->website)
+                                <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
                                     <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                @endif
-                            </div>
+                                </a>
+                            @else
+                                <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
+                            @endif
                             <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
                         </div>
+
+                        @if ($comment->is_approved)
+                            <a
+                                href="{{ route('fob-comment.public.comments.reply', $comment) }}"
+                                class="fob-comment-item-reply"
+
+                                data-comment-id="{{ $comment->getKey() }}"
+                                data-reply-to="{{ $replyLabel = trans('plugins/fob-comment::comment.front.list.reply_to', ['name' => $comment->name]) }}"
+                                data-cancel-reply="{{ trans('plugins/fob-comment::comment.front.list.cancel_reply') }}"
+                                aria-label="{{ $replyLabel }}"
+                            ><i class="fa fa-reply" style="margin-right: 5px; font-size: 14px;"></i>
+                                {{ trans('plugins/fob-comment::comment.front.list.reply') }}
+                            </a>
+                        @endif
                     </div>
                     <div class="fob-comment-item-body">
                         @if (! $comment->is_approved)
