@@ -50,7 +50,7 @@
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info {
         width: 100%;
         padding-left: 42px;
-        background-color: #fafafa;
+        background-color: #f7f7f7;
     }
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-info .fob-comment-item-author{
@@ -70,7 +70,7 @@
 
     .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside{
         padding-left: 42px;
-        border-left: 1px solid #fafafa;
+        border-left: 1px solid #f7f7f7;
     }
 </style>
 
