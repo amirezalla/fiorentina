@@ -15,11 +15,11 @@
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container{
         border-radius: 50%;
         border: 1px solid #f0f0f0;
+        padding: 8px;
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-avatar .fob-comment-item-avatar__image-container img{
-        width: 52px;
-        height: 52px;
+        
     }
 </style>
 
