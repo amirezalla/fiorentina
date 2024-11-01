@@ -81,6 +81,8 @@
         position: absolute;
         left: 42px;
         bottom: 0;
+        transform: translateY(50%);
+        background-color: #ffffff;
     }
 </style>
 
