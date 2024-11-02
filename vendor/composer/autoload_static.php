@@ -257,6 +257,7 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         ),
         'E' => 
         array (
+            'Eighteen73\\Turnstile\\' => 21,
             'Egulias\\EmailValidator\\' => 23,
         ),
         'D' => 
@@ -905,6 +906,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'Facebook\\WebDriver\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-webdriver/webdriver/lib',
+        ),
+        'Eighteen73\\Turnstile\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/eighteen73/laravel-turnstile/src',
         ),
         'Egulias\\EmailValidator\\' => 
         array (
@@ -3413,6 +3418,9 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'Egulias\\EmailValidator\\Warning\\QuotedString' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/QuotedString.php',
         'Egulias\\EmailValidator\\Warning\\TLD' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/TLD.php',
         'Egulias\\EmailValidator\\Warning\\Warning' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/Warning.php',
+        'Eighteen73\\Turnstile\\Http\\Middleware\\Turnstile' => __DIR__ . '/..' . '/eighteen73/laravel-turnstile/src/Http/Middleware/Turnstile.php',
+        'Eighteen73\\Turnstile\\Rules\\Turnstile' => __DIR__ . '/..' . '/eighteen73/laravel-turnstile/src/Rules/Turnstile.php',
+        'Eighteen73\\Turnstile\\TurnstileServiceProvider' => __DIR__ . '/..' . '/eighteen73/laravel-turnstile/src/TurnstileServiceProvider.php',
         'Facebook\\WebDriver\\AbstractWebDriverCheckboxOrRadio' => __DIR__ . '/..' . '/php-webdriver/webdriver/lib/AbstractWebDriverCheckboxOrRadio.php',
         'Facebook\\WebDriver\\Chrome\\ChromeDevToolsDriver' => __DIR__ . '/..' . '/php-webdriver/webdriver/lib/Chrome/ChromeDevToolsDriver.php',
         'Facebook\\WebDriver\\Chrome\\ChromeDriver' => __DIR__ . '/..' . '/php-webdriver/webdriver/lib/Chrome/ChromeDriver.php',

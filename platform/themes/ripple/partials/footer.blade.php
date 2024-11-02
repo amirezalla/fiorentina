@@ -20,7 +20,8 @@
                 </li>
             </ul>
             <div class="col-12">
-                <p class="mb-1 text-center">Pubblicazione iscritta nel registro della stampa del Tribunale di Firenze con il n. 5050/01 del 27 apr 2001. Partita IVA 06783020966.</p>
+                <p class="mb-1 text-center">Pubblicazione iscritta nel registro della stampa del Tribunale di Firenze
+                    con il n. 5050/01 del 27 apr 2001. Partita IVA 06783020966.</p>
                 <p class="mb-1 text-center">Direttore responsabile: Niccolò Misul.</p>
                 <p class="text-center">Service redazionale a cura di C&C Media Srl</p>
             </div>
@@ -32,7 +33,6 @@
 </div>
 
 {!! Theme::footer() !!}
-
 
 
 <div class="container">
@@ -59,6 +59,7 @@
         $('.page-header').after(row);
     });
 </script>-->
+@turnstileScripts
 </body>
 
 </html>

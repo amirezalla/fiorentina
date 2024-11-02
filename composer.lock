@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "560b168d8ec16e91c60ab993322a2f26",
+    "content-hash": "e000f175c6ac22ce1cd128c7df0ebe79",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1892,6 +1892,59 @@
                 }
             ],
             "time": "2023-10-06T06:47:41+00:00"
+        },
+        {
+            "name": "eighteen73/laravel-turnstile",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eighteen73/laravel-turnstile.git",
+                "reference": "4941321b443bd1682e6883a283c4cfe6eded34ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eighteen73/laravel-turnstile/zipball/4941321b443bd1682e6883a283c4cfe6eded34ef",
+                "reference": "4941321b443bd1682e6883a283c4cfe6eded34ef",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^9.0|^10.0|^11.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Eighteen73\\Turnstile\\TurnstileServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Eighteen73\\Turnstile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ed Jeavons",
+                    "email": "ed@orphans.co.uk"
+                }
+            ],
+            "description": "Add Cloudflare Turnstile verification to Laravel forms",
+            "keywords": [
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/eighteen73/laravel-turnstile/issues",
+                "source": "https://github.com/eighteen73/laravel-turnstile"
+            },
+            "time": "2024-06-27T11:48:40+00:00"
         },
         {
             "name": "erusev/parsedown",
