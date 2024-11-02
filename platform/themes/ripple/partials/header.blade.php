@@ -28,7 +28,7 @@
 <body {!! Theme::bodyAttributes() !!}>
     {!! apply_filters(THEME_FRONT_BODY, null) !!}
     <header data-sticky="false" data-sticky-checkpoint="200" data-responsive="991"
-        class="page-header page-header--light py-0">
+        class="page-header page-header--light py-0 z-1">
         <div class="container headup" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="page-header__left">
                 <a href="{{ BaseHelper::getHomepageUrl() }}" class="page-logo">
