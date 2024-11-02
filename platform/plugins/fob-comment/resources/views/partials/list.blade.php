@@ -8,7 +8,7 @@
 
 <style>
 
-    .fob-comment-item {
+    /*.fob-comment-item {
         margin-bottom: 12px;
     }
 
@@ -87,7 +87,7 @@
         border: 1px solid #eaeaea;
         padding: 2px 8px;
         border-radius: 9999px;
-    }
+    }*/
 </style>
 
 <div class="fob-comment-list">
