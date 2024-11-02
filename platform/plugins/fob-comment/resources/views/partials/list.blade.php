@@ -24,6 +24,7 @@
         position: absolute;
         left: 0;
         top: 0;
+        z-index: 1;
     }
 
     .fob-comment-item .fob-comment-item-inner .fob-comment-item-img-container .fob-comment-item-img {
