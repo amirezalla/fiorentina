@@ -59,7 +59,7 @@
         $('.page-header').after(row);
     });
 </script>-->
-@turnstileScripts
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </body>
 
 </html>
