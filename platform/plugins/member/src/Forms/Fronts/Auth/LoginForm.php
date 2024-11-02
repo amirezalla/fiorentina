@@ -75,13 +75,6 @@ class LoginForm extends AuthForm
                     ],
                 ]
             )
-            ->add(
-                'recaptcha',
-                HtmlField::class,
-                [
-                    'html' => '<div class="cf-turnstile" data-sitekey="'.config('turnstile.key').'" data-callback="onTurnstileSuccess"></div>',
-                ]
-            )
             ->add('closeRow', HtmlField::class, [
                 'html' => '</div>',
             ])

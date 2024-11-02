@@ -23,7 +23,6 @@
     @php(Theme::set('headerMeta', Theme::partial('header-meta')))
 
     {!! Theme::header() !!}
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body {!! Theme::bodyAttributes() !!}>
