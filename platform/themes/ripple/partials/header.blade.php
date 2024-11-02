@@ -90,7 +90,7 @@
     {{--        </div> --}}
     {{--    </header> --}}
     <header data-sticky="false" data-sticky-checkpoint="200" data-responsive="991"
-        class="page-header page-header--light py-0">
+        class="page-header page-header--light py-0 z-1">
         <div class="container d-flex">
 
             <div class="page-header__right flex-grow-1">
