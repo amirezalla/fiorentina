@@ -38,6 +38,7 @@ class Turnstile implements InvokableRule
             'secret' => config('turnstile.secret'),
             'response' => $response_code,
         ];
+        dd(config('turnstile'));
         if (config('turnstile.send_client_ip')) {
             $data['remoteip'] = request()->getClientIp();
         }
