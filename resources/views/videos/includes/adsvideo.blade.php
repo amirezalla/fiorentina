@@ -1,13 +1,14 @@
-@if (isset($video_urls) && $video_urls->count())
-
+@if ($video && $video_files->count())
     <div class="container">
         <div class="row mx-0">
             <div class="col-12 mx-auto">
                 <div class="d-block w-full">
-                    <video width="100%" id="ads-video" autoplay muted data-url="{{ json_encode($video_urls) }}">
-                        <source src="{{ $video_urls[0] }}" type="video/mp4">
+                    <video width="100%" id="ads-video" autoplay muted data-video="{{ json_encode($video) }}"
+                           data-video-files="{{ json_encode($video_files) }}">
+                        <source src="{{ $video_files[0] }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
+                    <span id="ads-video-timer" class="text-dark"></span>
                 </div>
             </div>
         </div>
@@ -22,28 +23,37 @@
 
 
 <script>
-    const video = document.getElementById('ads-video');
-    const urls = JSON.parse(video.getAttribute('data-url'));
+    const videoEl = document.getElementById('ads-video');
+    const video = JSON.parse(videoEl.getAttribute('data-video'));
+    const video_files = JSON.parse(videoEl.getAttribute('data-video-files'));
+    const delay = video.delay ? Number(video.delay) : 0;
     let activeVideo = 0;
-    let delay = 30000; // Set default delay to 30 seconds (30000 milliseconds)
-
-    const delayElement = document.getElementById('delay');
-
-    // Check if the delay dropdown exists and update the delay dynamically
-    if (delayElement) {
-        delay = parseInt(delayElement.value) * 1000; // Get initial delay from dropdown (if present)
-
-        // Update the delay when the user changes the selection
-        delayElement.addEventListener('change', function() {
-            delay = parseInt(this.value) * 1000; // Convert selected delay to milliseconds
-        });
-    }
-
-    video.addEventListener('ended', function(e) {
-        activeVideo = (++activeVideo) % urls.length; // Move to the next video
-        setTimeout(function() {
-            video.src = urls[activeVideo]; // Update video source to the next video
-            video.play(); // Play the next video after the delay
-        }, delay); // Use the selected delay before the next video starts
+    let delayTimer = null;
+    videoEl.addEventListener('ended', function (e) {
+        activeVideo = (++activeVideo) % video_files.length;
+        if (delay) {
+            startCountdown(delay,function () {
+                videoEl.src = video_files[activeVideo];
+                videoEl.play();
+            })
+        } else {
+            videoEl.src = video_files[activeVideo];
+            videoEl.play();
+        }
     });
+
+    function startCountdown(duration,func) {
+        let seconds = duration;
+        const timerDisplay = document.getElementById('ads-video-timer');
+
+        const countdown = setInterval(() => {
+            timerDisplay.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(countdown);
+                func();
+            } else {
+                seconds -= 1;
+            }
+        }, 1000);
+    }
 </script>

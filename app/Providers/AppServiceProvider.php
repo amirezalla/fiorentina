@@ -79,10 +79,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
-            /** @var Video $video */
             $video = Video::query()->published()->first();
             if ($video) {
-                $video_urls = $video->mediaFiles()
+                $video_files = $video->mediaFiles()
                     ->when($video->isRandom(), function ($q) {
                         $q->inRandomOrder();
                     }, function ($q) {
@@ -93,9 +92,9 @@ class AppServiceProvider extends ServiceProvider
                         return url('storage/'.$item->url);
                     });
             } else {
-                $video_urls = collect();
+                $video_files = collect();
             }
-            $view->with('video_urls', $video_urls);
+            $view->with('video',$video)->with('video_files', $video_files);
         });
 
 
