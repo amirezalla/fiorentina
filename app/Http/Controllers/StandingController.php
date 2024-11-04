@@ -16,45 +16,51 @@ class StandingController extends Controller
     public static function fetchStandingsIfNeeded()
     {
         $latestUpdate = Standing::latest('updated_at')->first();
-
-        // Check if the data was updated within the last 20 hours
+    
+        // Check if the data was updated within the last 20 hours or if the table is empty
         if (!$latestUpdate || $latestUpdate->updated_at <= Carbon::now()->subHours(20)) {
-
-
+    
+            // Clear the existing standings table
             Standing::truncate();
-
+    
             $response = Http::withHeaders([
-                'X-Auth-Token' => 'e1ef65752c2b42c2b8002bccec730215'
+                'X-Auth-Token' => 'e1ef65752c2b42c2b8002bccec730215' 
             ])->get('http://api.football-data.org/v4/competitions/SA/standings');
-
-            $standings = $response->json()['standings'][0]['table']; // Adjust depending on the actual JSON structure
-
-            foreach ($standings as $standing) {
-                /*Standing::updateOrCreate(
-                    ['team_id' => $standing['team']['id']], // Assuming team_id is unique and consistent
-                    [
-                        'position' => $standing['position'],
-                        'team_name' => $standing['team']['name'],
-                        'short_name' => $standing['team']['shortName'],
-                        'tla' => $standing['team']['tla'],
-                        'crest_url' => $standing['team']['crest'],
-                        'played_games' => $standing['playedGames'],
-                        'form' => $standing['form'],
-                        'won' => $standing['won'],
-                        'draw' => $standing['draw'],
-                        'lost' => $standing['lost'],
-                        'points' => $standing['points'],
-                        'goals_for' => $standing['goalsFor'],
-                        'goals_against' => $standing['goalsAgainst'],
-                        'goal_difference' => $standing['goalDifference']
-                    ]
-                );*/
+    
+            if ($response->successful()) {
+                $standings = $response->json()['standings'][0]['table']; // Adjust based on actual JSON structure
+    
+                foreach ($standings as $standing) {
+                    Standing::updateOrCreate(
+                        ['team_id' => $standing['team']['id']], // Assuming team_id is unique and consistent
+                        [
+                            'position' => $standing['position'],
+                            'team_name' => $standing['team']['name'],
+                            'short_name' => $standing['team']['shortName'],
+                            'tla' => $standing['team']['tla'],
+                            'crest_url' => $standing['team']['crest'],
+                            'played_games' => $standing['playedGames'],
+                            'form' => $standing['form'],
+                            'won' => $standing['won'],
+                            'draw' => $standing['draw'],
+                            'lost' => $standing['lost'],
+                            'points' => $standing['points'],
+                            'goals_for' => $standing['goalsFor'],
+                            'goals_against' => $standing['goalsAgainst'],
+                            'goal_difference' => $standing['goalDifference']
+                        ]
+                    );
+                }
+    
+                return "Standings updated successfully.";
+            } else {
+                return "Failed to fetch standings. Error: " . $response->body();
             }
-            return "Standings updated successfully.";
         }
-
+    
         return "No update needed.";
     }
+    
 
     public static function fetchScheduledMatches()
     {
