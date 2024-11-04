@@ -8,7 +8,9 @@
                         <source src="{{ $video_files[0] }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
-                    <span id="ads-video-timer" class="text-dark"></span>
+{{--                    <span id="ads-video-timer" class="text-dark"></span>--}}
+                    <span id="ads-video-timer" class="text-dark" style="display: none;"></span>
+
                 </div>
             </div>
         </div>
