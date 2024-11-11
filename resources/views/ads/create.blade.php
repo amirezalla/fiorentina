@@ -140,9 +140,9 @@
                     <div class=" card-body">
                         <select class="form-control form-select" required="required" id="status" name="status"
                             aria-required="true">
-                            <option value="published">Published</option>
-                            <option value="draft">Draft</option>
-                            <option value="pending">Pending</option>
+                            <option value="1">Published</option>
+                            <option value="0">Draft</option>
+                            <option value="2">Pending</option>
                         </select>
                     </div>
                 </div>
