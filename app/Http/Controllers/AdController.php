@@ -138,7 +138,6 @@ class AdController extends BaseController
             // Update the advertisement
             $ad->update($data);
             $ad->refresh(); // Refreshes the model from the database to reflect the latest state
-            dd($status, $ad->status, $data['status'], $ad->getAttributes());
                         return redirect()->route('ads.index')->with('success', 'Advertisement updated successfully!');
         } catch (\Exception $e) {
             Log::error('Failed to save advertisement: ' . $e->getMessage());
