@@ -2,7 +2,6 @@
 
 @section('content')
     <form action="{{ route('ads.update', $ad->id) }}" method="POST" enctype="multipart/form-data">
-        @dd($ad->status)
         @csrf
         @method('PUT')
         <div class="row">
@@ -219,7 +218,6 @@
                             id="status" name="status" aria-required="true">
                             <option @if ($ad->status == 1) selected @endif value="1">Published</option>
                             <option @if ($ad->status == 0) selected @endif value="0">Draft</option>
-                            <option @if ($ad->status == 2) selected @endif value="2">Pending</option>
                         </select>
                     </div>
                 </div>

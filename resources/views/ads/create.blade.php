@@ -52,18 +52,18 @@
                                 </div>
                             </div>
 
-                        <!-- Image Upload Section -->
-                        <div class="row mt-3 mb-3" id="imageUploadSection">
-                            <input type="file" class="form-control mb-1" id="imageUpload" name="image"
-                                accept="image/*">
-                            <input type="text" class="form-control" name="url" id="url"
-                                placeholder="https://example.com">
-                            <div class="row mx-0 mt-3">
-                                <div class="col-12">
-                                    <img src="" class="image-preview" alt="">
+                            <!-- Image Upload Section -->
+                            <div class="row mt-3 mb-3" id="imageUploadSection">
+                                <input type="file" class="form-control mb-1" id="imageUpload" name="image"
+                                    accept="image/*">
+                                <input type="text" class="form-control" name="url" id="url"
+                                    placeholder="https://example.com">
+                                <div class="row mx-0 mt-3">
+                                    <div class="col-12">
+                                        <img src="" class="image-preview" alt="">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
                             <!-- Image Name Section for Google Ad Manager -->
                             <div class="row mb-3 mt-3" id="googleAdImageNameSection" style="display: none;">
@@ -142,7 +142,6 @@
                             aria-required="true">
                             <option value="1">Published</option>
                             <option value="0">Draft</option>
-                            <option value="2">Pending</option>
                         </select>
                     </div>
                 </div>
