@@ -106,6 +106,9 @@ class AdController extends BaseController
             'type' => ['required', Rule::in(array_keys(Ad::TYPES))],
             'group' => ['required', Rule::in(array_keys(Ad::GROUPS))],
         ]);
+        if($request->status=='1'){
+            $status=true;
+        }else{$status=false;}
         $data = [
             'title' => $request->post_title,
             'group' => $request->group,
