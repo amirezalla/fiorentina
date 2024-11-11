@@ -119,13 +119,10 @@ class Ad extends BaseModel
         'expires_at',
         'width',
         'height',
+        'status'
     ];
 
-    protected $casts = [
-        'status' => 'bool',
-        'starts_at' => 'datetime',
-        'expires_at' => 'datetime',
-    ];
+
     public function getGroupNameAttribute()
     {
         return self::GROUPS[$this->group] ?? 'Unknown Group';
