@@ -50,25 +50,29 @@
                             </div>
 
                             <!-- Image Upload Section -->
-                            <div class="row mt-3 mb-3" id="imageUploadSection">
+                            <div class="row mt-3 mb-3" id="imageUploadSection"
+                                @if ($ad->type == 2) style="display: none;" @endif>
                                 <input type="file" class="form-control mb-1" id="imageUpload" name="image"
                                     accept="image/*">
                                 <input type="text" class="form-control" name="url" id="url"
                                     placeholder="https://example.com">
                                 <div class="row mx-0 mt-3">
                                     <div class="col-12">
-                                        <img src="" class="image-preview" alt="">
+                                        <img src="{{ $ad->getImageUrl() }}" class="image-preview" alt="{{ $ad->title }}">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Image Name Section for Google Ad Manager -->
-                            <div class="row mb-3 mt-3" id="googleAdImageNameSection" style="display: none;">
+
+                            <div class="row mb-3 mt-3" id="googleAdImageNameSection"
+                                @if ($ad->type == 1) style="display: none;" @endif>
                                 <div class="form-group">
                                     <label for="code">Amp</label>
-                                    <textarea id="code" name="amp" class="form-control" rows="10" placeholder="Enter your amp code here"></textarea>
+                                    <textarea id="code" name="amp" class="form-control" rows="10" placeholder="Enter your amp code here">{{ $ad->amp }}</textarea>
                                 </div>
                             </div>
+
 
 
                             <!-- Ad Parameters Section -->
