@@ -137,7 +137,6 @@ class AdController extends BaseController
         try {
             // Update the advertisement
             $ad->update($data);
-            dd($request->status,$ad->status);
             return redirect()->route('ads.index')->with('success', 'Advertisement updated successfully!');
         } catch (\Exception $e) {
             Log::error('Failed to save advertisement: ' . $e->getMessage());
