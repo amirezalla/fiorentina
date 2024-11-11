@@ -2,7 +2,7 @@
 
 @section('content')
     <form action="{{ route('ads.update', $ad->id) }}" method="POST" enctype="multipart/form-data">
-        @dd($ad)
+        @dd($ad->status)
         @csrf
         @method('PUT')
         <div class="row">
