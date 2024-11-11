@@ -55,7 +55,7 @@
                                 <input type="file" class="form-control mb-1" id="imageUpload" name="image"
                                     accept="image/*">
                                 <input type="text" class="form-control" name="url" id="url"
-                                    placeholder="https://example.com">
+                                    placeholder="https://example.com" value="{{ $ad->url }}">
                                 <div class="row mx-0 mt-3">
                                     <div class="col-12">
                                         <img src="{{ $ad->getImageUrl() }}" class="image-preview" alt="{{ $ad->title }}">
