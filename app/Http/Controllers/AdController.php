@@ -114,6 +114,7 @@ class AdController extends BaseController
             'height' => $request->height,
             'url' => $request->url,
             'amp' => $request->amp??null,
+            'status' => $request->status,
         ];
         if($data['type'] ==1){
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
