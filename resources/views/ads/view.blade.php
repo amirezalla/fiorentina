@@ -23,7 +23,13 @@
                     <tr>
                         <td class="align-middle">{{ $ad->id }}</td>
                         <td class="align-middle">{{ $ad->title }}</td>
-                        <td class="align-middle">{{ $ad->type }}</td>
+                        <td class="align-middle">
+                            @if ($ad->type == 1)
+                                IMAGE/URL
+                            @else
+                                GOOGLE ADS
+                            @endif
+                        </td>
                         <td class="align-middle">{{ $ad->group_name }}</td>
                         <td class="align-middle">
                             @if ($ad->getImageUrl())
