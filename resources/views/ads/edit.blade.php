@@ -216,9 +216,9 @@
                     <div class=" card-body">
                         <select data-placeholder="Select an option" class="form-control form-select" required="required"
                             id="status" name="status" aria-required="true">
-                            <option value="1">Published</option>
-                            <option value="0">Draft</option>
-                            <option value="2">Pending</option>
+                            <option @if ($ad->status == 1) selected @endif value="1">Published</option>
+                            <option @if ($ad->status == 0) selected @endif value="0">Draft</option>
+                            <option @if ($ad->status == 2) selected @endif value="2">Pending</option>
                         </select>
                     </div>
                 </div>
