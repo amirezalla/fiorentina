@@ -40,7 +40,7 @@ return [
 
         'form' => [
             'title' => 'Lascia un commento',
-            'description' => 'Il tuo indirizzo email non sarà pubblicato. I campi obbligatori sono contrassegnati *',
+            'description' => '',
             'cookie_consent' => 'Salva il mio nome, email e sito web in questo browser per la prossima volta che commenterò.',
             'submit' => 'Pubblica Commento',
         ],
