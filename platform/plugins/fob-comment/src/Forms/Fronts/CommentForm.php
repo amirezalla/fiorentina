@@ -104,13 +104,13 @@ class CommentForm extends FormFront
     ->when(CommentHelper::isShowCommentCookieConsent(), function (FormAbstract $form) {
         $form->add(
             'cookie_consent',
-            OnOffCheckboxField::class,
-            OnOffFieldOption::make()
-                ->label(trans('plugins/fob-comment::comment.front.form.cookie_consent'))
-                ->colspan(2)
-                ->toArray()
+            'hidden', // Use a hidden input instead of OnOffCheckboxField
+            [
+                'value' => '1' // Set the value to "1"
+            ]
         );
     })
+    
     ->setFormEndKey('button')
     ->add('button', 'submit', [
         'label' => trans('plugins/fob-comment::comment.front.form.submit'),
