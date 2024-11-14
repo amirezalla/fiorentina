@@ -28,30 +28,33 @@ class CommentForm extends FormFront
         $preparedData = CommentHelper::preparedDataForFill();
 
         $this
-            ->contentOnly()
-            ->setFormOption('class', 'fob-comment-form')
-            ->setUrl(route('fob-comment.public.comments.store'))
-            ->setValidatorClass(CommentRequest::class)
-            ->columns()
-            ->when(
-                $this->getReference(),
-                function (FormAbstract $form, BaseModel $reference) {
-                    $form
-                        ->add('reference_id', 'hidden', ['value' => $reference->getKey()])
-                        ->add('reference_type', 'hidden', ['value' => $reference::class]);
-                },
-                fn (FormAbstract $form) => $form->add('reference_url', 'hidden', ['value' => url()->current()])
-            )
-            ->add(
-                'content',
-                TextareaField::class,
-                TextareaFieldOption::make()
-                    ->label(trans('plugins/fob-comment::comment.common.comment'))
-                    ->required()
-                    ->colspan(2)
-                    ->toArray()
-            )
-            ->add(
+    ->contentOnly()
+    ->setFormOption('class', 'fob-comment-form')
+    ->setUrl(route('fob-comment.public.comments.store'))
+    ->setValidatorClass(CommentRequest::class)
+    ->columns()
+    ->when(
+        $this->getReference(),
+        function (FormAbstract $form, BaseModel $reference) {
+            $form
+                ->add('reference_id', 'hidden', ['value' => $reference->getKey()])
+                ->add('reference_type', 'hidden', ['value' => $reference::class]);
+        },
+        fn (FormAbstract $form) => $form->add('reference_url', 'hidden', ['value' => url()->current()])
+    )
+    ->add(
+        'content',
+        TextareaField::class,
+        TextareaFieldOption::make()
+            ->label(trans('plugins/fob-comment::comment.common.comment'))
+            ->required()
+            ->colspan(2)
+            ->toArray()
+    )
+    ->when(
+        !auth()->check(),
+        function (FormAbstract $form) use ($preparedData) {
+            $form->add(
                 'name',
                 TextField::class,
                 TextFieldOption::make()
@@ -75,40 +78,47 @@ class CommentForm extends FormFront
                     )
                     ->colspan(1)
                     ->toArray()
-            )
-            ->add(
-                'website',
-                TextField::class,
-                TextFieldOption::make()->label(trans('plugins/fob-comment::comment.common.website'))
-                    ->colspan(2)
-                    ->when(
-                        Arr::get($preparedData, 'website'),
-                        fn (TextFieldOption $option, $value) => $option->defaultValue($value)->disabled()
-                    )
-                    ->toArray()
-            )
+            );
+        },
+        function (FormAbstract $form) {
+            $user = auth()->user();
+            $form->add('name', 'hidden', ['value' => $user->name])
+                 ->add('email', 'hidden', ['value' => $user->email]);
+        }
+    )
+    ->add(
+        'website',
+        TextField::class,
+        TextFieldOption::make()->label(trans('plugins/fob-comment::comment.common.website'))
+            ->colspan(2)
             ->when(
-                CommentHelper::isEnableReCaptcha(),
-                fn (FormAbstract $form) => $form->add('recaptcha', ReCaptchaField::class)
+                Arr::get($preparedData, 'website'),
+                fn (TextFieldOption $option, $value) => $option->defaultValue($value)->disabled()
             )
-            ->when(CommentHelper::isShowCommentCookieConsent(), function (FormAbstract $form) {
-                $form->add(
-                    'cookie_consent',
-                    OnOffCheckboxField::class,
-                    OnOffFieldOption::make()
-                        ->label(trans('plugins/fob-comment::comment.front.form.cookie_consent'))
-                        ->colspan(2)
-                        ->toArray()
-                );
-            })
-            ->setFormEndKey('button')
-            ->add('button', 'submit', [
-                'label' => trans('plugins/fob-comment::comment.front.form.submit'),
-                'attr' => [
-                    'class' => 'btn btn-primary',
-                ],
-                'colspan' => 2,
-            ]);
+            ->toArray()
+    )
+    ->when(
+        CommentHelper::isEnableReCaptcha(),
+        fn (FormAbstract $form) => $form->add('recaptcha', ReCaptchaField::class)
+    )
+    ->when(CommentHelper::isShowCommentCookieConsent(), function (FormAbstract $form) {
+        $form->add(
+            'cookie_consent',
+            OnOffCheckboxField::class,
+            OnOffFieldOption::make()
+                ->label(trans('plugins/fob-comment::comment.front.form.cookie_consent'))
+                ->colspan(2)
+                ->toArray()
+        );
+    })
+    ->setFormEndKey('button')
+    ->add('button', 'submit', [
+        'label' => trans('plugins/fob-comment::comment.front.form.submit'),
+        'attr' => [
+            'class' => 'btn btn-primary',
+        ],
+        'colspan' => 2,
+    ]);
     }
 
     public static function createWithReference(BaseModel $model): FormAbstract

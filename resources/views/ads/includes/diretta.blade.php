@@ -118,10 +118,13 @@
             <a class="nav-link @if ($match->status == 'LIVE') active @endif " id="commento-tab" data-toggle="tab"
                 href="#commento" role="tab" aria-controls="commento" aria-selected="false">DIRETTA</a>
         </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" id="poll-tab" data-toggle="tab" href="#poll" role="tab" aria-controls="poll"
-                aria-selected="false">POLLS</a>
-        </li>
+        @if ($match->status == 'FINISHED')
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="poll-tab" data-toggle="tab" href="#poll" role="tab" aria-controls="poll"
+                    aria-selected="false">POLLS</a>
+            </li>
+        @endif
+
     </ul>
 
     <!-- Tab Content -->
@@ -196,13 +199,14 @@
             @endif
 
         </div>
+        @if ($match->status == 'FINISHED')
+            <div class="tab-pane fade" id="poll" role="tabpanel" aria-labelledby="poll-tab">
+                @include('ads.includes.polls', [
+                    'lineup' => $fiorentinaLineups,
+                ])
 
-        <div class="tab-pane fade" id="poll" role="tabpanel" aria-labelledby="poll-tab">
-            @include('ads.includes.polls', [
-                'lineup' => $fiorentinaLineups,
-            ])
-
-        </div>
+            </div>
+        @endif
     </div>
 @endif
 
