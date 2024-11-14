@@ -5125,9 +5125,30 @@ header>.container {
 .upcoming-match-sidebar p {
     color: #000;
 }
-.ad-top-sidebar .container .row{
+
+.ad-top-sidebar .container .row {
 
     display: flex;
     justify-content: center !important;
 
+}
+
+.playerpoll-card {
+    margin-bottom: 20px;
+}
+
+.playerpoll-image {
+    width: 100px;
+    height: auto;
+}
+
+.stars {
+    cursor: pointer;
+    font-size: 24px;
+    color: gray;
+}
+
+.stars .star:hover,
+.stars .star.selected {
+    color: gold;
 }
