@@ -1,6 +1,6 @@
 @foreach (['Fiorentina Subs', 'Fiorentina Initial Lineup'] as $category)
     <h3>{{ $category }}</h3>
-    @foreach ($polls[$category] as $player)
+    @foreach ($lineup[$category] as $player)
         <div class="playerpoll-card">
             <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}" class="playerpoll-image">
             <p>{{ $player->player_full_name }}</p>
