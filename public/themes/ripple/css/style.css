@@ -5134,12 +5134,15 @@ header>.container {
 }
 
 .playerpoll-card {
-    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
 }
 
 .playerpoll-image {
-    width: 100px;
-    height: auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
 }
 
 .stars {
@@ -5148,7 +5151,6 @@ header>.container {
     color: gray;
 }
 
-.stars .star:hover,
 .stars .star.selected {
     color: gold;
 }
