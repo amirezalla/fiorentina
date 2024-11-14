@@ -83,6 +83,7 @@
 </style>
 
 <div class="col-lg-4 mt-50">
+    <div class="mb-4">@include('ads.includes.SIZE_468X60_TOP_SX')</div>
     <div class="chat-container">
         <h4 class="chat-title"><i class="far fa-comments"></i> Chat dei tifosi</h4>
         <!-- Messages Display Section -->
@@ -107,6 +108,7 @@
 
         </div>
     </div>
+    <div class="mt-4">@include('ads.includes.SIZE_468X60_TOP_DX')</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -177,34 +179,34 @@
 
     // Function to append a message to the messages list
     function appendMessage(message, member) {
-    const messagesList = document.getElementById('messages-list');
+        const messagesList = document.getElementById('messages-list');
 
-    const newMessage = document.createElement('li');
-    newMessage.classList.add('message-bubble');
+        const newMessage = document.createElement('li');
+        newMessage.classList.add('message-bubble');
 
-    const avatar = document.createElement('div');
-    avatar.classList.add('message-avatar');
-    avatar.textContent = member.first_name.charAt(0).toUpperCase() || 'A';
-    avatar.style.backgroundColor = getAvatarColor(member.first_name.charAt(0));
+        const avatar = document.createElement('div');
+        avatar.classList.add('message-avatar');
+        avatar.textContent = member.first_name.charAt(0).toUpperCase() || 'A';
+        avatar.style.backgroundColor = getAvatarColor(member.first_name.charAt(0));
 
-    const messageContent = document.createElement('div');
-    messageContent.classList.add('message-content');
-    messageContent.innerHTML = `
+        const messageContent = document.createElement('div');
+        messageContent.classList.add('message-content');
+        messageContent.innerHTML = `
         <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
         ${message.message}
         <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
     `;
 
-    newMessage.appendChild(avatar);
-    newMessage.appendChild(messageContent);
+        newMessage.appendChild(avatar);
+        newMessage.appendChild(messageContent);
 
-    // Prepend the new message to the top of the messages list
-    messagesList.insertBefore(newMessage, messagesList.firstChild);
+        // Prepend the new message to the top of the messages list
+        messagesList.insertBefore(newMessage, messagesList.firstChild);
 
-    // Scroll to the top of the chat to show the latest message at the top
-    const chatMessages = document.getElementById('chat-messages');
-    chatMessages.scrollTop = 0;
-}
+        // Scroll to the top of the chat to show the latest message at the top
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.scrollTop = 0;
+    }
 
 
     @if (auth('member')->check())
@@ -219,7 +221,7 @@
         });
 
         sendMessageButton.addEventListener('click', function(event) {
-                sendMessage();
+            sendMessage();
         });
     @endif
 
