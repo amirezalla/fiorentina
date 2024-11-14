@@ -83,8 +83,9 @@
 </style>
 
 <div class="col-lg-4 mt-50">
-    <div class="mb-4">@include('ads.includes.SIZE_468X60_TOP_SX')</div>
     <div class="chat-container">
+        <div class="mb-4">@include('ads.includes.SIZE_468X60_TOP_SX')</div>
+
         <h4 class="chat-title"><i class="far fa-comments"></i> Chat dei tifosi</h4>
         <!-- Messages Display Section -->
         <div class="chat-messages" id="chat-messages">
@@ -107,8 +108,9 @@
             @endif
 
         </div>
+        <div class="mt-4">@include('ads.includes.SIZE_468X60_TOP_DX')</div>
+
     </div>
-    <div class="mt-4">@include('ads.includes.SIZE_468X60_TOP_DX')</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
