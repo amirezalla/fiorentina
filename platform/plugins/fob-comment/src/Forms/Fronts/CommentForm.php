@@ -52,7 +52,7 @@ class CommentForm extends FormFront
             ->toArray()
     )
     ->when(
-        !auth()->check(),
+        !auth('member')->check(),
         function (FormAbstract $form) use ($preparedData) {
             $form->add(
                 'name',
@@ -81,7 +81,7 @@ class CommentForm extends FormFront
             );
         },
         function (FormAbstract $form) {
-            $user = auth()->user();
+            $user = auth('member')->user();
             $form->add('name', 'hidden', ['value' => $user->name])
                  ->add('email', 'hidden', ['value' => $user->email]);
         }
