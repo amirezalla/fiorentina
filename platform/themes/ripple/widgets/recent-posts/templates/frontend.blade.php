@@ -37,7 +37,9 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 @if ($mostCommentedPosts->isNotEmpty())
-    @include('ads.includes.SIZE_300X250_C1')
+    <div class="row mt-30 ad-top-sidebar">
+        @include('ads.includes.SIZE_300X250_C1')
+    </div>
     <div class="widget widget__recent-post mt-4 mb-4">
         <ul class="nav nav-tabs" id="postTabs" role="tablist">
             <li class="nav-item" role="presentation">
@@ -102,8 +104,9 @@
             </div>
         </div>
     </div>
-    @include('ads.includes.SIZE_300X250_TOP')
-
+    <div class="row mt-30 ad-top-sidebar">
+        @include('ads.includes.SIZE_300X250_TOP')
+    </div>
     @if ($poll)
         <div class="row">
             <div class="col-12">
