@@ -1,4 +1,4 @@
-@foreach (['Fiorentina Subs', 'Fiorentina Initial Lineup'] as $category)
+@foreach (['Fiorentina Initial Lineup', 'Fiorentina Subs'] as $category)
     <h3>{{ $category }}</h3>
     @foreach ($lineup[$category] as $player)
         <div class="playerpoll-card">
