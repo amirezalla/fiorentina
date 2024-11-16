@@ -110,4 +110,14 @@ class Video extends Model
     {
         return $q->whereNotNull('published_at');
     }
+
+    public function scopeOnlyForHome($q)
+    {
+        return $q->where('is_for_home',true);
+    }
+
+    public function scopeOnlyForPost($q)
+    {
+        return $q->where('is_for_post',true);
+    }
 }

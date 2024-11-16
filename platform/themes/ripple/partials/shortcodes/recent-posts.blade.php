@@ -314,7 +314,7 @@
                             style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
                         Serie B
                     </div>
-                    @include('videos.includes.adsvideo')
+                    @include('videos.includes.adsvideo',['foo'=>'bar'])
 
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_C1')

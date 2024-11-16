@@ -7,8 +7,10 @@ use App\Rules\ValidateMediaFileIds;
 use Botble\Base\Http\Controllers\BaseController;
 use Botble\Base\Supports\Breadcrumb;
 use Botble\Media\Models\MediaFile;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Throwable;
 
@@ -24,6 +26,10 @@ class VideoController extends BaseController
 
     public function index()
     {
+        /*Schema::table('videos', function (Blueprint $table) {
+            $table->boolean('is_for_home')->default(false);
+            $table->boolean('is_for_post')->default(false);
+        });*/
         $this->pageTitle("Videos List");
         $videos = Video::query()->withCount('mediaFiles')->latest()->paginate(20);
         return view('videos.view', compact('videos'));
@@ -59,6 +65,8 @@ class VideoController extends BaseController
                     'title' => $request->title,
                     'is_random' => $is_random,
                     'published_at' => $is_published ? now() : null,
+                    'is_for_home'=>$request->has('is_for_home'),
+                    'is_for_post'=>$request->has('is_for_post'),
                     'delay' => $request->delay, // Store the delay value
                 ]);
 
@@ -115,6 +123,8 @@ class VideoController extends BaseController
                     'title' => $request->title,
                     'is_random' => $is_random,
                     'published_at' => $is_published ? now() : null,
+                    'is_for_home'=>$request->has('is_for_home'),
+                    'is_for_post'=>$request->has('is_for_post'),
                 ]);
                 if ($diffCount && $request->filled('videos')) {
                     $mediaFilesData = collect($video_ids)

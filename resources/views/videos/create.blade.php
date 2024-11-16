@@ -2,7 +2,7 @@
 
 @section('content')
     <form action="{{ route('videos.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf <!-- CSRF Token for Laravel, ensures your form is secure -->
+    @csrf <!-- CSRF Token for Laravel, ensures your form is secure -->
 
         <div class="row">
             <div class="gap-3 col-md-9">
@@ -61,6 +61,20 @@
                             @error('mode')
                             <span class="is-invalid text-danger">{{ $message }}</span>
                             @enderror
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-check form-switch">
+                                <input class="form-check-input" name="is_for_home" type="checkbox" value="1"
+                                       id="is_for_home" @if(old('is_for_home')) checked @endif>
+                                <span class="form-check-label">Advertisement for Home</span>
+                            </label>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-check form-switch">
+                                <input class="form-check-input" name="is_for_post" type="checkbox" value="1"
+                                       id="is_for_post" @if(old('is_for_post')) checked @endif>
+                                <span class="form-check-label">Advertisement for Post</span>
+                            </label>
                         </div>
                     </div>
                 </div>

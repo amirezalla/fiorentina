@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->string('title');
             $table->boolean('is_random')->default(true);
             $table->timestamp('published_at')->nullable();
+            $table->boolean('is_for_home')->default(false);
+            $table->boolean('is_for_post')->default(false);
             $table->timestamps();
         });
         Schema::create('media_file_video', function (Blueprint $table) {
