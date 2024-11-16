@@ -38,10 +38,6 @@ class GeneralSettingForm extends SettingForm
             ->setSectionDescription(trans('core/setting::setting.general.description'))
             ->contentOnly()
             ->setValidatorClass(GeneralSettingRequest::class)
-            ->add('main_posts_limit', TextField::class, [
-                'label' => trans('core/setting::setting.main_posts_limit'),
-                'value' => old('main_posts_limit', setting('main_posts_limit')),
-            ])
             ->add('admin_email', 'html', [
                 'html' => view('core/setting::partials.admin-email-field')->render(),
             ])
@@ -55,6 +51,10 @@ class GeneralSettingForm extends SettingForm
                     ->searchable()
                     ->toArray()
             )
+            ->add('main_posts_limit', TextField::class, [
+                'label' => trans('core/setting::setting.main_posts_limit'),
+                'value' => old('main_posts_limit', setting('main_posts_limit')),
+            ])
             ->when(! empty($locales), function (FormAbstract $form) use ($locales, $availableLocales) {
                 $defaultLocale = setting('locale', App::getLocale());
 
