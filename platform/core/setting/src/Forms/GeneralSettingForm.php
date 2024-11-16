@@ -51,10 +51,16 @@ class GeneralSettingForm extends SettingForm
                     ->searchable()
                     ->toArray()
             )
-            ->add('main_posts_limit', TextField::class, [
-                'label' => trans('core/setting::setting.main_posts_limit'),
-                'value' => old('main_posts_limit', setting('main_posts_limit')),
-            ])
+            ->add(
+                'time_zone2',
+                SelectField::class,
+                SelectFieldOption::make()
+                    ->label(trans('core/setting::setting.general.time_zone'))
+                    ->choices(array_combine(DateTimeZone::listIdentifiers(), DateTimeZone::listIdentifiers()))
+                    ->selected(setting('time_zone2', 'UTC'))
+                    ->searchable()
+                    ->toArray()
+            )
             ->when(! empty($locales), function (FormAbstract $form) use ($locales, $availableLocales) {
                 $defaultLocale = setting('locale', App::getLocale());
 
