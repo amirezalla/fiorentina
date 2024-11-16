@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'main_posts_limit' => 'Impostazioni',
+    'main_posts_limit' => 'Limite dei post principali',
     'title' => 'Impostazioni',
     'general_setting' => 'Impostazioni generali',
     'menu' => 'Tutte le impostazioni',

@@ -27,6 +27,13 @@ if (! function_exists('get_latest_posts')) {
     }
 }
 
+if (! function_exists('get_list_post_count')) {
+    function get_list_post_count(): int
+    {
+        return app(PostInterface::class)->getListPostCount();
+    }
+}
+
 if (! function_exists('get_related_posts')) {
     function get_related_posts(int|string $id, int $limit): Collection
     {

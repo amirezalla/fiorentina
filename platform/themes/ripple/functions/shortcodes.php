@@ -177,7 +177,8 @@ app('events')->listen(RouteMatched::class, function () {
             __('Recent posts'),
             __('Recent posts'),
             function (ShortcodeCompiler $shortcode) {
-                $posts = get_latest_posts(7, [], ['slugable']);
+                $posts = get_latest_posts(intval(setting('main_posts_limit', 8)), [], ['slugable']);
+                $postsCount = get_list_post_count();
 
                 if ($posts->isEmpty()) {
                     return null;
@@ -189,6 +190,7 @@ app('events')->listen(RouteMatched::class, function () {
                     'title' => $shortcode->title,
                     'withSidebar' => $withSidebar,
                     'posts' => $posts,
+                    'postsCount' => $postsCount,
                     'shortcode' => $shortcode,
                 ]);
             }

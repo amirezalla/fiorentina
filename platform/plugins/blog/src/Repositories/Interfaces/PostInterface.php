@@ -13,6 +13,8 @@ interface PostInterface extends RepositoryInterface
 
     public function getListPostNonInList(array $selected = [], int $limit = 7, array $with = []): Collection;
 
+    public function getListPostCount(): int;
+
     public function getRelated(int|string $id, int $limit = 3): Collection;
 
     public function getRelatedCategoryIds(Post|int|string $model): array;

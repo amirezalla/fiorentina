@@ -78,7 +78,7 @@
                                     {{--                                        @include('ads.includes.adsrecentp4') --}}
 
                                     <!-- Load More Button -->
-                                    @if (count($posts) > 6)
+                                    @if ($postsCount > intval(setting('main_posts_limit', 8)))
                                         <div style="text-align: center;">
                                             <button id="load-more"
                                                 style="
