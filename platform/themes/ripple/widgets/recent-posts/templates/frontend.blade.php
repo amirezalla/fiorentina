@@ -107,6 +107,9 @@
     <div class="row mt-30 ad-top-sidebar">
         @include('ads.includes.SIZE_300X250_TOP')
     </div>
+    <div class="mt-30">
+        @include('videos.includes.adsvideo')
+    </div>
     @if ($poll)
         <div class="row">
             <div class="col-12">
