@@ -14,15 +14,18 @@
         @endphp
         <div class="container mb-3">
             <div class="row justify-content-center">
-                <div class="col-6 mx-auto">
+                <div class="d-none d-md-block col-6 mx-auto">
                     <div class="col-12">
                         @include('ads.includes.SIZE_468X60_TOP_SX')
                     </div>
                 </div>
-                <div class="col-6 mx-auto">
+                <div class="d-none d-md-block col-6 mx-auto">
                     <div class="col-12">
                         @include('ads.includes.SIZE_468X60_TOP_DX')
                     </div>
+                </div>
+                <div class="d-block d-md-none col-12">
+                    @include('ads.includes.MOBILE_HOME_TOP_24')
                 </div>
             </div>
         </div>

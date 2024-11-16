@@ -78,6 +78,10 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad',Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_230X90_DX)->first());
         });
 
+        view()->composer('ads.includes.MOBILE_HOME_TOP_24',function (View $view){
+            $view->with('ad',Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_HOME_TOP_24)->first());
+        });
+
         view()->composer('videos.includes.adsvideo', function (View $view) {
             $video = Video::query()->published()->first();
             if ($video) {

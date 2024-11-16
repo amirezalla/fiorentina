@@ -49,19 +49,19 @@ class Ad extends BaseModel
     // const SIZE_728X90_TESTATA = 29;
 
     // const GRUPPO_POPUP_DESKTOP = 30;
-    // const GRUPPO_POPUP_MOBILE = 31;
+    const GRUPPO_POPUP_MOBILE = 31;
     // const IN_ARTICLE_DESKTOP_2024 = 32;
-    // const MOBILE_DOPO_FOTO = 33;
-    // const MOBILE_HOME_TOP_24 = 34;
-    // const MOBILE_POSIZIONE_1 = 35;
-    // const MOBILE_POSIZIONE_2 = 36;
-    // const MOBILE_POSIZIONE_3 = 37;
-    // const MOBILE_POSIZIONE_4 = 38;
-    // const MOBILE_POSIZIONE_5 = 39;
+    const MOBILE_DOPO_FOTO = 33;
+    const MOBILE_HOME_TOP_24 = 34;
+    const MOBILE_POSIZIONE_1 = 35;
+    const MOBILE_POSIZIONE_2 = 36;
+    const MOBILE_POSIZIONE_3 = 37;
+    const MOBILE_POSIZIONE_4 = 38;
+    const MOBILE_POSIZIONE_5 = 39;
     // const ROTATION_100 = 40;
     // const ROTAZIONE_728X200 = 41;
     // const SKIN = 42;
-    // const SKIN_MOBILE = 43;
+    const SKIN_MOBILE = 43;
 
 
     const GROUPS = [
@@ -90,22 +90,21 @@ class Ad extends BaseModel
         self::SIZE_300X250_TOP => "SIZE_300X250_TOP",
         self::SIZE_468X60_TOP_DX => "SIZE_468X60_TOP_DX",
         self::SIZE_468X60_TOP_SX => "SIZE_468X60_TOP_SX",
-        self::SIZE_300X250_TOP => "SIZE_300X250_TOP"
-        // self::SIZE_728X90_B1 => "SIZE_468X60_TOP_SX",
-        // self::SIZE_728X90_C1 => "SIZE_468X60_TOP_SX",
-        // self::SIZE_728X90_C2=> "SIZE_468X60_TOP_SX",
-        // self::SIZE_728X90_TESTATA => "SIZE_468X60_TOP_SX",
-        // self::GRUPPO_POPUP_DESKTOP => "SIZE_468X60_TOP_SX",
-        // self::GRUPPO_POPUP_MOBILE => "SIZE_468X60_TOP_SX",
-        // self::IN_ARTICLE_DESKTOP_2024 => "SIZE_468X60_TOP_SX",
-        // self::MOBILE_DOPO_FOTO => "SIZE_468X60_TOP_SX",
-        // self::MOBILE_HOME_TOP_24 => "SIZE_468X60_TOP_SX",
-        // self::MOBILE_POSIZIONE_1 => "SIZE_468X60_TOP_SX",
-        // self::MOBILE_POSIZIONE_2 => "SIZE_468X60_TOP_SX",
-        // self::MOBILE_POSIZIONE_3 => "SIZE_468X60_TOP_SX",
-        // self::MOBILE_POSIZIONE_4 => "SIZE_468X60_TOP_SX",
-        // self::MOBILE_POSIZIONE_5 => "SIZE_468X60_TOP_SX",
-
+        self::GRUPPO_POPUP_MOBILE => "GRUPPO_POPUP_MOBILE",
+        self::MOBILE_DOPO_FOTO => "MOBILE_DOPO_FOTO",
+        self::MOBILE_HOME_TOP_24 => "MOBILE_HOME_TOP_24",
+        self::MOBILE_POSIZIONE_1 => "MOBILE_POSIZIONE_1",
+        self::MOBILE_POSIZIONE_2 => "MOBILE_POSIZIONE_2",
+        self::MOBILE_POSIZIONE_3 => "MOBILE_POSIZIONE_3",
+        self::MOBILE_POSIZIONE_4 => "MOBILE_POSIZIONE_4",
+        self::MOBILE_POSIZIONE_5 => "MOBILE_POSIZIONE_5",
+        self::SKIN_MOBILE => "SKIN_MOBILE",
+        /*self::SIZE_728X90_B1 => "SIZE_468X60_TOP_SX",
+        self::SIZE_728X90_C1 => "SIZE_468X60_TOP_SX",
+        self::SIZE_728X90_C2 => "SIZE_468X60_TOP_SX",
+        self::SIZE_728X90_TESTATA => "SIZE_468X60_TOP_SX",
+        self::GRUPPO_POPUP_DESKTOP => "SIZE_468X60_TOP_SX",
+        self::IN_ARTICLE_DESKTOP_2024 => "SIZE_468X60_TOP_SX",*/
     ];
 
     protected $fillable = [
@@ -127,6 +126,7 @@ class Ad extends BaseModel
     {
         return self::GROUPS[$this->group] ?? 'Unknown Group';
     }
+
     protected static function boot()
     {
         parent::boot();
@@ -137,7 +137,7 @@ class Ad extends BaseModel
      */
     public function getImageUrl()
     {
-        if($this->type==1){
+        if ($this->type == 1) {
             return Storage::url($this->image);
         }
         return $this->image;
@@ -171,12 +171,11 @@ class Ad extends BaseModel
     }
 
 
-
     public static function addAdsToContent($content)
     {
         $ads = self::query()
             ->typeAnnuncioImmagine()
-            ->whereIn('group', [self::GROUP_DBLOG_P1,self::GROUP_DBLOG_P2,self::GROUP_DBLOG_P3])
+            ->whereIn('group', [self::GROUP_DBLOG_P1, self::GROUP_DBLOG_P2, self::GROUP_DBLOG_P3])
             ->get()
             ->unique('group')
             ->mapWithKeys(function ($item, $key) {
@@ -194,9 +193,9 @@ class Ad extends BaseModel
                 $content = $chunk->map(function ($item, $key) use ($ads) {
                     if ($key == 0 && $ads->has(self::GROUP_DBLOG_P1)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P1)])->render();
-                    }else if ($key == 1 && $ads->has(self::GROUP_DBLOG_P2)) {
+                    } else if ($key == 1 && $ads->has(self::GROUP_DBLOG_P2)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
-                    }else if ($key == 2 && $ads->has(self::GROUP_DBLOG_P3)) {
+                    } else if ($key == 2 && $ads->has(self::GROUP_DBLOG_P3)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
                     }
                     return $item;
