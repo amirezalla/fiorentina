@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'main_posts_limit' => 'Impostazioni',
     'title' => 'Impostazioni',
     'general_setting' => 'Impostazioni generali',
     'menu' => 'Tutte le impostazioni',

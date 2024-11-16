@@ -7,6 +7,7 @@ use Botble\Base\Facades\BaseHelper;
 use Botble\Base\Forms\FieldOptions\SelectFieldOption;
 use Botble\Base\Forms\Fields\HtmlField;
 use Botble\Base\Forms\Fields\SelectField;
+use Botble\Base\Forms\Fields\TextField;
 use Botble\Base\Forms\FormAbstract;
 use Botble\Base\Supports\Language;
 use Botble\Setting\Http\Requests\GeneralSettingRequest;
@@ -37,6 +38,10 @@ class GeneralSettingForm extends SettingForm
             ->setSectionDescription(trans('core/setting::setting.general.description'))
             ->contentOnly()
             ->setValidatorClass(GeneralSettingRequest::class)
+            ->add('main_posts_limit', TextField::class, [
+                'label' => trans('core/setting::setting.main_posts_limit'),
+                'value' => old('main_posts_limit', setting('main_posts_limit')),
+            ])
             ->add('admin_email', 'html', [
                 'html' => view('core/setting::partials.admin-email-field')->render(),
             ])
