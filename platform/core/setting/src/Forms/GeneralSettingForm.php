@@ -7,7 +7,6 @@ use Botble\Base\Facades\BaseHelper;
 use Botble\Base\Forms\FieldOptions\SelectFieldOption;
 use Botble\Base\Forms\Fields\HtmlField;
 use Botble\Base\Forms\Fields\SelectField;
-use Botble\Base\Forms\Fields\TextField;
 use Botble\Base\Forms\FormAbstract;
 use Botble\Base\Supports\Language;
 use Botble\Setting\Http\Requests\GeneralSettingRequest;
@@ -48,16 +47,6 @@ class GeneralSettingForm extends SettingForm
                     ->label(trans('core/setting::setting.general.time_zone'))
                     ->choices(array_combine(DateTimeZone::listIdentifiers(), DateTimeZone::listIdentifiers()))
                     ->selected(setting('time_zone', 'UTC'))
-                    ->searchable()
-                    ->toArray()
-            )
-            ->add(
-                'time_zone2',
-                SelectField::class,
-                SelectFieldOption::make()
-                    ->label(trans('core/setting::setting.general.time_zone'))
-                    ->choices(array_combine(DateTimeZone::listIdentifiers(), DateTimeZone::listIdentifiers()))
-                    ->selected(setting('time_zone2', 'UTC'))
                     ->searchable()
                     ->toArray()
             )
