@@ -71,8 +71,14 @@
                                         @if ($index == 2)
                                             @include('ads.includes.adsrecentp2')
                                         @endif
-                                        @if ($index == 6)
+                                        @if ($index == 5)
                                             @include('ads.includes.adsrecentp3')
+                                        @endif
+                                        @if ($index == 7)
+                                            @include('ads.includes.adsrecentp2')
+                                        @endif
+                                        @if ($index == 10)
+                                            @include('ads.includes.adsrecentp1')
                                         @endif
                                     @endforeach
 
