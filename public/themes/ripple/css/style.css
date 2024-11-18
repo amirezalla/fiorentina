@@ -5155,7 +5155,7 @@ header>.container {
     color: gold;
 }
 
-@media (max-width:1400px) {
+@media (max-width:990px) {
 
     .post__inside--feature .post__title:hover a {
         color: white;
@@ -5169,6 +5169,7 @@ header>.container {
         display: flex;
         flex-wrap: wrap;
     }
+
     .post-group__left {
         width: 100%;
         flex: none;
