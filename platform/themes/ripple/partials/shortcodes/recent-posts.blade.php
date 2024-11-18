@@ -43,7 +43,7 @@
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
-                                        @if ($index < MinMainPostsLimit)
+                                        @if ($index < $MinMainPostsLimit)
                                             <article class="post post__vertical post__vertical--single post-item"
                                                 style="display: flex; align-items: center; margin-bottom: 5px; {{ $index >= 6 ? 'display: none;' : '' }}">
                                                 <!-- Image on the left -->
