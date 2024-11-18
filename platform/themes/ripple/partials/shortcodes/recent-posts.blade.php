@@ -388,29 +388,26 @@
 @include('ads.includes.adsense', ['adClient' => 'ca-pub-6741446998584415'])
 
 <script>
-    < script >
-        document.addEventListener('DOMContentLoaded', function() {
-            const loadMoreButton = document.getElementById('load-more');
-            let visiblePosts = parseInt('{{ setting('min_main_posts_limit') }}');
-            const mainPostsLimit = parseInt('{{ setting('main_posts_limit', 20) }}');
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadMoreButton = document.getElementById('load-more');
+        let visiblePosts = parseInt('{{ setting('min_main_posts_limit') }}');
+        const mainPostsLimit = parseInt('{{ setting('main_posts_limit', 20) }}');
 
-            if (loadMoreButton) {
-                loadMoreButton.addEventListener('click', function() {
-                    const allPosts = document.querySelectorAll('.post-item');
-                    visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener('click', function() {
+                const allPosts = document.querySelectorAll('.post-item');
+                visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
 
-                    allPosts.forEach((post, index) => {
-                        if (index < visiblePosts) {
-                            post.style.display = 'flex';
-                        }
-                    });
-
-                    if (visiblePosts >= allPosts.length) {
-                        loadMoreButton.style.display = 'none'; // Hide button if no more posts
+                allPosts.forEach((post, index) => {
+                    if (index < visiblePosts) {
+                        post.style.display = 'flex';
                     }
                 });
-            }
-        });
-</script>
 
+                if (visiblePosts >= allPosts.length) {
+                    loadMoreButton.style.display = 'none'; // Hide button if no more posts
+                }
+            });
+        }
+    });
 </script>
