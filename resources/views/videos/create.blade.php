@@ -166,6 +166,7 @@
                                         <select name="order[${i.id}]" id="orderSelect-${i.id}" class="form-select">
                                             ${generateOrderOptions(orderValue)}
                                         </select>
+<label for="title" class="form-label">link video</label>
                                         <button type="button" class="btn btn-danger video-preview-item-delete mt-2">
                                             Delete
                                         </button>
