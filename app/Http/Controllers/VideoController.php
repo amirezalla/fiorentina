@@ -95,7 +95,7 @@ class VideoController extends BaseController
             'delay' => ['required', 'integer', 'in:1,5,10,15,30,60,120'], // Updated delay validation to include new values
             'videos' => ['nullable', 'array'],
             'videos.*' => [Rule::exists(MediaFile::class, 'id')],
-            'videolink' => ['nullable'],
+            'videolink' => ['nullable', 'array'],
             'videolink.*' => ['nullable', 'string', 'max:255'],
             'external_link' => ['nullable', 'array'],
             'external_link.*' => ['nullable', 'string', 'max:255'],
