@@ -5172,6 +5172,7 @@ header>.container {
 
     .post-group__left {
         width: 100%;
+        flex: none;
     }
 
     .post-group__right {
