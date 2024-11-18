@@ -46,6 +46,13 @@ class PostRepository extends RepositoriesAbstract implements PostInterface
 
         return $this->applyBeforeExecuteQuery($data)->count();
     }
+        public function getMinListPostCount(): int
+    {
+        $data = $this->model
+            ->wherePublished();
+
+        return $this->applyBeforeExecuteQuery($data)->count();
+    }
 
     public function getRelated(int|string $id, int $limit = 3): Collection
     {
