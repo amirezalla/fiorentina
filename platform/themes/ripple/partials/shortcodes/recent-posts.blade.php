@@ -38,8 +38,8 @@
                         <div class="post-group__content">
                             <div class="row">
                                 @php
-                                    dd(setting('min_main_posts_limit'));
-                                    $MinMainPostsLimit = intval(setting('min_main_posts_limit', 6));
+
+                                    $MinMainPostsLimit = setting('min_main_posts_limit');
 
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
