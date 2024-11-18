@@ -392,20 +392,34 @@
         const loadMoreButton = document.getElementById('load-more');
         let visiblePosts = parseInt('{{ setting('min_main_posts_limit') }}');
         const mainPostsLimit = parseInt('{{ setting('main_posts_limit', 20) }}');
+        const minMainPostsLimit = parseInt('{{ setting('min_main_posts_limit') }}');
 
         if (loadMoreButton) {
             loadMoreButton.addEventListener('click', function() {
                 const allPosts = document.querySelectorAll('.post-item');
-                visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
 
-                allPosts.forEach((post, index) => {
-                    if (index < visiblePosts) {
-                        post.style.display = 'flex';
+                if (loadMoreButton.innerText === 'ALTRE NOTIZIE') {
+                    // Expand posts up to mainPostsLimit
+                    visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
+
+                    allPosts.forEach((post, index) => {
+                        if (index < visiblePosts) {
+                            post.style.display = 'flex';
+                        }
+                    });
+
+                    if (visiblePosts >= allPosts.length) {
+                        loadMoreButton.innerText = 'MOSTRA MENO';
                     }
-                });
+                } else {
+                    // Collapse posts back to minMainPostsLimit
+                    visiblePosts = minMainPostsLimit;
 
-                if (visiblePosts >= allPosts.length) {
-                    loadMoreButton.style.display = 'none'; // Hide button if no more posts
+                    allPosts.forEach((post, index) => {
+                        post.style.display = index < visiblePosts ? 'flex' : 'none';
+                    });
+
+                    loadMoreButton.innerText = 'ALTRE NOTIZIE';
                 }
             });
         }
