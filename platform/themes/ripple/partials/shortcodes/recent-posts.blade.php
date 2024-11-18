@@ -107,7 +107,7 @@
                                                 "
                                                 onmouseover="this.style.borderColor='#441274';"
                                                 onmouseout="this.style.borderColor='#aaa';">
-                                                ALTRE NOTIZIE
+                                                MOSTRA PIU
                                             </button>
                                         </div>
                                     @endif
