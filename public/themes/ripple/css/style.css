@@ -5165,9 +5165,18 @@ header>.container {
         color: white;
     }
 
+    .post-group--hero {
+        display: flex;
+        flex-wrap: wrap;
+    }
     .post-group__left {
         width: 100%;
         flex: none;
+    }
+
+    .post-group__right {
+        display: flex;
+        width: 100%;
     }
 
 
