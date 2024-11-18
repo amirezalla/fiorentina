@@ -72,7 +72,7 @@
                     <div class="post-group post-group--hero h-100">
                         @foreach ($posts as $post)
                             @if ($loop->first)
-                                <div class="post-group__left">
+                                <div class="post-group__left full-width">
                                     <article class="post post__inside post__inside--feature h-100">
                                         <div class="post__thumbnail h-100">
                                             {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'eager']) }}
@@ -92,7 +92,7 @@
                                         </header>
                                     </article>
                                 </div>
-                                <div class="post-group__right d-flex flex-column">
+                                <div class="post-group__right d-flex flex-column half-width">
                                 @else
                                     <div class="post-group__item w-100 flex-grow-1">
                                         <article
