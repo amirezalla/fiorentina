@@ -2,6 +2,7 @@
 
 return [
     'main_posts_limit' => 'Limite dei post principali',
+    'min_main_posts_limit' => 'Limite dei post principali prima di altre notizie',
     'title' => 'Impostazioni',
     'general_setting' => 'Impostazioni generali',
     'menu' => 'Tutte le impostazioni',

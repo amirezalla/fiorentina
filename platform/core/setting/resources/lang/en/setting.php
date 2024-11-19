@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'main_posts_limit' => 'Main posts limit',
+    'main_posts_limit' => 'Limite dei post principali',
+    'min_main_posts_limit' => 'Limite dei post principali prima di altre notizie',
     'title' => 'Settings',
     'general_setting' => 'General Settings',
     'menu' => 'All Settings',

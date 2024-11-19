@@ -34,6 +34,13 @@ if (! function_exists('get_list_post_count')) {
     }
 }
 
+if (! function_exists('get_min_list_post_count')) {
+    function get_min_list_post_count(): int
+    {
+        return app(PostInterface::class)->getMinListPostCount();
+    }
+}
+
 if (! function_exists('get_related_posts')) {
     function get_related_posts(int|string $id, int $limit): Collection
     {

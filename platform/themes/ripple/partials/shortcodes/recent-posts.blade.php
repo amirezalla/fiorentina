@@ -28,19 +28,19 @@
                 <div class="page-content">
                     <h3 class="post-group__title">ULTIME NOTIZIE</h3>
                     <div class="post-group post-group--single">
-
                         <div class="post-group__header">
-                            <div class="row">
-
-                            </div>
-
+                            <div class="row"></div>
                         </div>
                         <div class="post-group__content">
                             <div class="row">
+                                @php
+                                    $minMainPostsLimit = intval(setting('min_main_posts_limit'));
+                                    $mainPostsLimit = intval(setting('main_posts_limit', 12));
+                                @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
                                         <article class="post post__vertical post__vertical--single post-item"
-                                            style="display: flex; align-items: center; margin-bottom: 5px; {{ $index >= 6 ? 'display: none;' : '' }}">
+                                            style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
                                             <!-- Image on the left -->
                                             <div class="post__thumbnail" style="flex: 1.5; width: 48%;">
                                                 {{ RvMedia::image($post->image, $post->name, 'large') }}
@@ -63,103 +63,61 @@
                                                 </div>
                                             </div>
                                         </article>
+
+                                        <!-- Optional ads -->
                                         @if ($index == 0)
                                             @include('ads.includes.adsrecentp1')
                                         @endif
-
                                         @if ($index == 2)
                                             @include('ads.includes.adsrecentp2')
                                         @endif
-
-                                        @if ($index == 6)
+                                        @if ($index == 5)
                                             @include('ads.includes.adsrecentp3')
                                         @endif
+                                        @if ($index == 7)
+                                            @include('ads.includes.adsrecentp2')
+                                        @endif
+                                        @if ($index == 10)
+                                            @include('ads.includes.adsrecentp1')
+                                        @endif
                                     @endforeach
-                                    {{--                                        @include('ads.includes.adsrecentp4') --}}
 
                                     <!-- Load More Button -->
-                                    @if ($postsCount > intval(setting('main_posts_limit', 8)))
+                                    @if ($postsCount > $minMainPostsLimit)
                                         <div style="text-align: center;">
                                             <button id="load-more"
                                                 style="
-                background: #fff;
-                border: 2px solid #aaa;
-                border-radius: 3px;
-                display: inline-block;
-                font-size: .8rem;
-                font-weight: 600;
-                letter-spacing: .02em;
-                line-height: 1;
-                margin-top: 20px;
-                margin-bottom: 20px;
-                padding: 15px 0;
-                text-align: center;
-                text-transform: uppercase;
-                width: 88.4%;
-                cursor: pointer;
-                color: #441274; /* Violet text color */
-                transition: border-color 0.3s ease;
-            "
+                                                    background: #fff;
+                                                    border: 2px solid #aaa;
+                                                    border-radius: 3px;
+                                                    display: inline-block;
+                                                    font-size: .8rem;
+                                                    font-weight: 600;
+                                                    letter-spacing: .02em;
+                                                    line-height: 1;
+                                                    margin-top: 20px;
+                                                    margin-bottom: 20px;
+                                                    padding: 15px 0;
+                                                    text-align: center;
+                                                    text-transform: uppercase;
+                                                    width: 88.4%;
+                                                    cursor: pointer;
+                                                    color: #441274; /* Violet text color */
+                                                    transition: border-color 0.3s ease;
+                                                "
                                                 onmouseover="this.style.borderColor='#441274';"
                                                 onmouseout="this.style.borderColor='#aaa';">
-                                                ALTRE NOTIZIE
+                                                MOSTRA PIU
                                             </button>
                                         </div>
                                     @endif
                                 </div>
-                                {{--                                        <div class="col-md-6 col-sm-6 col-12"> --}}
-                                {{--                                            <article class="post post__vertical post__vertical--single"> --}}
-                                {{--                                                <div class="post__thumbnail"> --}}
-                                {{--                                                    {{ RvMedia::image($post->image, $post->name, 'medium') }} --}}
-                                {{--                                                    <a class="post__overlay" href="{{ $post->url }}" --}}
-                                {{--                                                        title="{{ $post->name }}"></a> --}}
-                                {{--                                                </div> --}}
-                                {{--                                                <div class="post__content-wrap"> --}}
-                                {{--                                                    <header class="post__header"> --}}
-                                {{--                                                        <h3 class="post__title"><a href="{{ $post->url }}" --}}
-                                {{--                                                                title="{{ $post->name }}">{{ $post->name }}</a></h3> --}}
-                                {{--                                                        <div class="post__meta"><span --}}
-                                {{--                                                                class="created__month">{{ $post->created_at->translatedFormat('M') }}</span><span --}}
-                                {{--                                                                class="created__date">{{ $post->created_at->translatedFormat('d') }}</span><span --}}
-                                {{--                                                                class="created__year">{{ $post->created_at->translatedFormat('Y') }}</span> --}}
-                                {{--                                                        </div> --}}
-                                {{--                                                    </header> --}}
-                                {{--                                                    <div class="post__content"> --}}
-                                {{--                                                        <p data-number-line="4">{{ $post->description }}</p> --}}
-                                {{--                                                    </div> --}}
-                                {{--                                                </div> --}}
-                                {{--                                            </article> --}}
-                                {{--                                        </div> --}}
-                                {{--                                        <div class="col-md-6 col-sm-6 col-12"> --}}
-                                {{--                                        @else --}}
-                                {{--                                            <article --}}
-                                {{--                                                class="post post__horizontal post__horizontal--single mb-20 clearfix"> --}}
-                                {{--                                                <div class="post__thumbnail"> --}}
-                                {{--                                                    {{ RvMedia::image($post->image, $post->name, 'medium') }} --}}
-                                {{--                                                    <a class="post__overlay" href="{{ $post->url }}" --}}
-                                {{--                                                        title="{{ $post->name }}"></a> --}}
-                                {{--                                                </div> --}}
-                                {{--                                                <div class="post__content-wrap"> --}}
-                                {{--                                                    <header class="post__header"> --}}
-                                {{--                                                        <h3 class="post__title"><a href="{{ $post->url }}" --}}
-                                {{--                                                                title="{{ $post->name }}">{{ $post->name }}</a> --}}
-                                {{--                                                        </h3> --}}
-                                {{--                                                        <div class="post__meta"><span --}}
-                                {{--                                                                class="post__created-at">{{ Theme::formatDate($post->created_at) }}</span> --}}
-                                {{--                                                        </div> --}}
-                                {{--                                                    </header> --}}
-                                {{--                                                </div> --}}
-                                {{--                                            </article> --}}
-                                {{--                                    @endif --}}
-                                {{--                                    @if ($loop->last) --}}
-                                {{--                            </div> --}}
-                                {{--                            @endif --}}
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
 
             @if ($topSidebarContent)
                 @php
@@ -314,7 +272,7 @@
                             style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
                         Serie B
                     </div>
-                    @include('videos.includes.adsvideo',['foo'=>'bar'])
+                    @include('videos.includes.adsvideo', ['foo' => 'bar'])
 
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_C1')
@@ -436,14 +394,40 @@
 @include('ads.includes.adsense', ['adClient' => 'ca-pub-6741446998584415'])
 
 <script>
-    document.getElementById('load-more').addEventListener('click', function() {
-        const hiddenArticles = document.querySelectorAll('article.post-item[style*="display: none;"]');
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadMoreButton = document.getElementById('load-more');
+        let visiblePosts = parseInt('{{ setting('min_main_posts_limit') }}');
+        const mainPostsLimit = parseInt('{{ setting('main_posts_limit', 20) }}');
+        const minMainPostsLimit = parseInt('{{ setting('min_main_posts_limit') }}');
 
-        hiddenArticles.forEach(article => {
-            article.style.display = 'flex';
-        });
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener('click', function() {
+                const allPosts = document.querySelectorAll('.post-item');
 
-        // Hide the Load More button after revealing all hidden articles
-        this.style.display = 'none';
+                if (loadMoreButton.innerText === 'ALTRE NOTIZIE') {
+                    // Expand posts up to mainPostsLimit
+                    visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
+
+                    allPosts.forEach((post, index) => {
+                        if (index < visiblePosts) {
+                            post.style.display = 'flex';
+                        }
+                    });
+
+                    if (visiblePosts >= allPosts.length) {
+                        loadMoreButton.innerText = 'MOSTRA MENO';
+                    }
+                } else {
+                    // Collapse posts back to minMainPostsLimit
+                    visiblePosts = minMainPostsLimit;
+
+                    allPosts.forEach((post, index) => {
+                        post.style.display = index < visiblePosts ? 'flex' : 'none';
+                    });
+
+                    loadMoreButton.innerText = 'ALTRE NOTIZIE';
+                }
+            });
+        }
     });
 </script>

@@ -15,6 +15,8 @@ interface PostInterface extends RepositoryInterface
 
     public function getListPostCount(): int;
 
+    public function getMinListPostCount(): int;
+
     public function getRelated(int|string $id, int $limit = 3): Collection;
 
     public function getRelatedCategoryIds(Post|int|string $model): array;

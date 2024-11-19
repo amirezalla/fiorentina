@@ -44,6 +44,10 @@ class GeneralSettingForm extends SettingForm
                 'label' => trans('core/setting::setting.main_posts_limit'),
                 'value' => old('main_posts_limit', setting('main_posts_limit', null)),
             ])
+            ->add('min_main_posts_limit', TextField::class, [
+                'label' => trans('core/setting::setting.min_main_posts_limit'),
+                'value' => old('min_main_posts_limit', setting('min_main_posts_limit', null)),
+            ])
             ->add(
                 'time_zone',
                 SelectField::class,
