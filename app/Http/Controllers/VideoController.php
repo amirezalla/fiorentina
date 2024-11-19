@@ -51,7 +51,7 @@ class VideoController extends BaseController
                 'media_id'=>$item['media_id'],
                 'url'=>Arr::get($item,'url'),
             ];
-        }));
+        })->values());
         $this->validate($request, [
             'title' => ['required', 'string'],
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
