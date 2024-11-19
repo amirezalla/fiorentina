@@ -46,18 +46,6 @@ class VideoController extends BaseController
 
     public function store(Request $request)
     {
-        dd(collect($request->videos)->map(function ($item, $key) {
-            return [
-                'media_id' => $item['media_id'],
-                'url' => Arr::get($item, 'url'),
-            ];
-        })->values()->mapWithKeys(function ($item, $key) {
-            return [
-                $item['media_id'] => array_merge($item, [
-                    'priority' => $key + 1,
-                ]),
-            ];
-        }));
         $this->validate($request, [
             'title' => ['required', 'string'],
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
@@ -72,7 +60,6 @@ class VideoController extends BaseController
 
         try {
             return DB::transaction(function () use ($request) {
-                $video_ids = $request->videos;
                 $is_random = $request->mode == Video::PLAYLIST_MODE_RANDOM;
                 $is_published = $request->status == Video::STATUS_PUBLISHED;
 
@@ -88,14 +75,18 @@ class VideoController extends BaseController
 
                 // Sync video files with priorities if provided
                 if ($request->filled('videos')) {
-                    $mediaFilesData = collect($video_ids)
-                        ->mapWithKeys(function ($item, $key) {
-                            return [
-                                $item => [
-                                    'priority' => $key + 1,
-                                ],
-                            ];
-                        })->toArray();
+                    $mediaFilesData = collect($request->videos)->map(function ($item, $key) {
+                        return [
+                            'media_id' => $item['media_id'],
+                            'url' => Arr::get($item, 'url'),
+                        ];
+                    })->values()->mapWithKeys(function ($item, $key) {
+                        return [
+                            $item['media_id'] => array_merge($item, [
+                                'priority' => $key + 1,
+                            ]),
+                        ];
+                    })->toArray();
                     $video->mediaFiles()->sync($mediaFilesData);
                 }
 
@@ -126,7 +117,9 @@ class VideoController extends BaseController
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
             'status' => ['required', Rule::in(Video::STATUSES)],
             'videos' => ['nullable', 'array'],
-            'videos.*' => [Rule::exists(MediaFile::class, 'id')],
+            'videos.*' => ['array:media_id,url'],
+            'videos.*.media_id' => [Rule::exists(MediaFile::class, 'id')],
+            'videos.*.url' => ['nullable', 'url'],
         ]);
         try {
             return DB::transaction(function () use ($request, $video) {
@@ -142,14 +135,18 @@ class VideoController extends BaseController
                     'is_for_post' => $request->has('is_for_post'),
                 ]);
                 if ($diffCount && $request->filled('videos')) {
-                    $mediaFilesData = collect($video_ids)
-                        ->mapWithKeys(function ($item, $key) {
-                            return [
-                                $item => [
-                                    'priority' => $key + 1,
-                                ],
-                            ];
-                        })->toArray();
+                    $mediaFilesData = collect($request->videos)->map(function ($item, $key) {
+                        return [
+                            'media_id' => $item['media_id'],
+                            'url' => Arr::get($item, 'url'),
+                        ];
+                    })->values()->mapWithKeys(function ($item, $key) {
+                        return [
+                            $item['media_id'] => array_merge($item, [
+                                'priority' => $key + 1,
+                            ]),
+                        ];
+                    })->toArray();
                     $video->mediaFiles()->sync($mediaFilesData);
                 }
                 return redirect()->route('videos.index')->with('success', 'Videos uploaded successfully.');

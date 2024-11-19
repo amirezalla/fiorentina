@@ -41,7 +41,7 @@ class Video extends Model
      */
     public function mediaFiles(): BelongsToMany
     {
-        return $this->belongsToMany(MediaFile::class)->withPivot(['priority']);
+        return $this->belongsToMany(MediaFile::class)->withPivot(['url','priority']);
     }
 
     /**
