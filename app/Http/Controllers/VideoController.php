@@ -10,6 +10,7 @@ use Botble\Base\Supports\Breadcrumb;
 use Botble\Media\Models\MediaFile;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
@@ -45,7 +46,12 @@ class VideoController extends BaseController
 
     public function store(Request $request)
     {
-        dd(collect($request->videos));
+        dd(collect($request->videos)->map(function ($item, $key) {
+            return [
+                'media_id'=>$item['media_id'],
+                'url'=>Arr::get($item,'url'),
+            ];
+        }));
         $this->validate($request, [
             'title' => ['required', 'string'],
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
@@ -53,8 +59,8 @@ class VideoController extends BaseController
             'delay' => ['required', 'integer', 'in:1,5,10,15,30,60,120'], // Updated delay validation to include new values
             'videos' => ['nullable', 'array'],
             'videos.*' => ['array:media_id,url'],
-            'videos.*.media_id' => [Rule::exists(MediaFile::class,'id')],
-            'videos.*.url' => ['nullable','url'],
+            'videos.*.media_id' => [Rule::exists(MediaFile::class, 'id')],
+            'videos.*.url' => ['nullable', 'url'],
         ]);
 
 
@@ -69,8 +75,8 @@ class VideoController extends BaseController
                     'title' => $request->title,
                     'is_random' => $is_random,
                     'published_at' => $is_published ? now() : null,
-                    'is_for_home'=>$request->has('is_for_home'),
-                    'is_for_post'=>$request->has('is_for_post'),
+                    'is_for_home' => $request->has('is_for_home'),
+                    'is_for_post' => $request->has('is_for_post'),
                     'delay' => $request->delay, // Store the delay value
                 ]);
 
@@ -95,7 +101,6 @@ class VideoController extends BaseController
     }
 
 
-
     public function edit($video)
     {
         $video = Video::query()
@@ -115,7 +120,7 @@ class VideoController extends BaseController
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
             'status' => ['required', Rule::in(Video::STATUSES)],
             'videos' => ['nullable', 'array'],
-            'videos.*' => [Rule::exists(MediaFile::class,'id')],
+            'videos.*' => [Rule::exists(MediaFile::class, 'id')],
         ]);
         try {
             return DB::transaction(function () use ($request, $video) {
@@ -127,8 +132,8 @@ class VideoController extends BaseController
                     'title' => $request->title,
                     'is_random' => $is_random,
                     'published_at' => $is_published ? now() : null,
-                    'is_for_home'=>$request->has('is_for_home'),
-                    'is_for_post'=>$request->has('is_for_post'),
+                    'is_for_home' => $request->has('is_for_home'),
+                    'is_for_post' => $request->has('is_for_post'),
                 ]);
                 if ($diffCount && $request->filled('videos')) {
                     $mediaFilesData = collect($video_ids)
