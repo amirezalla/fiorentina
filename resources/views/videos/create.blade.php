@@ -117,17 +117,17 @@
                 multiple: true,
                 filter: "video",
                 onSelectFiles: function (e, t) {
-                    const html = `
+                    const container = $('#videoPreviewContainer');
+                    e.forEach((i, k) => {
+                        const html = `
                         <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
 
                             <input type="hidden" name="videos[${i.id}][media_id]" value="${i.id}">
                             <div class="w-100 p-2 border border-2 rounded-2">
                                 <video src="${i.preview_url}" class="w-100" controls></video>
                                 <div class="mt-1">
-                                    <div class="form-group">
-                                        <label for="link-video-input-${i.id}" class="form-label">link video</label>
-                                        <input type="text" class="form-control" id="link-video-input-${i.id}" name="videos[${i.id}][url]">
-                                    </div>
+                                    <label for="link-video-input-${i.id}" class="form-label">link video</label>
+                                    <input type="text" class="form-control mb-2" id="link-video-input-${i.id}" name="videos[${i.id}][url]">
                                     <button type="button" class="btn btn-danger video-preview-item-delete">
                                         Delete
                                     </button>
@@ -135,8 +135,6 @@
                             </div>
                         </div>
                         `;
-                    const container = $('#videoPreviewContainer');
-                    e.forEach((i, k) => {
                         container.append(html);
                     })
                 }
