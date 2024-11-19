@@ -126,7 +126,9 @@
                             <div class="w-100 p-2 border border-2 rounded-2">
                                 <video src="${i.preview_url}" class="w-100" controls></video>
                                 <div class="mt-1">
-                                    <label for="link-video-input-${i.id}" class="form-label">link video</label>
+                                    <label for="order-video-select-${i.id}" class="form-label">Order</label>
+                                    <select name="videos[${i.id}][order]" class="form-control order-video-select" id="order-video-select-${i.id}"></select>
+                                    <label for="link-video-input-${i.id}" class="form-label">Url</label>
                                     <input type="text" class="form-control mb-2" id="link-video-input-${i.id}" name="videos[${i.id}][url]">
                                     <button type="button" class="btn btn-danger video-preview-item-delete">
                                         Delete
