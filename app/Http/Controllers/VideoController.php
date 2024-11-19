@@ -45,6 +45,7 @@ class VideoController extends BaseController
 
     public function store(Request $request)
     {
+        dd($request->all());
         $this->validate($request, [
             'title' => ['required', 'string'],
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
@@ -56,7 +57,6 @@ class VideoController extends BaseController
             'videos.*.url' => ['nullable','url'],
         ]);
 
-        dd($request->all());
 
         try {
             return DB::transaction(function () use ($request) {

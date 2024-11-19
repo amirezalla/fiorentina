@@ -158,7 +158,7 @@
                         const orderValue = currentVideoCount + index + 1; // Start from the next available order
                         const html = `
                             <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
-                                <input type="hidden" name="videos[]" value="${i.id}">
+                                <input type="hidden" name="videos[${i.id}][media_id]" value="${i.id}">
                                 <div class="w-100 p-2 border border-2 rounded-2">
                                     <video src="${i.preview_url}" class="w-100" controls></video>
                                     <div class="mt-1">
@@ -166,9 +166,8 @@
                                         <select name="order[${i.id}]" id="orderSelect-${i.id}" class="form-select">
                                             ${generateOrderOptions(orderValue)}
                                         </select>
-<label for="title" class="form-label">link video</label>
-<input type="text" class="form-control" name="videolink" id="videolink">
-                                        <input type="text" class="form-control">
+                                        <label for="link-video-input-${i.id}" class="form-label">link video</label>
+                                        <input type="text" class="form-control" id="link-video-input-${i.id}" name="videos[${i.id}][url]">
                                         <button type="button" class="btn btn-danger video-preview-item-delete mt-2">
                                             Delete
                                         </button>
