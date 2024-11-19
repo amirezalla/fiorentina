@@ -27,9 +27,9 @@ class VideoController extends BaseController
 
     public function index()
     {
-        Schema::table('media_file_video', function (Blueprint $table) {
+        /*Schema::table('media_file_video', function (Blueprint $table) {
             $table->string('url')->nullable();
-        });
+        });*/
         $this->pageTitle("Videos List");
         $videos = Video::query()->withCount('mediaFiles')->latest()->paginate(20);
         return view('videos.view', compact('videos'));
@@ -43,52 +43,6 @@ class VideoController extends BaseController
         return view('videos.create');
     }
 
-//    public function store(Request $request)
-//    {
-//        $this->validate($request, [
-//            'title' => ['required', 'string'],
-//            'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
-//            'status' => ['required', Rule::in(Video::STATUSES)],
-//            'delay' => ['required', 'integer', 'in:1,5,10,15,30,60,120'], // Updated delay validation to include new values
-//            'videos' => ['nullable', 'array'],
-//            'videos.*' => [Rule::exists(MediaFile::class,'id')],
-//        ]);
-//
-//        try {
-//            return DB::transaction(function () use ($request) {
-//                $video_ids = $request->videos;
-//                $is_random = $request->mode == Video::PLAYLIST_MODE_RANDOM;
-//                $is_published = $request->status == Video::STATUS_PUBLISHED;
-//
-//                // Create a new Video record with delay included
-//                $video = Video::query()->create([
-//                    'title' => $request->title,
-//                    'is_random' => $is_random,
-//                    'published_at' => $is_published ? now() : null,
-//                    'is_for_home'=>$request->has('is_for_home'),
-//                    'is_for_post'=>$request->has('is_for_post'),
-//                    'delay' => $request->delay, // Store the delay value
-//                ]);
-//
-//                // Sync video files with priorities if provided
-//                if ($request->filled('videos')) {
-//                    $mediaFilesData = collect($video_ids)
-//                        ->mapWithKeys(function ($item, $key) {
-//                            return [
-//                                $item => [
-//                                    'priority' => $key + 1,
-//                                ],
-//                            ];
-//                        })->toArray();
-//                    $video->mediaFiles()->sync($mediaFilesData);
-//                }
-//
-//                return redirect()->route('videos.index')->with('success', 'Videos uploaded successfully.');
-//            });
-//        } catch (Throwable $e) {
-//            return redirect()->back()->with('error', 'Failed to upload videos.');
-//        }
-//    }
     public function store(Request $request)
     {
         $this->validate($request, [
@@ -97,14 +51,12 @@ class VideoController extends BaseController
             'status' => ['required', Rule::in(Video::STATUSES)],
             'delay' => ['required', 'integer', 'in:1,5,10,15,30,60,120'], // Updated delay validation to include new values
             'videos' => ['nullable', 'array'],
-            'videos.*' => [Rule::exists(MediaFile::class, 'id')],
-            'videolink' => ['nullable', 'string', 'max:255'], // Updated: treated as a single string input
-            'videolink.*' => ['nullable', 'string', 'max:255'],
-            'external_link' => ['nullable', 'array'],
-            'external_link.*' => ['nullable', 'string', 'max:255'],
-            'order' => ['nullable', 'array'],
-            'order.*' => ['nullable', 'integer'],
+            'videos.*' => ['array:media_id,url'],
+            'videos.*.media_id' => [Rule::exists(MediaFile::class,'id')],
+            'videos.*.url' => ['nullable','url'],
         ]);
+
+        dd($request->all());
 
         try {
             return DB::transaction(function () use ($request) {
@@ -117,27 +69,15 @@ class VideoController extends BaseController
                     'title' => $request->title,
                     'is_random' => $is_random,
                     'published_at' => $is_published ? now() : null,
-                    'is_for_home' => $request->has('is_for_home'),
-                    'is_for_post' => $request->has('is_for_post'),
+                    'is_for_home'=>$request->has('is_for_home'),
+                    'is_for_post'=>$request->has('is_for_post'),
                     'delay' => $request->delay, // Store the delay value
                 ]);
 
-                // Sync video files with priorities if provided and store related `video_spec` data
+                // Sync video files with priorities if provided
                 if ($request->filled('videos')) {
                     $mediaFilesData = collect($video_ids)
-                        ->mapWithKeys(function ($item, $key) use ($request, $video) {
-                            $videolink = $request->input('videolink')[$key] ?? null;
-                            $external_link = $request->input('external_link')[$key] ?? null;
-                            $order = $request->input('order')[$key] ?? $key + 1;
-
-                            // Create or insert into `video_spec` table
-                            VideoSpec::create([
-                                'video_id' => $video->id,
-                                'videolink' => $videolink,
-                                'external_link' => $external_link,
-                                'order' => $order,
-                            ]);
-
+                        ->mapWithKeys(function ($item, $key) {
                             return [
                                 $item => [
                                     'priority' => $key + 1,

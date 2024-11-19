@@ -168,6 +168,7 @@
                                         </select>
 <label for="title" class="form-label">link video</label>
 <input type="text" class="form-control" name="videolink" id="videolink">
+                                        <input type="text" class="form-control">
                                         <button type="button" class="btn btn-danger video-preview-item-delete mt-2">
                                             Delete
                                         </button>
