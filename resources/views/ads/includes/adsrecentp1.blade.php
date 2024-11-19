@@ -11,7 +11,6 @@
 
         </div>
     @else
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6741446998584415"
-            data-ad-slot="{{ $ad->image }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        {!! $ad->amp !!}
     @endif
 @endif
