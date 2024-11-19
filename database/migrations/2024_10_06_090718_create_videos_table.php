@@ -30,6 +30,7 @@ return new class extends Migration {
                 ->on('videos')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->string('url')->nullable();
             $table->unsignedInteger('priority');
         });
     }

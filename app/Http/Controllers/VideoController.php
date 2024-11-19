@@ -26,6 +26,9 @@ class VideoController extends BaseController
 
     public function index()
     {
+        Schema::table('media_file_video', function (Blueprint $table) {
+            $table->string('url')->nullable();
+        });
         $this->pageTitle("Videos List");
         $videos = Video::query()->withCount('mediaFiles')->latest()->paginate(20);
         return view('videos.view', compact('videos'));
