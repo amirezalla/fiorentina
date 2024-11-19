@@ -31,23 +31,8 @@
                         <div class="mb-3">
                             <label for="videoPreview" class="form-label">Video Previews</label>
                             <div id="videoPreviewContainer" class="row">
-                                <!-- Video previews will be injected here -->
+
                             </div>
-                        </div>
-
-                        <!-- Delay Selection Section -->
-                        <div class=" mb-3">
-                            <label for="delaySelect" class="form-label">Select Delay Between Plays (ms):</label>
-                            <select class="form-select" id="delay" name="delay">
-                                <option value="1">1s</option>
-                                <option value="5">5s</option>
-                                <option value="10">10s</option>
-                                <option value="15">15s</option>
-                                <option value="30">30s</option>
-                                <option value="60">1min</option>
-                                <option value="120">2min</option>
-                            </select>
-
                         </div>
 
                         <!-- Video Mode Selection -->
@@ -61,20 +46,6 @@
                             @error('mode')
                             <span class="is-invalid text-danger">{{ $message }}</span>
                             @enderror
-                        </div>
-                        <div class="mt-3">
-                            <label class="form-check form-switch">
-                                <input class="form-check-input" name="is_for_home" type="checkbox" value="1"
-                                       id="is_for_home" @if(old('is_for_home')) checked @endif>
-                                <span class="form-check-label">Advertisement for Home</span>
-                            </label>
-                        </div>
-                        <div class="mt-3">
-                            <label class="form-check form-switch">
-                                <input class="form-check-input" name="is_for_post" type="checkbox" value="1"
-                                       id="is_for_post" @if(old('is_for_post')) checked @endif>
-                                <span class="form-check-label">Advertisement for Post</span>
-                            </label>
                         </div>
                     </div>
                 </div>
@@ -141,76 +112,37 @@
 
 @push('footer')
     <script>
-        // Keep track of the number of uploaded videos to set the correct options for ordering
-        let totalVideos = 0;
-
         $.each($(document).find('[data-bb-toggle="video-picker-choose"][data-target="popup"]'), (function (e, t) {
             $(t).rvMedia({
                 multiple: true,
                 filter: "video",
                 onSelectFiles: function (e, t) {
                     const container = $('#videoPreviewContainer');
-                    const currentVideoCount = container.children().length; // Count existing videos in the container
-                    totalVideos = currentVideoCount + e.length; // Update totalVideos based on newly added videos
-
-                    e.forEach((i, index) => {
-                        // Automatically assign order based on upload sequence
-                        const orderValue = currentVideoCount + index + 1; // Start from the next available order
+                    e.forEach((i, k) => {
                         const html = `
-                            <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
-                                <input type="hidden" name="videos[${i.id}][media_id]" value="${i.id}">
-                                <div class="w-100 p-2 border border-2 rounded-2">
-                                    <video src="${i.preview_url}" class="w-100" controls></video>
-                                    <div class="mt-1">
-                                        <label for="orderSelect-${i.id}">Select Order</label>
-                                        <select name="order[${i.id}]" id="orderSelect-${i.id}" class="form-select">
-                                            ${generateOrderOptions(orderValue)}
-                                        </select>
-                                        <label for="link-video-input-${i.id}" class="form-label">link video</label>
-                                        <input type="text" class="form-control" id="link-video-input-${i.id}" name="videos[${i.id}][url]">
-                                        <button type="button" class="btn btn-danger video-preview-item-delete mt-2">
-                                            Delete
-                                        </button>
-                                    </div>
+                        <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
+
+                            <input type="hidden" name="videos[${i.id}][media_id]" value="${i.id}">
+                            <div class="w-100 p-2 border border-2 rounded-2">
+                                <video src="${i.preview_url}" class="w-100" controls></video>
+                                <div class="mt-1">
+                                    <label for="link-video-input-${i.id}" class="form-label">link video</label>
+                                    <input type="text" class="form-control" id="link-video-input-${i.id}" name="videos[${i.id}][url]">
+                                    <button type="button" class="btn btn-danger video-preview-item-delete">
+                                        Delete
+                                    </button>
                                 </div>
                             </div>
+                        </div>
                         `;
                         container.append(html);
-                    });
-
-                    // Update the order select options for all videos based on the new total count
-                    updateAllOrderSelectBoxes(totalVideos);
+                    })
                 }
-            });
+            })
         }));
-
-        // Function to generate select options up to totalVideos, with the specified selected order
-        function generateOrderOptions(selectedOrder) {
-            let options = '';
-            for (let j = 1; j <= totalVideos; j++) {
-                options += `<option value="${j}" ${j === selectedOrder ? 'selected' : ''}>${j}</option>`;
-            }
-            return options;
-        }
-
-        // Function to update the order select options for all existing videos
-        function updateAllOrderSelectBoxes(totalVideos) {
-            const allSelectBoxes = document.querySelectorAll('#videoPreviewContainer select');
-            allSelectBoxes.forEach((selectBox, index) => {
-                let options = '';
-                for (let j = 1; j <= totalVideos; j++) {
-                    options += `<option value="${j}" ${j === index + 1 ? 'selected' : ''}>${j}</option>`;
-                }
-                selectBox.innerHTML = options;
-            });
-        }
-
-        // Handle video deletion from the preview
         $(document).on('click', '.video-preview-item-delete', function (e) {
             e.preventDefault();
             $(e.target).closest('.video-preview-item').remove();
-            totalVideos--; // Decrement total videos when one is deleted
-            updateAllOrderSelectBoxes(totalVideos); // Update all select boxes after deletion
-        });
+        })
     </script>
 @endpush

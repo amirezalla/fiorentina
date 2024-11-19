@@ -55,6 +55,7 @@ class VideoController extends BaseController
             'videos.*' => ['array:media_id,url'],
             'videos.*.media_id' => [Rule::exists(MediaFile::class, 'id')],
             'videos.*.url' => ['nullable', 'url'],
+            'videos.*.order' => ['nullable', 'numeric'],
         ]);
 
 
