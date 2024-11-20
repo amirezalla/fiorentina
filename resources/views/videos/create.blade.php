@@ -112,12 +112,12 @@
 
 @push('footer')
     <script>
+        const container = $('#videoPreviewContainer');
         $.each($(document).find('[data-bb-toggle="video-picker-choose"][data-target="popup"]'), (function (e, t) {
             $(t).rvMedia({
                 multiple: true,
                 filter: "video",
                 onSelectFiles: function (e, t) {
-                    const container = $('#videoPreviewContainer');
                     e.forEach((i, k) => {
                         const html = `
                         <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
@@ -144,12 +144,11 @@
             })
         }));
 
-        $('#videoPreviewContainer').on('change','.order-video-select',function (el) {
+        container.on('change','.order-video-select',function (el) {
             console.log(el);
         });
 
         function updateAllOrderSelects() {
-            const container = $('#videoPreviewContainer');
             const videoPreviewItems = container.find('.video-preview-item');
             videoPreviewItems.each(function (key, el) {
                 const element = $(el);
