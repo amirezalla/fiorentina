@@ -140,10 +140,20 @@
                         </div>
                         `;
                         container.append(html);
+                        updateAllOrderSelects();
                     })
                 }
             })
         }));
+
+        function updateAllOrderSelects() {
+            const container = $('#videoPreviewContainer');
+            const videoPreviewItems = container.find('.video-preview-item');
+            videoPreviewItems.forEach(function (el,k) {
+                console.log(el)
+            });
+        }
+
         $(document).on('click', '.video-preview-item-delete', function (e) {
             e.preventDefault();
             $(e.target).closest('.video-preview-item').remove();
