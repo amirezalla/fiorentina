@@ -153,6 +153,7 @@
                 const selectPrevValue = select.val();
                 console.log(selectPrevValue);
                 select.empty();
+                select.append(`<option selected="${isNaN(selectPrevValue)}">DEFAULT</option>`);
                 for (let i = 1; i <= videoPreviewItems.length; i++) {
                     select.append(`<option value="${i}">${i}</option>`);
                 }
