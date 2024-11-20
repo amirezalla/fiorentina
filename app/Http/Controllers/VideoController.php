@@ -79,7 +79,7 @@ class VideoController extends BaseController
                         ->sortBy('order')
                         ->map(function ($item, $key) {
                             return [
-                                'media_id' => $item['media_id'],
+                                'media_file_id' => $item['media_id'],
                                 'url' => Arr::get($item, 'url'),
                             ];
                         })
