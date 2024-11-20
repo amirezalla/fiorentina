@@ -149,6 +149,7 @@
         function updateAllOrderSelects() {
             const container = $('#videoPreviewContainer');
             const videoPreviewItems = container.find('.video-preview-item');
+            console.log(videoPreviewItems.length)
             videoPreviewItems.each(function (el,k) {
                 console.log(el)
             });
