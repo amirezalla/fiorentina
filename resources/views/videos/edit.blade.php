@@ -39,6 +39,7 @@
                                             <div class="w-100 p-2 border border-2 rounded-2">
                                                 <video src="{{ $mediaFile->previewUrl }}" class="w-100" controls></video>
                                                 <div class="mt-1">
+                                                    @dd($mediaFile)
                                                     <label for="order-video-select-{{ $mediaFile->id }}" class="form-label">Order</label>
                                                     <select name="videos[{{ $mediaFile->id }}][order]" class="form-control order-video-select" id="order-video-select-{{ $mediaFile->id }}">
                                                         <option>DEFAULT</option>
