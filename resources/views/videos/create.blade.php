@@ -147,9 +147,15 @@
         function updateAllOrderSelects() {
             const container = $('#videoPreviewContainer');
             const videoPreviewItems = container.find('.video-preview-item');
-            console.log(videoPreviewItems.length)
-            videoPreviewItems.each(function (key,el) {
-                console.log(el)
+            videoPreviewItems.each(function (key, el) {
+                const element = $(el);
+                const select = element.find('.order-video-select');
+                const selectPrevValue = select.val();
+                console.log(selectPrevValue);
+                select.empty();
+                for (let i = 1; i <= videoPreviewItems.length; i++) {
+                    select.append(`<option value="${i}">${i}</option>`);
+                }
             });
         }
 
