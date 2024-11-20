@@ -35,14 +35,12 @@
     const delay = video.delay ? Number(video.delay) : 0;
     let activeVideo = 0;
     let delayTimer = null;
-    console.log("hiiiiiiiiii")
-    console.log(videoEl.closest('a'))
     videoEl.addEventListener('ended', function (e) {
         activeVideo = (++activeVideo) % video_files.length;
         if (delay) {
             startCountdown(delay, function () {
                 if (video_file_urls[activeVideo]) {
-                    $(videoEl).parent().setAttribute('href', video_file_urls[activeVideo]);
+                    videoEl.closest('a').href = video_file_urls[activeVideo];
                 }
                 videoEl.src = video_files[activeVideo];
                 videoEl.play();
