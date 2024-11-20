@@ -148,7 +148,7 @@
             const container = $('#videoPreviewContainer');
             const videoPreviewItems = container.find('.video-preview-item');
             console.log(videoPreviewItems.length)
-            videoPreviewItems.each(function (el,k) {
+            videoPreviewItems.each(function (key,el) {
                 console.log(el)
             });
         }
