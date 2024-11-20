@@ -153,9 +153,9 @@
                 const selectPrevValue = select.val();
                 console.log(selectPrevValue);
                 select.empty();
-                select.append(`<option selected="${isNaN(selectPrevValue) ? 'selected' : ''}">DEFAULT</option>`);
+                select.append(`<option ${isNaN(selectPrevValue) ? 'selected' : ''}>DEFAULT</option>`);
                 for (let i = 1; i <= videoPreviewItems.length; i++) {
-                    select.append(`<option value="${i}" selected="${!isNaN(selectPrevValue) && Number(selectPrevValue) === i ? 'selected' : ''}">${i}</option>`);
+                    select.append(`<option value="${i}" ${Number(selectPrevValue) === i ? 'selected' : ''}>${i}</option>`);
                 }
             });
         }
