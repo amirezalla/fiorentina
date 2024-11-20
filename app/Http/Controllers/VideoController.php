@@ -97,7 +97,6 @@ class VideoController extends BaseController
                 return redirect()->route('videos.index')->with('success', 'Videos uploaded successfully.');
             });
         } catch (Throwable $e) {
-            dd($e);
             return redirect()->back()->with('error', 'Failed to upload videos.');
         }
     }
@@ -125,11 +124,11 @@ class VideoController extends BaseController
             'videos.*' => ['array:media_id,url'],
             'videos.*.media_id' => [Rule::exists(MediaFile::class, 'id')],
             'videos.*.url' => ['nullable', 'url'],
+            'videos.*.order' => ['nullable'],
         ]);
         try {
             return DB::transaction(function () use ($request, $video) {
-                $video_ids = $request->videos;
-                $diffCount = $video->mediaFiles->pluck('id')->diff($video_ids)->count();
+                $diffCount = $video->mediaFiles->pluck('id')->diff(collect($request->videos)->keys()->toArray())->count();
                 $is_random = $request->mode == Video::PLAYLIST_MODE_RANDOM;
                 $is_published = $request->status == Video::STATUS_PUBLISHED;
                 $video->update([
@@ -140,18 +139,22 @@ class VideoController extends BaseController
                     'is_for_post' => $request->has('is_for_post'),
                 ]);
                 if ($diffCount && $request->filled('videos')) {
-                    $mediaFilesData = collect($request->videos)->map(function ($item, $key) {
-                        return [
-                            'media_id' => $item['media_id'],
-                            'url' => Arr::get($item, 'url'),
-                        ];
-                    })->values()->mapWithKeys(function ($item, $key) {
-                        return [
-                            $item['media_id'] => array_merge($item, [
-                                'priority' => $key + 1,
-                            ]),
-                        ];
-                    })->toArray();
+                    $mediaFilesData = collect($request->videos)
+                        ->sortBy('order')
+                        ->map(function ($item, $key) {
+                            return [
+                                'media_file_id' => $item['media_id'],
+                                'url' => Arr::get($item, 'url'),
+                            ];
+                        })
+                        ->values()
+                        ->mapWithKeys(function ($item, $key) {
+                            return [
+                                $item['media_file_id'] => array_merge($item, [
+                                    'priority' => $key + 1,
+                                ]),
+                            ];
+                        })->toArray();
                     $video->mediaFiles()->sync($mediaFilesData);
                 }
                 return redirect()->route('videos.index')->with('success', 'Videos uploaded successfully.');
