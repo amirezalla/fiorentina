@@ -155,7 +155,7 @@
                 select.empty();
                 select.append(`<option selected="${isNaN(selectPrevValue)}">DEFAULT</option>`);
                 for (let i = 1; i <= videoPreviewItems.length; i++) {
-                    select.append(`<option value="${i}">${i}</option>`);
+                    select.append(`<option value="${i}" selected="${!isNaN(selectPrevValue) && Number(selectPrevValue) === i}">${i}</option>`);
                 }
             });
         }
