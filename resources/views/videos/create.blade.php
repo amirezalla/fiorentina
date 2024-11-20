@@ -119,8 +119,6 @@
                 onSelectFiles: function (e, t) {
                     const container = $('#videoPreviewContainer');
                     e.forEach((i, k) => {
-                        const videoPreviewItems = container.find('.video-preview-item');
-                        console.log(videoPreviewItems.length);
                         const html = `
                         <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
 
@@ -148,7 +146,7 @@
 
         function updateAllOrderSelects() {
             const container = $('#videoPreviewContainer');
-            const videoPreviewItems = container.find('> .video-preview-item');
+            const videoPreviewItems = container.find('.video-preview-item');
             console.log(videoPreviewItems.length)
             videoPreviewItems.each(function (el,k) {
                 console.log(el)
