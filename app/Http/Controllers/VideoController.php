@@ -52,12 +52,11 @@ class VideoController extends BaseController
             'status' => ['required', Rule::in(Video::STATUSES)],
             'delay' => ['required', 'integer', 'in:1,5,10,15,30,60,120'], // Updated delay validation to include new values
             'videos' => ['nullable', 'array'],
-            'videos.*' => ['array:media_id,url'],
+            'videos.*' => ['array'],
             'videos.*.media_id' => [Rule::exists(MediaFile::class, 'id')],
             'videos.*.url' => ['nullable', 'url'],
             'videos.*.order' => ['nullable'],
         ]);
-
 
         try {
             return DB::transaction(function () use ($request) {
