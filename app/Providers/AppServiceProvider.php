@@ -85,28 +85,32 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('videos.includes.adsvideo', function (View $view) {
             $is_home = request()->route()->getName();
             $video = Video::query()
-                ->when($is_home,function ($q){
+                ->when($is_home, function ($q) {
                     $q->onlyForHome();
-                },function ($q){
+                }, function ($q) {
                     $q->onlyForPost();
                 })
                 ->published()
                 ->first();
             if ($video) {
-                $video_files = $video->mediaFiles()
+                $mediaFiles = $video->mediaFiles()
                     ->when($video->isRandom(), function ($q) {
                         $q->inRandomOrder();
                     }, function ($q) {
                         $q->orderBy('priority');
                     })
-                    ->get()
-                    ->map(function ($item) {
-                        return url('storage/' . $item->url);
-                    });
+                    ->get();
+                $video_files = $mediaFiles->map(function ($item) {
+                    return url('storage/' . $item->url);
+                });
+                $video_file_urls = $mediaFiles->map(function ($item) {
+                    return $item->pivot->url;
+                });;
             } else {
                 $video_files = collect();
+                $video_file_urls = collect();
             }
-            $view->with('video', $video)->with('video_files', $video_files);
+            $view->with('video', $video)->with('video_files', $video_files)->with('video_file_urls',$video_file_urls);
         });
 
 

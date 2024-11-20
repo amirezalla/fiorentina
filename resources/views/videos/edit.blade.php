@@ -35,10 +35,19 @@
                                 @if($video->mediaFiles->count())
                                     @foreach($video->mediaFiles as $mediaFile)
                                         <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
-                                            <input type="hidden" name="videos[]" value="{{ $mediaFile->id }}">
+                                            <input type="hidden" name="videos[{{ $mediaFile->id }}][media_id]" value="{{ $mediaFile->id }}">
                                             <div class="w-100 p-2 border border-2 rounded-2">
                                                 <video src="{{ $mediaFile->previewUrl }}" class="w-100" controls></video>
                                                 <div class="mt-1">
+                                                    <label for="order-video-select-{{ $mediaFile->id }}" class="form-label">Order</label>
+                                                    <select name="videos[{{ $mediaFile->id }}][order]" class="form-control order-video-select" id="order-video-select-{{ $mediaFile->id }}">
+                                                        <option>DEFAULT</option>
+                                                        @foreach($video->mediaFiles as $key => $mf)
+                                                            <option value="{{ $key++ }}" @if($mediaFile->pivot->priority == $loop->iteration) selected @endif>{{ $loop->iteration }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <label for="link-video-input-{{ $mediaFile->id }}" class="form-label">Url</label>
+                                                    <input type="text" class="form-control mb-2" id="link-video-input-{{ $mediaFile->id }}" name="videos[{{ $mediaFile->id }}][url]" value="{{ $mediaFile->pivot->url }}">
                                                     <button type="button" class="btn btn-danger video-preview-item-delete">
                                                         Delete
                                                     </button>
@@ -150,19 +159,23 @@
 
 @push('footer')
     <script>
+        const container = $('#videoPreviewContainer');
         $.each($(document).find('[data-bb-toggle="video-picker-choose"][data-target="popup"]'), (function (e, t) {
             $(t).rvMedia({
                 multiple: true,
                 filter: "video",
                 onSelectFiles: function (e, t) {
-                    const container = $('#videoPreviewContainer');
                     e.forEach((i, k) => {
                         const html = `
                         <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
-                            <input type="hidden" name="videos[]" value="${i.id}">
+                            <input type="hidden" name="videos[${i.id}][media_id]" value="${i.id}">
                             <div class="w-100 p-2 border border-2 rounded-2">
                                 <video src="${i.preview_url}" class="w-100" controls></video>
                                 <div class="mt-1">
+                                    <label for="order-video-select-${i.id}" class="form-label">Order</label>
+                                    <select name="videos[${i.id}][order]" class="form-control order-video-select" id="order-video-select-${i.id}"></select>
+                                    <label for="link-video-input-${i.id}" class="form-label">Url</label>
+                                    <input type="text" class="form-control mb-2" id="link-video-input-${i.id}" name="videos[${i.id}][url]">
                                     <button type="button" class="btn btn-danger video-preview-item-delete">
                                         Delete
                                     </button>
@@ -172,14 +185,39 @@
                         `;
                         container.append(html);
                     });
+                    updateAllOrderSelects();
+                }
+            })
+        }));
+
+        container.on('change', '.order-video-select', function (event) {
+            const value = Number($(event.target).val());
+            const id = Number($(event.target).closest('.video-preview-item').find('input[type="hidden"]').val());
+            updateAllOrderSelects(value, id);
+        });
+
+        function updateAllOrderSelects(selectedValue = null, selectedId = null) {
+            const videoPreviewItems = container.find('.video-preview-item');
+            videoPreviewItems.each(function (key, el) {
+                const element = $(el);
+                const select = element.find('.order-video-select');
+                let value = Number(select.val());
+                const id = Number($(el).find('input[type="hidden"]').val());
+                if (selectedValue && value === selectedValue && id !== selectedId) {
+                    value = null;
+                }
+                select.empty();
+                select.append(`<option ${isNaN(value) ? 'selected' : ''}>DEFAULT</option>`);
+                for (let i = 1; i <= videoPreviewItems.length; i++) {
+                    select.append(`<option value="${i}" ${Number(value) === i ? 'selected' : ''}>${i}</option>`);
                 }
             });
-        }));
+        }
 
         $(document).on('click', '.video-preview-item-delete', function (e) {
             e.preventDefault();
             $(e.target).closest('.video-preview-item').remove();
-        });
+        })
 
         // Toggle delay input based on Playlist Mode (show delay only for Sequential mode)
         function toggleDelayInput() {

@@ -35,6 +35,20 @@
                             </div>
                         </div>
 
+                        <div class=" mb-3">
+                            <label for="delaySelect" class="form-label">Select Delay Between Plays (ms):</label>
+                            <select class="form-select" id="delay" name="delay">
+                                <option value="1">1s</option>
+                                <option value="5">5s</option>
+                                <option value="10">10s</option>
+                                <option value="15">15s</option>
+                                <option value="30">30s</option>
+                                <option value="60">1min</option>
+                                <option value="120">2min</option>
+                            </select>
+
+                        </div>
+
                         <!-- Video Mode Selection -->
                         <div class="mb-3">
                             <label for="mode" class="form-label">Playlist Mode</label>
@@ -112,12 +126,12 @@
 
 @push('footer')
     <script>
+        const container = $('#videoPreviewContainer');
         $.each($(document).find('[data-bb-toggle="video-picker-choose"][data-target="popup"]'), (function (e, t) {
             $(t).rvMedia({
                 multiple: true,
                 filter: "video",
                 onSelectFiles: function (e, t) {
-                    const container = $('#videoPreviewContainer');
                     e.forEach((i, k) => {
                         const html = `
                         <div class="col-12 col-md-6 col-lg-4 mb-3 video-preview-item">
@@ -138,10 +152,36 @@
                         </div>
                         `;
                         container.append(html);
-                    })
+                    });
+                    updateAllOrderSelects();
                 }
             })
         }));
+
+        container.on('change', '.order-video-select', function (event) {
+            const value = Number($(event.target).val());
+            const id = Number($(event.target).closest('.video-preview-item').find('input[type="hidden"]').val());
+            updateAllOrderSelects(value, id);
+        });
+
+        function updateAllOrderSelects(selectedValue = null, selectedId = null) {
+            const videoPreviewItems = container.find('.video-preview-item');
+            videoPreviewItems.each(function (key, el) {
+                const element = $(el);
+                const select = element.find('.order-video-select');
+                let value = Number(select.val());
+                const id = Number($(el).find('input[type="hidden"]').val());
+                if (selectedValue && value === selectedValue && id !== selectedId) {
+                    value = null;
+                }
+                select.empty();
+                select.append(`<option ${isNaN(value) ? 'selected' : ''}>DEFAULT</option>`);
+                for (let i = 1; i <= videoPreviewItems.length; i++) {
+                    select.append(`<option value="${i}" ${Number(value) === i ? 'selected' : ''}>${i}</option>`);
+                }
+            });
+        }
+
         $(document).on('click', '.video-preview-item-delete', function (e) {
             e.preventDefault();
             $(e.target).closest('.video-preview-item').remove();
