@@ -156,7 +156,8 @@
                 const element = $(el);
                 const select = element.find('.order-video-select');
                 let value = Number(select.val());
-                const id = Number(el.find('input[type="hidden"]').val());
+                console.log(el,$(el))
+                const id = Number($(el).find('input[type="hidden"]').val());
                 if (selectedValue && value === selectedValue && id !== selectedId) {
                     value = null;
                 }
