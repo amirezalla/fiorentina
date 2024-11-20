@@ -36,7 +36,7 @@
     let activeVideo = 0;
     let delayTimer = null;
     console.log("hiiiiiiiiii")
-    console.log($(videoEl),$(videoEl).closest('a'))
+    console.log(videoEl.closest('a'))
     videoEl.addEventListener('ended', function (e) {
         activeVideo = (++activeVideo) % video_files.length;
         if (delay) {
