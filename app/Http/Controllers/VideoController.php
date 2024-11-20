@@ -97,6 +97,7 @@ class VideoController extends BaseController
                 return redirect()->route('videos.index')->with('success', 'Videos uploaded successfully.');
             });
         } catch (Throwable $e) {
+            dd($e);
             return redirect()->back()->with('error', 'Failed to upload videos.');
         }
     }
