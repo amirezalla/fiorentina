@@ -144,7 +144,7 @@
             })
         }));
 
-        $('.order-video-select').change(function (el) {
+        $('#videoPreviewContainer').on('change','.order-video-select',function (el) {
             console.log(el);
         });
 
