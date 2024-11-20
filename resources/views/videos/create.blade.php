@@ -144,8 +144,8 @@
             })
         }));
 
-        container.on('change','.order-video-select',function (el) {
-            console.log(el);
+        container.on('change','.order-video-select',function (event) {
+            console.log($(event.target),$(event.target).val());
         });
 
         function updateAllOrderSelects() {
