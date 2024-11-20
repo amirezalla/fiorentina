@@ -144,6 +144,10 @@
             })
         }));
 
+        $('.order-video-select').change(function (el) {
+            console.log(el);
+        });
+
         function updateAllOrderSelects() {
             const container = $('#videoPreviewContainer');
             const videoPreviewItems = container.find('.video-preview-item');
@@ -151,7 +155,6 @@
                 const element = $(el);
                 const select = element.find('.order-video-select');
                 const selectPrevValue = select.val();
-                console.log(selectPrevValue);
                 select.empty();
                 select.append(`<option ${isNaN(selectPrevValue) ? 'selected' : ''}>DEFAULT</option>`);
                 for (let i = 1; i <= videoPreviewItems.length; i++) {
