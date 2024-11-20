@@ -46,7 +46,6 @@ class VideoController extends BaseController
 
     public function store(Request $request)
     {
-        dd(collect($request->videos),collect($request->videos)->sortBy('order'));
         $this->validate($request, [
             'title' => ['required', 'string'],
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
@@ -56,7 +55,7 @@ class VideoController extends BaseController
             'videos.*' => ['array:media_id,url'],
             'videos.*.media_id' => [Rule::exists(MediaFile::class, 'id')],
             'videos.*.url' => ['nullable', 'url'],
-            'videos.*.order' => ['nullable', 'numeric'],
+            'videos.*.order' => ['nullable'],
         ]);
 
 
@@ -77,18 +76,22 @@ class VideoController extends BaseController
 
                 // Sync video files with priorities if provided
                 if ($request->filled('videos')) {
-                    $mediaFilesData = collect($request->videos)->map(function ($item, $key) {
-                        return [
-                            'media_id' => $item['media_id'],
-                            'url' => Arr::get($item, 'url'),
-                        ];
-                    })->values()->mapWithKeys(function ($item, $key) {
-                        return [
-                            $item['media_id'] => array_merge($item, [
-                                'priority' => $key + 1,
-                            ]),
-                        ];
-                    })->toArray();
+                    $mediaFilesData = collect($request->videos)
+                        ->sortBy('order')
+                        ->map(function ($item, $key) {
+                            return [
+                                'media_id' => $item['media_id'],
+                                'url' => Arr::get($item, 'url'),
+                            ];
+                        })
+                        ->values()
+                        ->mapWithKeys(function ($item, $key) {
+                            return [
+                                $item['media_id'] => array_merge($item, [
+                                    'priority' => $key + 1,
+                                ]),
+                            ];
+                        })->toArray();
                     $video->mediaFiles()->sync($mediaFilesData);
                 }
 
