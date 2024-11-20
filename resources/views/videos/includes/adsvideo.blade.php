@@ -3,7 +3,7 @@
         <div class="row mx-0">
             <div class="col-12 mx-auto">
                 <div class="d-block w-full">
-                    <a @if($video_file_urls->count()) href="{{ $video_file_urls[0] }}" @endif target="_blank">
+                    <a class="d-block w-100" @if($video_file_urls->count()) href="{{ $video_file_urls[0] }}" @endif target="_blank">
                         <video width="100%" id="ads-video" autoplay muted data-video="{{ json_encode($video) }}"
                                data-video-files="{{ json_encode($video_files) }}"
                                data-video-file-urls="{{ json_encode($video_file_urls) }}">
