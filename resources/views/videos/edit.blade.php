@@ -43,7 +43,7 @@
                                                     <select name="videos[{{ $mediaFile->id }}][order]" class="form-control order-video-select" id="order-video-select-{{ $mediaFile->id }}">
                                                         <option>DEFAULT</option>
                                                         @foreach($video->mediaFiles as $key => $mf)
-                                                            <option value="{{ ++$key }}">{{ ++$key }}</option>
+                                                            <option value="{{ $key++ }}">{{ $key++ }}</option>
                                                         @endforeach
                                                     </select>
                                                     <label for="link-video-input-{{ $mediaFile->id }}" class="form-label">Url</label>
