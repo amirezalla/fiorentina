@@ -149,7 +149,7 @@
         function updateAllOrderSelects() {
             const container = $('#videoPreviewContainer');
             const videoPreviewItems = container.find('.video-preview-item');
-            videoPreviewItems.forEach(function (el,k) {
+            videoPreviewItems.each(function (el,k) {
                 console.log(el)
             });
         }
