@@ -86,7 +86,7 @@ class VideoController extends BaseController
                         ->values()
                         ->mapWithKeys(function ($item, $key) {
                             return [
-                                $item['media_id'] => array_merge($item, [
+                                $item['media_file_id'] => array_merge($item, [
                                     'priority' => $key + 1,
                                 ]),
                             ];
