@@ -39,16 +39,15 @@
                                             <div class="w-100 p-2 border border-2 rounded-2">
                                                 <video src="{{ $mediaFile->previewUrl }}" class="w-100" controls></video>
                                                 <div class="mt-1">
-                                                    @dd($mediaFile)
                                                     <label for="order-video-select-{{ $mediaFile->id }}" class="form-label">Order</label>
                                                     <select name="videos[{{ $mediaFile->id }}][order]" class="form-control order-video-select" id="order-video-select-{{ $mediaFile->id }}">
                                                         <option>DEFAULT</option>
                                                         @foreach($video->mediaFiles as $key => $mf)
-                                                            <option value="{{ $key++ }}">{{ $key++ }}</option>
+                                                            <option value="{{ $key++ }}" @if($mediaFile->pivot->priority == $key++) selected @endif>{{ $key++ }}</option>
                                                         @endforeach
                                                     </select>
                                                     <label for="link-video-input-{{ $mediaFile->id }}" class="form-label">Url</label>
-                                                    <input type="text" class="form-control mb-2" id="link-video-input-{{ $mediaFile->id }}" name="videos[{{ $mediaFile->id }}][url]">
+                                                    <input type="text" class="form-control mb-2" id="link-video-input-{{ $mediaFile->id }}" name="videos[{{ $mediaFile->id }}][url]" value="{{ $mediaFile->pivot->url }}">
                                                     <button type="button" class="btn btn-danger video-preview-item-delete">
                                                         Delete
                                                     </button>
