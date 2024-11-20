@@ -144,20 +144,24 @@
             })
         }));
 
-        container.on('change','.order-video-select',function (event) {
-            console.log($(event.target),$(event.target).val());
+        container.on('change', '.order-video-select', function (event) {
+            const value = Number($(event.target).val());
+            updateAllOrderSelects(value);
         });
 
-        function updateAllOrderSelects() {
+        function updateAllOrderSelects(selectedValue = null) {
             const videoPreviewItems = container.find('.video-preview-item');
             videoPreviewItems.each(function (key, el) {
                 const element = $(el);
                 const select = element.find('.order-video-select');
-                const selectPrevValue = select.val();
+                let value = Number(select.val());
+                if (selectedValue && value === selectedValue){
+                    value = null;
+                }
                 select.empty();
-                select.append(`<option ${isNaN(selectPrevValue) ? 'selected' : ''}>DEFAULT</option>`);
+                select.append(`<option ${isNaN(value) ? 'selected' : ''}>DEFAULT</option>`);
                 for (let i = 1; i <= videoPreviewItems.length; i++) {
-                    select.append(`<option value="${i}" ${Number(selectPrevValue) === i ? 'selected' : ''}>${i}</option>`);
+                    select.append(`<option value="${i}" ${Number(value) === i ? 'selected' : ''}>${i}</option>`);
                 }
             });
         }
