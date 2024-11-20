@@ -146,17 +146,18 @@
 
         container.on('change', '.order-video-select', function (event) {
             const value = Number($(event.target).val());
-            console.log($(event.target).closest('.video-preview-item').find('input[type="hidden"]').val())
-            // updateAllOrderSelects(value);
+            const id = Number($(event.target).closest('.video-preview-item').find('input[type="hidden"]').val());
+            updateAllOrderSelects(value, id);
         });
 
-        function updateAllOrderSelects(selectedValue = null) {
+        function updateAllOrderSelects(selectedValue = null, selectedId = null) {
             const videoPreviewItems = container.find('.video-preview-item');
             videoPreviewItems.each(function (key, el) {
                 const element = $(el);
                 const select = element.find('.order-video-select');
                 let value = Number(select.val());
-                if (selectedValue && value === selectedValue){
+                const id = Number(el.find('input[type="hidden"]').val());
+                if (selectedValue && value === selectedValue && id !== selectedId) {
                     value = null;
                 }
                 select.empty();
