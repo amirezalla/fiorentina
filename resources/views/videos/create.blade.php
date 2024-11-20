@@ -146,7 +146,8 @@
 
         container.on('change', '.order-video-select', function (event) {
             const value = Number($(event.target).val());
-            updateAllOrderSelects(value);
+            console.log($(event.target))
+            // updateAllOrderSelects(value);
         });
 
         function updateAllOrderSelects(selectedValue = null) {
