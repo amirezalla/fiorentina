@@ -146,7 +146,7 @@
 
         container.on('change', '.order-video-select', function (event) {
             const value = Number($(event.target).val());
-            console.log($(event.target).closest('.video-preview-item'))
+            console.log($(event.target).closest('.video-preview-item').find('input[type="hidden"]'))
             // updateAllOrderSelects(value);
         });
 
