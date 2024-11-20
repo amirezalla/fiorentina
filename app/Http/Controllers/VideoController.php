@@ -46,6 +46,7 @@ class VideoController extends BaseController
 
     public function store(Request $request)
     {
+        dd(collect($request->videos),collect($request->videos)->sortBy('order'));
         $this->validate($request, [
             'title' => ['required', 'string'],
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
