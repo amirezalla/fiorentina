@@ -175,7 +175,7 @@ class Ad extends BaseModel
     {
         $ads = self::query()
             ->typeAnnuncioImmagine()
-            ->whereIn('group', [self::GROUP_DBLOG_P1, self::GROUP_DBLOG_P2, self::GROUP_DBLOG_P3])
+            ->whereIn('group', [self::GROUP_DBLOG_P1, self::GROUP_DBLOG_P2, self::GROUP_DBLOG_P3, self::GROUP_DBLOG_P4])
             ->get()
             ->unique('group')
             ->mapWithKeys(function ($item, $key) {
@@ -197,6 +197,11 @@ class Ad extends BaseModel
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
                     } else if ($key == 2 && $ads->has(self::GROUP_DBLOG_P3)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
+                    }else if ($key == 3 && $ads->has(self::GROUP_DBLOG_P4)) {
+                        $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P4)])->render();
+                    }
+                    else if ($key == 4 && $ads->has(self::GROUP_DBLOG_P5)) {
+                        $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P5)])->render();
                     }
                     return $item;
                 })->flatten();

@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_diretta_1)->first());
         });
         view()->composer('ads.includes.adsrecentp1', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp1)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp1)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.adsrecentp2', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp2)->first());
