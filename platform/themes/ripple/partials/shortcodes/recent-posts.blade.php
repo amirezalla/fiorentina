@@ -74,7 +74,6 @@
                                                         {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                     </a>
 
-                                                </div>
                                         </article>
 
                                         <!-- Optional ads -->
