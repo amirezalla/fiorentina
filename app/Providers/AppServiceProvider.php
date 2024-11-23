@@ -41,45 +41,44 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer('ads.includes.background-page', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->first());
-        });
-        view()->composer('ads.includes.adsdiretta', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_diretta_1)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrder()->first());
+        });      view()->composer('ads.includes.adsdiretta', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_diretta_1)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.adsrecentp1', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp1)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.adsrecentp2', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp2)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp2)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.adsrecentp3', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp3)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp3)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.adsrecentp4', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp4)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp4)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.adsense', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::Google_adsense)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::Google_adsense)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.SIZE_468X60_TOP_SX', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_468X60_TOP_SX)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_468X60_TOP_SX)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.SIZE_468X60_TOP_DX', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_468X60_TOP_DX)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_468X60_TOP_DX)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.SIZE_300X250_TOP', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_300X250_TOP)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_300X250_TOP)->inRandomOrder()->first());
         });
         view()->composer('ads.includes.SIZE_300X250_C1', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_300X250_C1)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_300X250_C1)->inRandomOrder()->first());
         });
 
         view()->composer('ads.includes.SIZE_230X90_DX', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_230X90_DX)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_230X90_DX)->inRandomOrder()->first());
         });
 
         view()->composer('ads.includes.MOBILE_HOME_TOP_24', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_HOME_TOP_24)->first());
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_HOME_TOP_24)->inRandomOrder()->first());
         });
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
