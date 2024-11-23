@@ -73,6 +73,8 @@
                                                         <i class="fa fa-comment" aria-hidden="true"></i>
                                                         {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                     </a>
+                                                </div>
+                                            </div>
 
                                         </article>
 
