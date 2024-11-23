@@ -60,7 +60,7 @@
                                                 </header>
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
-                                                    <p>
+                                                    <span class="mt-3 d-block">
                                                         @php
                                                             $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                                 'reference_id',
@@ -73,7 +73,7 @@
                                                             <i class="fa fa-comment" aria-hidden="true"></i>
                                                             {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                         </a>
-                                                    </p>
+                                                    </span>
                                                 </div>
 
                                         </article>
