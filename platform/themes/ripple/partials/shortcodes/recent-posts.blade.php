@@ -60,7 +60,7 @@
                                                 </header>
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
-                                                    <span class="mt-3 d-block">
+                                                    <span class=" text-dark mt-3 d-block">
                                                         @php
                                                             $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                                 'reference_id',
