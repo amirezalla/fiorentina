@@ -67,7 +67,8 @@
                                                                 $post->id,
                                                             )->count();
                                                         @endphp
-                                                        Di <span class="author-post">{{ $post->author }}</span> /
+                                                        Di <span class="author-post">{{ $post->author->first_name }}
+                                                            {{ $post->author->last_name }}</span> /
                                                         <a href="{{ $post->url }}#comments">
                                                             <i class="fa fa-comment" aria-hidden="true"></i>
                                                             {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
