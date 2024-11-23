@@ -16,9 +16,6 @@
                 <div class="post__content p-0">
                     <p data-number-line="4">{{ $post->description }}</p>
                 </div>
-                <div>
-                    @dd($post)
-                </div>
             </div>
         </article>
     @endforeach

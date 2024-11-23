@@ -61,6 +61,7 @@
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
                                                 </div>
+                                                @dd($post)
                                             </div>
                                         </article>
 
