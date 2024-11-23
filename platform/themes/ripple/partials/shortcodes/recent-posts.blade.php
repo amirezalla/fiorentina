@@ -60,6 +60,7 @@
                                                 </header>
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
+                                                    <p>
                                                     <div>
                                                         @php
                                                             $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
@@ -72,9 +73,9 @@
                                                             <i class="fa fa-comment" aria-hidden="true"></i>
                                                             {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                         </a>
+                                                        </p>
                                                     </div>
                                                 </div>
-                                            </div>
 
                                         </article>
 
