@@ -5,7 +5,6 @@
 
     .editoriale-item .editoriale-item-head{
         border-bottom: 1px solid #eeeeee;
-        position: relative;
     }
 
     .editoriale-item .editoriale-item-head .editoriale-item-head-title{
@@ -13,6 +12,7 @@
         font-weight: 500;
         color: #111111;
         padding: 0 8px;
+        position: relative;
     }
 
     .editoriale-item .editoriale-item-head .editoriale-item-head-title::before{
@@ -21,7 +21,7 @@
         right: 0;
         top: 100%;
         position: absolute;
-        content: "";
+        /*content: "";*/
         background-color: red;
     }
 </style>
