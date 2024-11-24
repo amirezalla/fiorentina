@@ -24,6 +24,12 @@
         content: "";
         background-color: rgb(68, 18, 116);
     }
+
+    .editoriale-item .editoriale-item-content .editoriale-item-content-title{
+        color: #111111;
+        font-size: 16px;
+        margin-top: 8px;
+    }
 </style>
 @if($last_post)
     <div class="w-full editoriale-item">
@@ -35,7 +41,7 @@
                 <a href="{{ $last_post->url }}" title="{{ $last_post->name }}" class="d-block w-100">
                     {{ RvMedia::image($last_post->image, $last_post->name, 'large') }}
                 </a>
-                <a href="{{ $last_post->url }}" title="{{ $last_post->name }}" class="editoriale-item-content-link-title">{{ $last_post->name }}</a>
+                <a href="{{ $last_post->url }}" title="{{ $last_post->name }}" class="editoriale-item-content-title">{{ $last_post->name }}</a>
             </div>
         </div>
     </div>
