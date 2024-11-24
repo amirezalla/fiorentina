@@ -25,11 +25,15 @@
         background-color: rgb(68, 18, 116);
     }
 </style>
-<div class="w-full editoriale-item">
-    <div class="editoriale-item-head d-flex">
-        <span class="editoriale-item-head-title">Editoriale</span>
+@if($last_post)
+    <div class="w-full editoriale-item">
+        <div class="editoriale-item-head d-flex">
+            <span class="editoriale-item-head-title">Editoriale</span>
+        </div>
+        <div class="editoriale-item-content p-2">
+            <div class="w-full d-flex">
+                {{ RvMedia::image($last_post->image, $last_post->name, 'large') }}
+            </div>
+        </div>
     </div>
-    <div class="editoriale-item-content">
-
-    </div>
-</div>
+@endif
