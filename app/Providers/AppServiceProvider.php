@@ -114,7 +114,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer('last_post_editoriale', function (View $view) {
-            dd(Category::query()->pluck('name','id')->toArray());
+            /** @var Category $category */
+            $category = Category::query()->find(17);
+            dd($category->posts()->latest()->limit(1)->first());
         });
 
 
