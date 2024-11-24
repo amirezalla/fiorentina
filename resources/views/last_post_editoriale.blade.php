@@ -29,6 +29,7 @@
         color: #111111;
         font-size: 16px;
         margin-top: 8px;
+        display: block;
     }
 </style>
 @if($last_post)
