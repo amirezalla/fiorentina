@@ -9,7 +9,7 @@
 
     .editoriale-item .editoriale-item-head .editoriale-item-head-title{
         font-size: 18px;
-        font-weight: 500;
+        font-weight: 600;
         color: #111111;
         padding: 0 8px;
         position: relative;
@@ -33,7 +33,7 @@
     }
 </style>
 @if($last_post)
-    <div class="w-full editoriale-item">
+    <div class="w-full editoriale-item mt-30">
         <div class="editoriale-item-head d-flex">
             <span class="editoriale-item-head-title">Editoriale</span>
         </div>
