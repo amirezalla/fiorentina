@@ -39,7 +39,7 @@
             <span class="editoriale-item-head-title">Editoriale</span>
         </div>
         <div class="editoriale-item-content p-2">
-            <a href="{{ $last_post->url }}" class="w-full editoriale-item-content-link d-flex" title="{{ $last_post->name }}">
+            <a href="{{ $last_post->url }}" class="w-full editoriale-item-content-link d-block" title="{{ $last_post->name }}">
                 {{ RvMedia::image($last_post->image, $last_post->name, 'large') }}
                 <div class="editoriale-item-content-link-title">{{ $last_post->name }}</div>
             </a>
