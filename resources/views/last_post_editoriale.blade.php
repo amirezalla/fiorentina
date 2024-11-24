@@ -21,7 +21,7 @@
         right: 0;
         top: 100%;
         position: absolute;
-        /*content: "";*/
+        content: "";
         background-color: red;
     }
 </style>
