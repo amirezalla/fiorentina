@@ -116,7 +116,8 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('last_post_editoriale', function (View $view) {
             /** @var Category $category */
             $category = Category::query()->find(170);
-            dd(optional($category)->posts()->latest()->limit(1)->first());
+            $post = $category?->posts()->latest()->limit(1)->first();
+            dd($post);
         });
 
 
