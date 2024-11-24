@@ -26,7 +26,7 @@
     }
 </style>
 <div class="w-full editoriale-item">
-    <div class="editoriale-item-head">
+    <div class="editoriale-item-head d-flex">
         <span class="editoriale-item-head-title">Editoriale</span>
     </div>
 </div>
