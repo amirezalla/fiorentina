@@ -11,6 +11,7 @@
     .editoriale-item .editoriale-item-head .editoriale-item-head-title{
         font-size: 16px;
         font-weight: 500;
+        color: #111111;
     }
 </style>
 <div class="w-full editoriale-item">
