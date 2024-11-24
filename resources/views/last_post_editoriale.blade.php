@@ -8,7 +8,7 @@
                 <a href="{{ $last_post->url }}" title="{{ $last_post->name }}" class="d-block w-100">
                     {{ RvMedia::image($last_post->image, $last_post->name, 'large') }}
                 </a>
-                <a href="{{ $last_post->url }}" title="{{ $last_post->name }}" class="editoriale-item-content-title">{{ $last_post->name }}</a>
+                <a href="{{ $last_post->url }}" title="{{ $last_post->name }}" class="editoriale-item-content-title p-3">{{ $last_post->name }}</a>
             </div>
         </div>
     </div>
