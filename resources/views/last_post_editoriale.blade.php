@@ -3,8 +3,14 @@
         width: 100%;
     }
 
+    .editoriale-item .editoriale-item-head{
+        padding: 0 8px;
+        border-bottom: 1px solid #eeeeee;
+    }
+
     .editoriale-item .editoriale-item-head .editoriale-item-head-title{
-        color: red;
+        font-size: 16px;
+        font-weight: 500;
     }
 </style>
 <div class="w-full editoriale-item">
