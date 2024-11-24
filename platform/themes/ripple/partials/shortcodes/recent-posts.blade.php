@@ -182,6 +182,7 @@
                                 </div>
                             </div>
                     </div>
+                    @include('last_post_editoriale')
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_TOP')
                     </div>
