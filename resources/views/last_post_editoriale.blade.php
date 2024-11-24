@@ -22,11 +22,14 @@
         top: 100%;
         position: absolute;
         content: "";
-        background-color: red;
+        background-color: rgb(68, 18, 116);
     }
 </style>
 <div class="w-full editoriale-item">
     <div class="editoriale-item-head d-flex">
         <span class="editoriale-item-head-title">Editoriale</span>
+    </div>
+    <div class="editoriale-item-content">
+
     </div>
 </div>
