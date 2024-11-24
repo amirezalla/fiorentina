@@ -1,37 +1,3 @@
-<style>
-    .editoriale-item{
-        width: 100%;
-    }
-
-    .editoriale-item .editoriale-item-head{
-        border-bottom: 1px solid #eeeeee;
-    }
-
-    .editoriale-item .editoriale-item-head .editoriale-item-head-title{
-        font-size: 18px;
-        font-weight: 600;
-        color: #111111;
-        padding: 0 8px;
-        position: relative;
-    }
-
-    .editoriale-item .editoriale-item-head .editoriale-item-head-title::before{
-        height: 2px;
-        left: 0;
-        right: 0;
-        top: 100%;
-        position: absolute;
-        content: "";
-        background-color: rgb(68, 18, 116);
-    }
-
-    .editoriale-item .editoriale-item-content .editoriale-item-content-title{
-        color: #111111;
-        font-size: 16px;
-        margin-top: 8px;
-        display: block;
-    }
-</style>
 @if($last_post)
     <div class="w-full editoriale-item mt-30">
         <div class="editoriale-item-head d-flex">
