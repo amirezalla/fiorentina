@@ -37,13 +37,13 @@
                             if ($rank <= 4) {
                                 $labelClass = 'badge badge-success'; // First place
                             } elseif ($rank == 5) {
-                                $labelClass = 'badge badge-danger'; // Top 4
+                                $labelClass = 'badge badge-warning'; // Top 4
                             } elseif ($rank == 6) {
                                 $labelClass = 'badge badge-warning'; // Top 6
                             } elseif ($rank >= 18) {
                                 $labelClass = 'badge badge-danger'; // Top 6
                             } else {
-                                $labelClass = 'text-dark'; // Top 6
+                                $labelClass = 'text-dark badge badge-light'; // Top 6
                             }
                         @endphp
                         <tr style="border-bottom:1px solid blueviolet">
@@ -84,6 +84,18 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="legend mb-4">
+                <span class="badge badge-success"
+                    style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
+                Champions League
+                <span class="badge badge-warning"
+                    style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
+                Europa & Conference League
+                <br>
+                <span class="badge badge-danger"
+                    style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
+                Serie B
+            </div>
         </section>
     </div>
 </div>
