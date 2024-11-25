@@ -209,6 +209,7 @@ class Ad extends BaseModel
 //                        dd(preg_match($item, $adsBackgroundShortCodeRegex));
                         return preg_match($item, $adsBackgroundShortCodeRegex);
                     });
+                    dd($adsBackground);
                     if ($adsBackground) {
                         Theme::set('has-ads-background', $adsBackground);
                         $shortCodes = $shortCodes->filter(function ($item) use ($adsBackgroundShortCodeRegex) {
