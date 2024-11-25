@@ -182,7 +182,6 @@ class Ad extends BaseModel
             });
         $shortCodePattern = '/<shortcode>(.*?)<\/shortcode>/';
         $adsBackgroundShortCodeRegex = '/<shortcode>\[ads-background.*?\](.*?)\[\/ads-background.*?\]<\/shortcode>/';
-        $adsBackgroundShortCodeRegex = '/<shortcode>\[ads-background.*?\](.*?)\[\/ads-background.*?\]<\/shortcode>/';
         preg_match_all('/<shortcode>(.*?)<\/shortcode>|<p[^>]*?>([\s\S]*?)<\/p>/', $content, $contentMatches);
         if (count($contentMatches)) {
             $contentMatches = collect(collect($contentMatches)->first());
@@ -207,6 +206,7 @@ class Ad extends BaseModel
                 })->flatten();
                 if ($shortCodes->count()) {
                     $adsBackground = $shortCodes->first(function ($item) use ($adsBackgroundShortCodeRegex) {
+                        dd($item);
                         return preg_match($item, $adsBackgroundShortCodeRegex);
                     });
                     if ($adsBackground) {
