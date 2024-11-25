@@ -181,7 +181,7 @@ class Ad extends BaseModel
                 return [$item->group => $item];
             });
         $shortCodePattern = '/<shortcode>(.*?)<\/shortcode>/';
-        $adsBackgroundShortCodeRegex = '/<shortcode>(.*?)<\/shortcode>/';
+        $adsBackgroundShortCodeRegex = '/<shortcode>([^<]*)<\/shortcode>/';
         preg_match_all('/<shortcode>(.*?)<\/shortcode>|<p[^>]*?>([\s\S]*?)<\/p>/', $content, $contentMatches);
         if (count($contentMatches)) {
             $contentMatches = collect(collect($contentMatches)->first());
