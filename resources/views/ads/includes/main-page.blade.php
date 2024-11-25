@@ -8,8 +8,10 @@
                         <div class="col-8 mx-auto">
                             <a href="{{ $ad->url }}" class="d-block">
                                 <img src="{{ $ad->getImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
-                                    style="width: 100%; height: auto;">
-                            </a>
+                                    @if (!$ad->width) style="width: 100%; height: auto;">
+                                @else
+                                    style="width: {{ $ad->width }}px; height: {{ $ad->height }}px;"> @endif
+                                    </a>
                         </div>
                     </div>
                 @else

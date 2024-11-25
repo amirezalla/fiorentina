@@ -16,7 +16,7 @@
 
 <div></div>
 
-<div class="d-block d-md-none col-12">
+<div class="d-block d-md-none col-12 text-center">
     @include('ads.includes.MOBILE_HOME_HERO_25')
 </div>
 
