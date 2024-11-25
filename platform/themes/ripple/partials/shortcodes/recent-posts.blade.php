@@ -89,19 +89,49 @@
 
                                         <!-- Optional ads -->
                                         @if ($index == 0)
-                                            @include('ads.includes.adsrecentp1')
+                                            <div class="d-none d-md-block">
+                                                @include('ads.includes.adsrecentp1')
+
+                                            </div>
+                                        <div class="d-block d-md-none col-12 mb-4">
+                                            @include('ads.includes.MOBILE_POSIZIONE_1')
+                                        </div>
                                         @endif
                                         @if ($index == 2)
-                                            @include('ads.includes.adsrecentp2')
+                                            <div class="d-none d-md-block">
+                                                @include('ads.includes.adsrecentp2')
+                                            </div>
+
+                                            <div class="d-block d-md-none col-12 mb-4">
+                                                @include('ads.includes.MOBILE_POSIZIONE_2')
+                                            </div>
                                         @endif
                                         @if ($index == 5)
-                                            @include('ads.includes.adsrecentp3')
+                                            <div class="d-none d-md-block">
+                                                @include('ads.includes.adsrecentp3')
+                                            </div>
+
+                                            <div class="d-block d-md-none col-12 mb-4">
+                                                @include('ads.includes.MOBILE_POSIZIONE_3')
+                                            </div>
                                         @endif
                                         @if ($index == 7)
-                                            @include('ads.includes.adsrecentp2')
+                                            <div class="d-none d-md-block">
+                                                @include('ads.includes.adsrecentp2')
+                                            </div>
+
+                                            <div class="d-block d-md-none col-12 mb-4">
+                                                @include('ads.includes.MOBILE_POSIZIONE_4')
+                                            </div>
                                         @endif
                                         @if ($index == 10)
-                                            @include('ads.includes.adsrecentp1')
+                                            <div class="d-none d-md-block">
+                                                @include('ads.includes.adsrecentp1')
+
+                                            </div>
+                                            <div class="d-block d-md-none col-12 mb-4">
+                                                @include('ads.includes.MOBILE_POSIZIONE_5')
+                                            </div>
                                         @endif
                                     @endforeach
 
