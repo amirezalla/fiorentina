@@ -84,6 +84,21 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('ads.includes.MOBILE_HOME_HERO_25', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_HOME_HERO_25)->inRandomOrder()->first());
         });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_1', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_1)->inRandomOrder()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_2', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_2)->inRandomOrder()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_3', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_3)->inRandomOrder()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_4', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_4)->inRandomOrder()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_5', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_5)->inRandomOrder()->first());
+        });
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
             $is_home = request()->route()->getName();

@@ -61,6 +61,20 @@
                             <span class="is-invalid text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="mt-3">
+                            <label class="form-check form-switch">
+                                <input class="form-check-input" name="is_for_home" type="checkbox" value="1"
+                                       id="is_for_home" >
+                                <span class="form-check-label">Advertisement for Home</span>
+                            </label>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-check form-switch">
+                                <input class="form-check-input" name="is_for_post" type="checkbox" value="1"
+                                       id="is_for_post" >
+                                <span class="form-check-label">Advertisement for Post</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -24,7 +24,7 @@
                         @include('ads.includes.SIZE_468X60_TOP_DX')
                     </div>
                 </div>
-                <div class="d-block d-md-none col-12">
+                <div class="d-block d-md-none col-12 text-center">
                     @include('ads.includes.MOBILE_HOME_TOP_24')
                 </div>
             </div>
