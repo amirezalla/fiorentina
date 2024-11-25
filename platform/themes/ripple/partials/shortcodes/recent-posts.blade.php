@@ -160,7 +160,7 @@
                                                 "
                                                 onmouseover="this.style.borderColor='#441274';"
                                                 onmouseout="this.style.borderColor='#aaa';">
-                                                MOSTRA PIU
+                                                ALTRE NOTIZIE
                                             </button>
                                         </div>
                                     @endif
