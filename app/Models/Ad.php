@@ -206,14 +206,12 @@ class Ad extends BaseModel
                 })->flatten();
                 if ($shortCodes->count()) {
                     $adsBackground = $shortCodes->first(function ($item) use ($adsBackgroundShortCodeRegex) {
-                        dd(preg_match($adsBackgroundShortCodeRegex,$item));
-                        return preg_match($item, $adsBackgroundShortCodeRegex);
+                        return preg_match($adsBackgroundShortCodeRegex,$item);
                     });
-                    dd($adsBackground);
                     if ($adsBackground) {
                         Theme::set('has-ads-background', $adsBackground);
                         $shortCodes = $shortCodes->filter(function ($item) use ($adsBackgroundShortCodeRegex) {
-                            return !preg_match($item, $adsBackgroundShortCodeRegex);
+                            return !preg_match($adsBackgroundShortCodeRegex,$item);
                         });
                     }
                 }
