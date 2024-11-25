@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Ad;
 use App\Models\Video;
+use Botble\Blog\Models\Category;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 
@@ -113,6 +114,12 @@ class AppServiceProvider extends ServiceProvider
                 $video_file_urls = collect();
             }
             $view->with('video', $video)->with('video_files', $video_files)->with('video_file_urls',$video_file_urls);
+        });
+
+        view()->composer('last_post_editoriale', function (View $view) {
+            $category = Category::query()->find(17);
+            $last_post = $category?->posts()->latest()->limit(1)->first();
+            $view->with('last_post',$last_post);
         });
 
 

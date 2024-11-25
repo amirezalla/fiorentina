@@ -192,6 +192,7 @@
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_TOP')
                     </div>
+                    @include('last_post_editoriale')
                     <div class="page-content">
                         <div class="post-group">
                             <div class="post-group__header">
