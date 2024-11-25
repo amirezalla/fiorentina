@@ -64,14 +64,14 @@
                         <div class="mt-3">
                             <label class="form-check form-switch">
                                 <input class="form-check-input" name="is_for_home" type="checkbox" value="1"
-                                       id="is_for_home" @if($video->is_for_home) checked @endif>
+                                       id="is_for_home" >
                                 <span class="form-check-label">Advertisement for Home</span>
                             </label>
                         </div>
                         <div class="mt-3">
                             <label class="form-check form-switch">
                                 <input class="form-check-input" name="is_for_post" type="checkbox" value="1"
-                                       id="is_for_post" @if($video->is_for_post) checked @endif>
+                                       id="is_for_post" >
                                 <span class="form-check-label">Advertisement for Post</span>
                             </label>
                         </div>
