@@ -5,9 +5,9 @@
             <div class="col-12 mx-auto">
                 <a href="" class="d-block">
                     <img src="{{ $ad->getImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
-                        @if (!$post->width) style="width: 100%; height: auto;">
+                        @if (!$ad->width) style="width: 100%; height: auto;">
                     @else
-                        style="width: {{ $post->width }}px; height: {{ $post->height }}px;"> @endif
+                        style="width: {{ $ad->width }}px; height: {{ $ad->height }}px;"> @endif
                         </a>
             </div>
 
