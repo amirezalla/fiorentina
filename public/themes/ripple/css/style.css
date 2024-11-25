@@ -5031,7 +5031,11 @@ header>.container {
 
     .post-group--hero .post-group__left,
     .post-group__right .post-group__item {
-        margin-bottom: 50px;
+        margin-bottom: 0px;
+    }
+
+    .post-group--hero .post-group__left {
+        margin-top: 20px;
     }
 
     .stat-label {
@@ -5165,6 +5169,7 @@ header>.container {
 
     .post__inside--feature .post__title a {
         color: white;
+        font-size: 8pt;
     }
 
     .post-group--hero {
@@ -5189,15 +5194,15 @@ header>.container {
     font-family: 'Roboto Condensed', sans-serif;
 }
 
-.editoriale-item{
+.editoriale-item {
     width: 100%;
 }
 
-.editoriale-item .editoriale-item-head{
+.editoriale-item .editoriale-item-head {
     border-bottom: 1px solid #eeeeee;
 }
 
-.editoriale-item .editoriale-item-head .editoriale-item-head-title{
+.editoriale-item .editoriale-item-head .editoriale-item-head-title {
     font-size: 18px;
     font-weight: 600;
     color: #111111;
@@ -5205,7 +5210,7 @@ header>.container {
     position: relative;
 }
 
-.editoriale-item .editoriale-item-head .editoriale-item-head-title::before{
+.editoriale-item .editoriale-item-head .editoriale-item-head-title::before {
     height: 2px;
     left: 0;
     right: 0;
@@ -5215,7 +5220,7 @@ header>.container {
     background-color: rgb(68, 18, 116);
 }
 
-.editoriale-item .editoriale-item-content .editoriale-item-content-title{
+.editoriale-item .editoriale-item-content .editoriale-item-content-title {
     color: #111111;
     font-size: 16px;
     margin-top: 8px;
