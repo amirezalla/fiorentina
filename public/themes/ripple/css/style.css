@@ -541,7 +541,7 @@ p:empty {
 
 #back2top.active {
     background-color: white;
-    bottom: 90px;
+    bottom: 35px;
     opacity: 1;
     visibility: visible
 }

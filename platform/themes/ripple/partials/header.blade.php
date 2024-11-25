@@ -10,16 +10,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <noscript>
         <style amp-boilerplate>
-          body{
-            -webkit-animation:none;
-            -moz-animation:none;
-            -ms-animation:none;
-            animation:none
-          }
+            body {
+                -webkit-animation: none;
+                -moz-animation: none;
+                -ms-animation: none;
+                animation: none
+            }
         </style>
-      </noscript>
-      <script async src="https://cdn.ampproject.org/v0.js"></script>
-      <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+    </noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
     @php(Theme::set('headerMeta', Theme::partial('header-meta')))
 
     {!! Theme::header() !!}
@@ -28,7 +28,7 @@
 <body {!! Theme::bodyAttributes() !!}>
     {!! apply_filters(THEME_FRONT_BODY, null) !!}
     <header data-sticky="false" data-sticky-checkpoint="200" data-responsive="991"
-        class="page-header page-header--light py-0 z-1">
+        class="page-header page-header--light py-0">
         <div class="container headup" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="page-header__left">
                 <a href="{{ BaseHelper::getHomepageUrl() }}" class="page-logo">
@@ -90,7 +90,7 @@
     {{--        </div> --}}
     {{--    </header> --}}
     <header data-sticky="false" data-sticky-checkpoint="200" data-responsive="991"
-        class="page-header page-header--light py-0 z-1">
+        class="page-header page-header--light py-0">
         <div class="container d-flex">
 
             <div class="page-header__right flex-grow-1">
