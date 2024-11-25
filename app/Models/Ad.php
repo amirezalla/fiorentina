@@ -206,8 +206,7 @@ class Ad extends BaseModel
                 })->flatten();
                 if ($shortCodes->count()) {
                     $adsBackground = $shortCodes->first(function ($item) use ($adsBackgroundShortCodeRegex) {
-                        preg_match($item, $adsBackgroundShortCodeRegex,$matches);
-                        dd($matches);
+                        dd(preg_match($item, $adsBackgroundShortCodeRegex));
                         return preg_match($item, $adsBackgroundShortCodeRegex);
                     });
                     if ($adsBackground) {
