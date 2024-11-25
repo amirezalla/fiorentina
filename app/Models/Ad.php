@@ -58,9 +58,7 @@ class Ad extends BaseModel
     const MOBILE_POSIZIONE_3 = 37;
     const MOBILE_POSIZIONE_4 = 38;
     const MOBILE_POSIZIONE_5 = 39;
-    // const ROTATION_100 = 40;
-    // const ROTAZIONE_728X200 = 41;
-    // const SKIN = 42;
+    const MOBILE_HOME_HERO_25=40;
     const SKIN_MOBILE = 43;
 
 
@@ -99,6 +97,7 @@ class Ad extends BaseModel
         self::MOBILE_POSIZIONE_4 => "MOBILE_POSIZIONE_4",
         self::MOBILE_POSIZIONE_5 => "MOBILE_POSIZIONE_5",
         self::SKIN_MOBILE => "SKIN_MOBILE",
+        self::MOBILE_HOME_HERO_25 => "MOBILE_HOME_HERO_25",
         /*self::SIZE_728X90_B1 => "SIZE_468X60_TOP_SX",
         self::SIZE_728X90_C1 => "SIZE_468X60_TOP_SX",
         self::SIZE_728X90_C2 => "SIZE_468X60_TOP_SX",

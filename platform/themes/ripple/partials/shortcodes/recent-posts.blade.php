@@ -13,6 +13,13 @@
     }
 
 @endphp
+
+<div></div>
+
+<div class="d-block d-md-none col-12">
+    @include('ads.includes.MOBILE_HOME_HERO_25')
+</div>
+
 <section class="section recent-posts pt-20 pb-20"
     @if ($shortcode->background_color) style="background-color: {{ $shortcode->background_color }} !important;" @endif>
     <div class="container bg-white">
