@@ -1,13 +1,12 @@
 @extends($layout ?? BaseHelper::getAdminMasterLayoutTemplate())
 
 @section('content')
+    <a href="{{ $url }}" class="btn btn-danger">
+        <i class="fas fa-trash"></i> {{ trans('plugins/fob-comment::comment.trash') }}
+    </a>
     @include('core/table::base-table')
 
-    <x-core::modal
-        id="reply-comment-modal"
-        :title="trans('plugins/fob-comment::comment.reply_modal.title')"
-        size="lg"
-    >
+    <x-core::modal id="reply-comment-modal" :title="trans('plugins/fob-comment::comment.reply_modal.title')" size="lg">
         {!! \FriendsOfBotble\Comment\Forms\ReplyCommentForm::create()->renderForm() !!}
 
         <x-slot:footer>
@@ -26,14 +25,14 @@
         'use strict';
 
         $(() => {
-            $('#reply-comment-modal').on('show.bs.modal', function (event) {
+            $('#reply-comment-modal').on('show.bs.modal', function(event) {
                 const relatedTarget = $(event.relatedTarget).parent()
 
                 $('form#reply-comment-form').prop('action', relatedTarget.data('url'))
                 $('#reply-comment-modal .modal-title').text(relatedTarget.data('modal-title'))
             })
 
-            $('form#reply-comment-form').on('submit', function (e) {
+            $('form#reply-comment-form').on('submit', function(e) {
                 e.preventDefault()
 
                 const dataTable = $('#fob-comment-table')
