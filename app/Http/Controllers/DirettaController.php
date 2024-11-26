@@ -54,26 +54,28 @@ class DirettaController extends BaseController
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
-            'match_id' => 'required',
+            'match_id' => 'required|exists:matches,id',
             'time' => 'required|numeric',
             'tipo_event' => 'required|string|max:255',
             'comment_text' => 'required|string|max:500',
-            'style' => 'required|in:bold,important',
+            'is_bold' => 'nullable|boolean',
+            'is_important' => 'nullable|boolean',
         ]);
     
         // Create a new commentary
         MatchCommentary::create([
             'match_id' => $validatedData['match_id'],
-            'time' => $validatedData['time'],
+            'comment_time' => $validatedData['time'],
             'comment_class' => $validatedData['tipo_event'],
             'comment_text' => $validatedData['comment_text'],
-            'is_bold' => $validatedData['style'] === 'bold',
-            'is_important' => $validatedData['style'] === 'important',
+            'is_bold' => $request->has('is_bold'),
+            'is_important' => $request->has('is_important'),
         ]);
     
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Commentary added successfully.');
     }
+    
     
     
 

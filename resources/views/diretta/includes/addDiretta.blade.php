@@ -22,7 +22,7 @@
         <!-- Time Input -->
         <div class="col-md-2">
             <label for="time" class="form-label">Time</label>
-            <input type="number" id="time" name="time" class="form-control" required>
+            <input type="text" id="time" name="time" class="form-control" required>
         </div>
 
         <!-- Tipo di Event Select -->
@@ -46,15 +46,16 @@
         <textarea id="comment_text" name="comment_text" rows="4" class="form-control" required></textarea>
     </div>
 
-    <!-- Radio Buttons -->
     <div class="mb-3">
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="style" id="bold" value="bold" required>
-            <label class="form-check-label" for="bold">Bold</label>
+            <input class="form-check-input" type="checkbox" name="is_bold" id="is_bold" value="1"
+                {{ old('is_bold') ? 'checked' : '' }}>
+            <label class="form-check-label" for="is_bold">Bold</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="style" id="important" value="important" required>
-            <label class="form-check-label" for="important">Important</label>
+            <input class="form-check-input" type="checkbox" name="is_important" id="is_important" value="1"
+                {{ old('is_important') ? 'checked' : '' }}>
+            <label class="form-check-label" for="is_important">Important</label>
         </div>
     </div>
 
