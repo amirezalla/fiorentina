@@ -126,20 +126,28 @@ class VideoController extends BaseController
             'videos.*.url' => ['nullable', 'url'],
             'videos.*.order' => ['nullable'],
         ]);
-        dd($video->mediaFiles->map(function ($item, $key) {
-            return [
-                'media_id' => $item->id,
-                'order' => $item->pivot->priority,
-                'url' => $item->pivot->url,
-            ];
-        }), collect($request->videos)->values()->map(function ($item, $key) {
-            return array_merge($item,[
-                'media_id'=>intval($item['media_id']),
-                'order'=>$key++,
-            ]);
-        }));
         try {
             return DB::transaction(function () use ($request, $video) {
+                $arr1 = $video->mediaFiles->map(function ($item, $key) {
+                    return [
+                        'media_id' => $item->id,
+                        'order' => $item->pivot->priority,
+                        'url' => $item->pivot->url,
+                    ];
+                });
+                $arr2 = collect($request->videos)->values()->map(function ($item, $key) {
+                    return array_merge($item, [
+                        'media_id' => intval($item['media_id']),
+                        'order' => $key++,
+                    ]);
+                });
+                dd($arr1->diff($arr2),$arr1->diff([
+                    [
+                        'media_id' => 1,
+                        'order' => 1,
+                        'url' => null,
+                    ]
+                ]));
                 $diffCount = $video->mediaFiles->pluck('id')->diff(collect($request->videos)->keys()->toArray())->count();
                 $is_random = $request->mode == Video::PLAYLIST_MODE_RANDOM;
                 $is_published = $request->status == Video::STATUS_PUBLISHED;
