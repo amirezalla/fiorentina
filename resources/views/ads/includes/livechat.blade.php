@@ -116,86 +116,72 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/7.0.3/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
 <script>
-    // Cache for avatar colors
-    const colorCache = {};
-
     function getAvatarColor(firstLetter) {
-        const letter = firstLetter.toUpperCase();
-        if (colorCache[letter]) return colorCache[letter];
-
-        let color;
+        const letter = firstLetter.toUpperCase(); // Ensure the letter is uppercase
         switch (letter) {
             case 'A':
-                color = '#3498db';
-                break; // Blue
+                return '#3498db'; // Blue
             case 'B':
-                color = '#2ecc71';
-                break; // Green
+                return '#2ecc71'; // Green
             case 'C':
-                color = '#e74c3c';
-                break; // Red
+                return '#e74c3c'; // Red
             case 'D':
-                color = '#f39c12';
-                break; // Orange
+                return '#f39c12'; // Orange
             case 'E':
-                color = '#8e44ad';
-                break; // Dark Purple
+                return '#8e44ad'; // Dark Purple
             case 'F':
-                color = '#9b59b6';
-                break; // Purple
+                return '#9b59b6'; // Purple
             case 'G':
-                color = '#16a085';
-                break; // Teal
+                return '#16a085'; // Teal
             case 'H':
-                color = '#e67e22';
-                break; // Orange
+                return '#e67e22'; // Orange
             case 'I':
-                color = '#f1c40f';
-                break; // Yellow
+                return '#f1c40f'; // Yellow
             case 'J':
-                color = '#e84393';
-                break; // Pink
+                return '#e84393'; // Pink
             case 'K':
-                color = '#34495e';
-                break; // Navy Blue
+                return '#34495e'; // Navy Blue
+                // Add more cases as needed
             default:
-                color = '#95a5a6'; // Default Gray
+                return '#95a5a6'; // Default Gray
         }
-
-        colorCache[letter] = color;
-        return color;
     }
 
+
     // Setup CSRF token for axios
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = '{{ csrf_token() }}'
 
     // Extract match_id from the URL
     const urlParams = new URLSearchParams(window.location.search);
-    const matchId = urlParams.get('match_id');
+    const matchId = urlParams.get('match_id'); // Get match_id from the URL
 
     if (!matchId) {
         console.error('Match ID is missing in the URL.');
-    } else {
-        // Initialize Pusher for real-time updates
-        const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
-            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-            encrypted: false
-        });
+    }
 
-        let channel = pusher.subscribe(`match.${matchId}`);
+    // Initialize Pusher for real-time updates
+    const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+        cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+        encrypted: true
+    });
+    // Subscribe to the specific match channel (only once)
+    let channel;
+    if (!channel) {
+        channel = pusher.subscribe(`match.${matchId}`);
         channel.bind('App\\Events\\MessageSent', function(data) {
-            appendMessage(data.message, data.member);
+            appendMessage(data.message, data.member); // Append both message and member data
         });
     }
 
-    Pusher.logToConsole = process.env.NODE_ENV !== 'production';
+    Pusher.logToConsole = true;
+
 
     // Function to append a message to the messages list
-    const messagesList = document.getElementById('messages-list');
-    const chatMessages = document.getElementById('chat-messages');
-
     function appendMessage(message, member) {
+        const messagesList = document.getElementById('messages-list');
+
         const newMessage = document.createElement('li');
         newMessage.classList.add('message-bubble');
 
@@ -207,95 +193,77 @@
         const messageContent = document.createElement('div');
         messageContent.classList.add('message-content');
         messageContent.innerHTML = `
-            <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
-            ${message.message}
-            <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
-        `;
+        <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
+        ${message.message}
+        <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
+    `;
 
         newMessage.appendChild(avatar);
         newMessage.appendChild(messageContent);
 
+        // Prepend the new message to the top of the messages list
         messagesList.insertBefore(newMessage, messagesList.firstChild);
 
+        // Scroll to the top of the chat to show the latest message at the top
+        const chatMessages = document.getElementById('chat-messages');
         chatMessages.scrollTop = 0;
     }
 
-    @if (auth('member')->check())
-        // Debounce for the input
-        let debounceTimeout;
 
+    @if (auth('member')->check())
+        // Send message when button is clicked or enter key is pressed
         const sendMessageButton = document.getElementById('send-message-btn');
         const messageInput = document.getElementById('message-input');
 
         messageInput.addEventListener('keyup', function(event) {
-            clearTimeout(debounceTimeout);
-            debounceTimeout = setTimeout(() => {
-                if (event.key === 'Enter') {
-                    sendMessage();
-                }
-            }, 300);
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
         });
 
-        sendMessageButton.addEventListener('click', function() {
+        sendMessageButton.addEventListener('click', function(event) {
             sendMessage();
         });
-
-        function sendMessage() {
-            const message = messageInput.value.trim();
-
-            if (message === '') return;
-
-            // Send message to the server
-            axios.post(`/chat/${matchId}`, {
-                    message
-                })
-                .then(response => {
-                    console.log('Censored message:', response.data.censored_message);
-                    messageInput.value = '';
-                })
-                .catch(error => {
-                    if (error.response && error.response.status === 400) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: error.response.data.error
-                        });
-                    } else {
-                        console.error('Error sending message:', error);
-                    }
-                });
-        }
     @endif
+
+    function sendMessage() {
+        const message = messageInput.value.trim();
+
+        if (message === '') {
+            return;
+        }
+
+        // Send message to the server
+        axios.post(`/chat/${matchId}`, {
+                message: message
+            })
+            .then(response => {
+                // Show the censored message returned from the server
+                const censoredMessage = response.data.censored_message;
+                console.log('Censored message:', censoredMessage);
+                messageInput.value = ''; // Clear input field
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 400) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: error.response.data.error, // Show error message
+                    });
+                } else {
+                    console.error('Error sending message:', error);
+                }
+            });
+    }
 
     // Fetch existing messages when the page loads
     window.onload = function() {
         axios.get(`/chat/${matchId}`)
             .then(response => {
                 const messages = response.data.messages;
-                const fragment = document.createDocumentFragment();
                 messages.forEach(function(message) {
-                    const newMessage = document.createElement('li');
-                    newMessage.classList.add('message-bubble');
-
-                    const avatar = document.createElement('div');
-                    avatar.classList.add('message-avatar');
-                    avatar.textContent = message.member.first_name.charAt(0).toUpperCase() || 'A';
-                    avatar.style.backgroundColor = getAvatarColor(message.member.first_name.charAt(0));
-
-                    const messageContent = document.createElement('div');
-                    messageContent.classList.add('message-content');
-                    messageContent.innerHTML = `
-                        <strong style='font-size:small'>${message.member.first_name} ${message.member.last_name}</strong><br>
-                        ${message.message}
-                        <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
-                    `;
-
-                    newMessage.appendChild(avatar);
-                    newMessage.appendChild(messageContent);
-
-                    fragment.appendChild(newMessage);
+                    appendMessage(message, message.member);
                 });
-                messagesList.appendChild(fragment);
             })
             .catch(error => {
                 console.error('Error fetching messages:', error);
