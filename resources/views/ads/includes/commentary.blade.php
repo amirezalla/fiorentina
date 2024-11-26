@@ -1,6 +1,14 @@
 @php
     use Illuminate\Support\Str;
 @endphp
+<style>
+    .edit-box {
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+</style>
 <div class="container mt-3">
     @foreach ($commentaries as $comment)
         <div
