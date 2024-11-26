@@ -121,7 +121,7 @@ class VideoController extends BaseController
             'mode' => ['required', Rule::in(Video::PLAYLIST_MODES)],
             'status' => ['required', Rule::in(Video::STATUSES)],
             'videos' => ['nullable', 'array'],
-            'videos.*' => ['array:media_id,url'],
+            'videos.*' => ['array'],
             'videos.*.media_id' => [Rule::exists(MediaFile::class, 'id')],
             'videos.*.url' => ['nullable', 'url'],
             'videos.*.order' => ['nullable'],
