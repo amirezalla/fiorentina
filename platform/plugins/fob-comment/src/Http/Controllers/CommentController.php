@@ -37,13 +37,17 @@ class CommentController extends BaseController
             ->setPreviousRoute('fob-comment.comments.index')
             ->withUpdatedSuccessMessage();
     }
-    
-    public function trash(CommentTable $commentTable)
-{
-    $this->pageTitle(trans('plugins/fob-comment::comment.trash_comments'));
 
-    return $commentTable->renderTable(['onlyTrashed' => true]);
-}
+    public function trash()
+    {
+        $this->pageTitle('Comments Trash Can');
+    
+        // Retrieve only soft-deleted comments
+        $comments = Comment::onlyTrashed()->paginate(10); // Adjust pagination as needed
+    
+        return view('comments.trash.view', compact('comments'));
+    }
+    
 
 
     public function destroy(Comment $comment)
