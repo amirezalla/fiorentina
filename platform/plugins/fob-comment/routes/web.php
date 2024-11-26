@@ -9,16 +9,13 @@ use FriendsOfBotble\Comment\Http\Controllers\Fronts\CommentController as FrontCo
 use FriendsOfBotble\Comment\Http\Controllers\Fronts\ReplyCommentController as FrontReplyCommentController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::name('fob-comment.')->group(function () {
     AdminHelper::registerRoutes(function () {
         Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
             Route::resource('', CommentController::class)->parameters(['' => 'comment']);
             Route::post('{comment}/reply', [ReplyCommentController::class, '__invoke'])->name('reply');
-            Route::post('{id}/restore', [CommentController::class, 'restore'])->name('restore'); // Add the restore route
-            Route::get('trash', [CommentController::class, 'trash'])->name('trash');
-
-
+            Route::post('{id}/restore', [CommentController::class, 'restore'])->name('restore'); // Restore route
+            Route::get('trash', [CommentController::class, 'trash'])->name('trash'); // Trash route
         });
 
         Route::group(['prefix' => 'settings', 'permission' => 'fob-comment.settings'], function () {
