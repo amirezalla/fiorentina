@@ -1,7 +1,13 @@
 <ul @class(['navbar-nav', $navbarClass ?? null])>
     @dd(DashboardMenu::getAll())
     @foreach (DashboardMenu::getAll() as $menu)
-        @if ($menu['id'] == 'cms-core-plugins' || $menu['id'] == 'cms-core-system')
+        @if (
+            $menu['id'] == 'cms-core-plugins' ||
+                $menu['id'] == 'cms-core-system' ||
+                $menu['id'] == 'cms-plugins-custom-field' ||
+                $menu['id'] == 'cms-plugins-block' ||
+                $menu['id'] == 'cms-plugins-gallery' ||
+                $menu['id'] == 'cms-core-appearance')
         @else
             @include('core/base::layouts.partials.navbar-nav-item', [
                 'menu' => $menu,
