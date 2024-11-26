@@ -54,7 +54,7 @@ class DirettaController extends BaseController
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
-            'match_id' => 'required|exists:matches,id',
+            'match_id' => 'required',
             'time' => 'required|numeric',
             'tipo_event' => 'required|string|max:255',
             'comment_text' => 'required|string|max:500',
