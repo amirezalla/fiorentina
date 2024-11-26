@@ -128,8 +128,8 @@ public function updateCommentary(Request $request)
     $commentary = MatchCommentary::findOrFail($validatedData['id']);
 
     // Normalize the values for 'is_important' and 'is_bold' to ensure true or false
-    $commentary->is_important = $request->has('is_important') ? true : false;
-    $commentary->is_bold = $request->has('is_bold') ? true : false;
+    $commentary->is_important = $request->has('is_important') ? 1 : 0;
+    $commentary->is_bold = $request->has('is_bold') ? 1 : 0;
 
     // Update the comment text
     $commentary->comment_text = $validatedData['comment_text'];
