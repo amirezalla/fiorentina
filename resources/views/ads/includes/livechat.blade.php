@@ -118,36 +118,31 @@
 
 
 <script>
-    function getAvatarColor(firstLetter) {
-        const letter = firstLetter.toUpperCase(); // Ensure the letter is uppercase
-        switch (letter) {
-            case 'A':
-                return '#3498db'; // Blue
-            case 'B':
-                return '#2ecc71'; // Green
-            case 'C':
-                return '#e74c3c'; // Red
-            case 'D':
-                return '#f39c12'; // Orange
-            case 'E':
-                return '#8e44ad'; // Dark Purple
-            case 'F':
-                return '#9b59b6'; // Purple
-            case 'G':
-                return '#16a085'; // Teal
-            case 'H':
-                return '#e67e22'; // Orange
-            case 'I':
-                return '#f1c40f'; // Yellow
-            case 'J':
-                return '#e84393'; // Pink
-            case 'K':
-                return '#34495e'; // Navy Blue
-                // Add more cases as needed
-            default:
-                return '#95a5a6'; // Default Gray
-        }
+    const colorCache = {};
+
+function getAvatarColor(firstLetter) {
+    const letter = firstLetter.toUpperCase();
+    if (colorCache[letter]) return colorCache[letter];
+
+    let color;
+    switch (letter) {
+        case 'A': color = '#3498db'; break; // Blue
+        case 'B': color = '#2ecc71'; break; // Green
+        case 'C': color = '#e74c3c'; break; // Red
+        case 'D': color = '#f39c12'; break; // Orange
+        case 'E': color = '#8e44ad'; break; // Dark Purple
+        case 'F': color = '#9b59b6'; break; // Purple
+        case 'G': color = '#16a085'; break; // Teal
+        case 'H': color = '#e67e22'; break; // Orange
+        case 'I': color = '#f1c40f'; break; // Yellow
+        case 'J': color = '#e84393'; break; // Pink
+        case 'K': color = '#34495e'; break; // Navy Blue
+        default: color = '#95a5a6'; // Default Gray
     }
+
+    colorCache[letter] = color;
+    return color;
+}
 
 
     // Setup CSRF token for axios
