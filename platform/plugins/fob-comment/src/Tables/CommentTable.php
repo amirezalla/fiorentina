@@ -109,7 +109,7 @@ class CommentTable extends TableAbstract
         ])->render();
     }
 
-    protected function query()
+    public function query()
 {
     $query = parent::query();
 
