@@ -50,19 +50,29 @@ class DirettaController extends BaseController
         return view('diretta.view-chat',compact('matchId'));
     }
 
-    // Post a new comment
     public function storeCommentary(Request $request)
-    {   
-        $match_id=$request->input('match_id');
-        $comment = DirettaComment::create([
-            'match_id'=>$match_id,
-            'event_type'=>$request->input('event_type'),
-            'comment'=>$request->input('comments')??'',
-            'details'=>$request->input('details')??'',
-            'content' => $request->input('content'),
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'time' => 'required|numeric',
+            'tipo_event' => 'required|string|max:255',
+            'comment_text' => 'required|string|max:500',
+            'style' => 'required|in:bold,important',
         ]);
-        return response()->json($comment);
+    
+        // Create a new commentary
+        MatchCommentary::create([
+            'time' => $validatedData['time'],
+            'comment_class' => $validatedData['tipo_event'],
+            'comment_text' => $validatedData['comment_text'],
+            'is_bold' => $validatedData['style'] === 'bold',
+            'is_important' => $validatedData['style'] === 'important',
+        ]);
+    
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Commentary added successfully.');
     }
+    
 
     public function deleteCommentary(Request $request)
 {

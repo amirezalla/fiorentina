@@ -92,4 +92,5 @@ Route::get('/delete-chat', [DirettaController::class, 'deleteChat'])->name('dele
 Route::get('/undo-commentary', [DirettaController::class, 'undoCommentary'])->name('undo-commentary');
 Route::get('/undo-chat', [DirettaController::class, 'undoChat'])->name('undo-chat');
 Route::post('/update-commentary', [DirettaController::class, 'updateCommentary'])->name('update-commentary');
+Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 

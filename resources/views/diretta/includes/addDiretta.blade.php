@@ -16,7 +16,7 @@
     </div>
 @endif
 
-<form action="" method="POST" class="p-3">
+<form action="{{ route('store-commentary') }}" method="POST" class="p-3">
     @csrf
     <div class="row mb-3">
         <!-- Time Input -->
@@ -35,7 +35,6 @@
                         {{ $comment_class }}
                     </option>
                 @endforeach
-                <!-- Add more options as needed -->
             </select>
         </div>
     </div>
@@ -63,6 +62,7 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 </form>
+
 <style>
     .commentary-container {
         width: 100%;
