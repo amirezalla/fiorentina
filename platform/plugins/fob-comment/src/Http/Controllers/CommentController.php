@@ -37,9 +37,37 @@ class CommentController extends BaseController
             ->setPreviousRoute('fob-comment.comments.index')
             ->withUpdatedSuccessMessage();
     }
+    
+    public function trash(CommentTable $commentTable)
+{
+    $this->pageTitle(trans('plugins/fob-comment::comment.trash_comments'));
+
+    return $commentTable->renderTable(['onlyTrashed' => true]);
+}
+
 
     public function destroy(Comment $comment)
     {
-        return DeleteResourceAction::make($comment);
+        // Soft delete the comment
+        $comment->delete();
+
+        return $this
+            ->httpResponse()
+            ->setPreviousRoute('fob-comment.comments.index')
+            ->withDeletedSuccessMessage();
+    }
+
+    public function restore($id)
+    {
+        // Find the soft-deleted comment
+        $comment = Comment::onlyTrashed()->findOrFail($id);
+
+        // Restore the comment
+        $comment->restore();
+
+        return $this
+            ->httpResponse()
+            ->setPreviousRoute('fob-comment.comments.index')
+            ->withSuccessMessage(trans('plugins/fob-comment::comment.restore_success'));
     }
 }

@@ -9,9 +9,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Comment extends BaseModel
 {
+    use SoftDeletes;
+
     protected $table = 'fob_comments';
 
     protected $fillable = [
@@ -31,6 +35,9 @@ class Comment extends BaseModel
     protected $casts = [
         'status' => CommentStatus::class,
     ];
+
+    protected $dates = ['deleted_at'];
+
 
     public function author(): MorphTo
     {

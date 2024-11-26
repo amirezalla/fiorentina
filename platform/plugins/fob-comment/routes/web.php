@@ -15,6 +15,10 @@ Route::name('fob-comment.')->group(function () {
         Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
             Route::resource('', CommentController::class)->parameters(['' => 'comment']);
             Route::post('{comment}/reply', [ReplyCommentController::class, '__invoke'])->name('reply');
+            Route::post('{id}/restore', [CommentController::class, 'restore'])->name('restore'); // Add the restore route
+            Route::get('trash', [CommentController::class, 'trash'])->name('trash');
+
+
         });
 
         Route::group(['prefix' => 'settings', 'permission' => 'fob-comment.settings'], function () {

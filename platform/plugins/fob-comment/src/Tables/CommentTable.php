@@ -98,6 +98,25 @@ class CommentTable extends TableAbstract
                 StatusBulkChange::make()
                     ->choices(CommentStatus::labels())
                     ->validate(['required', Rule::in(CommentStatus::values())]),
-            );
+            )
+            ->setOption('topExtraActions', $this->getTrashLink()); // Add trash link
     }
+
+    protected function getTrashLink(): string
+    {
+        return view('plugins/fob-comment::tables.trash-button', [
+            'url' => route('fob-comment.comments.trash'),
+        ])->render();
+    }
+
+    protected function query()
+{
+    $query = parent::query();
+
+    if (request()->get('onlyTrashed')) {
+        $query->onlyTrashed();
+    }
+
+    return $query;
+}
 }
