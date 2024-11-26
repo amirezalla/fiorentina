@@ -228,7 +228,7 @@
         })
 
         // Toggle delay input based on Playlist Mode (show delay only for Sequential mode)
-        function toggleDelayInput() {
+        /*function toggleDelayInput() {
             const mode = document.getElementById('mode').value;
             const delayInput = document.getElementById('delay').closest('.mb-3');
             if (mode === 'sequential') {
@@ -240,6 +240,6 @@
 
         // Initial call to set delay visibility and add event listener
         toggleDelayInput();
-        document.getElementById('mode').addEventListener('change', toggleDelayInput);
+        document.getElementById('mode').addEventListener('change', toggleDelayInput);*/
     </script>
 @endpush
