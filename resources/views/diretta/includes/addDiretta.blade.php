@@ -63,5 +63,107 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 </form>
+<style>
+    .commentary-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
+    .commentary-row {
+        background-color: #212529f0;
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #444;
+        padding-left: 10px;
+        border-left: 5px solid #212529f0;
+
+
+    }
+
+    .comment-time {
+        flex: 1;
+        color: #9e9e9e;
+        font-weight: bold;
+    }
+
+    .comment-text {
+        flex: 4;
+        color: #f0f6fc;
+        padding-right: 10px;
+    }
+
+    .comment-icon {
+        flex: 0.5;
+        font-size: 20px;
+        color: #f0f6fc;
+        margin-right: 15px;
+    }
+
+    /* Specific classes for different event types */
+    .whistle .comment-icon::before {
+        content: '\1F3C1';
+        /* Whistle emoji */
+    }
+
+    .y-card .comment-icon::before {
+        content: '\1F7E1';
+        /* Yellow card emoji */
+    }
+
+    .soccer-ball .comment-icon::before {
+        content: '\26BD';
+        /* Soccer ball emoji */
+    }
+
+    .corner .comment-icon::before {
+        content: '\1F4CB';
+        /* Corner emoji */
+    }
+
+    .substitution .comment-icon::before {
+        content: '\1F504';
+        /* Substitution emoji */
+    }
+
+    /* Bold text for important comments */
+    .comment-bold {
+        font-weight: bold;
+    }
+
+    /* Styling for important events */
+    .important {
+        background-color: #1d2025;
+        border-left: 5px solid #d83a56;
+
+    }
+
+    .stage {
+        border-radius: 21px;
+        background-color: #1f2b36;
+        color: white;
+        padding: 16px 20px;
+    }
+
+    .incident {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #444;
+        padding: 5px 0;
+    }
+
+    .incident-time {
+        color: yellow;
+    }
+
+    .incident-detail span {
+        font-weight: bold;
+        color: #f9f9f9;
+    }
+
+    .incident-detail span.GOAL {
+        color: yellow;
+    }
+</style>
 @include('ads.includes.commentary', ['commentaries' => $commentaries])
