@@ -65,7 +65,7 @@ class DirettaController extends BaseController
         // Create a new commentary
         MatchCommentary::create([
             'match_id' => $validatedData['match_id'],
-            'comment_time' => $validatedData['time'],
+            'comment_time' => $validatedData['time']."'",
             'comment_class' => $validatedData['tipo_event'],
             'comment_text' => $validatedData['comment_text'],
             'is_bold' => $request->has('is_bold'),
