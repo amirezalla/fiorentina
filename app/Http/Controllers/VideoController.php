@@ -126,6 +126,7 @@ class VideoController extends BaseController
             'videos.*.url' => ['nullable', 'url'],
             'videos.*.order' => ['nullable'],
         ]);
+        dd($video->mediaFiles,$request->videos);
         try {
             return DB::transaction(function () use ($request, $video) {
                 $diffCount = $video->mediaFiles->pluck('id')->diff(collect($request->videos)->keys()->toArray())->count();
