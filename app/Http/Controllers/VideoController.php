@@ -139,13 +139,7 @@ class VideoController extends BaseController
                 'order' => $key++,
             ]);
         });
-        dd($arr1->diff($arr2),$arr1->diff([
-            [
-                'media_id' => 1,
-                'order' => 1,
-                'url' => null,
-            ]
-        ]));
+        dd($arr1->diff($arr2));
         try {
             return DB::transaction(function () use ($request, $video) {
                 $arr1 = $video->mediaFiles->map(function ($item, $key) {
