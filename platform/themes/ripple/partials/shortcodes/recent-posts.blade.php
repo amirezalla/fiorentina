@@ -331,46 +331,48 @@
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_C1')
                     </div>
+
+                    @if ($poll)
+                        <div class="row container mt-4">
+                            <div class="col-12">
+                                <div>
+                                    <h1>{{ $poll->question }}</h1>
+                                    <div id="options-container">
+                                        @foreach ($poll->options as $option)
+                                            <div class="row">
+                                                <button class="col-12 btn btn-outline-primary vote-btn"
+                                                    data-id="{{ $option->id }}"
+                                                    style="--fill-width: {{ $option->percentage }}%;">
+                                                    <span
+                                                        @if ($option->percentage > 16.66) class="option-text-w"
+
+                                        @else
+                                            class="option-text-p" @endif>
+                                                        {{ $option->option }}</span>
+                                                    <span
+                                                        @if ($option->percentage < 88) class="percentage-text-p"
+
+                                        @else
+                                            class="percentage-text-w" @endif>{{ $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0 }}
+                                                        %</span>
+                                                </button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div id="results-container">
+                                        @foreach ($poll->options as $option)
+                                            <div class="result" id="result-{{ $option->id }}">
+                                                {{ $option->option }}: <span class="percentage">0%</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 </section>
 </div>
 
-@if ($poll)
-    <div class="row container mt-4">
-        <div class="col-12">
-            <div>
-                <h1>{{ $poll->question }}</h1>
-                <div id="options-container">
-                    @foreach ($poll->options as $option)
-                        <div class="row">
-                            <button class="col-12 btn btn-outline-primary vote-btn" data-id="{{ $option->id }}"
-                                style="--fill-width: {{ $option->percentage }}%;">
-                                <span
-                                    @if ($option->percentage > 16.66) class="option-text-w"
-
-                                            @else
-                                                class="option-text-p" @endif>
-                                    {{ $option->option }}</span>
-                                <span
-                                    @if ($option->percentage < 88) class="percentage-text-p"
-
-                                            @else
-                                                class="percentage-text-w" @endif>{{ $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0 }}
-                                    %</span>
-                            </button>
-                        </div>
-                    @endforeach
-                </div>
-                <div id="results-container">
-                    @foreach ($poll->options as $option)
-                        <div class="result" id="result-{{ $option->id }}">
-                            {{ $option->option }}: <span class="percentage">0%</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-@endif
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script>
