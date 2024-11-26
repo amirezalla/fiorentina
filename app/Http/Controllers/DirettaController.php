@@ -114,6 +114,30 @@ public function undoCommentary()
     return redirect()->back()->with('error', 'Nothing to undo.');
 }
 
+public function updateCommentary(Request $request)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'id' => 'required|exists:match_commentaries,id',
+        'comment_text' => 'required|string|max:500',
+        'is_important' => 'nullable|boolean',
+        'is_bold' => 'nullable|boolean',
+    ]);
+
+    // Find the commentary by ID
+    $commentary = MatchCommentary::findOrFail($validatedData['id']);
+
+    // Update the commentary fields
+    $commentary->comment_text = $validatedData['comment_text'];
+    $commentary->is_important = $validatedData['is_important'] ?? false;
+    $commentary->is_bold = $validatedData['is_bold'] ?? false;
+    $commentary->save();
+
+    // Redirect back with a success message
+    return redirect()->back()->with('success', 'Commentary updated successfully.');
+}
+
+
     
 
 
