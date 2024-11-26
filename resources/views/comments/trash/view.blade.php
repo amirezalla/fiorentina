@@ -2,9 +2,7 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Deleted Comments</h3>
-            <br>
-            <a href="{{ route('fob-comment.comments.index') }}" class="btn btn-primary mb-4">
+            <a href="{{ route('fob-comment.comments.index') }}" class="btn btn-primary mb-4 d-block">
                 <i class="fas fa-arrow-left"></i> Back to Comments
             </a>
         </div>
