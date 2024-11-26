@@ -126,43 +126,8 @@ class VideoController extends BaseController
             'videos.*.url' => ['nullable', 'url'],
             'videos.*.order' => ['nullable'],
         ]);
-        $arr1 = $video->mediaFiles->map(function ($item, $key) {
-            return [
-                'media_id' => $item->id,
-                'order' => $item->pivot->priority,
-                'url' => $item->pivot->url,
-            ];
-        });
-        $arr2 = collect($request->videos)->values()->map(function ($item, $key) {
-            return array_merge($item, [
-                'media_id' => intval($item['media_id']),
-                'order' => $key++,
-            ]);
-        });
-        dd($arr1->diffAssoc($arr2));
         try {
             return DB::transaction(function () use ($request, $video) {
-                $arr1 = $video->mediaFiles->map(function ($item, $key) {
-                    return [
-                        'media_id' => $item->id,
-                        'order' => $item->pivot->priority,
-                        'url' => $item->pivot->url,
-                    ];
-                });
-                $arr2 = collect($request->videos)->values()->map(function ($item, $key) {
-                    return array_merge($item, [
-                        'media_id' => intval($item['media_id']),
-                        'order' => $key++,
-                    ]);
-                });
-                dd($arr1->diff($arr2),$arr1->diff([
-                    [
-                        'media_id' => 1,
-                        'order' => 1,
-                        'url' => null,
-                    ]
-                ]));
-                $diffCount = $video->mediaFiles->pluck('id')->diff(collect($request->videos)->keys()->toArray())->count();
                 $is_random = $request->mode == Video::PLAYLIST_MODE_RANDOM;
                 $is_published = $request->status == Video::STATUS_PUBLISHED;
                 $video->update([
@@ -172,7 +137,7 @@ class VideoController extends BaseController
                     'is_for_home' => $request->has('is_for_home'),
                     'is_for_post' => $request->has('is_for_post'),
                 ]);
-                if ($diffCount && $request->filled('videos')) {
+                if ($request->filled('videos')){
                     $mediaFilesData = collect($request->videos)
                         ->sortBy('order')
                         ->map(function ($item, $key) {
@@ -189,8 +154,10 @@ class VideoController extends BaseController
                                 ]),
                             ];
                         })->toArray();
-                    $video->mediaFiles()->sync($mediaFilesData);
+                }else{
+                    $mediaFilesData = [];
                 }
+                $video->mediaFiles()->sync($mediaFilesData);
                 return redirect()->route('videos.index')->with('success', 'Videos uploaded successfully.');
             });
         } catch (Throwable $e) {
