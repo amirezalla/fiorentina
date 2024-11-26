@@ -72,6 +72,6 @@ class CommentController extends BaseController
         return $this
             ->httpResponse()
             ->setPreviousRoute('fob-comment.comments.index')
-            ->withSuccessMessage(trans('plugins/fob-comment::comment.restore_success'));
+            ->withSuccess(trans('plugins/fob-comment::comment.restore_success'));
     }
 }
