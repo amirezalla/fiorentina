@@ -3,6 +3,7 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Deleted Comments</h3>
+            <br>
             <a href="{{ route('fob-comment.comments.index') }}" class="btn btn-primary mb-4">
                 <i class="fas fa-arrow-left"></i> Back to Comments
             </a>
