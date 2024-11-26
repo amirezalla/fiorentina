@@ -1,5 +1,5 @@
 <ul @class(['navbar-nav', $navbarClass ?? null])>
-    @dd(DashboardMenu::getAll())
+
     @foreach (DashboardMenu::getAll() as $menu)
         @if (
             $menu['id'] == 'cms-core-plugins' ||
