@@ -54,6 +54,7 @@ class DirettaController extends BaseController
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
+            'match_id' => 'required|exists:matches,id',
             'time' => 'required|numeric',
             'tipo_event' => 'required|string|max:255',
             'comment_text' => 'required|string|max:500',
@@ -62,6 +63,7 @@ class DirettaController extends BaseController
     
         // Create a new commentary
         MatchCommentary::create([
+            'match_id' => $validatedData['match_id'],
             'time' => $validatedData['time'],
             'comment_class' => $validatedData['tipo_event'],
             'comment_text' => $validatedData['comment_text'],
@@ -72,6 +74,7 @@ class DirettaController extends BaseController
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Commentary added successfully.');
     }
+    
     
 
     public function deleteCommentary(Request $request)

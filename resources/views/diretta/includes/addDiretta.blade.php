@@ -38,6 +38,7 @@
             </select>
         </div>
     </div>
+    <input type="hidden" name="match_id" value="{{ $matchId }}">
 
     <!-- Comment Text Area -->
     <div class="mb-3">
