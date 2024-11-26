@@ -11,13 +11,11 @@
 </style>
 <div class="container mt-3">
     @foreach ($commentaries as $comment)
-        <div
-            class="commentary-row {{ $comment['comment_class'] }} {{ $comment['is_important'] ? 'important' : '' }}{{ $comment['is_bold'] ? 'comment-is-bold' : '' }}">
+        <div class="commentary-row {{ $comment['comment_class'] }} {{ $comment['is_important'] ? 'important' : '' }}{{ $comment['is_bold'] ? 'comment-is-bold' : '' }}"
+            data-id="{{ $comment['id'] }}">
             <div class="comment-time" style="flex: 0.5">{{ $comment['comment_time'] }}</div>
             <div style="flex: 0.5">
                 @if (Str::contains(request()->url(), '/diretta/view'))
-                    <a style="margin-right: 5px" href="/delete-commentary?id={{ $comment->id }}"><i
-                            class="text-danger fa-solid fa-trash"></i></a>
                     <a style="margin-right: 5px" href="#" onclick="toggleEditBox({{ $comment['id'] }})"><i
                             class="text-white fa-solid fa-pen-to-square"></i></i></a>
                 @endif
@@ -26,6 +24,7 @@
             <div class="comment-text {{ $comment['is_bold'] ? 'comment-bold' : '' }}">{{ $comment['comment_text'] }}
             </div>
         </div>
+
         <!-- Hidden edit box -->
         <div id="edit-box-{{ $comment['id'] }}" class="edit-box" style="display: none; margin-top: 10px;">
             <form action="/update-commentary" method="POST">
@@ -53,8 +52,18 @@
 <script>
     function toggleEditBox(id) {
         const editBox = document.getElementById(`edit-box-${id}`);
+        const row = document.querySelector(`.commentary-row[data-id="${id}"]`);
+
         if (editBox.style.display === 'none' || editBox.style.display === '') {
             editBox.style.display = 'block';
+
+            // Scroll to the row
+            if (row) {
+                row.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
         } else {
             editBox.style.display = 'none';
         }
