@@ -164,7 +164,7 @@
     // Initialize Pusher for real-time updates
     const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
         cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-        encrypted: true
+        encrypted: false
     });
     // Subscribe to the specific match channel (only once)
     let channel;
@@ -175,7 +175,7 @@
         });
     }
 
-    Pusher.logToConsole = true;
+    Pusher.logToConsole = false;
 
 
     // Function to append a message to the messages list
