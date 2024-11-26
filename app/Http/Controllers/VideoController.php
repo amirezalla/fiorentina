@@ -126,6 +126,26 @@ class VideoController extends BaseController
             'videos.*.url' => ['nullable', 'url'],
             'videos.*.order' => ['nullable'],
         ]);
+        $arr1 = $video->mediaFiles->map(function ($item, $key) {
+            return [
+                'media_id' => $item->id,
+                'order' => $item->pivot->priority,
+                'url' => $item->pivot->url,
+            ];
+        });
+        $arr2 = collect($request->videos)->values()->map(function ($item, $key) {
+            return array_merge($item, [
+                'media_id' => intval($item['media_id']),
+                'order' => $key++,
+            ]);
+        });
+        dd($arr1->diff($arr2),$arr1->diff([
+            [
+                'media_id' => 1,
+                'order' => 1,
+                'url' => null,
+            ]
+        ]));
         try {
             return DB::transaction(function () use ($request, $video) {
                 $arr1 = $video->mediaFiles->map(function ($item, $key) {
