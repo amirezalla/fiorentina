@@ -1,7 +1,7 @@
 @extends($layout ?? BaseHelper::getAdminMasterLayoutTemplate())
 
 @section('content')
-    <a href="{{ route('fob-comment.comments.trash') }}" class="btn btn-danger">
+    <a href="{{ route('fob-comment.comments.trash') }}" class="btn btn-danger mb-4">
         <i class="fas fa-trash"></i> Comments trash can
     </a>
     @include('core/table::base-table')
