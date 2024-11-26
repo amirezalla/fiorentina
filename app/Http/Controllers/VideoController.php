@@ -134,7 +134,7 @@ class VideoController extends BaseController
             ];
         }), collect($request->videos)->values()->map(function ($item, $key) {
             return array_merge($item,[
-                'media_id'=>intval($item->media_id),
+                'media_id'=>intval($item['media_id']),
                 'order'=>$key++,
             ]);
         }));
