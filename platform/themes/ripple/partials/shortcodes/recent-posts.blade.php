@@ -211,7 +211,7 @@
                                 <!-- Ticket Buttons -->
                                 <div class="col-md-12">
                                     <div class="d-grid">
-                                        <a href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}"
+                                        <a @if ($match->status == 'live') href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}" @else disabled @endif
                                             class="btn-sm btn-primary mb-2 fiorentina-btn" style="grid-area: auto;">Vai
                                             alla
                                             diretta!</a>
