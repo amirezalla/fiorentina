@@ -52,7 +52,9 @@
 </div>
 
 <script>
-    function toggleEditBox(id) {
+    function toggleEditBox(id, event) {
+        event.preventDefault();
+
         const editBox = document.getElementById(`edit-box-${id}`);
         const row = document.querySelector(`.commentary-row[data-id="${id}"]`);
 
