@@ -120,8 +120,8 @@ public function updateCommentary(Request $request)
     $validatedData = $request->validate([
         'id' => 'required|exists:match_commentaries,id',
         'comment_text' => 'required|string|max:500',
-        'is_important' => 'nullable|boolean',
-        'is_bold' => 'nullable|boolean',
+        'is_important' => 'nullable',
+        'is_bold' => 'nullable',
     ]);
 
     // Find the commentary by ID
