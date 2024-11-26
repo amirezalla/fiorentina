@@ -1,4 +1,4 @@
-@extends('admin.layouts.app') {{-- Adjust layout as per your project --}}
+@extends(BaseHelper::getAdminMasterLayoutTemplate())
 
 @section('content')
     <div class="card">
