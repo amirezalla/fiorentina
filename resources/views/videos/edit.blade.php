@@ -59,10 +59,18 @@
                             </div>
                         </div>
 
-                        <!-- Delay Input (for Sequential Mode) -->
-                        <div class="mb-3">
-                            <label for="delay" class="form-label">Delay Between Videos (in seconds)</label>
-                            <input type="number" class="form-control" name="delay" id="delay" value="{{ $video->delay / 1000 }}" min="1" step="1">
+                        <div class=" mb-3">
+                            <label for="delaySelect" class="form-label">Select Delay Between Plays (ms):</label>
+                            <select class="form-select" id="delay" name="delay">
+                                <option value="1">1s</option>
+                                <option value="5">5s</option>
+                                <option value="10">10s</option>
+                                <option value="15">15s</option>
+                                <option value="30">30s</option>
+                                <option value="60">1min</option>
+                                <option value="120">2min</option>
+                            </select>
+
                         </div>
 
                         <!-- Video Mode Selection -->
