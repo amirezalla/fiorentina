@@ -1,4 +1,3 @@
-@section('content')
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Deleted Comments</h3>
@@ -43,4 +42,3 @@
             </div>
         </div>
     </div>
-@stop
