@@ -2,7 +2,7 @@
 
 @section('content')
     <a href="{{ route('fob-comment.comments.trash') }}" class="btn btn-danger">
-        <i class="fas fa-trash"></i> {{ trans('plugins/fob-comment::comment.trash') }}
+        <i class="fas fa-trash"></i> Comments trash can
     </a>
     @include('core/table::base-table')
 
