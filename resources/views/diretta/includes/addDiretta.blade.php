@@ -38,7 +38,6 @@
             </select>
         </div>
     </div>
-    @dd($commentaries[0])
     <input type="hidden" name="match_id" value="{{ $commentaries[0]->match_id }}">
 
     <!-- Comment Text Area -->
