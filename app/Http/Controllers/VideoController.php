@@ -126,13 +126,17 @@ class VideoController extends BaseController
             'videos.*.url' => ['nullable', 'url'],
             'videos.*.order' => ['nullable'],
         ]);
-        dd($video->mediaFiles->map(function ($item,$key){
+        dd($video->mediaFiles->map(function ($item, $key) {
             return [
-                'media_id'=>$item->id,
-                'order'=>$item->pivot->priority,
-                'url'=>$item->pivot->url,
+                'media_id' => $item->id,
+                'order' => $item->pivot->priority,
+                'url' => $item->pivot->url,
             ];
-        }),$request->videos);
+        }), collect($request->videos)->values()->map(function ($item, $key) {
+            return array_merge($item,[
+                'order'=>$key++,
+            ]);
+        }));
         try {
             return DB::transaction(function () use ($request, $video) {
                 $diffCount = $video->mediaFiles->pluck('id')->diff(collect($request->videos)->keys()->toArray())->count();
