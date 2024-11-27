@@ -102,7 +102,7 @@ class AppServiceProvider extends ServiceProvider
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
             $is_home = request()->route()->getName();
-            dd($is_home,$is_home ? "ok" : "nok");
+//            dd($is_home,$is_home ? "ok" : "nok");
             $video = Video::query()
                 ->when($is_home, function ($q) {
                     $q->onlyForHome();
