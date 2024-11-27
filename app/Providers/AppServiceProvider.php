@@ -101,6 +101,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
+            dd($view->getData());
             $is_home = request()->route()->getName();
             $video = Video::query()
                 ->when($is_home, function ($q) {
