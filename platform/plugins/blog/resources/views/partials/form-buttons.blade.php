@@ -28,7 +28,7 @@
         type="button"
         name="preview"
         color="secondary"
-        icon="ti ti-device-floppy"
+        icon="ti ti-presentation"
     >
         {{ trans('plugins/blog::forms.preview') }}
     </x-core::button>
