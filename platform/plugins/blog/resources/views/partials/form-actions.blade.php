@@ -72,7 +72,7 @@
                     success : function(response){
                         const name = $('input[name="name"]').val();
                         const content = $('#content').val();
-                        const image = $('input[name="banner_image"]').closest('div').find('.preview-image').attr('src');
+                        const image = $('input[name="image"]').closest('div').find('.preview-image').attr('src');
                         const parsedDocument = (new DOMParser).parseFromString(response, "text/html");
                         if (image){
                             parsedDocument.querySelector('.img-in-post img').src = image;
