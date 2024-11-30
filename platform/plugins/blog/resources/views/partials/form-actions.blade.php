@@ -41,6 +41,7 @@
 </header>
 <script>
     $('button[name="preview"]').click(function (e) {
-        console.log(e.target)
+        const baseUrl = $('.input-group .input-group-text').text();
+        console.log(baseUrl)
     });
 </script>
