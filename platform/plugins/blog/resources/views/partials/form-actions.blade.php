@@ -51,10 +51,6 @@
             <div class="modal-body d-flex flex-column">
                 <iframe src="" class="w-100 flex-grow-1"></iframe>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
         </div>
     </div>
 </div>
@@ -68,6 +64,9 @@
                 previewModal.modal('show');
                 previewModal.find('iframe').attr('src',url)
             }
+        });
+        previewModal.on('hidden.bs.modal', function () {
+            console.log("closed")
         });
     });
 </script>
