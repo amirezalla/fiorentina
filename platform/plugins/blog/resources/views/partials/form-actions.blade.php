@@ -68,8 +68,8 @@
                 iframe.attr('src',url)
             }else {
                 iframe.attr('src',"https://laviola.collaudo.biz/");
-                iframe.contents().find('.ck-content').remove();
                 previewModal.modal('show');
+                console.log(iframe.contents().find('.ck-content'))
             }
         });
         previewModal.find('button.close').click( function () {
