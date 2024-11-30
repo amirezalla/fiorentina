@@ -32,13 +32,13 @@ class PostController extends BaseController
     {
         $slug = SlugHelper::getSlug($slug, "");
 
-        dd($slug);
 
         if (!$slug) {
             abort(404);
         }
 
         $result = apply_filters(BASE_FILTER_PUBLIC_SINGLE_DATA, $slug);
+        dd($result);
 
         if (! empty($result) && is_array($result)) {
             if (isset($result['view'])) {
