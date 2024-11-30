@@ -65,7 +65,7 @@
                 previewModal.find('iframe').attr('src',url)
             }else {
                 $.ajax({
-                    url : "https://laviola.collaudo.biz/404",
+                    url : "https://laviola.collaudo.biz/",
                     success : function(response){
                         console.log(response)
                         previewModal.modal('show');
