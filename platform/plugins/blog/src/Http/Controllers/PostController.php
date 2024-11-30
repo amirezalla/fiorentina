@@ -14,6 +14,7 @@ use Botble\Blog\Models\Post;
 use Botble\Blog\Services\StoreCategoryService;
 use Botble\Blog\Services\StoreTagService;
 use Botble\Blog\Tables\PostTable;
+use Botble\Slug\Facades\SlugHelper;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -24,6 +25,7 @@ class PostController extends BaseController
 {
     public function getPreview($slug)
     {
+        $slug = SlugHelper::getSlug($slug, "");
         dd($slug);
     }
 
