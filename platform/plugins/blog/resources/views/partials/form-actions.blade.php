@@ -70,9 +70,9 @@
                 $.ajax({
                     url : "https://laviola.collaudo.biz/",
                     success : function(response){
-                        var html_string = $(response).outerHTML;
-                        console.log($.parseHTML(response))
-                        iframe.attr("srcdoc", $.parseHTML(response).html());
+                        var doc = new DOMParser().parseFromString(response, "text/xml");
+                        console.log(doc,$(doc))
+                        iframe.attr("srcdoc", $(doc).html());
                         previewModal.modal('show');
                     }
                 });
