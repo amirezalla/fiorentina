@@ -41,6 +41,6 @@
 </header>
 <script>
     $('button[name="preview"]').click(function (e) {
-        console.log($('.input-group.input-group-flat .input-group-text'))
+        console.log($('.slug-field-wrapper .input-group-text'))
     });
 </script>
