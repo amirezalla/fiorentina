@@ -66,7 +66,7 @@
             }
         });
         previewModal.on('hidden.bs.modal', function () {
-            console.log("closed")
+            previewModal.find('iframe').attr('src',"");
         });
     });
 </script>
