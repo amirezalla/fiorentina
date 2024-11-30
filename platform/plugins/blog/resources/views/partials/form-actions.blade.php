@@ -50,6 +50,7 @@
             </div>
             <div class="modal-body d-flex flex-column">
                 <iframe src="" class="w-100 flex-grow-1"></iframe>
+                <div class="preview-test"></div>
                 <div id="previewContent"></div>
             </div>
         </div>
@@ -70,8 +71,9 @@
                 $.ajax({
                     url : "https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants",
                     success : function(response){
-                        const elements = $(response.replace('<!DOCTYPE html>',''));
-                        iframe.attr("srcdoc", elements.toHtml());
+                        const elements = $(response);
+                        console.log(elements.outerHTML)
+                        iframe.attr("srcdoc", elements.outerHTML);
                         previewModal.modal('show');
                     }
                 });
