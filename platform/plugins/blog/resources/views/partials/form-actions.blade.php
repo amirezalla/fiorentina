@@ -73,7 +73,7 @@
                         const name = $('input[name="name"]').val();
                         const content = $('#content').val();
                         const image = $('.image-box-actions .preview-image').attr('src');
-                        console.log($('.image-box-actions .preview-image'))
+                        console.log($('.banner_image').parent())
                         const parsedDocument = (new DOMParser).parseFromString(response, "text/html");
                         /*if (image){
                             parsedDocument.querySelector('.img-in-post img').src = image;
