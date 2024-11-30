@@ -73,12 +73,13 @@
                         const name = $('input[name="name"]').val();
                         const content = $('#content').val();
                         const image = $('.image-box-actions .preview-image').attr('src');
+                        console.log($('.image-box-actions .preview-image'))
                         const parsedDocument = (new DOMParser).parseFromString(response, "text/html");
-                        if (image){
+                        /*if (image){
                             parsedDocument.querySelector('.img-in-post img').src = image;
                         }else {
                             parsedDocument.querySelector('.img-in-post img').remove();
-                        }
+                        }*/
                         parsedDocument.querySelector('.page-intro__title').textContent = name;
                         parsedDocument.querySelector('.post__title').textContent = name;
                         parsedDocument.querySelector('ol.breadcrumb').remove();
