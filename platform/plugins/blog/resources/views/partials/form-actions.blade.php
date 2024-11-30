@@ -39,3 +39,8 @@
     </div>
 </div>
 </header>
+<script>
+    $('button[name="preview"]').click(function (e) {
+        console.log(e.target)
+    });
+</script>
