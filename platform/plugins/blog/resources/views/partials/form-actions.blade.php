@@ -71,8 +71,8 @@
                     url : "https://laviola.collaudo.biz/",
                     success : function(response){
                         var html_string = $(response).outerHTML;
-                        console.log($("<p>Hello World!</p>").html())
-                        iframe.attr("srcdoc", $("<p>Hello World!</p>").html());
+                        console.log($(response).html())
+                        iframe.attr("srcdoc", $(response).html());
                         previewModal.modal('show');
                     }
                 });
