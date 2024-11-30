@@ -43,7 +43,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg d-flex flex-column" role="document">
         <div class="modal-content flex-grow-1">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">{{ trans('plugins/blog::forms.preview') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -65,8 +65,12 @@
                 previewModal.find('iframe').attr('src',url)
             }
         });
+        previewModal.find('button.close').click( function () {
+            previewModal.modal('hide');
+        });
         previewModal.on('hidden.bs.modal', function () {
             previewModal.find('iframe').attr('src',"");
+            console.log("test")
         });
     });
 </script>
