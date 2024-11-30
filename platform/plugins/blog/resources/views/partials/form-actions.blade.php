@@ -62,42 +62,50 @@
         const previewContent = $('#previewContent');
         $('button[name="preview"]').click(function (e) {
             const element = $('small.form-hint');
-            if (!element) {
-                const url = element.find('a').text();
-                previewModal.modal('show');
-                previewModal.find('iframe').attr('src',url)
-            }else {
-                $.ajax({
-                    url : "https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants",
-                    success : function(response){
-                        const name = $('input[name="name"]').val();
-                        const content = $('#content').val();
-                        const image = $('input[name="image"]').closest('div').find('.preview-image').attr('src');
-                        const parsedDocument = (new DOMParser).parseFromString(response, "text/html");
-                        if (image){
-                            parsedDocument.querySelector('.img-in-post img').src = image;
-                        }else {
-                            parsedDocument.querySelector('.img-in-post img').remove();
+            const name = $('input[name="name"]').val();
+            const content = $('#content').val();
+            if (name.length && content.length){
+                if (!element) {
+                    const url = element.find('a').text();
+                    previewModal.modal('show');
+                    previewModal.find('iframe').attr('src',url)
+                }else {
+                    $.ajax({
+                        url : "https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants",
+                        success : function(response){
+                            const name = $('input[name="name"]').val();
+                            const content = $('#content').val();
+                            const image = $('input[name="image"]').closest('div').find('.preview-image').attr('src');
+                            const parsedDocument = (new DOMParser).parseFromString(response, "text/html");
+                            if (image){
+                                parsedDocument.querySelector('.img-in-post img').src = image;
+                            }else {
+                                parsedDocument.querySelector('.img-in-post img').remove();
+                            }
+                            if (name){
+                                parsedDocument.querySelector('.page-intro__title').textContent = name;
+                                parsedDocument.querySelector('.post__title').textContent = name;
+                            }
+                            parsedDocument.querySelector('ol.breadcrumb').remove();
+                            parsedDocument.querySelector('.post-category').remove();
+                            parsedDocument.querySelector('.widget__content').remove();
+                            parsedDocument.querySelector('.ck-content').innerHTML = "";
+                            if (content){
+                                parsedDocument.querySelector('.ck-content').innerHTML = content;
+                            }
+                            parsedDocument.querySelector('.post__footer').remove();
+                            parsedDocument.querySelector('.fob-comment-list-section').remove();
+                            parsedDocument.querySelector('.fob-comment-form-section').remove();
+                            const newHTML = parsedDocument.documentElement.outerHTML;
+                            const doc = document.querySelector('iframe').contentWindow.document;
+                            doc.open();
+                            doc.write(newHTML);
+                            doc.close();
+                            previewModal.modal('show');
                         }
-                        parsedDocument.querySelector('.page-intro__title').textContent = name;
-                        parsedDocument.querySelector('.post__title').textContent = name;
-                        parsedDocument.querySelector('ol.breadcrumb').remove();
-                        parsedDocument.querySelector('.post-category').remove();
-                        parsedDocument.querySelector('.widget__content').remove();
-                        parsedDocument.querySelector('.ck-content').innerHTML = "";
-                        parsedDocument.querySelector('.ck-content').innerHTML = content;
-                        parsedDocument.querySelector('.post__footer').remove();
-                        parsedDocument.querySelector('.fob-comment-list-section').remove();
-                        parsedDocument.querySelector('.fob-comment-form-section').remove();
-                        const newHTML = parsedDocument.documentElement.outerHTML;
-                        const doc = document.querySelector('iframe').contentWindow.document;
-                        doc.open();
-                        doc.write(newHTML);
-                        doc.close();
-                        previewModal.modal('show');
-                    }
-                });
+                    });
 
+                }
             }
         });
         previewModal.find('button.close').click( function () {
