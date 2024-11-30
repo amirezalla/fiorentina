@@ -59,10 +59,17 @@
         const previewModal = $('#previewModal');
         $('button[name="preview"]').click(function (e) {
             const element = $('small.form-hint');
-            if (element) {
+            if (!element) {
                 const url = element.find('a').text();
                 previewModal.modal('show');
                 previewModal.find('iframe').attr('src',url)
+            }else {
+                $.ajax({
+                    url : "https://laviola.collaudo.biz/404",
+                    success : function(response){
+                        console.log(response)
+                    }
+                });
             }
         });
         previewModal.find('button.close').click( function () {
