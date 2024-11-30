@@ -120,7 +120,6 @@ class PublicController extends BaseController
 
     public function getViewWithPrefix(string $prefix, ?string $slug = null)
     {
-        dd($prefix);
         return $this->getView($slug, $prefix);
     }
 }
