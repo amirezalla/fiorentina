@@ -32,12 +32,14 @@ class PostController extends BaseController
     {
         $slug = SlugHelper::getSlug($slug, "");
 
+        dd($slug);
+
         if (!$slug) {
             abort(404);
         }
 
         $result = apply_filters(BASE_FILTER_PUBLIC_SINGLE_DATA, $slug);
-        
+
         if (! empty($result) && is_array($result)) {
             if (isset($result['view'])) {
                 Theme::addBodyAttributes(['id' => Str::slug(Str::snake(Str::afterLast($slug->reference_type, '\\'))) . '-' . $slug->reference_id]);
