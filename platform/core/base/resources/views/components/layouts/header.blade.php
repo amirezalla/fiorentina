@@ -3,6 +3,9 @@
     [x-cloak] {
         display: none;
     }
+    #previewModal .modal-dialog{
+        max-width: 80%;
+    }
 </style>
 
 {!! BaseHelper::googleFonts('https://fonts.googleapis.com/' . sprintf(
