@@ -50,6 +50,7 @@
             </div>
             <div class="modal-body d-flex flex-column">
                 <iframe src="" class="w-100 flex-grow-1"></iframe>
+                <div id="previewContent"></div>
             </div>
         </div>
     </div>
@@ -57,6 +58,7 @@
 <script>
     $(function () {
         const previewModal = $('#previewModal');
+        const previewContent = $('#previewContent');
         $('button[name="preview"]').click(function (e) {
             const element = $('small.form-hint');
             if (!element) {
@@ -68,6 +70,7 @@
                     url : "https://laviola.collaudo.biz/",
                     success : function(response){
                         console.log(response)
+                        previewContent.html(response)
                         previewModal.modal('show');
                     }
                 });
