@@ -48,8 +48,8 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <iframe src="" class="w-100"></iframe>
+            <div class="modal-body d-flex flex-column">
+                <iframe src="" class="w-100 flex-grow-1"></iframe>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
