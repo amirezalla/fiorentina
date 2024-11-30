@@ -44,7 +44,7 @@
         <div class="modal-content flex-grow-1">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">{{ trans('plugins/blog::forms.preview') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close btn btn-close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -70,7 +70,6 @@
         });
         previewModal.on('hidden.bs.modal', function () {
             previewModal.find('iframe').attr('src',"");
-            console.log("test")
         });
     });
 </script>
