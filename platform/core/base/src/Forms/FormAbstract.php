@@ -182,7 +182,6 @@ abstract class FormAbstract extends Form implements ExtensibleContract
 
     public function getActionButtons(): string
     {
-        dd($this->actionButtons);
         if ($this->actionButtons === '') {
             return view('core/base::forms.partials.form-actions')->render();
         }
