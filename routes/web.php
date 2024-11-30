@@ -28,6 +28,7 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
+Route::get('test-preview', 'getPreview')->name('posts.preview');
 
     Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
     Route::get('/admin/ads/create', [AdController::class, 'create'])->name('ads.create');

@@ -20,7 +20,6 @@ Theme::registerRoutes(function () {
             ->name('public.sitemap.index');
 
         Route::get('{slug?}', 'getView')->name('public.single');
-        Route::get('test-preview', 'getPreview')->name('posts.preview');
 
         Route::get('{prefix}/{slug?}', 'getViewWithPrefix')
             ->whereIn('prefix', SlugHelper::getAllPrefixes() ?: ['1437bcd2-d94e-4a5fd-9a39-b5d60225e9af']);
