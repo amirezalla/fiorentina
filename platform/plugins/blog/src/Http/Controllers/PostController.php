@@ -28,31 +28,6 @@ use Illuminate\Support\Str;
 
 class PostController extends BaseController
 {
-    public function getPreview($slug)
-    {
-        $slug = SlugHelper::getSlug($slug, "");
-
-
-        if (!$slug) {
-            abort(404);
-        }
-
-        $result = apply_filters(BASE_FILTER_PUBLIC_SINGLE_DATA, $slug);
-        dd($result);
-
-        if (! empty($result) && is_array($result)) {
-            if (isset($result['view'])) {
-                Theme::addBodyAttributes(['id' => Str::slug(Str::snake(Str::afterLast($slug->reference_type, '\\'))) . '-' . $slug->reference_id]);
-
-                return Theme::scope($result['view'], $result['data'], Arr::get($result, 'default_view'))->render();
-            }
-
-            return $result;
-        }
-
-        abort(404);
-    }
-
     protected function breadcrumb(): Breadcrumb
     {
         return parent::breadcrumb()
