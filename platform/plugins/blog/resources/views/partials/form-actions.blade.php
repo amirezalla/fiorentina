@@ -75,7 +75,7 @@
                         parsedDocument.querySelector('.post__title').textContent = $('input[name="name"]').val();
                         parsedDocument.querySelector('ol.breadcrumb').remove();
                         parsedDocument.querySelector('.post-category').remove();
-                        parsedDocument.querySelector('.post__footer').remove();
+                        // parsedDocument.querySelector('.post__footer').remove();
                         parsedDocument.querySelector('.fob-comment-form-section').remove();
                         parsedDocument.querySelector('.fob-comment-form-section').remove();
                         var newHTML = parsedDocument.documentElement.outerHTML;
