@@ -14,6 +14,7 @@
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\MatchCommentaryController;
 use Botble\Base\Facades\AdminHelper;
+use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AdController;
@@ -28,7 +29,7 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
-Route::get('test-preview', [\Botble\Blog\Http\Controllers\PostController::class,'getPreview'])->name('posts.preview');
+Route::get('post-preview/{slug}', [PostController::class,'getPreview'])->name('posts.preview');
 
     Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
     Route::get('/admin/ads/create', [AdController::class, 'create'])->name('ads.create');

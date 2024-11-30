@@ -22,9 +22,9 @@ use Illuminate\Support\Facades\Schema;
 
 class PostController extends BaseController
 {
-    public function getPreview()
+    public function getPreview($slug)
     {
-        dd("ok");
+        dd($slug);
     }
 
     protected function breadcrumb(): Breadcrumb
