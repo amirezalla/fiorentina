@@ -70,10 +70,13 @@
                 $.ajax({
                     url : "https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants",
                     success : function(response){
-                        var doc = (new DOMParser).parseFromString(response, "text/html");
-                        console.log(doc.querySelector('.page-intro__title'))
+                        var parsedDocument = (new DOMParser).parseFromString(response, "text/html");
+                        var newHTML = parsedDocument.documentElement.outerHTML;
+                        var doc = document.querySelector('iframe').contentWindow.document;
+                        doc.open();
+                        doc.write(newHTML);
+                        doc.close();
                         // iframe.attr("srcdoc", doc.out);
-                        previewContent.html(doc)
                         previewModal.modal('show');
                     }
                 });
