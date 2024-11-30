@@ -75,7 +75,7 @@
                         previewModal.modal('show');
                     }
                 });
-                console.log(iframe.contents())
+                console.log(iframe.contents()[0])
             }
         });
         previewModal.find('button.close').click( function () {
