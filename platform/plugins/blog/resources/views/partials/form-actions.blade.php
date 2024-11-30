@@ -71,7 +71,7 @@
                     url : "https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants",
                     success : function(response){
                         var parsedDocument = (new DOMParser).parseFromString(response, "text/html");
-                        parsedDocument.querySelector('.page-intro__title').textContent = "salam";
+                        parsedDocument.querySelector('.page-intro__title').textContent = $('input[name="name"]').val();
                         var newHTML = parsedDocument.documentElement.outerHTML;
                         var doc = document.querySelector('iframe').contentWindow.document;
                         doc.open();
