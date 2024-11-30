@@ -67,17 +67,19 @@
                 previewModal.modal('show');
                 previewModal.find('iframe').attr('src',url)
             }else {
-                console.log(CKEDITOR.instances)
-                /*$.ajax({
+                $.ajax({
                     url : "https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants",
                     success : function(response){
+                        const name = $('input[name="name"]').val();
+                        const content = $('#content').val();
                         var parsedDocument = (new DOMParser).parseFromString(response, "text/html");
-                        parsedDocument.querySelector('.page-intro__title').textContent = $('input[name="name"]').val();
-                        parsedDocument.querySelector('.post__title').textContent = $('input[name="name"]').val();
+                        parsedDocument.querySelector('.page-intro__title').textContent = name;
+                        parsedDocument.querySelector('.post__title').textContent = name;
                         parsedDocument.querySelector('ol.breadcrumb').remove();
                         parsedDocument.querySelector('.post-category').remove();
                         parsedDocument.querySelector('.widget__content').remove();
                         parsedDocument.querySelector('.ck-content').innerHTML = "";
+                        parsedDocument.querySelector('.ck-content').innerHTML = content;
                         parsedDocument.querySelector('.post__footer').remove();
                         parsedDocument.querySelector('.fob-comment-list-section').remove();
                         parsedDocument.querySelector('.fob-comment-form-section').remove();
@@ -88,7 +90,7 @@
                         doc.close();
                         previewModal.modal('show');
                     }
-                });*/
+                });
 
             }
         });
