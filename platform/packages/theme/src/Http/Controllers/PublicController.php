@@ -48,12 +48,12 @@ class PublicController extends BaseController
 
     public function getView(?string $key = null, string $prefix = '')
     {
+        dd($key,$prefix);
         if (empty($key)) {
             return $this->getIndex();
         }
 
         $slug = SlugHelper::getSlug($key, $prefix);
-        dd($key,$prefix,$slug);
 
         if (! $slug) {
             abort(404);
