@@ -22,6 +22,11 @@ use Illuminate\Support\Facades\Schema;
 
 class PostController extends BaseController
 {
+    public function getPreview()
+    {
+        dd("ok");
+    }
+
     protected function breadcrumb(): Breadcrumb
     {
         return parent::breadcrumb()

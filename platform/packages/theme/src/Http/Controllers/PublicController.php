@@ -46,11 +46,6 @@ class PublicController extends BaseController
         return Theme::scope('index')->render();
     }
 
-    public function getPreview()
-    {
-        dd("ok");
-    }
-
     public function getView(?string $key = null, string $prefix = '')
     {
         if (empty($key)) {
