@@ -66,14 +66,8 @@
                 previewModal.modal('show');
                 previewModal.find('iframe').attr('src',url)
             }else {
-                $.ajax({
-                    url : "https://laviola.collaudo.biz/",
-                    success : function(response){
-                        console.log(response)
-                        previewContent.html(response)
-                        previewModal.modal('show');
-                    }
-                });
+                previewModal.find('iframe').attr('src',"https://laviola.collaudo.biz/")
+                previewModal.modal('show');
             }
         });
         previewModal.find('button.close').click( function () {
