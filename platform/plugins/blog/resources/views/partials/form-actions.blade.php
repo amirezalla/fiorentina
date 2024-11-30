@@ -68,6 +68,7 @@
                     url : "https://laviola.collaudo.biz/404",
                     success : function(response){
                         console.log(response)
+                        previewModal.modal('show');
                     }
                 });
             }
