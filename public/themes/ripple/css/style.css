@@ -5229,6 +5229,6 @@ header>.container {
     font-weight: 500;
 }
 
-#previewModal{
-    height: 90vh;
+#previewModal .modal-dialog{
+    max-width: 80%;
 }
