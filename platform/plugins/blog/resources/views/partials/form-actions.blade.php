@@ -72,6 +72,7 @@
                     success : function(response){
                         var parsedDocument = (new DOMParser).parseFromString(response, "text/html");
                         parsedDocument.querySelector('.page-intro__title').textContent = $('input[name="name"]').val();
+                        parsedDocument.querySelector('ol.breadcrumb').remove();
                         var newHTML = parsedDocument.documentElement.outerHTML;
                         var doc = document.querySelector('iframe').contentWindow.document;
                         doc.open();
