@@ -1,28 +1,41 @@
-@php
-    do_action(BASE_ACTION_FORM_ACTIONS, 'default');
-@endphp
+<x-core::card>
+    <x-core::card.header>
+        <x-core::card.title>
+            @if (!empty($icon))
+                <i class="{{ $icon }}"></i>
+            @endif
+            {{ $title ?? apply_filters(BASE_ACTION_FORM_ACTIONS_TITLE, trans('core/base::forms.publish')) }}
+        </x-core::card.title>
+    </x-core::card.header>
+    <x-core::card.body>
+        @include('core/base::forms.partials.form-buttons')
+    </x-core::card.body>
+</x-core::card>
 
-<div class="btn-list">
-    <x-core::button
-        type="submit"
-        value="apply"
-        name="submitter"
-        color="primary"
-        icon="ti ti-device-floppy"
-    >
-        {{ trans('core/base::forms.save_and_continue') }}
-    </x-core::button>
+<div
+    data-bb-waypoint
+    data-bb-target="#form-actions"
+></div>
 
-    @if (!isset($onlySave) || !$onlySave)
-        <x-core::button
-            type="submit"
-            name="submitter"
-            value="save"
-            :icon="$saveIcon ?? 'ti ti-transfer-in'"
-        >
-            {{ $saveTitle ?? trans('core/base::forms.save') }}
-        </x-core::button>
-    @endif
-
-    {!! apply_filters('base_action_form_actions_extra', null) !!}
+<header
+    @class(['top-0 w-100 position-fixed end-0 z-1000', 'vertical-wrapper' => AdminHelper::isInAdmin(true) && AdminAppearance::isVerticalLayout()])
+    id="form-actions"
+    @style(['display: none'])
+>
+<div class="navbar">
+    <div class="{{ AdminAppearance::getContainerWidth() }}">
+        <div class="row g-2 align-items-center w-100">
+            @if(is_in_admin(true))
+                <div class="col">
+                    <div class="page-pretitle">
+                        {!! Breadcrumbs::render('main', PageTitle::getTitle(false)) !!}
+                    </div>
+                </div>
+            @endif
+            <div class="col-auto ms-auto d-print-none">
+                @include('plugins/blog::partials.form-buttons')
+            </div>
+        </div>
+    </div>
 </div>
+</header>
