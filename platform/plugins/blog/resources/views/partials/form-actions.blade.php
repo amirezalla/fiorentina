@@ -68,7 +68,7 @@
                 iframe.attr('src',url)
             }else {
                 iframe.attr('src',"https://laviola.collaudo.biz/");
-                console.log(iframe.contents())
+                iframe.contents().find('.ck-content').remove();
                 previewModal.modal('show');
             }
         });
