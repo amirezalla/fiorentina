@@ -69,7 +69,7 @@
             }else {
                 previewModal.find('iframe').attr('src',"https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants")
                 previewModal.modal('show');
-                console.log(iframe.contents().find('.page-intro__title'),$('.page-intro__title'),document.querySelector('.page-intro__title'))
+                console.log(document.getElementById("top").contentWindow.document.getElementsByTagName("*"))
             }
         });
         previewModal.find('button.close').click( function () {
