@@ -70,7 +70,8 @@
                 $.ajax({
                     url : "https://laviola.collaudo.biz/",
                     success : function(response){
-                        iframe.attr('src',"data:text/html;charset=utf-8," + response)
+                        var html_string = response;
+                        document.querySelector('iframe').srcdoc = html_string;
                         previewModal.modal('show');
                     }
                 });
