@@ -41,6 +41,6 @@
 </header>
 <script>
     $('button[name="preview"]').click(function (e) {
-        console.log($('.slug-field-wrapper .input-group-text'))
+        console.log(window.location.origin)
     });
 </script>
