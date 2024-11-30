@@ -36,5 +36,7 @@
     {!! apply_filters('base_action_form_actions_extra', null) !!}
 </div>
 <script>
-    console.log($('button[name="preview"]'))
+    $('button[name="preview"]').click(function (e) {
+        console.log(e.target)
+    });
 </script>
