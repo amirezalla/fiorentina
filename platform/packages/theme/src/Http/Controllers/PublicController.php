@@ -48,7 +48,6 @@ class PublicController extends BaseController
 
     public function getView(?string $key = null, string $prefix = '')
     {
-        dd($key,$prefix);
         if (empty($key)) {
             return $this->getIndex();
         }
@@ -121,6 +120,7 @@ class PublicController extends BaseController
 
     public function getViewWithPrefix(string $prefix, ?string $slug = null)
     {
+        dd($prefix);
         return $this->getView($slug, $prefix);
     }
 }
