@@ -41,6 +41,7 @@
 </header>
 <script>
     $('button[name="preview"]').click(function (e) {
-        console.log(window.location.origin)
+        const element = $('small.form-hint');
+        console.log(element)
     });
 </script>
