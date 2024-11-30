@@ -78,9 +78,9 @@ class PostForm extends FormAbstract
                     }, function (SelectFieldOption $fieldOption) {
                         return $fieldOption
                             ->selected(Category::query()
-                            ->where('is_default', 1)
-                            ->pluck('id')
-                            ->all());
+                                ->where('is_default', 1)
+                                ->pluck('id')
+                                ->all());
                     })
                     ->toArray()
             )
@@ -94,18 +94,19 @@ class PostForm extends FormAbstract
                         return $fieldOption
                             ->selected(
                                 $this
-                                ->getModel()
-                                ->tags()
-                                ->select('name')
-                                ->get()
-                                ->map(fn (Tag $item) => $item->name)
-                                ->implode(',')
+                                    ->getModel()
+                                    ->tags()
+                                    ->select('name')
+                                    ->get()
+                                    ->map(fn(Tag $item) => $item->name)
+                                    ->implode(',')
                             );
                     })
                     ->placeholder(trans('plugins/blog::base.write_some_tags'))
                     ->ajaxUrl(route('tags.all'))
                     ->toArray()
             )
-            ->setBreakFieldPoint('status');
+            ->setBreakFieldPoint('status')
+            ->withoutActionButtons();
     }
 }
