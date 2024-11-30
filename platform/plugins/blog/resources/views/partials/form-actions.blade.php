@@ -73,11 +73,11 @@
                         const name = $('input[name="name"]').val();
                         const content = $('#content').val();
                         const image = $('.image-box-actions .preview-image').attr('src');
-                        var parsedDocument = (new DOMParser).parseFromString(response, "text/html");
+                        const parsedDocument = (new DOMParser).parseFromString(response, "text/html");
                         if (image){
-                            parsedDocument.querySelector('.img-in-post').src = image;
+                            parsedDocument.querySelector('.img-in-post img').src = image;
                         }else {
-                            parsedDocument.querySelector('.img-in-post').remove();
+                            parsedDocument.querySelector('.img-in-post img').remove();
                         }
                         parsedDocument.querySelector('.page-intro__title').textContent = name;
                         parsedDocument.querySelector('.post__title').textContent = name;
@@ -89,8 +89,8 @@
                         parsedDocument.querySelector('.post__footer').remove();
                         parsedDocument.querySelector('.fob-comment-list-section').remove();
                         parsedDocument.querySelector('.fob-comment-form-section').remove();
-                        var newHTML = parsedDocument.documentElement.outerHTML;
-                        var doc = document.querySelector('iframe').contentWindow.document;
+                        const newHTML = parsedDocument.documentElement.outerHTML;
+                        const doc = document.querySelector('iframe').contentWindow.document;
                         doc.open();
                         doc.write(newHTML);
                         doc.close();
