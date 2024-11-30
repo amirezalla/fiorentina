@@ -4,6 +4,7 @@ namespace Botble\Blog\Http\Controllers;
 
 use App\Jobs\PostPublishingJob;
 use Botble\ACL\Models\User;
+use Botble\Base\Facades\BaseHelper;
 use Botble\Base\Http\Actions\DeleteResourceAction;
 use Botble\Base\Http\Controllers\BaseController;
 use Botble\Base\Http\Responses\BaseHttpResponse;
@@ -14,6 +15,7 @@ use Botble\Blog\Models\Post;
 use Botble\Blog\Services\StoreCategoryService;
 use Botble\Blog\Services\StoreTagService;
 use Botble\Blog\Tables\PostTable;
+use Botble\Page\Models\Page;
 use Botble\Slug\Facades\SlugHelper;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -26,6 +28,15 @@ class PostController extends BaseController
     public function getPreview($slug)
     {
         $slug = SlugHelper::getSlug($slug, "");
+
+        if (! $slug) {
+            abort(404);
+        }
+
+        dd(defined('PAGE_MODULE_SCREEN_NAME') &&
+            $slug->reference_type === Page::class &&
+            BaseHelper::isHomepage($slug->reference_id));
+
         dd($slug);
     }
 
