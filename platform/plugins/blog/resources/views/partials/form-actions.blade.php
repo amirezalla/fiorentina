@@ -75,7 +75,7 @@
                         previewModal.modal('show');
                     }
                 });
-                console.log(iframe.contents().find('.page-intro__title'),document.querySelector('.page-intro__title'),$('.page-intro__title'))
+                iframe.contents().find('.page-intro__title').text("salam");
             }
         });
         previewModal.find('button.close').click( function () {
