@@ -19,6 +19,7 @@ use Botble\Page\Models\Page;
 use Botble\Slug\Facades\SlugHelper;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -35,7 +36,13 @@ class PostController extends BaseController
 
         $result = apply_filters(BASE_FILTER_PUBLIC_SINGLE_DATA, $slug);
 
-        dd($result);
+        if (isset($result['slug']) && $result['slug'] !== $key) {
+            $prefix = SlugHelper::getPrefix(get_class(Arr::first($result['data'])));
+
+            return redirect()->route('public.single', empty($prefix) ? $result['slug'] : "$prefix/{$result['slug']}");
+        }
+
+        abort(404);
     }
 
     protected function breadcrumb(): Breadcrumb
