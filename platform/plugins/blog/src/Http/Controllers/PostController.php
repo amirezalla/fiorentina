@@ -33,11 +33,9 @@ class PostController extends BaseController
             abort(404);
         }
 
-        dd(defined('PAGE_MODULE_SCREEN_NAME') &&
-            $slug->reference_type === Page::class &&
-            BaseHelper::isHomepage($slug->reference_id));
+        $result = apply_filters(BASE_FILTER_PUBLIC_SINGLE_DATA, $slug);
 
-        dd($slug);
+        dd($result);
     }
 
     protected function breadcrumb(): Breadcrumb
