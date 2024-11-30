@@ -24,14 +24,7 @@
         </x-core::button>
     @endif
 
-    <x-core::button
-        type="button"
-        name="preview"
-        color="secondary"
-        icon="ti ti-device-floppy"
-    >
-        {{ trans('plugins/blog::forms.preview') }}
-    </x-core::button>
+    aaaaaa
 
     {!! apply_filters('base_action_form_actions_extra', null) !!}
 </div>
