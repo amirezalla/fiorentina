@@ -40,8 +40,8 @@
 </div>
 </header>
 <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-lg d-flex flex-column" role="document">
+        <div class="modal-content flex-grow-1">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
