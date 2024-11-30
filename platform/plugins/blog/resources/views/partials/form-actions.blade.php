@@ -77,9 +77,9 @@
                         parsedDocument.querySelector('.post-category').remove();
                         parsedDocument.querySelector('.widget__content').remove();
                         parsedDocument.querySelector('.ck-content').innerHTML = "";
-                        // parsedDocument.querySelector('.post__footer').remove();
-                        // parsedDocument.querySelector('.fob-comment-list-section').remove();
-                        // parsedDocument.querySelector('.fob-comment-form-section').remove();
+                        parsedDocument.querySelector('.post__footer').remove();
+                        parsedDocument.querySelector('.fob-comment-list-section').remove();
+                        parsedDocument.querySelector('.fob-comment-form-section').remove();
                         var newHTML = parsedDocument.documentElement.outerHTML;
                         var doc = document.querySelector('iframe').contentWindow.document;
                         doc.open();
