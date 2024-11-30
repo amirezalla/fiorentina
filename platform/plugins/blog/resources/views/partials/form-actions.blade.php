@@ -8,7 +8,7 @@
         </x-core::card.title>
     </x-core::card.header>
     <x-core::card.body>
-        @include('core/base::forms.partials.form-buttons')
+        @include('plugins/blog::partials.form-buttons')
     </x-core::card.body>
 </x-core::card>
 
@@ -33,7 +33,7 @@
                 </div>
             @endif
             <div class="col-auto ms-auto d-print-none">
-{{--                @include('plugins/blog::partials.form-buttons')--}}
+                @include('plugins/blog::partials.form-buttons')
             </div>
         </div>
     </div>
