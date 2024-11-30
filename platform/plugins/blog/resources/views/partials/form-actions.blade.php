@@ -49,7 +49,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <iframe src=""></iframe>
+                <iframe src="" class="w-100"></iframe>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

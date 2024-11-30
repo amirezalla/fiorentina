@@ -5228,3 +5228,7 @@ header>.container {
     display: block;
     font-weight: 500;
 }
+
+#previewModal{
+    height: 90vh;
+}
