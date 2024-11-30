@@ -65,18 +65,22 @@
             if (!element) {
                 const url = element.find('a').text();
                 previewModal.modal('show');
-                iframe.attr('src',url)
+                previewModal.find('iframe').attr('src',url)
             }else {
-                iframe.attr('src',"https://laviola.collaudo.biz/");
-                previewModal.modal('show');
-                console.log(iframe.contents().find('html'))
+                $.ajax({
+                    url : "https://laviola.collaudo.biz/",
+                    success : function(response){
+                        iframe.contents().find('html').html(response);
+                        previewModal.modal('show');
+                    }
+                });
             }
         });
         previewModal.find('button.close').click( function () {
             previewModal.modal('hide');
         });
         previewModal.on('hidden.bs.modal', function () {
-            iframe.attr('src',"");
+            previewModal.find('iframe').attr('src',"");
         });
     });
 </script>
