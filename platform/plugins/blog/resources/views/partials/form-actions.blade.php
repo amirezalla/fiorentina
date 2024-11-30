@@ -42,6 +42,8 @@
 <script>
     $('button[name="preview"]').click(function (e) {
         const element = $('small.form-hint');
-        console.log(element)
+        if (element){
+            console.log(element.find('a').text())
+        }
     });
 </script>
