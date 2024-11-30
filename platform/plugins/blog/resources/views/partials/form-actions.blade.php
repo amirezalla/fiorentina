@@ -33,7 +33,7 @@
                 </div>
             @endif
             <div class="col-auto ms-auto d-print-none">
-                @include('plugins/blog::partials.form-buttons')
+{{--                @include('plugins/blog::partials.form-buttons')--}}
             </div>
         </div>
     </div>
