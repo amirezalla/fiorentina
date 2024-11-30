@@ -59,13 +59,15 @@
     </div>
 </div>
 <script>
-    const previewModal = $('#previewModal');
-    $('button[name="preview"]').click(function (e) {
-        const element = $('small.form-hint');
-        if (element) {
-            const url = element.find('a').text();
-            previewModal.modal('show');
-            previewModal.find('iframe').attr('src',url)
-        }
+    $(function () {
+        const previewModal = $('#previewModal');
+        $('button[name="preview"]').click(function (e) {
+            const element = $('small.form-hint');
+            if (element) {
+                const url = element.find('a').text();
+                previewModal.modal('show');
+                previewModal.find('iframe').attr('src',url)
+            }
+        });
     });
 </script>
