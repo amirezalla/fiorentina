@@ -49,7 +49,7 @@
     </div>
 
     <div class="col-md-3 gap-3 d-flex flex-column-reverse flex-md-column mb-md-0 mb-5">
-        {!! $form->getActionButtons() !!}
+{{--        {!! $form->getActionButtons() !!}--}}
 
         @php
             do_action(BASE_ACTION_META_BOXES, 'top', $form->getModel());
