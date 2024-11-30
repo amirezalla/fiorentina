@@ -37,7 +37,6 @@ class PostController extends BaseController
         }
 
         $result = apply_filters(BASE_FILTER_PUBLIC_SINGLE_DATA, $slug);
-
         
         if (! empty($result) && is_array($result)) {
             if (isset($result['view'])) {
