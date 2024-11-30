@@ -58,15 +58,17 @@
 <script>
     $(function () {
         const previewModal = $('#previewModal');
+        const iframe = previewModal.find('iframe');
         const previewContent = $('#previewContent');
         $('button[name="preview"]').click(function (e) {
             const element = $('small.form-hint');
             if (!element) {
                 const url = element.find('a').text();
                 previewModal.modal('show');
-                previewModal.find('iframe').attr('src',url)
+                iframe.attr('src',url)
             }else {
-                previewModal.find('iframe').attr('src',"https://laviola.collaudo.biz/")
+                iframe.attr('src',"https://laviola.collaudo.biz/");
+                console.log(iframe.contents())
                 previewModal.modal('show');
             }
         });
@@ -74,7 +76,7 @@
             previewModal.modal('hide');
         });
         previewModal.on('hidden.bs.modal', function () {
-            previewModal.find('iframe').attr('src',"");
+            iframe.attr('src',"");
         });
     });
 </script>
