@@ -67,13 +67,8 @@
                 previewModal.modal('show');
                 previewModal.find('iframe').attr('src',url)
             }else {
-                $.ajax({
-                    url : "https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants",
-                    success : function(response){
-                        iframe.html(response)
-                        previewModal.modal('show');
-                    }
-                });
+                previewModal.find('iframe').attr('src',"https://laviola.collaudo.biz/humanoid-robots-in-everyday-life-ai-companions-and-assistants")
+                previewModal.modal('show');
             }
         });
         previewModal.find('button.close').click( function () {
