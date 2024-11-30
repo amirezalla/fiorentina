@@ -72,9 +72,8 @@
                     success : function(response){
                         var doc = (new DOMParser).parseFromString(response, "text/html");
                         console.log(doc.querySelector('.page-intro__title'))
-                        /*iframe.attr("srcdoc", response);
+                        iframe.attr("srcdoc", doc);
                         previewModal.modal('show');
-                        console.log(document.getElementById("iframe").contentWindow.document.getElementsByTagName("*"))*/
                     }
                 });
 
