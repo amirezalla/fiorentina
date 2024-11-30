@@ -34,6 +34,78 @@ class PostForm extends FormAbstract
         $this
             ->model(Post::class)
             ->setValidatorClass(PostRequest::class)
-            ->hasTabs();
+            ->hasTabs()
+            ->add('name', TextField::class, NameFieldOption::make()->required()->toArray())
+            ->add('description', TextareaField::class, DescriptionFieldOption::make()->toArray())
+            ->add(
+                'is_featured',
+                OnOffField::class,
+                IsFeaturedFieldOption::make()
+                    ->toArray()
+            )
+            ->add('published_at', DatetimeField::class, DatePickerFieldOption::make()
+                ->label(trans('plugins/blog::posts.form.scheduled_publishing'))
+                ->defaultValue(null))
+            ->add('content', EditorField::class, ContentFieldOption::make()->allowedShortcodes()->toArray())
+            ->add('status', SelectField::class, StatusFieldOption::make()->toArray())
+            ->when(get_post_formats(true), function (PostForm $form, array $postFormats) {
+                if (count($postFormats) > 1) {
+                    $choices = [];
+
+                    foreach ($postFormats as $postFormat) {
+                        $choices[$postFormat[0]] = $postFormat[1];
+                    }
+
+                    $form
+                        ->add(
+                            'format_type',
+                            RadioField::class,
+                            RadioFieldOption::make()
+                                ->label(trans('plugins/blog::posts.form.format_type'))
+                                ->choices($choices)
+                                ->toArray()
+                        );
+                }
+            })
+            ->add(
+                'categories[]',
+                TreeCategoryField::class,
+                SelectFieldOption::make()
+                    ->label(trans('plugins/blog::posts.form.categories'))
+                    ->choices(get_categories_with_children())
+                    ->when($this->getModel()->getKey(), function (SelectFieldOption $fieldOption) {
+                        return $fieldOption->selected($this->getModel()->categories()->pluck('category_id')->all());
+                    }, function (SelectFieldOption $fieldOption) {
+                        return $fieldOption
+                            ->selected(Category::query()
+                            ->where('is_default', 1)
+                            ->pluck('id')
+                            ->all());
+                    })
+                    ->toArray()
+            )
+            ->add('image', MediaImageField::class)
+            ->add(
+                'tag',
+                TagField::class,
+                TagFieldOption::make()
+                    ->label(trans('plugins/blog::posts.form.tags'))
+                    ->when($this->getModel()->getKey(), function (TagFieldOption $fieldOption) {
+                        return $fieldOption
+                            ->selected(
+                                $this
+                                ->getModel()
+                                ->tags()
+                                ->select('name')
+                                ->get()
+                                ->map(fn (Tag $item) => $item->name)
+                                ->implode(',')
+                            );
+                    })
+                    ->placeholder(trans('plugins/blog::base.write_some_tags'))
+                    ->ajaxUrl(route('tags.all'))
+                    ->toArray()
+            )
+            ->setBreakFieldPoint('status');
     }
 }
