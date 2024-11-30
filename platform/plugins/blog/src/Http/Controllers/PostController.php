@@ -17,12 +17,14 @@ use Botble\Blog\Services\StoreTagService;
 use Botble\Blog\Tables\PostTable;
 use Botble\Page\Models\Page;
 use Botble\Slug\Facades\SlugHelper;
+use Botble\Theme\Facades\Theme;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class PostController extends BaseController
 {
@@ -30,16 +32,21 @@ class PostController extends BaseController
     {
         $slug = SlugHelper::getSlug($slug, "");
 
-        if (! $slug) {
+        if (!$slug) {
             abort(404);
         }
 
         $result = apply_filters(BASE_FILTER_PUBLIC_SINGLE_DATA, $slug);
 
-        if (isset($result['slug']) && $result['slug'] !== $key) {
-            $prefix = SlugHelper::getPrefix(get_class(Arr::first($result['data'])));
+        
+        if (! empty($result) && is_array($result)) {
+            if (isset($result['view'])) {
+                Theme::addBodyAttributes(['id' => Str::slug(Str::snake(Str::afterLast($slug->reference_type, '\\'))) . '-' . $slug->reference_id]);
 
-            return redirect()->route('public.single', empty($prefix) ? $result['slug'] : "$prefix/{$result['slug']}");
+                return Theme::scope($result['view'], $result['data'], Arr::get($result, 'default_view'))->render();
+            }
+
+            return $result;
         }
 
         abort(404);
@@ -67,10 +74,11 @@ class PostController extends BaseController
     }
 
     public function store(
-        PostRequest $request,
-        StoreTagService $tagService,
+        PostRequest          $request,
+        StoreTagService      $tagService,
         StoreCategoryService $categoryService
-    ) {
+    )
+    {
         $postForm = PostForm::create();
 
         $postForm->saving(function (PostForm $form) use ($request, $tagService, $categoryService) {
@@ -89,8 +97,8 @@ class PostController extends BaseController
 
             $post = $form->getModel();
 
-            if ($published_at){
-                PostPublishingJob::dispatch($post->id,$post->published_at)->delay($published_at);
+            if ($published_at) {
+                PostPublishingJob::dispatch($post->id, $post->published_at)->delay($published_at);
             }
 
             $form->fireModelEvents($post);
@@ -115,11 +123,12 @@ class PostController extends BaseController
     }
 
     public function update(
-        Post $post,
-        PostRequest $request,
-        StoreTagService $tagService,
+        Post                 $post,
+        PostRequest          $request,
+        StoreTagService      $tagService,
         StoreCategoryService $categoryService,
-    ) {
+    )
+    {
         PostForm::createFromModel($post)
             ->setRequest($request)
             ->saving(function (PostForm $form) use ($categoryService, $tagService) {
@@ -135,8 +144,8 @@ class PostController extends BaseController
                 $post->fill($request->input());
                 $post->save();
 
-                if ($published_at){
-                    PostPublishingJob::dispatch($post->id,$post->published_at)->delay($published_at);
+                if ($published_at) {
+                    PostPublishingJob::dispatch($post->id, $post->published_at)->delay($published_at);
                 }
 
                 $form->fireModelEvents($post);
