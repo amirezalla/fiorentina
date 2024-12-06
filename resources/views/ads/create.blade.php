@@ -22,6 +22,14 @@
                                 </div>
                             </div>
 
+                            <div class="post-body-content">
+                                <div class="mb-3">
+                                    <label for="weight" class="form-label">Weight</label>
+                                    <input type="text" class="form-control" name="weight" id="weight"
+                                           value="{{ old('weight') }}" autocomplete="off">
+                                </div>
+                            </div>
+
                             <!-- Publish Section -->
                             <div class="postbox-container" id="postbox-container-1">
                                 <div class="meta-box-sortables ui-sortable" id="side-sortables">
