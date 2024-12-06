@@ -48,6 +48,7 @@ class AdController extends BaseController
             'post_title' => 'required|string|max:255',
             'width' => 'nullable|numeric|min:0',
             'height' => 'nullable|numeric|min:0',
+            'weight' => 'required|numeric|min:1',
             'type' => ['required', Rule::in(array_keys(Ad::TYPES))],
             'group' => ['required', Rule::in(array_keys(Ad::GROUPS))],
         ]);
@@ -56,6 +57,7 @@ class AdController extends BaseController
         $advertisement = new Ad();
         $advertisement->title = $validated['post_title'];
         $advertisement->group = $request->group;
+        $advertisement->weight = $request->weight;
         $advertisement->type = $request->type;
         $advertisement->width = $request->width;
         $advertisement->height = $request->height;
@@ -103,6 +105,7 @@ class AdController extends BaseController
             'post_title' => 'required|string|max:255',
             'width' => 'nullable|numeric|min:0',
             'height' => 'nullable|numeric|min:0',
+            'weight' => 'required|numeric|min:1',
             'type' => ['required', Rule::in(array_keys(Ad::TYPES))],
             'group' => ['required', Rule::in(array_keys(Ad::GROUPS))],
         ]);
@@ -116,6 +119,7 @@ class AdController extends BaseController
             'width' => $request->width,
             'height' => $request->height,
             'url' => $request->url,
+            'weight' => $request->weight,
             'amp' => $request->amp??null,
             'status' => $status,
         ];
