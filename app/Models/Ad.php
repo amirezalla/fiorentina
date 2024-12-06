@@ -228,7 +228,7 @@ class Ad extends BaseModel
      */
     public function scopeInRandomOrderByWeight($q): mixed
     {
-        return $q->orderByRaw('-LOG(RAND()) / `' . $this->getTable() . '`.`weight`');
+        return $q->orderByRaw('-LOG(1-RAND()) / `' . $this->getTable() . '`.`weight`');
     }
 
 }
