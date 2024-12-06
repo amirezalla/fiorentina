@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Botble\Base\Models\BaseModel;
 use Botble\Theme\Facades\Theme;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 
 class Ad extends BaseModel
@@ -58,7 +59,7 @@ class Ad extends BaseModel
     const MOBILE_POSIZIONE_3 = 37;
     const MOBILE_POSIZIONE_4 = 38;
     const MOBILE_POSIZIONE_5 = 39;
-    const MOBILE_HOME_HERO_25=40;
+    const MOBILE_HOME_HERO_25 = 40;
     const SKIN_MOBILE = 43;
 
 
@@ -117,6 +118,7 @@ class Ad extends BaseModel
         'expires_at',
         'width',
         'height',
+        'weight',
         'status'
     ];
 
@@ -196,22 +198,21 @@ class Ad extends BaseModel
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
                     } else if ($key == 2 && $ads->has(self::GROUP_DBLOG_P3)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
-                    }else if ($key == 3 && $ads->has(self::GROUP_DBLOG_P4)) {
+                    } else if ($key == 3 && $ads->has(self::GROUP_DBLOG_P4)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P4)])->render();
-                    }
-                    else if ($key == 4 && $ads->has(self::GROUP_DBLOG_P5)) {
+                    } else if ($key == 4 && $ads->has(self::GROUP_DBLOG_P5)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P5)])->render();
                     }
                     return $item;
                 })->flatten();
                 if ($shortCodes->count()) {
                     $adsBackground = $shortCodes->first(function ($item) use ($adsBackgroundShortCodeRegex) {
-                        return preg_match($adsBackgroundShortCodeRegex,$item);
+                        return preg_match($adsBackgroundShortCodeRegex, $item);
                     });
                     if ($adsBackground) {
                         Theme::set('has-ads-background', $adsBackground);
                         $shortCodes = $shortCodes->filter(function ($item) use ($adsBackgroundShortCodeRegex) {
-                            return !preg_match($adsBackgroundShortCodeRegex,$item);
+                            return !preg_match($adsBackgroundShortCodeRegex, $item);
                         });
                     }
                 }
@@ -219,6 +220,15 @@ class Ad extends BaseModel
             }
         }
         return $content;
+    }
+
+    /**
+     * @param $q
+     * @return mixed
+     */
+    public function inRandomOrderByWeight($q): mixed
+    {
+        return $q->orderByRaw('-LOG(RAND()) / `' . $this->getTable() . '`.`weight`');
     }
 
 }

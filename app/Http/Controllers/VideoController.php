@@ -28,9 +28,6 @@ class VideoController extends BaseController
 
     public function index()
     {
-        Schema::table('ads', function (Blueprint $table) {
-            $table->unsignedInteger('weight')->default(1);
-        });
         $this->pageTitle("Videos List");
         $videos = Video::query()->withCount('mediaFiles')->latest()->paginate(20);
         return view('videos.view', compact('videos'));
