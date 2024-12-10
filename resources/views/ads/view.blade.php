@@ -21,8 +21,8 @@
                     <label for="search-status" class="form-label">Status</label>
                     <select class="form-select" name="status" id="search-status">
                         <option value="">All</option>
-                        <option value="1">Published</option>
-                        <option value="2">Draft</option>
+                        <option value="1" @if(request()->filled('status') && request('status') == 0) selected @endif>Published</option>
+                        <option value="2" @if(request()->filled('status') && request('status') == 1) selected @endif>Draft</option>
                     </select>
                 </div>
                 <div class="col-12 col-md-4">
