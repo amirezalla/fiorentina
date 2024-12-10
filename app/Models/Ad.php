@@ -124,7 +124,7 @@ class Ad extends BaseModel
 
     public function getWeightPercentage()
     {
-        dd($this);
+        dd($this->group,self::GROUPS[$this->group]);
     }
 
 
