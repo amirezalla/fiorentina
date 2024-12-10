@@ -7,7 +7,7 @@
         </div>
         <form action="" method="get">
             <div class="row">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-4">
                     <label for="advads-group-id" class="form-label">Gruppo annunci</label>
                     <select class="form-select" name="group" id="advads-group-id">
                         @foreach (\App\Models\Ad::GROUPS as $key => $title)
