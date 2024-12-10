@@ -33,6 +33,8 @@ class AdController extends BaseController
             ->where(function ($q) use ($request) {
                 $q->when($request->filled('group'), function ($q) use ($request) {
                     $q->where('group',$request->group);
+                })->when($request->filled('q'), function ($q) use ($request) {
+                    $q->where('title','LIKE','%'.$request->q.'%');
                 });
             })
             ->latest()
