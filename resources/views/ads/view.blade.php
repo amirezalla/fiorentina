@@ -5,7 +5,7 @@
         <div class="mb-3">
             <a href="{{ route('ads.create') }}" class="btn btn-primary">Crea</a>
         </div>
-        <form action="" method="get">
+        <form action="" method="get" class="mb-3">
             <div class="row">
                 <div class="col-12 col-md-4">
                     <label for="advads-group-id" class="form-label">Gruppo annunci</label>
@@ -16,6 +16,9 @@
                         @endforeach
                     </select>
                 </div>
+            </div>
+            <div class="mt-2">
+                <button type="submit" class="btn btn-primary">Search</button>
             </div>
         </form>
         <table class="table table-striped">
