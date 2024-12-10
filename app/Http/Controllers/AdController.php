@@ -29,10 +29,9 @@ class AdController extends BaseController
     public function index(Request $request)
     {
         $this->pageTitle("Ads List");
-        dd(array_keys(Ad::GROUPS));
         $ads = Ad::query()
             ->where(function ($q) use ($request) {
-                $q->when($request->filled('group'), function ($q) use ($request) {
+                $q->when($request->filled('group') && in_array($request->group,array_keys(Ad::GROUPS)), function ($q) use ($request) {
                     $q->where('group',$request->group);
                 })->when($request->filled('q'), function ($q) use ($request) {
                     $q->where('title','LIKE','%'.$request->q.'%');
