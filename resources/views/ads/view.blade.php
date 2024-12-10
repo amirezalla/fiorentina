@@ -7,7 +7,7 @@
         </div>
         <form action="" method="get" class="mb-3">
             <div class="row">
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4 mb-2">
                     <label for="search-group" class="form-label">Gruppo annunci</label>
                     <select class="form-select" name="group" id="search-group">
                         <option value="">All</option>
@@ -17,7 +17,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4 mb-2">
                     <label for="search-status" class="form-label">Status</label>
                     <select class="form-select" name="status" id="search-status">
                         <option value="">All</option>
@@ -25,12 +25,12 @@
                         <option value="2" @if(request()->filled('status') && request('status') == 2) selected @endif>Draft</option>
                     </select>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4 mb-2">
                     <label for="search-q" class="form-label">Title</label>
                     <input type="text" class="form-control" id="search-q" name="q" value="{{ request('q') }}">
                 </div>
             </div>
-            <div class="mt-2">
+            <div class="w-full">
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
         </form>
