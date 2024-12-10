@@ -26,10 +26,17 @@ class AdController extends BaseController
             ->add("Advertisements");
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $this->pageTitle("Ads List");
-        $ads = Ad::query()->latest()->paginate(20);
+        $ads = Ad::query()
+            ->where(function ($q) use ($request) {
+                $q->when($request->filled('group'), function ($q) use ($request) {
+                    $q->where('group',$request->group);
+                });
+            })
+            ->latest()
+            ->paginate(20);
         return view('ads.view', compact('ads'));
     }
 
@@ -65,20 +72,20 @@ class AdController extends BaseController
         $advertisement->amp = $request->amp;
 
         // Handle file upload
-        if($advertisement->type ==1){
+        if ($advertisement->type == 1) {
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
                 $filename = Str::random(32) . time() . "." . $request->file('image')->getClientOriginalExtension();
                 $imageResized = ImageManager::gd()->read($request->image);
-                if($request->width && $request->height){
-                    $imageResized=$imageResized->resize($request->width, $request->height);
+                if ($request->width && $request->height) {
+                    $imageResized = $imageResized->resize($request->width, $request->height);
                 }
-                $imageResized=$imageResized->encode();
+                $imageResized = $imageResized->encode();
                 $path = "ads-images/" . $filename;
                 Storage::disk('public')->put($path, $imageResized);
                 $advertisement->image = $path;
             }
-        }else{
-            $advertisement->image=$request->image;
+        } else {
+            $advertisement->image = $request->image;
         }
 
 
@@ -109,9 +116,11 @@ class AdController extends BaseController
             'type' => ['required', Rule::in(array_keys(Ad::TYPES))],
             'group' => ['required', Rule::in(array_keys(Ad::GROUPS))],
         ]);
-        if($request->status=='1'){
-            $status=1;
-        }else{$status=0;}
+        if ($request->status == '1') {
+            $status = 1;
+        } else {
+            $status = 0;
+        }
         $data = [
             'title' => $request->post_title,
             'group' => $request->group,
@@ -120,29 +129,29 @@ class AdController extends BaseController
             'height' => $request->height,
             'url' => $request->url,
             'weight' => $request->weight,
-            'amp' => $request->amp??null,
+            'amp' => $request->amp ?? null,
             'status' => $status,
         ];
-        if($data['type'] ==1){
+        if ($data['type'] == 1) {
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
                 $filename = Str::random(32) . time() . "." . $request->file('image')->getClientOriginalExtension();
                 $imageResized = ImageManager::gd()->read($request->image);
-                if($request->width && $request->height){
-                    $imageResized=$imageResized->resize($request->width, $request->height);
+                if ($request->width && $request->height) {
+                    $imageResized = $imageResized->resize($request->width, $request->height);
                 }
-                $imageResized=$imageResized->encode();
+                $imageResized = $imageResized->encode();
                 $path = "ads-images/" . $filename;
                 Storage::disk('public')->put($path, $imageResized);
                 $data['image'] = $path;
             }
-        }else{
-            $data['image'] =$request->image;
+        } else {
+            $data['image'] = $request->image;
         }
         try {
             // Update the advertisement
             $ad->update($data);
             $ad->refresh(); // Refreshes the model from the database to reflect the latest state
-                        return redirect()->route('ads.index')->with('success', 'Advertisement updated successfully!');
+            return redirect()->route('ads.index')->with('success', 'Advertisement updated successfully!');
         } catch (\Exception $e) {
             Log::error('Failed to save advertisement: ' . $e->getMessage());
             return redirect()->back()->withErrors('Failed to save advertisement. Please try again.');

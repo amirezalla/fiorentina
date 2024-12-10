@@ -8,14 +8,18 @@
         <form action="" method="get" class="mb-3">
             <div class="row">
                 <div class="col-12 col-md-4">
-                    <label for="advads-group-id" class="form-label">Gruppo annunci</label>
-                    <select class="form-select" name="group" id="advads-group-id">
+                    <label for="search-group" class="form-label">Gruppo annunci</label>
+                    <select class="form-select" name="group" id="search-group">
                         <option value="">All</option>
                         @foreach (\App\Models\Ad::GROUPS as $key => $title)
                             <option value="{{ $key }}" @selected(request('group') == $key)>
                                 {{ $title }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="search-q" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="search-q" name="q" value="{{ request('q') }}">
                 </div>
             </div>
             <div class="mt-2">
