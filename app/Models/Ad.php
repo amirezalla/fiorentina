@@ -125,7 +125,7 @@ class Ad extends BaseModel
     public function getWeightPercentage()
     {
         $sumWeight = self::query()->where('group',$this->group)->sum('weight');
-        dd($sumWeight,$this->weight);
+        dd((100 / $sumWeight) * $this->weight);
     }
 
 
