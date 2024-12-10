@@ -13,6 +13,7 @@
                     <th>type</th>
                     <th>group</th>
                     <th>image</th>
+                    <th>Weight</th>
                     <th>Status</th>
 
                     <th>Actions</th>
@@ -20,7 +21,6 @@
             </thead>
             <tbody>
                 @foreach ($ads as $ad)
-                    @dd($ad->getWeightPercentage())
                     <tr>
                         <td class="align-middle">{{ $ad->id }}</td>
                         <td class="align-middle">{{ $ad->title }}</td>
@@ -37,6 +37,7 @@
                                 <img src="{{ $ad->getImageUrl() }}" width="140" alt="{{ $ad->title }}">
                             @endif
                         </td>
+                        <td>%{{ $ad->getWeightPercentage() }}</td>
                         <td>
                             @if ($ad->status)
                                 Published

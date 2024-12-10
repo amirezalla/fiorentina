@@ -122,10 +122,13 @@ class Ad extends BaseModel
         'status'
     ];
 
-    public function getWeightPercentage()
+    /**
+     * @return int
+     */
+    public function getWeightPercentage(): int
     {
         $sumWeight = self::query()->where('group',$this->group)->sum('weight');
-        dd((100 / $sumWeight) * $this->weight);
+        return intval((100 / $sumWeight) * $this->weight);
     }
 
 
