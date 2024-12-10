@@ -10,6 +10,7 @@
                 <div class="col-12 col-md-4">
                     <label for="advads-group-id" class="form-label">Gruppo annunci</label>
                     <select class="form-select" name="group" id="advads-group-id">
+                        <option>All</option>
                         @foreach (\App\Models\Ad::GROUPS as $key => $title)
                             <option value="{{ $key }}" @selected(request('group') == $key)>
                                 {{ $title }}</option>
