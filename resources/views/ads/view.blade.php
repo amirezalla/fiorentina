@@ -20,6 +20,7 @@
             </thead>
             <tbody>
                 @foreach ($ads as $ad)
+                    @dd($ad->getWeightPercentage())
                     <tr>
                         <td class="align-middle">{{ $ad->id }}</td>
                         <td class="align-middle">{{ $ad->title }}</td>

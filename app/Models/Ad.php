@@ -122,6 +122,11 @@ class Ad extends BaseModel
         'status'
     ];
 
+    public function getWeightPercentage()
+    {
+        dd($this);
+    }
+
 
     public function getGroupNameAttribute()
     {
