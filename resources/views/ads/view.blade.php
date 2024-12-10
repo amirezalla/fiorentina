@@ -18,6 +18,14 @@
                     </select>
                 </div>
                 <div class="col-12 col-md-4">
+                    <label for="search-status" class="form-label">Status</label>
+                    <select class="form-select" name="status" id="search-status">
+                        <option value="">All</option>
+                        <option value="1">Published</option>
+                        <option value="2">Draft</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4">
                     <label for="search-q" class="form-label">Title</label>
                     <input type="text" class="form-control" id="search-q" name="q" value="{{ request('q') }}">
                 </div>

@@ -31,10 +31,16 @@ class AdController extends BaseController
         $this->pageTitle("Ads List");
         $ads = Ad::query()
             ->where(function ($q) use ($request) {
-                $q->when($request->filled('group') && in_array($request->group,array_keys(Ad::GROUPS)), function ($q) use ($request) {
-                    $q->where('group',$request->group);
+                $q->when($request->filled('group') && in_array($request->group, array_keys(Ad::GROUPS)), function ($q) use ($request) {
+                    $q->where('group', $request->group);
                 })->when($request->filled('q'), function ($q) use ($request) {
-                    $q->where('title','LIKE','%'.$request->q.'%');
+                    $q->where('title', 'LIKE', '%' . $request->q . '%');
+                })->when($request->filled('status') && in_array(intval($request->status), [1, 2]), function ($q) use ($request) {
+                    $q->when($request->status == 1, function ($q) {
+                        $q->where('status', 1);
+                    }, function ($q) {
+                        $q->where('status', 0);
+                    });
                 });
             })
             ->latest()
