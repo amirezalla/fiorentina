@@ -17,7 +17,16 @@
 
 <div class="fob-comment-list-section" style="display: none">
     <h4 class="fob-comment-title fob-comment-list-title mb-2"></h4>
-    <div class="border-bottom text-dark mb-3">aaa</div>
+    <div class="flex justify-content-end border-bottom text-dark mb-3">
+        <div class="flex">
+            <button>
+                <i class="fa-solid fa-fire-flame-curved"></i>
+            </button>
+            <button>
+                <i class="fa-solid fa-fire-flame-curved"></i>
+            </button>
+        </div>
+    </div>
     <div class="fob-comment-list-wrapper"></div>
 </div>
 
