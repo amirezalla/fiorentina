@@ -29,9 +29,9 @@
                         aria-haspopup="true" aria-expanded="false">
                     Small button
                 </button>
-                <div class="dropdown-menu">
+                <div class="dropdown-menu sort-dropdown">
                     @foreach(trans('plugins/fob-comment::comment.sort_options') as $item)
-                        <a class="dropdown-item" href="#">{{ $item['title'] }}</a>
+                        <a class="dropdown-item" href="#" data-key="{{ $item['key'] }}">{{ $item['title'] }}</a>
                     @endforeach
                 </div>
             </div>
