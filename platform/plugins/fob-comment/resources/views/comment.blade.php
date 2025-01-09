@@ -17,8 +17,8 @@
 
 <div class="fob-comment-list-section" style="display: none">
     <h4 class="fob-comment-title fob-comment-list-title mb-2"></h4>
-    <div class="flex justify-content-end border-bottom text-dark mb-3">
-        <div class="flex align-items-center">
+    <div class="d-flex justify-content-end border-bottom text-dark mb-3">
+        <div class="d-flex">
             <button class="btn mb-0">
                 <i class="fa fa-bolt" aria-hidden="true"></i>
             </button>
