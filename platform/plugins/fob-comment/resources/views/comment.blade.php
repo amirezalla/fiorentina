@@ -20,10 +20,10 @@
     <div class="flex justify-content-end border-bottom text-dark mb-3">
         <div class="flex">
             <button>
-                <i class="fa-solid fa-fire-flame-curved"></i>
+                <i class="fa fa-rebel" aria-hidden="true"></i>
             </button>
             <button>
-                <i class="fa-solid fa-fire-flame-curved"></i>
+                <i class="fa fa-bolt" aria-hidden="true"></i>
             </button>
         </div>
     </div>
