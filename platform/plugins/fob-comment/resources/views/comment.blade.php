@@ -17,6 +17,7 @@
 
 <div class="fob-comment-list-section" style="display: none">
     <h4 class="fob-comment-title fob-comment-list-title"></h4>
+    <div class="text-dark">aaa</div>
     <div class="fob-comment-list-wrapper"></div>
 </div>
 
