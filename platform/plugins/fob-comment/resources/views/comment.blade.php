@@ -26,7 +26,7 @@
                 <i class="fa fa-fire" aria-hidden="true"></i>
             </button>
             <div class="btn-group">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+                <button class="btn btn-secondary btn-sm dropdown-toggle mb-0" type="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                     Small button
                 </button>
