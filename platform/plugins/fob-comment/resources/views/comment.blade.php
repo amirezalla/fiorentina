@@ -25,6 +25,7 @@
             <button class="btn mb-0 btn-must-replies">
                 <i class="fa fa-fire" aria-hidden="true"></i>
             </button>
+            @dd(trans('plugins/fob-comment::comment.front'))
             <div class="btn-group">
                 <button class="btn btn-sm dropdown-toggle mb-0" type="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
@@ -43,7 +44,7 @@
 
 <div class="fob-comment-form-section">
     <h4 class="fob-comment-title fob-comment-form-title">
-        aaaa{{ trans('plugins/fob-comment::comment.front.form.title') }}
+        {{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
 
