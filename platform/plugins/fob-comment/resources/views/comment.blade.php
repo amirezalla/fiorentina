@@ -18,20 +18,32 @@
 <div class="fob-comment-list-section" style="display: none">
     <h4 class="fob-comment-title fob-comment-list-title mb-2"></h4>
     <div class="d-flex justify-content-end border-bottom text-dark mb-3">
-        <div class="d-flex">
+        <div class="d-flex align-items-center">
             <button class="btn mb-0">
                 <i class="fa fa-bolt" aria-hidden="true"></i>
             </button>
             <button class="btn mb-0">
                 <i class="fa fa-fire" aria-hidden="true"></i>
             </button>
+            <div class="btn-group">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    Small button
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </div>
         </div>
     </div>
     <div class="fob-comment-list-wrapper"></div>
 </div>
 
 <div class="fob-comment-form-section">
-    <h4 class="fob-comment-title fob-comment-form-title">aaaa{{ trans('plugins/fob-comment::comment.front.form.title') }}
+    <h4 class="fob-comment-title fob-comment-form-title">
+        aaaa{{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
 
