@@ -57,7 +57,6 @@ $(() => {
                     $commentListSection.hide()
                 } else {
                     $commentListSection.show()
-                    console.log(title)
                     $(document).find('.fob-comment-list-title').text(title)
                     $(document).find('.fob-comment-list-wrapper').html(html)
                 }
