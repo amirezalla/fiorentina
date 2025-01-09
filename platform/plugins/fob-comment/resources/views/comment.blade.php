@@ -27,7 +27,7 @@
             <div class="btn-group">
                 <button class="btn btn-sm dropdown-toggle mb-0" type="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
-                    Small button
+                    {{ collect(trans('plugins/fob-comment::comment.sort_options'))->firstWhere('key','latest')['title'] }}
                 </button>
                 <div class="dropdown-menu sort-dropdown">
                     @foreach(trans('plugins/fob-comment::comment.sort_options') as $item)
