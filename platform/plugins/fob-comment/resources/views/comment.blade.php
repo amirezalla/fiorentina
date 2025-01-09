@@ -16,12 +16,13 @@
 </script>
 
 <div class="fob-comment-list-section" style="display: none">
+    <div>bbbb</div>
     <h4 class="fob-comment-title fob-comment-list-title"></h4>
     <div class="fob-comment-list-wrapper"></div>
 </div>
 
 <div class="fob-comment-form-section">
-    <h4 class="fob-comment-title fob-comment-form-title">{{ trans('plugins/fob-comment::comment.front.form.title') }}
+    <h4 class="fob-comment-title fob-comment-form-title">aaaa{{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
 
