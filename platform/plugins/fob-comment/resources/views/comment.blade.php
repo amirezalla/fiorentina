@@ -18,12 +18,12 @@
 <div class="fob-comment-list-section" style="display: none">
     <h4 class="fob-comment-title fob-comment-list-title mb-2"></h4>
     <div class="flex justify-content-end border-bottom text-dark mb-3">
-        <div class="flex">
-            <button>
-                <i class="fa fa-fire" aria-hidden="true"></i>
-            </button>
-            <button>
+        <div class="flex align-items-center">
+            <button class="btn">
                 <i class="fa fa-bolt" aria-hidden="true"></i>
+            </button>
+            <button class="btn">
+                <i class="fa fa-fire" aria-hidden="true"></i>
             </button>
         </div>
     </div>
