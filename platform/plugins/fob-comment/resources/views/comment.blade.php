@@ -19,10 +19,10 @@
     <h4 class="fob-comment-title fob-comment-list-title mb-2"></h4>
     <div class="flex justify-content-end border-bottom text-dark mb-3">
         <div class="flex align-items-center">
-            <button class="btn">
+            <button class="btn mb-0">
                 <i class="fa fa-bolt" aria-hidden="true"></i>
             </button>
-            <button class="btn">
+            <button class="btn mb-0">
                 <i class="fa fa-fire" aria-hidden="true"></i>
             </button>
         </div>
