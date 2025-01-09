@@ -16,7 +16,6 @@
 </script>
 
 <div class="fob-comment-list-section" style="display: none">
-    <div>bbbb</div>
     <h4 class="fob-comment-title fob-comment-list-title"></h4>
     <div class="fob-comment-list-wrapper"></div>
 </div>
