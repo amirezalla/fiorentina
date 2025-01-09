@@ -14,7 +14,7 @@
         listUrl: {{ Js::from(route('fob-comment.public.comments.index', isset($model) ? ['reference_type' => $model::class, 'reference_id' => $model->id] : url()->current())) }},
     };
 </script>
-
+@dd(trans('plugins/fob-comment::comment.front'))
 <div class="fob-comment-list-section" style="display: none">
     <h4 class="fob-comment-title fob-comment-list-title mb-2"></h4>
     <div class="d-flex justify-content-end border-bottom text-dark mb-3">
@@ -25,7 +25,6 @@
             <button class="btn mb-0 btn-must-replies">
                 <i class="fa fa-fire" aria-hidden="true"></i>
             </button>
-            @dd(trans('plugins/fob-comment::comment.front'))
             <div class="btn-group">
                 <button class="btn btn-sm dropdown-toggle mb-0" type="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
