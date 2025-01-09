@@ -31,9 +31,9 @@
                     Small button
                 </button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
+                    @foreach(trans('plugins/fob-comment::sort_options') as $item)
+                        <a class="dropdown-item" href="#">Action</a>
+                    @endforeach
                 </div>
             </div>
         </div>

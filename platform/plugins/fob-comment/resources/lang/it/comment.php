@@ -9,7 +9,16 @@ return [
         'website' => 'Sito web',
         'comment' => 'Commento',
     ],
-
+    'sort_options'=>[
+        [
+            'key'=>"latest",
+            'title'=>"Ultime"
+        ],
+        [
+            'key'=>"oldest",
+            'title'=>"il più vecchio"
+        ],
+    ],
     'title' => 'Commenti',
     'author' => 'Autore',
     'responsed_to' => 'Risposta a',

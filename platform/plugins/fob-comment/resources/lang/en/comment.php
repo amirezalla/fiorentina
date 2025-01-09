@@ -7,7 +7,16 @@ return [
         'website' => 'Website',
         'comment' => 'Comment',
     ],
-
+    'sort_options'=>[
+        [
+            'key'=>"latest",
+            'title'=>"The latest"
+        ],
+        [
+            'key'=>"oldest",
+            'title'=>"The oldest"
+        ],
+    ],
     'title' => 'Comments',
     'author' => 'Author',
     'responsed_to' => 'Response to',
