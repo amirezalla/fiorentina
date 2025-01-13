@@ -20,7 +20,6 @@ class CommentController extends BaseController
 {
     public function index(CommentReferenceRequest $request, GetCommentReference $getCommentReference)
     {
-        dd("ok");
         $reference = new BaseModel();
 
         if ($request->input('reference_type')) {
@@ -35,6 +34,7 @@ class CommentController extends BaseController
         }
 
         $query
+            ->withCount(['likes', 'dislikes'])
             ->where(function (Builder $query) {
                 $query
                     ->where('status', CommentStatus::APPROVED)
@@ -48,7 +48,7 @@ class CommentController extends BaseController
             ->orderBy('created_at', CommentHelper::getCommentOrder());
 
         $comments = apply_filters('fob_comment_list_query', $query, $request)->paginate(10);
-
+        dd($comments);
         $count = CommentHelper::getCommentsCount($reference);
 
         $view = apply_filters('fob_comment_list_view_path', 'plugins/fob-comment::partials.list');
@@ -105,9 +105,9 @@ class CommentController extends BaseController
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        if ($comment->likes->contains($request->user()->id)){
+        if ($comment->likes->contains($request->user()->id)) {
             $comment->likes()->detach($request->user()->id);
-        }else{
+        } else {
             $comment->likes()->attach($request->user()->id);
         }
         return response()->json([
@@ -131,9 +131,9 @@ class CommentController extends BaseController
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        if ($comment->dislikes->contains($request->user()->id)){
+        if ($comment->dislikes->contains($request->user()->id)) {
             $comment->dislikes()->detach($request->user()->id);
-        }else{
+        } else {
             $comment->dislikes()->attach($request->user()->id);
         }
         return response()->json([
