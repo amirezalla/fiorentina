@@ -81,7 +81,7 @@ class LoginController extends BaseController
         $wp_hasher = new PasswordHash(8, false); // or (8, true), depending on your config
         $wpPassword = new WpPassword($wp_hasher);
 
-        dd($wp_hasher,$request->password,$member->password,$wpPassword->make($request->password),$wpPassword->check($request->password, $member->password))
+        dd($wp_hasher,$request->password,$member->password,$wpPassword->make($request->password),$wpPassword->check($request->password, $member->password));
 
     
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
