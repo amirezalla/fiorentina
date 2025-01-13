@@ -18,6 +18,7 @@ use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Botble\Member\Models\Member;
 
 
 use App\Http\Controllers\AdController;
@@ -130,8 +131,39 @@ Route::post('/update-commentary', [DirettaController::class, 'updateCommentary']
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 
 Route::get('/check-db-connection', function () {
-        // Attempt to connect to the mysql2 database
-        $users = DB::connection('mysql2')->table('frntn_users')->first();
-        dd($users);
+    try {
+        // Fetch the user_login as 'Amirezalla' from the frntn_users table
+        $user = DB::connection('mysql2')
+            ->table('frntn_users')
+            ->where('user_login', 'Amirezalla')
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found in frntn_users table.'], 404);
+        }
+
+        // Import the user data into the Member model
+        $member = Member::create([
+            'first_name' => $user->user_nicename, // Assuming `user_nicename` is the first name
+            'last_name' => '',                   // No last name field in the source table
+            'email' => $user->user_email,
+            'password' => $user->user_pass,      // Ensure the password is hashed
+            'avatar_id' => null,                 // Set null or default value
+            'dob' => null,                       // Set null or default value
+            'phone' => null,                     // Set null or default value
+            'description' => null,               // Set null or default value
+            'gender' => null,                    // Set null or default value
+        ]);
+
+        return response()->json([
+            'message' => 'User imported successfully!',
+            'data' => $member
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error importing user.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
 
 });
