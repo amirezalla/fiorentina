@@ -86,16 +86,7 @@ $wpPassword = new WpPassword($wp_hasher);
 $plain = $request->password;
 $stored = $member->password; // The hashed password from DB
 
-// 3) Debug so we can see our starting values
-dd('Before loop:', [
-    '$wp_hasher'   => $wp_hasher,
-    '$plain'       => $plain,
-    '$stored'      => $stored,
-    // A single new hash from $plain:
-    'make_once'    => $wpPassword->make($plain),
-    // Check if the stored hash matches the plain password:
-    'check_stored' => $wpPassword->check($plain, $stored),
-]);
+
 
 // 4) (NOT RECOMMENDED) The infinite loop approach:
 while (true) {
