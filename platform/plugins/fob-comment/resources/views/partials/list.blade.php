@@ -199,6 +199,8 @@
                 success: function (response) {
                     loading = false;
                     $(this).prop('disabled', false);
+                    console.log(response.count)
+                    console.log($(this).find('span'))
                     $(this).find('span').text(response.count);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
