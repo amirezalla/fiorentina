@@ -179,3 +179,8 @@
         {{ $comments->appends(request()->except('page'))->links($paginationView) }}
     </div>
 @endif
+<script>
+    $('.js-fob-comment-item-like-btn').click(function (e) {
+        console.log(e);
+    });
+</script>

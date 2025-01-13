@@ -48,8 +48,3 @@
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
-<script>
-    $(document).on('click','.js-fob-comment-item-like-btn',function () {
-        console.log("aaaa")
-    })
-</script>
