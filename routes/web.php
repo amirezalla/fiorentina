@@ -137,7 +137,7 @@ Route::get('/check-db-connection', function () {
             ->table('frntn_users')
             ->where('user_login', 'Amirezalla')
             ->first();
-
+        dd($user);
         if (!$user) {
             return response()->json(['message' => 'User not found in frntn_users table.'], 404);
         }
