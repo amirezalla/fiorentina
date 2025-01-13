@@ -151,12 +151,12 @@
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
-                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-btn"
+                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-dislike-btn"
                                     data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
-                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-dislike-btn"
+                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-like-dislike-btn"
                                     data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                 <span>0</span>
@@ -183,7 +183,7 @@
 @endif
 <script>
     let loading = false;
-    $('.js-fob-comment-item-like-btn').click(function (e) {
+    $('.js-fob-comment-item-like-dislike-btn').click(function (e) {
         if (!loading) {
             $.ajax({
                 headers: {
@@ -199,13 +199,13 @@
                 success: function (response) {
                     loading = false;
                     $(this).prop('disabled', false);
-                    console.log(response)
+                    $(this).find('span').text(response.count);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(errorThrown)
+                    loading = false;
+                    $(this).prop('disabled', false);
                 }
             });
         }
-        console.log()
     });
 </script>
