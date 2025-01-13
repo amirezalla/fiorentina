@@ -65,6 +65,7 @@ class LoginController extends BaseController
 
     protected function attemptLogin(Request $request)
     {
+        dd($request);
         if (Hash::driver('wordpress')->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
 
