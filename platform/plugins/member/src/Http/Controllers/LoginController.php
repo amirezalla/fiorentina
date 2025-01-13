@@ -66,7 +66,7 @@ class LoginController extends BaseController
 
         $wpPassword = new \MikeMcLin\WpPassword\WpPassword();
 
-        if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($password, $member->password)) {
+        if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
 
             if (setting(
