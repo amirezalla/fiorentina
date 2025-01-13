@@ -12,6 +12,7 @@ use Botble\SeoHelper\Facades\SeoHelper;
 use Botble\Theme\Facades\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Hautelook\Phpass\PasswordHash;
 
 class LoginController extends BaseController
 {
@@ -65,7 +66,11 @@ class LoginController extends BaseController
     {
 
         $wpPassword = new \MikeMcLin\WpPassword\WpPassword(['portable_hashes' => true]);
+        // Create an instance of Hautelook\Phpass\PasswordHash
+        $wpHasher = new PasswordHash(8, true); // 8 iterations and portable hashes enabled
 
+        // Pass the instance to WpPassword
+        $wpPassword = new WpPassword($wpHasher);
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
 
