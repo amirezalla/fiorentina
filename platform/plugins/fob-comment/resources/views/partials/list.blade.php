@@ -151,6 +151,15 @@
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
+                            <style>
+                                .fob-comment-item-like-btn{
+                                    display: flex;
+                                }
+
+                                .fob-comment-item-dislike-btn{
+                                    display: flex;
+                                }
+                            </style>
                             <button class="fob-comment-item-like-btn">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>12</span>
