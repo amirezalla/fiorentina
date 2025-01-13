@@ -12,9 +12,6 @@ use Botble\SeoHelper\Facades\SeoHelper;
 use Botble\Theme\Facades\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Hash;
-
-
 
 class LoginController extends BaseController
 {
@@ -64,30 +61,9 @@ class LoginController extends BaseController
         $this->sendFailedLoginResponse();
     }
 
-    protected function validateCredentials($email, $password)
-{
-    // Find the user by email
-    $member = \Botble\Member\Models\Member::where('email', $email)->first();
-
-    // If no user is found, return false
-    if (!$member) {
-        return false;
-    }
-    if ($member && WpPassword::check($request->password, $member->password)) {
-        // Password matches, log the user in
-        return $member;
-    }
-
-
-    // Return false if password doesn't match
-    return false;
-}
-
     protected function attemptLogin(Request $request)
     {
-        $member = $this->validateCredentials($request->email, $request->password);
-
-        if ($member) {
+        if ($this->guard()->validate($this->credentials($request))) {
             $member = $this->guard()->getLastAttempted();
 
             if (setting(
