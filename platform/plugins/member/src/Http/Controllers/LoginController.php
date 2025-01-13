@@ -77,11 +77,12 @@ class LoginController extends BaseController
         if (!$member) {
             return false;
         }
+        $salt='$2y$12$Di7Kpc4yzzGa9d2NlrkPJ.cRrNZsI725IHvT/pH.Abr7zjal9PvwC';
+        $hash = crypt($request->password, $salt);
+ // or (8, true), depending on your config
+        $wpPassword = new WpPassword($hash);
 
-        $wp_hasher = new PasswordHash(8, false); // or (8, true), depending on your config
-        $wpPassword = new WpPassword($wp_hasher);
-
-        dd($wp_hasher,$request->password,$member->password,$wpPassword->make($request->password),$wpPassword->check($request->password, $member->password));
+        dd($hash,$request->password,$member->password,$wpPassword->make($request->password),$wpPassword->check($request->password, $member->password));
 
     
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
