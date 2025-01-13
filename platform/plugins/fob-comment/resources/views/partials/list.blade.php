@@ -182,10 +182,30 @@
     </div>
 @endif
 <script>
+    let loading = false;
     $('.js-fob-comment-item-like-btn').click(function (e) {
-        let loading = true;
-        $(this).prop('disabled', true);
-        console.log($("meta[name='csrf-token']").attr("content"))
-        console.log($(this).data('action'))
+        if (!loading) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: $(this).data('action'),
+                type: 'POST',
+                dataType: 'json',
+                beforeSend: function () {
+                    loading = true;
+                    $(this).prop('disabled', true);
+                },
+                success: function (response) {
+                    loading = false;
+                    $(this).prop('disabled', false);
+                    console.log(response)
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(errorThrown)
+                }
+            });
+        }
+        console.log()
     });
 </script>
