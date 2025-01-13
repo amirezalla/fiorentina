@@ -13,6 +13,7 @@ use FriendsOfBotble\Comment\Models\Comment;
 use FriendsOfBotble\Comment\Support\CommentHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends BaseController
 {
@@ -91,6 +92,10 @@ class CommentController extends BaseController
         $comment = Comment::query()
             ->where('status', CommentStatus::APPROVED)
             ->findOrFail($comment);
-        dd($request->user(),$comment->likes,$comment->dislikes,$comment->likes()->where('users.id',$request->user()->id)->exists());
+        if (is_null($request->user())){
+            return response(null,Response::HTTP_UNAUTHORIZED);
+        }
+        $comment->likes()->sync($request->user()->id);
+        return response(null);
     }
 }
