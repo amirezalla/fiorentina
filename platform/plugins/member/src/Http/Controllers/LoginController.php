@@ -63,9 +63,30 @@ class LoginController extends BaseController
         $this->sendFailedLoginResponse();
     }
 
+    protected function validateCredentials($email, $password)
+{
+    // Find the user by email
+    $member = \Botble\Member\Models\Member::where('email', $email)->first();
+
+    // If no user is found, return false
+    if (!$member) {
+        return false;
+    }
+
+    // Validate the provided password with the stored hash
+    if (Hash::driver('wordpress')->check($password, $member->password)) {
+        return $member; // Return the user if valid
+    }
+
+    // Return false if password doesn't match
+    return false;
+}
+
     protected function attemptLogin(Request $request)
     {
-        if (Hash::driver('wordpress')->check($request->password, $member->password)) {
+        $member = $this->validateCredentials($request->email, $request->password);
+
+        if ($member) {
             $member = $this->guard()->getLastAttempted();
 
             if (setting(
