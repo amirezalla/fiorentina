@@ -131,7 +131,7 @@ Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])-
 
 Route::get('/check-db-connection', function () {
         // Attempt to connect to the mysql2 database
-        $users = DB::connection('mysql2')->table('frntn_users')->get();
+        $users = DB::connection('mysql2')->table('frntn_users')->first();
         dd($users);
 
 });
