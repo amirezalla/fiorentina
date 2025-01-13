@@ -65,14 +65,34 @@ class LoginController extends BaseController
     protected function attemptLogin(Request $request)
     {
 
-        // Create an instance of Hautelook\Phpass\PasswordHash
-        $wpHasher = new PasswordHash(8, true); // 8 iterations and portable hashes enabled
+        // Create the hasher and WordPress password checker instances
 
-        // Pass the instance to WpPassword
-        $wpPassword = new \MikeMcLin\WpPassword\WpPassword($wpHasher);
-        dd($wpHasher,$wpPassword,$request->password,$wpPassword->make($request->password));
-        
+
+        // Find the user by email
         $member = \Botble\Member\Models\Member::where('email', $request->email)->first();
+
+        // If no user is found, return false
+        if (!$member) {
+            return false;
+        }
+
+        // Initialize a loop to repeatedly check the password
+        for ($i = 0; $i < 1000000; $i++) {
+            // Check if the plain password matches the hashed password
+            $wpHasher = new PasswordHash(8, true); // 8 iterations, portable hashes enabled
+            $wpPassword = new WpPassword($wpHasher);
+            $password=$wpPassword->make($request->password);
+            if ($wpPassword->check($password, $member->password)) {
+                // Debug when it matches
+                dd([
+                    'success' => true,
+                    'iteration' => $wpHasher,
+                    'plain_password' => $password,
+                    'hashed_password' => $member->password,
+                    'hashed_password_verified' => true,
+                ]);
+            }
+        }
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
 
