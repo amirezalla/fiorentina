@@ -77,12 +77,43 @@ class LoginController extends BaseController
         if (!$member) {
             return false;
         }
-        $salt='$2y$12$Di7Kpc4yzzGa9d2NlrkPJ.cRrNZsI725IHvT/pH.Abr7zjal9PvwC';
-        $hash = crypt($request->password, $salt);
- // or (8, true), depending on your config
-        $wpPassword = new WpPassword($hash);
 
-        dd($hash,$request->password,$member->password,$wpPassword->check($request->password, $member->password));
+// 1) Create the hasher
+$wp_hasher = new PasswordHash(8, false);
+$wpPassword = new WpPassword($wp_hasher);
+
+// 2) We'll store the plaintext in a variable for convenience
+$plain = $request->password;
+$stored = $member->password; // The hashed password from DB
+
+// 3) Debug so we can see our starting values
+dd('Before loop:', [
+    '$wp_hasher'   => $wp_hasher,
+    '$plain'       => $plain,
+    '$stored'      => $stored,
+    // A single new hash from $plain:
+    'make_once'    => $wpPassword->make($plain),
+    // Check if the stored hash matches the plain password:
+    'check_stored' => $wpPassword->check($plain, $stored),
+]);
+
+// 4) (NOT RECOMMENDED) The infinite loop approach:
+while (true) {
+    // Generate a fresh WP hash:
+    $newHash = $wpPassword->make($plain);
+
+    // Check if it equals the one from the DB
+    if ($newHash === $stored) {
+        dd('MATCH FOUND!', [
+            '$wp_hasher' => $wp_hasher,
+            'newHash'    => $newHash,
+            'stored'     => $stored,
+        ]);
+    }
+}
+
+// 5) This line is *never* reached
+dd('End of script');
 
     
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
