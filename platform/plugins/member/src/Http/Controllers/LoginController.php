@@ -12,6 +12,8 @@ use Botble\SeoHelper\Facades\SeoHelper;
 use Botble\Theme\Facades\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
+
 
 class LoginController extends BaseController
 {
@@ -63,7 +65,7 @@ class LoginController extends BaseController
 
     protected function attemptLogin(Request $request)
     {
-        if ($this->guard()->validate($this->credentials($request))) {
+        if (Hash::driver('wordpress')->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
 
             if (setting(
