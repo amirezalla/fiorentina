@@ -22,23 +22,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Hash::extend('wordpress', function () {
-            return new class {
-                public function check($value, $hashedValue)
-                {
-                    return PasswordHash::CheckPassword($value, $hashedValue);
-                }
-    
-                public function make($value, array $options = [])
-                {
-                    throw new \Exception('Password creation is not implemented for WordPress hashing.');
-                }
-    
-                public function needsRehash($hashedValue, array $options = [])
-                {
-                    return false; // WordPress passwords don't need rehashing
-                }
-            };
-        });
+        
     }
 }

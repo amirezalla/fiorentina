@@ -72,9 +72,9 @@ class LoginController extends BaseController
     if (!$member) {
         return false;
     }
-
+    dd($member,\Illuminate\Support\Facades\Hash::check($password, $member->password));
     // Validate the provided password with the stored hash
-    if (Hash::driver('wordpress')->check($password, $member->password)) {
+    if (\Illuminate\Support\Facades\Hash::check($password, $member->password)) {
         return $member; // Return the user if valid
     }
 
