@@ -91,6 +91,6 @@ class CommentController extends BaseController
         $comment = Comment::query()
             ->where('status', CommentStatus::APPROVED)
             ->findOrFail($comment);
-        dd($request->user(),$comment->likes,$comment->dislikes);
+        dd($request->user(),$comment->likes,$comment->dislikes,$comment->likes()->where('users.id',$request->user()->id)->exists());
     }
 }
