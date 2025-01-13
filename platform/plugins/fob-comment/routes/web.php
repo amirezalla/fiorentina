@@ -27,11 +27,9 @@ Route::name('fob-comment.')->group(function () {
 
     Theme::registerRoutes(function () {
         Route::prefix('fob-comment')->name('public.comments.')->group(function () {
-            Route::get('/comments-test',function (){
-                dd("ok");
-            });
             Route::get('comments', [FrontCommentController::class, 'index'])->name('index');
             Route::post('comments', [FrontCommentController::class, 'store'])->name('store');
+            Route::post('comments/{comment}/like', [FrontCommentController::class, 'like'])->name('like');
             Route::post('comments/{comment}/reply', FrontReplyCommentController::class)->name('reply');
         });
     });

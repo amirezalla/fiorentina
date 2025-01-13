@@ -84,4 +84,12 @@ class CommentController extends BaseController
             ->httpResponse()
             ->setMessage(trans('plugins/fob-comment::comment.front.comment_success_message'));
     }
+
+    public function like($comment)
+    {
+        $comment = Comment::query()
+            ->where('status', CommentStatus::APPROVED)
+            ->findOrFail($comment);
+        dd($comment);
+    }
 }

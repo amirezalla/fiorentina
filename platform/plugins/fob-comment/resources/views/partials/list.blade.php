@@ -151,7 +151,7 @@
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
-                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-btn">
+                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-btn" data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
