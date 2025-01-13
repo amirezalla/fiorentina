@@ -12,6 +12,7 @@ use FriendsOfBotble\Comment\Http\Requests\Fronts\CommentRequest;
 use FriendsOfBotble\Comment\Models\Comment;
 use FriendsOfBotble\Comment\Support\CommentHelper;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -88,6 +89,11 @@ class CommentController extends BaseController
             ->setMessage(trans('plugins/fob-comment::comment.front.comment_success_message'));
     }
 
+    /**
+     * @param Request $request
+     * @param $comment
+     * @return JsonResponse
+     */
     public function like(Request $request, $comment)
     {
         $comment = Comment::query()
@@ -101,6 +107,29 @@ class CommentController extends BaseController
         $comment->likes()->sync($request->user()->id);
         return response()->json([
             'message' => "Success",
+            'count' => number_format($comment->likes()->count()),
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param $comment
+     * @return JsonResponse
+     */
+    public function dislike(Request $request, $comment)
+    {
+        $comment = Comment::query()
+            ->where('status', CommentStatus::APPROVED)
+            ->findOrFail($comment);
+        if (is_null($request->user())) {
+            return response()->json([
+                'message' => "Unauthenticated.",
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+        $comment->dislikes()->sync($request->user()->id);
+        return response()->json([
+            'message' => "Success",
+            'count' => number_format($comment->dislikes()->count()),
         ]);
     }
 }
