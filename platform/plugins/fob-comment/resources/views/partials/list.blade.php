@@ -157,7 +157,8 @@
                                     text-decoration: none;
                                     display: inline-flex;
                                     align-items: center;
-                                    background-color: #f0f0f0;
+                                    gap: 4px;
+                                    background-color: #ffffff;
                                     border: 1px solid #ccc;
                                     border-radius: 20px;
                                     color: #333;
