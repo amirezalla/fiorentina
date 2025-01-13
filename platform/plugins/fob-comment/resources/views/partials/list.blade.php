@@ -152,11 +152,11 @@
                                 </a>
                             @endif
                             <button class="fob-comment-item-like-btn">
-                                <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>12</span>
                             </button>
                             <button class="fob-comment-item-dislike-btn">
-                                <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                 <span>12</span>
                             </button>
                         </div>
