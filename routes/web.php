@@ -143,11 +143,13 @@ Route::get('/check-db-connection', function () {
 
         // Import the user data into the Member model
         $member = Member::create([
+            'id'=>$user->ID,
             'first_name' => $user->user_nicename, // Assuming `user_nicename` is the first name
             'last_name' => '',                   // No last name field in the source table
             'email' => $user->user_email,
             'password' => "Amir208079@",      // Ensure the password is hashed
             'avatar_id' => null,                 // Set null or default value
+            ''=>'1001-01-1'
             'dob' => null,                       // Set null or default value
             'phone' => null,                     // Set null or default value
             'description' => null,               // Set null or default value
