@@ -181,32 +181,3 @@
         {{ $comments->appends(request()->except('page'))->links($paginationView) }}
     </div>
 @endif
-<script>
-    let loading = false;
-    $('.js-fob-comment-item-like-dislike-btn').click(function (e) {
-        if (!loading) {
-            const self = $(this);
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: $(this).data('action'),
-                type: 'POST',
-                dataType: 'json',
-                beforeSend: function () {
-                    loading = true;
-                    self.prop('disabled', true);
-                },
-                success: function (response) {
-                    loading = false;
-                    self.prop('disabled', false);
-                    self.find('span').text(response.count);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    loading = false;
-                    self.prop('disabled', false);
-                }
-            });
-        }
-    });
-</script>
