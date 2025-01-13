@@ -50,6 +50,6 @@
 </div>
 <script>
     $('.js-fob-comment-item-like-btn').click(function (e) {
-        console.log(e.target.getAttribute('data-action'));
+        console.log(e.target);
     });
 </script>
