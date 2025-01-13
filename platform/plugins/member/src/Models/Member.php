@@ -46,6 +46,7 @@ class Member extends BaseModel implements
         'email',
         'password',
         'avatar_id',
+        'confirmed_at',
         'dob',
         'phone',
         'description',
@@ -59,7 +60,6 @@ class Member extends BaseModel implements
 
     protected $casts = [
         'password' => 'hashed',
-        'confirmed_at' => 'datetime',
         'dob' => 'date',
         'first_name' => SafeContent::class,
         'last_name' => SafeContent::class,
