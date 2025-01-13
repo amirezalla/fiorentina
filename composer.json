@@ -11,7 +11,7 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "ayesh/wordpress-password-hash": "*",
+        "ayesh/wordpress-password-hash": "^3.0",
         "botble/api": "^2.0.0",
         "botble/get-started": "*@dev",
         "botble/installer": "*@dev",
