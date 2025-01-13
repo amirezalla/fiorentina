@@ -70,6 +70,8 @@ class LoginController extends BaseController
 
         // Pass the instance to WpPassword
         $wpPassword = new \MikeMcLin\WpPassword\WpPassword($wpHasher);
+        dd($wpHasher,$wpPassword,$request->password,$wpPassword->make($request->password));
+        
         $member = \Botble\Member\Models\Member::where('email', $request->email)->first();
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
