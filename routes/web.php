@@ -26,7 +26,9 @@ use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
 
 
-
+Route::get('/migrate',function (){
+    dd("salam");
+});
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
     Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
