@@ -106,3 +106,11 @@
 .cancel-comment-reply-link:hover {
     text-decoration: none;
 }
+
+.fob-comment-item-like-btn{
+    display: flex;
+}
+
+.fob-comment-item-dislike-btn{
+    display: flex;
+}
