@@ -28,6 +28,10 @@ use App\Http\Controllers\VideoController;
 
 
 Route::get('/migrate', function () {
+    Schema::disableForeignKeyConstraints();
+    Schema::dropIfExists('likes');
+    Schema::dropIfExists('dislikes');
+    Schema::enableForeignKeyConstraints();
     Schema::create('likes', function (Blueprint $table) {
         $table->foreignId('fob_comment_id')
             ->references('id')
