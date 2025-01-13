@@ -163,6 +163,21 @@
                                     border-radius: 20px;
                                     color: #333;
                                     padding: 5px 10px;
+                                    position: absolute;
+                                    bottom: 0;
+                                    transform: translateY(50%);
+                                }
+
+                                .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply{
+                                    left: 126px;
+                                }
+
+                                .fob-comment-item-like-btn{
+                                    left: 42px;
+                                }
+
+                                .fob-comment-item-dislike-btn{
+                                    left: 84px;
                                 }
                             </style>
                             <button class="fob-comment-item-like-btn">
