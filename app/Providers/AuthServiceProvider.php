@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 use Illuminate\Support\Facades\Hash;
-use Ayesh\WP_Password\PasswordCheck;
+use Ayesh\WP_PasswordHash\PasswordHash;
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
             return new class {
                 public function check($value, $hashedValue)
                 {
-                    return PasswordCheck::check($value, $hashedValue);
+                    return CheckPassword::check($value, $hashedValue);
                 }
     
                 public function make($value, array $options = [])
