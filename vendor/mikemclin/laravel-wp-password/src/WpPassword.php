@@ -14,7 +14,7 @@ class WpPassword implements WpPasswordContract
     /**
      * @param \Hautelook\Phpass\PasswordHash $wp_hasher
      */
-    function __construct(PasswordHash $wp_hasher)
+    function __construct( $wp_hasher)
     {
         $this->wp_hasher = $wp_hasher;
     }
