@@ -181,6 +181,6 @@
 @endif
 <script>
     $('.js-fob-comment-item-like-btn').click(function (e) {
-        console.log(e);
+        console.log($(this).data('action'))
     });
 </script>
