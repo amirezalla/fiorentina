@@ -49,7 +49,9 @@
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
 <script>
-    $('.js-fob-comment-item-like-btn').click(function (e) {
-        console.log("salam");
-    });
+    $(function () {
+        $('.js-fob-comment-item-like-btn').click(function (e) {
+            console.log("salam");
+        });
+    })
 </script>
