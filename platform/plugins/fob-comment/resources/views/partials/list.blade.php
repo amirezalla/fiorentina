@@ -185,6 +185,7 @@
     let loading = false;
     $('.js-fob-comment-item-like-dislike-btn').click(function (e) {
         if (!loading) {
+            const self = $(this);
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -194,18 +195,16 @@
                 dataType: 'json',
                 beforeSend: function () {
                     loading = true;
-                    $(this).prop('disabled', true);
+                    self.prop('disabled', true);
                 },
                 success: function (response) {
                     loading = false;
-                    $(this).prop('disabled', false);
-                    console.log(response.count)
-                    console.log($(this).find('span'))
-                    $(this).find('span').text(response.count);
+                    self.prop('disabled', false);
+                    self.find('span').text(response.count);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     loading = false;
-                    $(this).prop('disabled', false);
+                    self.prop('disabled', false);
                 }
             });
         }
