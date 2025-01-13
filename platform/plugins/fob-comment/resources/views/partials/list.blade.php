@@ -151,11 +151,13 @@
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
-                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-btn" data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
+                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-btn"
+                                    data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
-                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-dislike-btn" data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
+                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-dislike-btn"
+                                    data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
@@ -181,6 +183,9 @@
 @endif
 <script>
     $('.js-fob-comment-item-like-btn').click(function (e) {
+        let loading = true;
+        $(this).prop('disabled', true);
+        console.log($("meta[name='csrf-token']").attr("content"))
         console.log($(this).data('action'))
     });
 </script>
