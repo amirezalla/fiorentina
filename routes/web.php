@@ -17,6 +17,8 @@ use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
 
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\VoteController;
@@ -127,3 +129,9 @@ Route::get('/undo-chat', [DirettaController::class, 'undoChat'])->name('undo-cha
 Route::post('/update-commentary', [DirettaController::class, 'updateCommentary'])->name('update-commentary');
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 
+Route::get('/check-db-connection', function () {
+        // Attempt to connect to the mysql2 database
+        $users = DB::connection('mysql2')->table('frntn_users')->first();
+        dd($users);
+
+});
