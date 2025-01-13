@@ -69,7 +69,7 @@ class LoginController extends BaseController
         $wpHasher = new PasswordHash(8, true); // 8 iterations and portable hashes enabled
 
         // Pass the instance to WpPassword
-        $wpPassword = new WpPassword($wpHasher);
+        $wpPassword = new \MikeMcLin\WpPassword\WpPassword($wpHasher);
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
 
