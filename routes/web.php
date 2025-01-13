@@ -29,12 +29,12 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/migrate', function () {
     Schema::create('likes', function (Blueprint $table) {
-        $table->foreign('fob_comment_id')
+        $table->foreignId('fob_comment_id')
             ->references('id')
             ->on('fob_comments')
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
-        $table->foreign('user_id')
+        $table->foreignId('user_id')
             ->references('id')
             ->on('users')
             ->cascadeOnDelete()
@@ -43,12 +43,12 @@ Route::get('/migrate', function () {
         $table->timestamps();
     });
     Schema::create('dislikes', function (Blueprint $table) {
-        $table->foreign('fob_comment_id')
+        $table->foreignId('fob_comment_id')
             ->references('id')
             ->on('fob_comments')
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
-        $table->foreign('user_id')
+        $table->foreignId('user_id')
             ->references('id')
             ->on('users')
             ->cascadeOnDelete()
