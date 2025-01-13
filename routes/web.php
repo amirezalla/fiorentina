@@ -33,7 +33,7 @@ Route::get('/migrate', function () {
     Schema::dropIfExists('dislikes');
     Schema::enableForeignKeyConstraints();
     Schema::create('likes', function (Blueprint $table) {
-        $table->foreignId('fob_comment_id')
+        $table->foreignId('comment_id')
             ->references('id')
             ->on('fob_comments')
             ->cascadeOnDelete()
@@ -43,11 +43,11 @@ Route::get('/migrate', function () {
             ->on('users')
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
-        $table->primary(['fob_comment_id', 'user_id']);
+        $table->primary(['comment_id', 'user_id']);
         $table->timestamps();
     });
     Schema::create('dislikes', function (Blueprint $table) {
-        $table->foreignId('fob_comment_id')
+        $table->foreignId('comment_id')
             ->references('id')
             ->on('fob_comments')
             ->cascadeOnDelete()
@@ -57,7 +57,7 @@ Route::get('/migrate', function () {
             ->on('users')
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
-        $table->primary(['fob_comment_id', 'user_id']);
+        $table->primary(['comment_id', 'user_id']);
         $table->timestamps();
     });
 });
