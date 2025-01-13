@@ -61,10 +61,11 @@ class CommentController extends BaseController
     }
 
     public function store(
-        CommentRequest $request,
-        CreateNewComment $createNewComment,
+        CommentRequest      $request,
+        CreateNewComment    $createNewComment,
         GetCommentReference $getCommentReference
-    ) {
+    )
+    {
         $data = [
             ...$request->validated(),
             'reference_url' => $request->input('reference_url') ?? url()->previous(),
@@ -87,15 +88,19 @@ class CommentController extends BaseController
             ->setMessage(trans('plugins/fob-comment::comment.front.comment_success_message'));
     }
 
-    public function like(Request $request,$comment)
+    public function like(Request $request, $comment)
     {
         $comment = Comment::query()
             ->where('status', CommentStatus::APPROVED)
             ->findOrFail($comment);
-        if (is_null($request->user())){
-            return response("Unauthenticated.",Response::HTTP_UNAUTHORIZED);
+        if (is_null($request->user())) {
+            return response()->json([
+                'message' => "Unauthenticated.",
+            ], Response::HTTP_UNAUTHORIZED);
         }
         $comment->likes()->sync($request->user()->id);
-        return response("Success");
+        return response()->json([
+            'message' => "Success",
+        ]);
     }
 }
