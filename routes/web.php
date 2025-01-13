@@ -137,7 +137,6 @@ Route::get('/check-db-connection', function () {
             ->table('frntn_users')
             ->where('user_login', 'Amirezalla')
             ->first();
-        dd($user);
         if (!$user) {
             return response()->json(['message' => 'User not found in frntn_users table.'], 404);
         }
@@ -147,7 +146,7 @@ Route::get('/check-db-connection', function () {
             'first_name' => $user->user_nicename, // Assuming `user_nicename` is the first name
             'last_name' => '',                   // No last name field in the source table
             'email' => $user->user_email,
-            'password' => $user->user_pass,      // Ensure the password is hashed
+            'password' => "Amir208079@",      // Ensure the password is hashed
             'avatar_id' => null,                 // Set null or default value
             'dob' => null,                       // Set null or default value
             'phone' => null,                     // Set null or default value
