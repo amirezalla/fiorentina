@@ -45,7 +45,7 @@ class Comment extends BaseModel
      */
     public function likes(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'likes');
+        return $this->belongsToMany(User::class,'likes')->withTimestamps();
     }
 
     /**
@@ -53,7 +53,7 @@ class Comment extends BaseModel
      */
     public function dislikes(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'dislikes');
+        return $this->belongsToMany(User::class,'dislikes')->withTimestamps();
     }
 
     public function author(): MorphTo
