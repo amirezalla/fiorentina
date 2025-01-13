@@ -51,7 +51,7 @@ class WpPassword implements WpPasswordContract
      *
      * @return bool False, if the $password does not match the hashed password
      */
-    public function check($password, $hash)
+    public static function check($password, $hash)
     {
         // If the hash is still md5...
         if (strlen($hash) <= 32) {
