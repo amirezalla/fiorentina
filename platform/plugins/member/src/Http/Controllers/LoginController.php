@@ -64,7 +64,7 @@ class LoginController extends BaseController
     protected function attemptLogin(Request $request)
     {
 
-        $wpPassword = new \MikeMcLin\WpPassword\WpPassword();
+        $wpPassword = new \MikeMcLin\WpPassword\WpPassword(['portable_hashes' => true]);
 
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
             $member = $this->guard()->getLastAttempted();
