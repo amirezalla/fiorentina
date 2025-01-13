@@ -154,12 +154,12 @@
                             <button class="fob-comment-item-like-btn js-fob-comment-item-like-dislike-btn"
                                     data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                <span>0</span>
+                                <span>{{ number_format($comment->likes_count) }}</span>
                             </button>
                             <button class="fob-comment-item-dislike-btn js-fob-comment-item-like-dislike-btn"
                                     data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                                <span>0</span>
+                                <span>{{ number_format($comment->dislikes_count) }}</span>
                             </button>
                         </div>
                     </div>
