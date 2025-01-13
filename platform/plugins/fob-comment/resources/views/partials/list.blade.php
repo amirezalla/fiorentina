@@ -151,11 +151,11 @@
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
-                            <button class="fob-comment-item-like-btn">
+                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-btn">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
-                            <button class="fob-comment-item-dislike-btn">
+                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-dislike-btn">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
@@ -180,5 +180,7 @@
     </div>
 @endif
 <script>
-    console.log("salam")
+    $('.js-fob-comment-item-like-btn').click(function (e) {
+        console.log(e);
+    });
 </script>
