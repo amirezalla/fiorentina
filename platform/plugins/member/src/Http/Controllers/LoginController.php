@@ -82,7 +82,7 @@ class LoginController extends BaseController
  // or (8, true), depending on your config
         $wpPassword = new WpPassword($hash);
 
-        dd($hash,$request->password,$member->password,$wpPassword->make($request->password),$wpPassword->check($request->password, $member->password));
+        dd($hash,$request->password,$member->password,$wpPassword->check($request->password, $member->password));
 
     
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
