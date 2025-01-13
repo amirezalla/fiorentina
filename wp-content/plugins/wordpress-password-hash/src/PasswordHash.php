@@ -68,7 +68,7 @@ final class PasswordHash {
 	 * @return bool False, if the $password does not match the hashed password
 	 *
 	 */
-	public function checkPassword(string $password, string $hash, $user_id = ''): bool {
+	public static function checkPassword(string $password, string $hash, $user_id = ''): bool {
 		// Check if the hash uses Password API.
 		$info = password_get_info($hash);
 		if (!empty($info['algo'])) {
