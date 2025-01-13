@@ -93,9 +93,9 @@ class CommentController extends BaseController
             ->where('status', CommentStatus::APPROVED)
             ->findOrFail($comment);
         if (is_null($request->user())){
-            return response(null,Response::HTTP_UNAUTHORIZED);
+            return response("Unauthenticated.",Response::HTTP_UNAUTHORIZED);
         }
         $comment->likes()->sync($request->user()->id);
-        return response(null);
+        return response("Success");
     }
 }
