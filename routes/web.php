@@ -130,10 +130,10 @@ Route::post('/update-commentary', [DirettaController::class, 'updateCommentary']
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 
 Route::get('/check-db-connection', function () {
-
+        dd('ewo');
         // Attempt to connect to the mysql2 database
-        $connection = DB::connection('mysql2');
-        $connection->select('SELECT 1'); 
-        dd($connection);
+        // $connection = DB::connection('mysql2');
+        // $connection->select('SELECT 1'); 
+        // dd($connection);
 
 });
