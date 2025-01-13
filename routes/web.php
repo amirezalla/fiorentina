@@ -132,7 +132,7 @@ Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])-
 Route::get('/check-db-connection', function () {
     try {
         // Attempt to connect to the mysql2 database
-        DB::connection('mysql2')->getPdo();
+        DB::connection('mysql')->getPdo();
         return response()->json(['message' => 'Successfully connected to the database!'], 200);
     } catch (\Exception $e) {
         return response()->json(['message' => 'Could not connect to the database.', 'error' => $e->getMessage()], 500);
