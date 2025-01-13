@@ -245,6 +245,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/ryangjchandler/laravel-cloudflare-turnstile" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-package-tools" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/eighteen73/laravel-turnstile" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mikemclin/laravel-wp-password" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bordoni/phpass" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

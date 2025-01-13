@@ -154,12 +154,12 @@
                             <button class="fob-comment-item-like-btn js-fob-comment-item-like-dislike-btn"
                                     data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                <span>0</span>
+                                <span>{{ number_format($comment->likes_count) }}</span>
                             </button>
                             <button class="fob-comment-item-dislike-btn js-fob-comment-item-like-dislike-btn"
                                     data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                                <span>0</span>
+                                <span>{{ number_format($comment->dislikes_count) }}</span>
                             </button>
                         </div>
                     </div>
@@ -181,32 +181,3 @@
         {{ $comments->appends(request()->except('page'))->links($paginationView) }}
     </div>
 @endif
-<script>
-    let loading = false;
-    $('.js-fob-comment-item-like-dislike-btn').click(function (e) {
-        if (!loading) {
-            const self = $(this);
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: $(this).data('action'),
-                type: 'POST',
-                dataType: 'json',
-                beforeSend: function () {
-                    loading = true;
-                    self.prop('disabled', true);
-                },
-                success: function (response) {
-                    loading = false;
-                    self.prop('disabled', false);
-                    self.find('span').text(response.count);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    loading = false;
-                    self.prop('disabled', false);
-                }
-            });
-        }
-    });
-</script>

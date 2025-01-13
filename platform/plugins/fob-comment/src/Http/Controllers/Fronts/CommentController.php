@@ -34,6 +34,7 @@ class CommentController extends BaseController
         }
 
         $query
+            ->withCount(['likes', 'dislikes', 'replies'])
             ->where(function (Builder $query) {
                 $query
                     ->where('status', CommentStatus::APPROVED)
@@ -43,11 +44,20 @@ class CommentController extends BaseController
                     });
             })
             ->where('reply_to', null)
-            ->with(['replies'])
-            ->orderBy('created_at', CommentHelper::getCommentOrder());
-
+            ->with(['replies']);
+        if ($request->filled('sort') && $request->get('sort') == "must-reaction") {
+            $query->orderByDesc('likes_count');
+        } else if ($request->filled('sort') && $request->get('sort') == "must-replies") {
+            $query->orderByDesc('replies_count');
+        }
+        if ($request->filled('sort2') && $request->get('sort2') == "latest") {
+            $query->orderByDesc('created_at');
+        } elseif ($request->filled('sort2') && $request->get('sort2') == "oldest") {
+            $query->orderBy('created_at');
+        } else {
+            $query->orderBy('created_at', CommentHelper::getCommentOrder());
+        }
         $comments = apply_filters('fob_comment_list_query', $query, $request)->paginate(10);
-
         $count = CommentHelper::getCommentsCount($reference);
 
         $view = apply_filters('fob_comment_list_view_path', 'plugins/fob-comment::partials.list');
@@ -104,7 +114,11 @@ class CommentController extends BaseController
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        $comment->likes()->sync($request->user()->id);
+        if ($comment->likes->contains($request->user()->id)) {
+            $comment->likes()->detach($request->user()->id);
+        } else {
+            $comment->likes()->attach($request->user()->id);
+        }
         return response()->json([
             'message' => "Success",
             'count' => number_format($comment->likes()->count()),
@@ -126,7 +140,11 @@ class CommentController extends BaseController
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        $comment->dislikes()->sync($request->user()->id);
+        if ($comment->dislikes->contains($request->user()->id)) {
+            $comment->dislikes()->detach($request->user()->id);
+        } else {
+            $comment->dislikes()->attach($request->user()->id);
+        }
         return response()->json([
             'message' => "Success",
             'count' => number_format($comment->dislikes()->count()),
