@@ -169,7 +169,7 @@
                                 }
 
                                 .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply{
-                                    left: 126px;
+                                    left: 172px;
                                 }
 
                                 .fob-comment-item-like-btn{
@@ -177,7 +177,7 @@
                                 }
 
                                 .fob-comment-item-dislike-btn{
-                                    left: 84px;
+                                    left: 100px;
                                 }
                             </style>
                             <button class="fob-comment-item-like-btn">
