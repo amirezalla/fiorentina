@@ -65,7 +65,6 @@ class LoginController extends BaseController
     protected function attemptLogin(Request $request)
     {
 
-        $wpPassword = new \MikeMcLin\WpPassword\WpPassword(['portable_hashes' => true]);
         // Create an instance of Hautelook\Phpass\PasswordHash
         $wpHasher = new PasswordHash(8, true); // 8 iterations and portable hashes enabled
 
