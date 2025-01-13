@@ -20,7 +20,6 @@ class CommentController extends BaseController
 {
     public function index(CommentReferenceRequest $request, GetCommentReference $getCommentReference)
     {
-        dd($request->all());
         $reference = new BaseModel();
 
         if ($request->input('reference_type')) {
