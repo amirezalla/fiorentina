@@ -3,10 +3,12 @@
 namespace FriendsOfBotble\Comment\Models;
 
 use Botble\ACL\Contracts\HasPermissions;
+use Botble\ACL\Models\User;
 use Botble\Base\Models\BaseModel;
 use FriendsOfBotble\Comment\Enums\CommentStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -38,6 +40,21 @@ class Comment extends BaseModel
 
     protected $dates = ['deleted_at'];
 
+    /**
+     * @return BelongsToMany
+     */
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'likes');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function dislikes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'dislikes');
+    }
 
     public function author(): MorphTo
     {

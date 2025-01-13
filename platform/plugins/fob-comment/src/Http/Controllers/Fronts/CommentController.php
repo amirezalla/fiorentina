@@ -12,6 +12,7 @@ use FriendsOfBotble\Comment\Http\Requests\Fronts\CommentRequest;
 use FriendsOfBotble\Comment\Models\Comment;
 use FriendsOfBotble\Comment\Support\CommentHelper;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class CommentController extends BaseController
 {
@@ -83,5 +84,13 @@ class CommentController extends BaseController
         return $this
             ->httpResponse()
             ->setMessage(trans('plugins/fob-comment::comment.front.comment_success_message'));
+    }
+
+    public function like(Request $request,$comment)
+    {
+        $comment = Comment::query()
+            ->where('status', CommentStatus::APPROVED)
+            ->findOrFail($comment);
+        dd($request->user(),$comment->likes,$comment->dislikes);
     }
 }

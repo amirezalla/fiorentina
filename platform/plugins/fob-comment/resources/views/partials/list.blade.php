@@ -151,6 +151,16 @@
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
+                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-btn"
+                                    data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
+                                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                <span>0</span>
+                            </button>
+                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-dislike-btn"
+                                    data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
+                                <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                                <span>0</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -171,3 +181,31 @@
         {{ $comments->appends(request()->except('page'))->links($paginationView) }}
     </div>
 @endif
+<script>
+    let loading = false;
+    $('.js-fob-comment-item-like-btn').click(function (e) {
+        if (!loading) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: $(this).data('action'),
+                type: 'POST',
+                dataType: 'json',
+                beforeSend: function () {
+                    loading = true;
+                    $(this).prop('disabled', true);
+                },
+                success: function (response) {
+                    loading = false;
+                    $(this).prop('disabled', false);
+                    console.log(response)
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(errorThrown)
+                }
+            });
+        }
+        console.log()
+    });
+</script>
