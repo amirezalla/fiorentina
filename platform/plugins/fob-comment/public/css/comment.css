@@ -105,6 +105,40 @@
 
 .cancel-comment-reply-link:hover {
     text-decoration: none;
+
+
+.fob-comment-item-like-btn, .fob-comment-item-dislike-btn {
+    font-size: 12px;
+    text-decoration: none;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    gap: 4px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    color: #888;
+    padding: 5px 10px;
+    position: absolute;
+    bottom: 0;
+    -webkit-transform: translateY(50%);
+    -ms-transform: translateY(50%);
+    transform: translateY(50%);
+}
+
+.fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply {
+    left: 172px;
+}
+
+.fob-comment-item-like-btn {
+    left: 42px;
+}
+
+.fob-comment-item-dislike-btn {
+    left: 100px;
 }
 
 

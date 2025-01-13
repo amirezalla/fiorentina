@@ -151,35 +151,6 @@
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
-                            <style>
-                                .fob-comment-item-like-btn,.fob-comment-item-dislike-btn{
-                                    font-size: 12px;
-                                    text-decoration: none;
-                                    display: inline-flex;
-                                    align-items: center;
-                                    gap: 4px;
-                                    background-color: #ffffff;
-                                    border: 1px solid #ccc;
-                                    border-radius: 20px;
-                                    color: #333;
-                                    padding: 5px 10px;
-                                    position: absolute;
-                                    bottom: 0;
-                                    transform: translateY(50%);
-                                }
-
-                                .fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply{
-                                    left: 172px;
-                                }
-
-                                .fob-comment-item-like-btn{
-                                    left: 42px;
-                                }
-
-                                .fob-comment-item-dislike-btn{
-                                    left: 100px;
-                                }
-                            </style>
                             <button class="fob-comment-item-like-btn">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>12</span>
