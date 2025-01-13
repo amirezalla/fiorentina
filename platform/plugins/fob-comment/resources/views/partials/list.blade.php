@@ -152,12 +152,16 @@
                                 </a>
                             @endif
                             <style>
-                                .fob-comment-item-like-btn{
-                                    display: flex;
-                                }
-
-                                .fob-comment-item-dislike-btn{
-                                    display: flex;
+                                .fob-comment-item-like-btn,.fob-comment-item-dislike-btn{
+                                    font-size: 12px;
+                                    text-decoration: none;
+                                    display: inline-flex;
+                                    align-items: center;
+                                    background-color: #f0f0f0;
+                                    border: 1px solid #ccc;
+                                    border-radius: 20px;
+                                    color: #333;
+                                    padding: 5px 10px;
                                 }
                             </style>
                             <button class="fob-comment-item-like-btn">
