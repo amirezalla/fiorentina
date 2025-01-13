@@ -69,45 +69,8 @@ class LoginController extends BaseController
 
         // Create the hasher and WordPress password checker instances
 
-
-        // Find the user by email
-        $member = \Botble\Member\Models\Member::where('email', $request->email)->first();
-
-        // If no user is found, return false
-        if (!$member) {
-            return false;
-        }
-
-// 1) Create the hasher
-$wp_hasher = new PasswordHash(8, false);
-$wpPassword = new WpPassword($wp_hasher);
-
-// 2) We'll store the plaintext in a variable for convenience
-$plain = $request->password;
-$stored = $member->password; // The hashed password from DB
-
-
-
-// 4) (NOT RECOMMENDED) The infinite loop approach:
-while (true) {
-    // Generate a fresh WP hash:
-    $newHash = $wpPassword->make($plain);
-
-    // Check if it equals the one from the DB
-    if ($newHash === $stored) {
-        dd('MATCH FOUND!', [
-            '$wp_hasher' => $wp_hasher,
-            'newHash'    => $newHash,
-            'stored'     => $stored,
-        ]);
-    }
-}
-
-// 5) This line is *never* reached
-dd('End of script');
-
     
-        if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member->password)) {
+        if ($this->guard()->validate($this->credentials($request))) {
             $member = $this->guard()->getLastAttempted();
 
             if (setting(
