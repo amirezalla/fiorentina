@@ -149,7 +149,7 @@ Route::get('/check-db-connection', function () {
             'email' => $user->user_email,
             'password' => "Amir208079@",      // Ensure the password is hashed
             'avatar_id' => null,                 // Set null or default value
-            'confirmed_at'=>'1001-01-1',
+            'confirmed_at'=>'2024-09-24 13:42:15',
             'dob' => null,                       // Set null or default value
             'phone' => null,                     // Set null or default value
             'description' => null,               // Set null or default value
