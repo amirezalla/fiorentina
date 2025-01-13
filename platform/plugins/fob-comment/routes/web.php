@@ -30,6 +30,7 @@ Route::name('fob-comment.')->group(function () {
             Route::get('comments', [FrontCommentController::class, 'index'])->name('index');
             Route::post('comments', [FrontCommentController::class, 'store'])->name('store');
             Route::post('comments/{comment}/like', [FrontCommentController::class, 'like'])->name('like');
+            Route::post('comments/{comment}/dislike', [FrontCommentController::class, 'dislike'])->name('dislike');
             Route::post('comments/{comment}/reply', FrontReplyCommentController::class)->name('reply');
         });
     });

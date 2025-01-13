@@ -155,7 +155,7 @@
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
-                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-dislike-btn">
+                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-dislike-btn" data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                 <span>0</span>
                             </button>
@@ -179,8 +179,3 @@
         {{ $comments->appends(request()->except('page'))->links($paginationView) }}
     </div>
 @endif
-<script>
-    $('.js-fob-comment-item-like-btn').click(function (e) {
-        console.log(e);
-    });
-</script>
