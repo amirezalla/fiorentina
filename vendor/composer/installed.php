@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b1e20e3de31e9ebc970abceaa12b8ded439ee355',
+        'reference' => '942bb5a5f3d91aba6516e09267f881e4e5e83300',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -52,6 +52,15 @@
             'reference' => 'cb37868365f9b937039d316727a1fced1e87b31c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../barryvdh/laravel-dompdf',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'bordoni/phpass' => array(
+            'pretty_version' => '0.3.6',
+            'version' => '0.3.6.0',
+            'reference' => '12f8f5cc03ebb7efd69554f104afe9aa1aa46e1a',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../bordoni/phpass',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -559,6 +568,12 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'hautelook/phpass' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => '0.3.*',
+            ),
+        ),
         'illuminate/auth' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -820,7 +835,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b1e20e3de31e9ebc970abceaa12b8ded439ee355',
+            'reference' => '942bb5a5f3d91aba6516e09267f881e4e5e83300',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1012,6 +1027,15 @@
             'reference' => 'd4d3830267eeda7b385d61dd680ace14dcf142df',
             'type' => 'package',
             'install_path' => __DIR__ . '/../mews/purifier',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'mikemclin/laravel-wp-password' => array(
+            'pretty_version' => '2.0.3',
+            'version' => '2.0.3.0',
+            'reference' => '5225c95f75aa0a5ad4040ec2074d1c8d7f10b5f4',
+            'type' => 'laravel-package',
+            'install_path' => __DIR__ . '/../mikemclin/laravel-wp-password',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

@@ -168,6 +168,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        MikeMcLin\WpPassword\WpPasswordServiceProvider::class,
     ])->toArray(),
 
     /*

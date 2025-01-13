@@ -177,6 +177,7 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         array (
             'Monolog\\' => 8,
             'Mockery\\' => 8,
+            'MikeMcLin\\WpPassword\\' => 21,
             'Mews\\Purifier\\' => 14,
             'Matrix\\' => 7,
             'Masterminds\\' => 12,
@@ -668,6 +669,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         array (
             0 => __DIR__ . '/..' . '/mockery/mockery/library/Mockery',
         ),
+        'MikeMcLin\\WpPassword\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mikemclin/laravel-wp-password/src',
+        ),
         'Mews\\Purifier\\' => 
         array (
             0 => __DIR__ . '/..' . '/mews/purifier/src',
@@ -1152,6 +1157,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         ),
         'H' => 
         array (
+            'Hautelook' => 
+            array (
+                0 => __DIR__ . '/..' . '/bordoni/phpass/src',
+            ),
             'HTMLPurifier' => 
             array (
                 0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
@@ -5374,6 +5383,7 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'Hamcrest\\Type\\IsString' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Type/IsString.php',
         'Hamcrest\\Util' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Util.php',
         'Hamcrest\\Xml\\HasXPath' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Xml/HasXPath.php',
+        'Hautelook\\Phpass\\PasswordHash' => __DIR__ . '/..' . '/bordoni/phpass/src/Hautelook/Phpass/PasswordHash.php',
         'Illuminate\\Auth\\Access\\AuthorizationException' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/AuthorizationException.php',
         'Illuminate\\Auth\\Access\\Events\\GateEvaluated' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/Events/GateEvaluated.php',
         'Illuminate\\Auth\\Access\\Gate' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/Gate.php',
@@ -8046,6 +8056,10 @@ class ComposerStaticInit67c8499ae07a1d85090772844c809fa8
         'Mews\\Purifier\\Facades\\Purifier' => __DIR__ . '/..' . '/mews/purifier/src/Facades/Purifier.php',
         'Mews\\Purifier\\Purifier' => __DIR__ . '/..' . '/mews/purifier/src/Purifier.php',
         'Mews\\Purifier\\PurifierServiceProvider' => __DIR__ . '/..' . '/mews/purifier/src/PurifierServiceProvider.php',
+        'MikeMcLin\\WpPassword\\Contracts\\WpPassword' => __DIR__ . '/..' . '/mikemclin/laravel-wp-password/src/Contracts/WpPassword.php',
+        'MikeMcLin\\WpPassword\\Facades\\WpPassword' => __DIR__ . '/..' . '/mikemclin/laravel-wp-password/src/Facades/WpPassword.php',
+        'MikeMcLin\\WpPassword\\WpPassword' => __DIR__ . '/..' . '/mikemclin/laravel-wp-password/src/WpPassword.php',
+        'MikeMcLin\\WpPassword\\WpPasswordProvider' => __DIR__ . '/..' . '/mikemclin/laravel-wp-password/src/WpPasswordProvider.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegration' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegration.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegrationAssertPostConditions' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegrationAssertPostConditions.php',
         'Mockery\\Adapter\\Phpunit\\MockeryTestCase' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryTestCase.php',

@@ -90,6 +90,7 @@ return array(
     'NunoMaduro\\Collision\\' => array($vendorDir . '/nunomaduro/collision/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Mockery\\' => array($vendorDir . '/mockery/mockery/library/Mockery'),
+    'MikeMcLin\\WpPassword\\' => array($vendorDir . '/mikemclin/laravel-wp-password/src'),
     'Mews\\Purifier\\' => array($vendorDir . '/mews/purifier/src'),
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
     'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
