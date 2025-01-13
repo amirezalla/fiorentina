@@ -104,7 +104,11 @@ class CommentController extends BaseController
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        $comment->likes()->sync($request->user()->id);
+        if ($comment->likes->contains($request->user()->id)){
+            $comment->likes()->detach($request->user()->id);
+        }else{
+            $comment->likes()->attach($request->user()->id);
+        }
         return response()->json([
             'message' => "Success",
             'count' => number_format($comment->likes()->count()),
@@ -126,7 +130,11 @@ class CommentController extends BaseController
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        $comment->dislikes()->sync($request->user()->id);
+        if ($comment->dislikes->contains($request->user()->id)){
+            $comment->dislikes()->detach($request->user()->id);
+        }else{
+            $comment->dislikes()->attach($request->user()->id);
+        }
         return response()->json([
             'message' => "Success",
             'count' => number_format($comment->dislikes()->count()),
