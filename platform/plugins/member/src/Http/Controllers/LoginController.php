@@ -13,7 +13,7 @@ use Botble\Theme\Facades\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
-use MikeMcLin\WpPassword\WpPassword;
+
 
 
 class LoginController extends BaseController
