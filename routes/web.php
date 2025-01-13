@@ -15,6 +15,7 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\MatchCommentaryController;
 use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AdController;
@@ -26,17 +27,44 @@ use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
 
 
-Route::get('/migrate',function (){
-    dd("salam");
+Route::get('/migrate', function () {
+    Schema::create('likes', function (Blueprint $table) {
+        $table->foreign('fob_comment_id')
+            ->references('id')
+            ->on('fob_comments')
+            ->cascadeOnDelete()
+            ->cascadeOnUpdate();
+        $table->foreign('user_id')
+            ->references('id')
+            ->on('users')
+            ->cascadeOnDelete()
+            ->cascadeOnUpdate();
+        $table->primary(['fob_comment_id', 'user_id']);
+        $table->timestamps();
+    });
+    Schema::create('dislikes', function (Blueprint $table) {
+        $table->foreign('fob_comment_id')
+            ->references('id')
+            ->on('fob_comments')
+            ->cascadeOnDelete()
+            ->cascadeOnUpdate();
+        $table->foreign('user_id')
+            ->references('id')
+            ->on('users')
+            ->cascadeOnDelete()
+            ->cascadeOnUpdate();
+        $table->primary(['fob_comment_id', 'user_id']);
+        $table->timestamps();
+    });
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
-    Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
-    Route::get('/admin/ads/create', [AdController::class, 'create'])->name('ads.create');
-    Route::post('/admin/ads', [AdController::class, 'store'])->name('ads.store');
-    Route::get('/admin/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
-    Route::put('/admin/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
-    Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
+Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
+Route::get('/admin/ads/create', [AdController::class, 'create'])->name('ads.create');
+Route::post('/admin/ads', [AdController::class, 'store'])->name('ads.store');
+Route::get('/admin/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
+Route::put('/admin/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
+Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
 
 
 Route::get('/admin/videos', [VideoController::class, 'index'])->name('videos.index');
@@ -46,41 +74,40 @@ Route::get('/admin/videos/{video}/edit', [VideoController::class, 'edit'])->name
 Route::put('/admin/videos/{video}', [VideoController::class, 'update'])->name('videos.update');
 Route::delete('/admin/videos/{video}', [VideoController::class, 'destroy'])->name('videos.destroy');
 
-    Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
-    Route::get('/admin/ads/create', [AdController::class, 'create'])->name('ads.create');
-    Route::post('/admin/ads', [AdController::class, 'store'])->name('ads.store');
-    Route::get('/admin/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
-    Route::put('/admin/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
-    Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
+Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
+Route::get('/admin/ads/create', [AdController::class, 'create'])->name('ads.create');
+Route::post('/admin/ads', [AdController::class, 'store'])->name('ads.store');
+Route::get('/admin/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
+Route::put('/admin/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
+Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
 
-    Route::get('/admin/players', [PlayerController::class, 'index'])->name('players.index');
-    Route::get('/admin/players/create', [PlayerController::class, 'create'])->name('players.create');
-    Route::post('/admin/players', [PlayerController::class, 'store'])->name('players.store');
-    Route::get('/admin/players/{player}/edit', [PlayerController::class, 'edit'])->name('players.edit');
-    Route::put('/admin/players/{player}', [PlayerController::class, 'update'])->name('players.update');
-    Route::delete('/admin/players/{player}', [PlayerController::class, 'destroy'])->name('players.destroy');
+Route::get('/admin/players', [PlayerController::class, 'index'])->name('players.index');
+Route::get('/admin/players/create', [PlayerController::class, 'create'])->name('players.create');
+Route::post('/admin/players', [PlayerController::class, 'store'])->name('players.store');
+Route::get('/admin/players/{player}/edit', [PlayerController::class, 'edit'])->name('players.edit');
+Route::put('/admin/players/{player}', [PlayerController::class, 'update'])->name('players.update');
+Route::delete('/admin/players/{player}', [PlayerController::class, 'destroy'])->name('players.destroy');
 
-    Route::get('/admin/votes', [VoteController::class, 'index'])->name('votes.index');
-    Route::get('/admin/votes/create', [VoteController::class, 'create'])->name('votes.create');
-    Route::post('/admin/votes', [VoteController::class, 'store'])->name('votes.store');
-    Route::get('/admin/votes/{vote}/edit', [VoteController::class, 'edit'])->name('votes.edit');
-    Route::put('/admin/votes/{vote}', [VoteController::class, 'update'])->name('votes.update');
-    Route::delete('/admin/votes/{vote}', [VoteController::class, 'destroy'])->name('votes.destroy');
+Route::get('/admin/votes', [VoteController::class, 'index'])->name('votes.index');
+Route::get('/admin/votes/create', [VoteController::class, 'create'])->name('votes.create');
+Route::post('/admin/votes', [VoteController::class, 'store'])->name('votes.store');
+Route::get('/admin/votes/{vote}/edit', [VoteController::class, 'edit'])->name('votes.edit');
+Route::put('/admin/votes/{vote}', [VoteController::class, 'update'])->name('votes.update');
+Route::delete('/admin/votes/{vote}', [VoteController::class, 'destroy'])->name('votes.destroy');
 
-    Route::get('/polls/create', [PollController::class, 'create'])->name('polls.create');
-    Route::post('/polls', [PollController::class, 'store'])->name('polls.store');
-    Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
-    Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->name('polls.vote');
-    Route::get('/polls/{id}/toggle', [PollController::class, 'toggleActive'])->name('polls.toggle');
-    Route::get('/polls/{id}/export', [PollController::class, 'exportResults'])->name('polls.export');
-    Route::get('/polls/{id}/edit', [PollController::class, 'edit'])->name('polls.edit'); // Assumes an edit method
-    Route::delete('/polls/{id}', [PollController::class, 'destroy'])->name('polls.destroy');
+Route::get('/polls/create', [PollController::class, 'create'])->name('polls.create');
+Route::post('/polls', [PollController::class, 'store'])->name('polls.store');
+Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
+Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->name('polls.vote');
+Route::get('/polls/{id}/toggle', [PollController::class, 'toggleActive'])->name('polls.toggle');
+Route::get('/polls/{id}/export', [PollController::class, 'exportResults'])->name('polls.export');
+Route::get('/polls/{id}/edit', [PollController::class, 'edit'])->name('polls.edit'); // Assumes an edit method
+Route::delete('/polls/{id}', [PollController::class, 'destroy'])->name('polls.destroy');
 
 
-
-    Route::get('/chat/{match}', [ChatController::class, 'fetchMessages']);
-    Route::post('/chat/{match}', [ChatController::class, 'sendMessage']);
-    Route::post('/chat/{match}/status/{status}', [ChatController::class, 'updateChatStatus']);
+Route::get('/chat/{match}', [ChatController::class, 'fetchMessages']);
+Route::post('/chat/{match}', [ChatController::class, 'sendMessage']);
+Route::post('/chat/{match}/status/{status}', [ChatController::class, 'updateChatStatus']);
 
 
 Route::post('/notifica/store', [NotificaController::class, 'store']);
