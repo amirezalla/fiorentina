@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '81e62a31c8854a6b20046b2733250de6331445df',
+        'reference' => 'b1e20e3de31e9ebc970abceaa12b8ded439ee355',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -25,6 +25,15 @@
             'reference' => '20be41a5f1eef4c8a53a6ae7c0fc8b7346c0c386',
             'type' => 'library',
             'install_path' => __DIR__ . '/../aws/aws-sdk-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'ayesh/wordpress-password-hash' => array(
+            'pretty_version' => 'v3.0.1',
+            'version' => '3.0.1.0',
+            'reference' => '09e32d4c34ff1d9bde090bd74cd415c43b9e0881',
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../wp-content/plugins/wordpress-password-hash',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -232,6 +241,15 @@
             'reference' => '99f76ffa36cce3b70a4a6abce41dba15ca2e84cb',
             'type' => 'library',
             'install_path' => __DIR__ . '/../carbonphp/carbon-doctrine-types',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'composer/installers' => array(
+            'pretty_version' => 'v1.12.0',
+            'version' => '1.12.0.0',
+            'reference' => 'd20a64ed3c94748397ff5973488761b22f6d3f19',
+            'type' => 'composer-plugin',
+            'install_path' => __DIR__ . '/./installers',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -802,7 +820,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '81e62a31c8854a6b20046b2733250de6331445df',
+            'reference' => 'b1e20e3de31e9ebc970abceaa12b8ded439ee355',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1496,6 +1514,12 @@
                 0 => '4.7.5',
             ),
         ),
+        'roundcube/plugin-installer' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
         'ryangjchandler/laravel-cloudflare-turnstile' => array(
             'pretty_version' => 'v1.1.0',
             'version' => '1.1.0.0',
@@ -1666,6 +1690,12 @@
             'install_path' => __DIR__ . '/../shalvah/upgrader',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'shama/baton' => array(
+            'dev_requirement' => false,
+            'replaced' => array(
+                0 => '*',
+            ),
         ),
         'spatie/backtrace' => array(
             'pretty_version' => '1.5.3',
