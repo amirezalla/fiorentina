@@ -153,11 +153,11 @@
                             @endif
                             <button class="fob-comment-item-like-btn">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                <span>12</span>
+                                <span>0</span>
                             </button>
                             <button class="fob-comment-item-dislike-btn">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                                <span>12</span>
+                                <span>0</span>
                             </button>
                         </div>
                     </div>
@@ -179,3 +179,6 @@
         {{ $comments->appends(request()->except('page'))->links($paginationView) }}
     </div>
 @endif
+<script>
+    console.log("salam")
+</script>
