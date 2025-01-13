@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::name('fob-comment.')->group(function () {
     AdminHelper::registerRoutes(function () {
-        Route::get('/comments-test',function (){
-            dd("ok");
-        });
         Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
             Route::resource('', CommentController::class)->parameters(['' => 'comment']);
             Route::post('{comment}/reply', [ReplyCommentController::class, '__invoke'])->name('reply');
@@ -30,6 +27,9 @@ Route::name('fob-comment.')->group(function () {
 
     Theme::registerRoutes(function () {
         Route::prefix('fob-comment')->name('public.comments.')->group(function () {
+            Route::get('/comments-test',function (){
+                dd("ok");
+            });
             Route::get('comments', [FrontCommentController::class, 'index'])->name('index');
             Route::post('comments', [FrontCommentController::class, 'store'])->name('store');
             Route::post('comments/{comment}/reply', FrontReplyCommentController::class)->name('reply');
