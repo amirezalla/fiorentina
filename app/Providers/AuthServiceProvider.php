@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
             return new class {
                 public function check($value, $hashedValue)
                 {
-                    return CheckPassword::check($value, $hashedValue);
+                    return PasswordHash::CheckPassword($value, $hashedValue);
                 }
     
                 public function make($value, array $options = [])
