@@ -13,6 +13,7 @@ use Botble\Theme\Facades\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
+use WpPassword;
 
 
 class LoginController extends BaseController
@@ -72,11 +73,11 @@ class LoginController extends BaseController
     if (!$member) {
         return false;
     }
-    dd($member,\Illuminate\Support\Facades\Hash::check($password, $member->password));
-    // Validate the provided password with the stored hash
-    if (\Illuminate\Support\Facades\Hash::check($password, $member->password)) {
-        return $member; // Return the user if valid
+    if ($member && WpPassword::check($request->password, $member->password)) {
+        // Password matches, log the user in
+        return $member;
     }
+
 
     // Return false if password doesn't match
     return false;

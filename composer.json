@@ -33,6 +33,7 @@
         "laravel/framework": "^10.24",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.9",
+        "mikemclin/laravel-wp-password": "^2.0",
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.2",
         "ryangjchandler/laravel-cloudflare-turnstile": "^1.1",
