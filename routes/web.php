@@ -31,9 +31,9 @@ use App\Http\Controllers\VideoController;
 
 
 Route::get('/migrate', function () {
-    $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(function ($item){
-        dd(\Illuminate\Support\Arr::first(json_decode(json_encode($item),1)));
-    });
+    $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(function ($item) {
+        return \Illuminate\Support\Arr::first(json_decode(json_encode($item), 1));
+    })->values();
     dd($tables);
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
@@ -115,13 +115,13 @@ Route::get('/check-db-connection', function () {
 
         // Import the user data into the Member model
         $member = Member::create([
-            'id'=>$user->ID,
+            'id' => $user->ID,
             'first_name' => $user->user_nicename, // Assuming `user_nicename` is the first name
             'last_name' => '',                   // No last name field in the source table
             'email' => $user->user_email,
             'password' => "Amir208079@",      // Ensure the password is hashed
             'avatar_id' => null,                 // Set null or default value
-            'confirmed_at'=>'2024-09-24 13:42:15',
+            'confirmed_at' => '2024-09-24 13:42:15',
             'dob' => null,                       // Set null or default value
             'phone' => null,                     // Set null or default value
             'description' => null,               // Set null or default value
