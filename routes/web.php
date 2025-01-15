@@ -34,7 +34,8 @@ Route::get('/migrate', function () {
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(function ($item) {
         return \Illuminate\Support\Arr::first(json_decode(json_encode($item), 1));
     })->values();
-    dd($tables);
+    $posts = DB::connection('mysql2')->table('frntn_posts')->get();
+    dd($posts);
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
