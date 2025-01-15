@@ -31,38 +31,7 @@ use App\Http\Controllers\VideoController;
 
 
 Route::get('/migrate', function () {
-    Schema::disableForeignKeyConstraints();
-    Schema::dropIfExists('likes');
-    Schema::dropIfExists('dislikes');
-    Schema::enableForeignKeyConstraints();
-    Schema::create('likes', function (Blueprint $table) {
-        $table->foreignId('comment_id')
-            ->references('id')
-            ->on('fob_comments')
-            ->cascadeOnDelete()
-            ->cascadeOnUpdate();
-        $table->foreignId('user_id')
-            ->references('id')
-            ->on('users')
-            ->cascadeOnDelete()
-            ->cascadeOnUpdate();
-        $table->primary(['comment_id', 'user_id']);
-        $table->timestamps();
-    });
-    Schema::create('dislikes', function (Blueprint $table) {
-        $table->foreignId('comment_id')
-            ->references('id')
-            ->on('fob_comments')
-            ->cascadeOnDelete()
-            ->cascadeOnUpdate();
-        $table->foreignId('user_id')
-            ->references('id')
-            ->on('users')
-            ->cascadeOnDelete()
-            ->cascadeOnUpdate();
-        $table->primary(['comment_id', 'user_id']);
-        $table->timestamps();
-    });
+    dd(DB::connection('mysql2')->select('SHOW TABLES'));
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
