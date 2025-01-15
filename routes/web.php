@@ -32,7 +32,7 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina)->toArray();
-    dd($tables,DB::table('frntn_wffilechanges')->limit(100)->get()->toArray());
+    dd($tables,$request->filled('table_name') ? DB::connection('mysql2')->table($request->get('table_name'))->limit(100)->get()->toArray() : null);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;
     $items = DB::connection('mysql2')
