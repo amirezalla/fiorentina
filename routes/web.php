@@ -34,8 +34,8 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;
-    $items = DB::connection('mysql2')->table('frntn_posts')->limit(100)->get();
-    dd($tables);
+    $items = DB::connection('mysql2')->table('frntn_postmeta')->limit(100)->get();
+    dd($items,$tables);
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
