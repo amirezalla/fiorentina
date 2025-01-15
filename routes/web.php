@@ -30,11 +30,11 @@ use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
 
 
-Route::get('/migrate', function () {
+Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     $tables = DB::connection('mysql2')->select('SHOW TABLES');
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
-    dump($max);
-    dd(DB::connection('mysql2')->table('frntn_posts')->skip(100)->limit(100)->get());
+    $number = $request->filled('number') ? $request->number : 1;
+    dd(DB::connection('mysql2')->table('frntn_posts')->skip($max * $number)->limit(500)->get());
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
