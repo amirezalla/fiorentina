@@ -32,7 +32,7 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/migrate', function () {
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(function ($item){
-        dd($item);
+        dd(json_decode(json_encode($item),1));
     });
     dd($tables);
 });
