@@ -32,9 +32,8 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/migrate', function () {
     $tables = DB::connection('mysql2')->select('SHOW TABLES');
-    dd(DB::connection('mysql2')->table('frntn_posts')->chunk(200,function ($items){
-        dump($items);
-    }));
+    dump(DB::connection('mysql2')->table('frntn_posts')->limit(100)->get());
+    dd(DB::connection('mysql2')->table('frntn_posts')->skip(100)->limit(100)->get());
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
