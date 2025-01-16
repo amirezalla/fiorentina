@@ -36,7 +36,8 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     foreach ($tables as $table) {
         $result[$table]=DB::connection('mysql2')->table($table)->limit(5)->get()->toArray();
     }
-    dd($result);
+    $usersCount = DB::connection('mysql2')->table("frntn_users")->count();
+    dd($usersCount,$result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;
     $items = DB::connection('mysql2')
