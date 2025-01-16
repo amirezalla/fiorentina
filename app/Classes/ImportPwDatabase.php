@@ -33,16 +33,16 @@ class ImportPwDatabase
             ->get()
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();
-        dd(basename(User::class),User::class);
         foreach ($posts as $post) {
+            dd($post);
             Post::unguard();
-            Post::query()->create([
+            /*Post::query()->create([
                 'id' => $post['ID'],
                 'author_id' => $post['post_author'],
-                'author_type' => $post['post_author'],
+                'author_type' => basename(User::class),
                 'status' => $post['post_status'] == "publish" ? "published" : "draft",
                 'created_at' => $post['post_date'],
-            ]);
+            ]);*/
             Post::reguard();
         }
     }
