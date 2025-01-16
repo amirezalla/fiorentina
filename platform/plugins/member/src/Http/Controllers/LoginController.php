@@ -72,7 +72,6 @@ class LoginController extends BaseController
 
         $wp_hasher = new PasswordHash(8, false);
         $wpPassword = new WpPassword($wp_hasher);
-        dd($request->password,$member1->password,$wpPassword->check($request->password, $member1->password));
     
         if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member1->password)) {
             $member = $this->guard()->getLastAttempted();
