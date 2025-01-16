@@ -46,7 +46,7 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
         ->map(fn($i) => json_decode(json_encode($i), true))
         ->toArray();
     foreach (collect($users)->take(1) as $user) {
-        \App\Models\User::query()->create([
+        \Botble\ACL\Models\User::query()->create([
             'email' => $user['user_email'],
             'email_verified_at' => now(),
             'username' => $user['user_nicename'],
