@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use App\Jobs\ImportUserFromWpUsersDatabase;
 use Botble\ACL\Models\User;
+use Botble\Blog\Models\Post;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -32,6 +33,17 @@ class ImportPwDatabase
             ->get()
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();
-        dd($posts);
+        dd(basename(User::class),User::class);
+        foreach ($posts as $post) {
+            Post::unguard();
+            Post::query()->create([
+                'id' => $post['ID'],
+                'author_id' => $post['post_author'],
+                'author_type' => $post['post_author'],
+                'status' => $post['post_status'] == "publish" ? "published" : "draft",
+                'created_at' => $post['post_date'],
+            ]);
+            Post::reguard();
+        }
     }
 }
