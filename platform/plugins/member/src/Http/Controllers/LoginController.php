@@ -80,11 +80,11 @@ class LoginController extends BaseController
                 if (setting(
                     'verify_account_email',
                     config('plugins.member.general.verify_email')
-                ) && empty($member->confirmed_at)) {
+                ) && empty($member1->confirmed_at)) {
                     throw ValidationException::withMessages([
                         'confirmation' => [
                             trans('plugins/member::member.not_confirmed', [
-                                'resend_link' => route('public.member.resend_confirmation', ['email' => $member->email]),
+                                'resend_link' => route('public.member.resend_confirmation', ['email' => $member1->email]),
                             ]),
                         ],
                     ]);
