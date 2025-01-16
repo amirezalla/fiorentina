@@ -31,8 +31,6 @@ use App\Http\Controllers\VideoController;
 
 
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
-    \App\Jobs\ImportUserFromWpUsersDatabase::dispatch();
-    dd("ok");
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina)->toArray();
     $result = [];
     foreach ($tables as $table) {
