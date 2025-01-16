@@ -21,4 +21,17 @@ class ImportPwDatabase
             ImportUserFromWpUsersDatabase::dispatch($o);
         }
     }
+
+    public function importPosts()
+    {
+        $postsCount = DB::connection('mysql2')->table("frntn_posts")->count();
+        $max_page = ceil($postsCount / 100);
+        $posts = DB::connection('mysql2')
+            ->table('frntn_posts')
+            ->limit(100)
+            ->get()
+            ->map(fn($i) => json_decode(json_encode($i), true))
+            ->toArray();
+        dd($posts);
+    }
 }
