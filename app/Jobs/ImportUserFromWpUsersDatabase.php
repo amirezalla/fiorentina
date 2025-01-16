@@ -54,7 +54,9 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
             if ($user['ID'] != 1) {
                 $userData['id'] = $user['ID'];
             }
-            User::query()->create($userData);
+            User::query()->firstOrCreate([
+                'email' => $user['user_email'],
+            ],$userData);
             User::reguard();
         }
     }
