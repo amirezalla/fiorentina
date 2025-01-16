@@ -45,11 +45,15 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
         ->get()
         ->map(fn($i) => json_decode(json_encode($i), true))
         ->toArray();
-    foreach ($users as $user) {
-        dd($user, \Illuminate\Support\Str::before($user['display_name']," "),\Illuminate\Support\Str::after($user['display_name']," "));
+    foreach (collect($users)->take(1) as $user) {
         \App\Models\User::query()->create([
             'email' => $user['user_email'],
             'email_verified_at' => now(),
+            'username' => $user['user_nicename'],
+            'password' => $user['user_pass'],
+            'first_name' => \Illuminate\Support\Str::before($user['display_name']," "),
+            'last_name' => \Illuminate\Support\Str::after($user['display_name']," "),
+            'created_at' => $user['user_registered'],
         ]);
     }
     dd($users, $result);
