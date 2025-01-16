@@ -37,7 +37,6 @@ class ImportPwDatabase
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();
         $response = Http::get('https://www.laviola.it/?p=554494');
-        $dom=new \DOMDocument()
         dd($response->body());
         $res = [];
         foreach ($posts as $key => $post) {
