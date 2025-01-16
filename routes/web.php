@@ -31,7 +31,6 @@ use App\Http\Controllers\VideoController;
 
 
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
-    dd(DB::connection('mysql2')->table("frntn_users")->where('ID',1)->exists());
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina)->toArray();
     $result = [];
     foreach ($tables as $table) {
