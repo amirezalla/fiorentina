@@ -42,7 +42,9 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
         ->table("frntn_users")
         ->skip($max_page * 0)
         ->limit(100)
-        ->get();
+        ->get()
+        ->map(fn($i) => json_decode(json_encode($i), true))
+        ->toArray();
     dd($users, $result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;
