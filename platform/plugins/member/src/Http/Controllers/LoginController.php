@@ -90,7 +90,8 @@ class LoginController extends BaseController
                     ]);
                 }
     
-                return $this->baseAttemptLogin($request);
+                $this->guard()->login($member, $request->filled('remember'));
+                return true;            
             }
             
         }else{
