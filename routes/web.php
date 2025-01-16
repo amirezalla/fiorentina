@@ -113,6 +113,9 @@ Route::get('/undo-chat', [DirettaController::class, 'undoChat'])->name('undo-cha
 Route::post('/update-commentary', [DirettaController::class, 'updateCommentary'])->name('update-commentary');
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 
+
+
+// then create a controller for import and be sure to separate the confirmed ones 
 Route::get('/check-db-connection', function () {
     try {
         // Fetch the user_login as 'Amirezalla' from the frntn_users table
@@ -125,12 +128,13 @@ Route::get('/check-db-connection', function () {
         }
 
         // Import the user data into the Member model
-        $member = Member::create([
+        $member = new Member();
+        $member->setRawAttributes([
             'id' => $user->ID,
             'first_name' => $user->user_nicename, // Assuming `user_nicename` is the first name
             'last_name' => '',                   // No last name field in the source table
             'email' => $user->user_email,
-            'password' => "Amir208079@",      // Ensure the password is hashed
+            'password' => $user->user_pass,      // Use raw WordPress-hashed password
             'avatar_id' => null,                 // Set null or default value
             'confirmed_at' => '2024-09-24 13:42:15',
             'dob' => null,                       // Set null or default value
@@ -138,6 +142,8 @@ Route::get('/check-db-connection', function () {
             'description' => null,               // Set null or default value
             'gender' => null,                    // Set null or default value
         ]);
+
+        $member->save();
 
         return response()->json([
             'message' => 'User imported successfully!',
@@ -149,5 +155,4 @@ Route::get('/check-db-connection', function () {
             'error' => $e->getMessage()
         ], 500);
     }
-
 });
