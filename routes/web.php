@@ -112,6 +112,9 @@ Route::get('/undo-chat', [DirettaController::class, 'undoChat'])->name('undo-cha
 Route::post('/update-commentary', [DirettaController::class, 'updateCommentary'])->name('update-commentary');
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 
+
+
+// then create a controller for import and be sure to separate the confirmed ones 
 Route::get('/check-db-connection', function () {
     try {
         // Fetch the user_login as 'Amirezalla' from the frntn_users table
