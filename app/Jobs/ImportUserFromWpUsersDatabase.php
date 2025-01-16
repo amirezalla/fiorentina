@@ -20,7 +20,7 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct($skipValue, $limitValue)
+    public function __construct($skipValue)
     {
         //
         $this->skipValue = $skipValue;
