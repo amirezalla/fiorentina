@@ -37,7 +37,7 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
         $result[$table]=DB::connection('mysql2')->table($table)->limit(5)->get()->toArray();
     }
     $usersCount = DB::connection('mysql2')->table("frntn_users")->count();
-    dd($usersCount,$result);
+    dd(ceil($usersCount / 100),$usersCount / 100,$result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;
     $items = DB::connection('mysql2')
@@ -115,7 +115,7 @@ Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])-
 
 
 
-// then create a controller for import and be sure to separate the confirmed ones 
+// then create a controller for import and be sure to separate the confirmed ones
 Route::get('/check-db-connection', function () {
     try {
         // Fetch the user_login as 'Amirezalla' from the frntn_users table
