@@ -38,24 +38,8 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     }
     $usersCount = DB::connection('mysql2')->table("frntn_users")->count();
     $max_page = ceil($usersCount / 100);
-    $users = DB::connection('mysql2')
-        ->table("frntn_users")
-        ->skip($max_page * 0)
-        ->limit(100)
-        ->get()
-        ->map(fn($i) => json_decode(json_encode($i), true))
-        ->toArray();
-    foreach (collect($users)->take(1) as $user) {
-        \Botble\ACL\Models\User::query()->create([
-            'email' => $user['user_email'],
-            'email_verified_at' => now(),
-            'username' => $user['user_nicename'],
-            'password' => $user['user_pass'],
-            'first_name' => \Illuminate\Support\Str::before($user['display_name']," "),
-            'last_name' => \Illuminate\Support\Str::after($user['display_name']," "),
-            'created_at' => $user['user_registered'],
-        ]);
-    }
+    \App\Jobs\ImportUserFromWpUsersDatabase::dispatch(0, 1);
+    dd("ok");
     dd($users, $result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;

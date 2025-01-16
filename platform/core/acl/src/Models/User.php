@@ -57,6 +57,7 @@ class User extends BaseModel implements
         'avatar_id',
         'permissions',
         'email_verified_at',
+        'created_at',
     ];
 
     protected $hidden = [
