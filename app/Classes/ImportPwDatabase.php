@@ -16,7 +16,6 @@ class ImportPwDatabase
     {
         $usersCount = DB::connection('mysql2')->table("frntn_users")->count();
         $max_page = ceil($usersCount / 100);
-        dump($usersCount);
         foreach (range(0, $max_page - 1) as $i) {
             $o = $i * 100;
             ImportUserFromWpUsersDatabase::dispatch($o);
