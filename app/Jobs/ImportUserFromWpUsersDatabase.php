@@ -16,7 +16,6 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $skipValue;
-    private $limitValue;
 
     /**
      * Create a new job instance.
@@ -25,7 +24,6 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
     {
         //
         $this->skipValue = $skipValue;
-        $this->limitValue = $limitValue;
     }
 
     /**
@@ -36,7 +34,7 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
         $users = DB::connection('mysql2')
             ->table("frntn_users")
             ->skip($this->skipValue)
-            ->limit($this->limitValue)
+            ->limit(100)
             ->get()
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();

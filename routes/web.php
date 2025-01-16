@@ -38,7 +38,9 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     }
     $usersCount = DB::connection('mysql2')->table("frntn_users")->count();
     $max_page = ceil($usersCount / 100);
-    \App\Jobs\ImportUserFromWpUsersDatabase::dispatch(0, 1);
+    foreach (range(0, $max_page - 1) as $i) {
+        \App\Jobs\ImportUserFromWpUsersDatabase::dispatch($i * 100)->delay(now()->addMinutes($i * 2));
+    }
     dd("ok");
     dd($users, $result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
