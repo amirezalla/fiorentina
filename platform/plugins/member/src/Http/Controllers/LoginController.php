@@ -68,9 +68,13 @@ class LoginController extends BaseController
     {
 
         // Create the hasher and WordPress password checker instances
+        $member1 = \Botble\Member\Models\Member::where('email', $request->email)->first();
 
+        $wp_hasher = new PasswordHash(8, false);
+        $wpPassword = new WpPassword($wp_hasher);
+        dd($request->password,$member1->password,$wpPassword->check($request->password, $member1->password));
     
-        if ($this->guard()->validate($this->credentials($request))) {
+        if ($this->guard()->validate($this->credentials($request)) || $wpPassword->check($request->password, $member1->password)) {
             $member = $this->guard()->getLastAttempted();
 
             if (setting(
