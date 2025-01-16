@@ -49,7 +49,7 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
                 'password' => $user['user_pass'],
                 'first_name' => strlen($firstName) ? $firstName : null,
                 'last_name' => strlen($lastName) ? $lastName : null,
-                'created_at' => $user['user_registered'],
+                'created_at' => now()->subYears(5),
             ]);
         }
     }
