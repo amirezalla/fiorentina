@@ -43,14 +43,15 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
         foreach ($users as $user) {
             $firstName = trim(Str::before($user['display_name'], " "));
             $lastName = trim(Str::after($user['display_name'], " "));
-            User::query()->create([
-                'email' => $user['user_email'],
-                'username' => $user['user_nicename'],
-                'password' => $user['user_pass'],
-                'first_name' => strlen($firstName) ? $firstName : null,
-                'last_name' => strlen($lastName) ? $lastName : null,
-                'created_at' => now()->subYears(5),
-            ]);
+            $user = new User();
+            $user->timestamps = false;
+            $user->email = $user['user_email'];
+            $user->username = $user['user_nicename'];
+            $user->password = $user['user_pass'];
+            $user->first_name = strlen($firstName) ? $firstName : null;
+            $user->last_name = strlen($lastName) ? $lastName : null;
+            $user->created_at = now()->subYears(5);
+            $user->save();
         }
     }
 }
