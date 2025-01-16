@@ -30,7 +30,7 @@ class ImportPwDatabase
         $posts = DB::connection('mysql2')
             ->table('frntn_posts')
             ->limit(100)
-            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->get()
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();
