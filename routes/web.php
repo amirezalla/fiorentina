@@ -46,7 +46,11 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
         ->map(fn($i) => json_decode(json_encode($i), true))
         ->toArray();
     foreach ($users as $user) {
-
+        dd($user, \Illuminate\Support\Str::before(" ", $user['display_name']),\Illuminate\Support\Str::after(" ", $user['display_name']));
+        \App\Models\User::query()->create([
+            'email' => $user['user_email'],
+            'email_verified_at' => now(),
+        ]);
     }
     dd($users, $result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
