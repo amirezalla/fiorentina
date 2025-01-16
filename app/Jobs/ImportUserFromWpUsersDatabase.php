@@ -42,7 +42,7 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
             $firstName = trim(Str::before($user['display_name'], " "));
             $lastName = trim(Str::after($user['display_name'], " "));
             User::unguard();
-            User::query()->create([
+            $userData = [
                 'email' => $user['user_email'],
                 'username' => $user['user_nicename'],
                 'password' => $user['user_pass'],
@@ -50,7 +50,11 @@ class ImportUserFromWpUsersDatabase implements ShouldQueue
                 'last_name' => strlen($lastName) ? $lastName : null,
                 'created_at' => $user['user_registered'],
                 'email_verified_at' => now(),
-            ]);
+            ];
+            if ($user['ID'] != 1) {
+                $userData['id'] = $user['ID'];
+            }
+            User::query()->create($userData);
             User::reguard();
         }
     }
