@@ -1,18 +1,17 @@
-<?php //3d28b1086d38581b3ccda5695443e67f
+<?php //1c7f33edfabab4870d30e477e3df5eb3
 /** @noinspection all */
 
 namespace Botble\Api\Models {
 
     use Botble\Base\Models\MetaBox;
     use Illuminate\Database\Eloquent\Model;
-    use Illuminate\Database\Eloquent\Relations\MorphTo;
     use Illuminate\Database\Eloquent\Relations\MorphToMany;
     use Illuminate\Support\Carbon;
     use LaravelIdea\Helper\Botble\Api\Models\_IH_PersonalAccessToken_C;
     use LaravelIdea\Helper\Botble\Api\Models\_IH_PersonalAccessToken_QB;
     use LaravelIdea\Helper\Botble\Base\Models\_IH_MetaBox_C;
     use LaravelIdea\Helper\Botble\Base\Models\_IH_MetaBox_QB;
-
+    
     /**
      * @property int $id
      * @property int $tokenable_id
@@ -27,8 +26,6 @@ namespace Botble\Api\Models {
      * @property _IH_MetaBox_C|MetaBox[] $metadata
      * @property-read int $metadata_count
      * @method MorphToMany|_IH_MetaBox_QB metadata()
-     * @property Model $tokenable
-     * @method MorphTo tokenable()
      * @method static _IH_PersonalAccessToken_QB onWriteConnection()
      * @method _IH_PersonalAccessToken_QB newQuery()
      * @method static _IH_PersonalAccessToken_QB on(null|string $connection = null)

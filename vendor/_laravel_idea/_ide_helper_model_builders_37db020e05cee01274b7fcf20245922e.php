@@ -1,4 +1,4 @@
-<?php //aeeaa76d922b2f4d0e5c750546e76de9
+<?php //5fe7eaeaaaa482eccf317fc08b74f7d4
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Dashboard\Models {
@@ -11,7 +11,7 @@ namespace LaravelIdea\Helper\Botble\Dashboard\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method DashboardWidgetSetting|null getOrPut($key, $value)
      * @method DashboardWidgetSetting|$this shift(int $count = 1)
@@ -37,7 +37,7 @@ namespace LaravelIdea\Helper\Botble\Dashboard\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_DashboardWidgetSetting_QB whereId($value)
      * @method _IH_DashboardWidgetSetting_QB whereSettings($value)
@@ -50,6 +50,7 @@ namespace LaravelIdea\Helper\Botble\Dashboard\Models {
      * @method DashboardWidgetSetting baseSole(array|string $columns = ['*'])
      * @method DashboardWidgetSetting create(array $attributes = [])
      * @method DashboardWidgetSetting createOrFirst(array $attributes = [], array $values = [])
+     * @method DashboardWidgetSetting createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_DashboardWidgetSetting_C|DashboardWidgetSetting[] cursor()
      * @method DashboardWidgetSetting|null|_IH_DashboardWidgetSetting_C|DashboardWidgetSetting[] find($id, array|string $columns = ['*'])
      * @method _IH_DashboardWidgetSetting_C|DashboardWidgetSetting[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -72,12 +73,13 @@ namespace LaravelIdea\Helper\Botble\Dashboard\Models {
      * @method DashboardWidgetSetting make(array $attributes = [])
      * @method DashboardWidgetSetting newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|DashboardWidgetSetting[]|_IH_DashboardWidgetSetting_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method DashboardWidgetSetting restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|DashboardWidgetSetting[]|_IH_DashboardWidgetSetting_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method DashboardWidgetSetting sole(array|string $columns = ['*'])
      * @method DashboardWidgetSetting updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_DashboardWidgetSetting_QB extends _BaseBuilder {}
-
+    
     /**
      * @method DashboardWidget|null getOrPut($key, $value)
      * @method DashboardWidget|$this shift(int $count = 1)
@@ -103,7 +105,7 @@ namespace LaravelIdea\Helper\Botble\Dashboard\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_DashboardWidget_QB whereId($value)
      * @method _IH_DashboardWidget_QB whereName($value)
@@ -112,6 +114,7 @@ namespace LaravelIdea\Helper\Botble\Dashboard\Models {
      * @method DashboardWidget baseSole(array|string $columns = ['*'])
      * @method DashboardWidget create(array $attributes = [])
      * @method DashboardWidget createOrFirst(array $attributes = [], array $values = [])
+     * @method DashboardWidget createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_DashboardWidget_C|DashboardWidget[] cursor()
      * @method DashboardWidget|null|_IH_DashboardWidget_C|DashboardWidget[] find($id, array|string $columns = ['*'])
      * @method _IH_DashboardWidget_C|DashboardWidget[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -134,6 +137,7 @@ namespace LaravelIdea\Helper\Botble\Dashboard\Models {
      * @method DashboardWidget make(array $attributes = [])
      * @method DashboardWidget newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|DashboardWidget[]|_IH_DashboardWidget_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method DashboardWidget restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|DashboardWidget[]|_IH_DashboardWidget_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method DashboardWidget sole(array|string $columns = ['*'])
      * @method DashboardWidget updateOrCreate(array $attributes, array $values = [])

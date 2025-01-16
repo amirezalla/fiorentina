@@ -29,22 +29,31 @@ class ImportPwDatabase
         $max_page = ceil($postsCount / 100);
         $posts = DB::connection('mysql2')
             ->table('frntn_posts')
-            ->limit(100)
+            ->where('post_parent', 0)
+            ->limit(10)
             ->orderByDesc('id')
             ->get()
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();
-        dd($posts);
-        foreach ($posts as $post) {
-            Post::unguard();
-            /*Post::query()->create([
+        $res = [];
+        foreach ($posts as $key => $post) {
+            $res[$key]['post'] = $post;
+            $res[$key]['children'] = DB::connection('mysql2')
+                ->table('frntn_posts')
+                ->where('post_parent', $post['ID'])
+                ->get()
+                ->map(fn($i) => json_decode(json_encode($i), true))
+                ->toArray();
+            /*Post::unguard();
+            Post::query()->create([
                 'id' => $post['ID'],
                 'author_id' => $post['post_author'],
                 'author_type' => basename(User::class),
                 'status' => $post['post_status'] == "publish" ? "published" : "draft",
                 'created_at' => $post['post_date'],
-            ]);*/
-            Post::reguard();
+            ]);
+            Post::reguard();*/
         }
+        dd($res);
     }
 }

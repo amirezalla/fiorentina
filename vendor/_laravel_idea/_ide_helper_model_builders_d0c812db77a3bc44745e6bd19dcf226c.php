@@ -1,4 +1,4 @@
-<?php //b663a444e6ca5bf9ab7d503e46b82025
+<?php //129916349bc8363ca2e633d03c007453
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Contact\Models {
@@ -11,7 +11,7 @@ namespace LaravelIdea\Helper\Botble\Contact\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method ContactReply|null getOrPut($key, $value)
      * @method ContactReply|$this shift(int $count = 1)
@@ -37,7 +37,7 @@ namespace LaravelIdea\Helper\Botble\Contact\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_ContactReply_QB whereId($value)
      * @method _IH_ContactReply_QB whereMessage($value)
@@ -47,6 +47,7 @@ namespace LaravelIdea\Helper\Botble\Contact\Models {
      * @method ContactReply baseSole(array|string $columns = ['*'])
      * @method ContactReply create(array $attributes = [])
      * @method ContactReply createOrFirst(array $attributes = [], array $values = [])
+     * @method ContactReply createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_ContactReply_C|ContactReply[] cursor()
      * @method ContactReply|null|_IH_ContactReply_C|ContactReply[] find($id, array|string $columns = ['*'])
      * @method _IH_ContactReply_C|ContactReply[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -69,12 +70,13 @@ namespace LaravelIdea\Helper\Botble\Contact\Models {
      * @method ContactReply make(array $attributes = [])
      * @method ContactReply newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|ContactReply[]|_IH_ContactReply_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method ContactReply restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|ContactReply[]|_IH_ContactReply_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method ContactReply sole(array|string $columns = ['*'])
      * @method ContactReply updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_ContactReply_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Contact|null getOrPut($key, $value)
      * @method Contact|$this shift(int $count = 1)
@@ -100,7 +102,7 @@ namespace LaravelIdea\Helper\Botble\Contact\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Contact_QB whereId($value)
      * @method _IH_Contact_QB whereName($value)
@@ -115,6 +117,7 @@ namespace LaravelIdea\Helper\Botble\Contact\Models {
      * @method Contact baseSole(array|string $columns = ['*'])
      * @method Contact create(array $attributes = [])
      * @method Contact createOrFirst(array $attributes = [], array $values = [])
+     * @method Contact createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Contact_C|Contact[] cursor()
      * @method Contact|null|_IH_Contact_C|Contact[] find($id, array|string $columns = ['*'])
      * @method _IH_Contact_C|Contact[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -137,6 +140,7 @@ namespace LaravelIdea\Helper\Botble\Contact\Models {
      * @method Contact make(array $attributes = [])
      * @method Contact newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Contact[]|_IH_Contact_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Contact restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Contact[]|_IH_Contact_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Contact sole(array|string $columns = ['*'])
      * @method Contact updateOrCreate(array $attributes, array $values = [])

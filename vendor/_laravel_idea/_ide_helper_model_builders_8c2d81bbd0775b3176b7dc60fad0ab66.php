@@ -1,4 +1,4 @@
-<?php //1b284cc19403964282adefaa26334117
+<?php //b54b8b3d23384321809e180230d59f7c
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Setting\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\Setting\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method Setting|null getOrPut($key, $value)
      * @method Setting|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\Setting\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Setting_QB whereId($value)
      * @method _IH_Setting_QB whereValue($value)
@@ -45,6 +45,7 @@ namespace LaravelIdea\Helper\Botble\Setting\Models {
      * @method Setting baseSole(array|string $columns = ['*'])
      * @method Setting create(array $attributes = [])
      * @method Setting createOrFirst(array $attributes = [], array $values = [])
+     * @method Setting createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Setting_C|Setting[] cursor()
      * @method Setting|null|_IH_Setting_C|Setting[] find($id, array|string $columns = ['*'])
      * @method _IH_Setting_C|Setting[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -67,6 +68,7 @@ namespace LaravelIdea\Helper\Botble\Setting\Models {
      * @method Setting make(array $attributes = [])
      * @method Setting newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Setting[]|_IH_Setting_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Setting restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Setting[]|_IH_Setting_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Setting sole(array|string $columns = ['*'])
      * @method Setting updateOrCreate(array $attributes, array $values = [])

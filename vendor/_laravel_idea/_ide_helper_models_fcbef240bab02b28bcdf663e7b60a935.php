@@ -1,4 +1,4 @@
-<?php //c46b7be72aa359f5aedda72cbaaa317c
+<?php //4e3b4a4ea42324bbdd26653b8dd67891
 /** @noinspection all */
 
 namespace App\Models {
@@ -56,6 +56,8 @@ namespace App\Models {
     use LaravelIdea\Helper\App\Models\_IH_User_QB;
     use LaravelIdea\Helper\App\Models\_IH_VideoAd_C;
     use LaravelIdea\Helper\App\Models\_IH_VideoAd_QB;
+    use LaravelIdea\Helper\App\Models\_IH_VideoSpec_C;
+    use LaravelIdea\Helper\App\Models\_IH_VideoSpec_QB;
     use LaravelIdea\Helper\App\Models\_IH_Video_C;
     use LaravelIdea\Helper\App\Models\_IH_Video_QB;
     use LaravelIdea\Helper\App\Models\_IH_Vote_C;
@@ -68,7 +70,7 @@ namespace App\Models {
     use LaravelIdea\Helper\Illuminate\Notifications\_IH_DatabaseNotification_QB;
     use LaravelIdea\Helper\Laravel\Sanctum\_IH_PersonalAccessToken_C;
     use LaravelIdea\Helper\Laravel\Sanctum\_IH_PersonalAccessToken_QB;
-
+    
     /**
      * @property-read string $group_name attribute
      * @property _IH_MetaBox_C|MetaBox[] $metadata
@@ -86,7 +88,7 @@ namespace App\Models {
      * @mixin _IH_Ad_QB
      */
     class Ad extends Model {}
-
+    
     /**
      * @property _IH_MetaBox_C|MetaBox[] $metadata
      * @property-read int $metadata_count
@@ -103,7 +105,7 @@ namespace App\Models {
      * @mixin _IH_AdPosition_QB
      */
     class AdPosition extends Model {}
-
+    
     /**
      * @property _IH_MetaBox_C|MetaBox[] $metadata
      * @property-read int $metadata_count
@@ -120,7 +122,7 @@ namespace App\Models {
      * @mixin _IH_AdType_QB
      */
     class AdType extends Model {}
-
+    
     /**
      * @property _IH_Vote_C|Vote[] $votes
      * @property-read int $votes_count
@@ -137,7 +139,7 @@ namespace App\Models {
      * @mixin _IH_Calendario_QB
      */
     class Calendario extends Model {}
-
+    
     /**
      * @property Calendario $match
      * @method BelongsTo|_IH_Calendario_QB match()
@@ -153,7 +155,7 @@ namespace App\Models {
      * @mixin _IH_LiveChat_QB
      */
     class LiveChat extends Model {}
-
+    
     /**
      * @method static _IH_MatchCommentary_QB onWriteConnection()
      * @method _IH_MatchCommentary_QB newQuery()
@@ -167,7 +169,7 @@ namespace App\Models {
      * @mixin _IH_MatchCommentary_QB
      */
     class MatchCommentary extends Model {}
-
+    
     /**
      * @property Matches $match
      * @method BelongsTo|_IH_Matches_QB match()
@@ -183,7 +185,7 @@ namespace App\Models {
      * @mixin _IH_MatchLineups_QB
      */
     class MatchLineups extends Model {}
-
+    
     /**
      * @method static _IH_MatchStatics_QB onWriteConnection()
      * @method _IH_MatchStatics_QB newQuery()
@@ -197,7 +199,7 @@ namespace App\Models {
      * @mixin _IH_MatchStatics_QB
      */
     class MatchStatics extends Model {}
-
+    
     /**
      * @method static _IH_MatchSummary_QB onWriteConnection()
      * @method _IH_MatchSummary_QB newQuery()
@@ -211,7 +213,7 @@ namespace App\Models {
      * @mixin _IH_MatchSummary_QB
      */
     class MatchSummary extends Model {}
-
+    
     /**
      * @property int $id
      * @property int $match_id
@@ -247,7 +249,7 @@ namespace App\Models {
      * @mixin _IH_Matches_QB
      */
     class Matches extends Model {}
-
+    
     /**
      * @property Calendario $match
      * @method BelongsTo|_IH_Calendario_QB match()
@@ -265,7 +267,7 @@ namespace App\Models {
      * @mixin _IH_Message_QB
      */
     class Message extends Model {}
-
+    
     /**
      * @method static _IH_Notifica_QB onWriteConnection()
      * @method _IH_Notifica_QB newQuery()
@@ -279,7 +281,7 @@ namespace App\Models {
      * @mixin _IH_Notifica_QB
      */
     class Notifica extends Model {}
-
+    
     /**
      * @property _IH_Vote_C|Vote[] $votes
      * @property-read int $votes_count
@@ -296,7 +298,7 @@ namespace App\Models {
      * @mixin _IH_Player_QB
      */
     class Player extends Model {}
-
+    
     /**
      * @method static _IH_PlayerStats_QB onWriteConnection()
      * @method _IH_PlayerStats_QB newQuery()
@@ -310,7 +312,7 @@ namespace App\Models {
      * @mixin _IH_PlayerStats_QB
      */
     class PlayerStats extends Model {}
-
+    
     /**
      * @property Matches $match
      * @method BelongsTo|_IH_Matches_QB match()
@@ -328,7 +330,7 @@ namespace App\Models {
      * @mixin _IH_PlayerVotes_QB
      */
     class PlayerVotes extends Model {}
-
+    
     /**
      * @property _IH_PollOption_C|PollOption[] $options
      * @property-read int $options_count
@@ -345,7 +347,7 @@ namespace App\Models {
      * @mixin _IH_Poll_QB
      */
     class Poll extends Model {}
-
+    
     /**
      * @property Poll $poll
      * @method BelongsTo|_IH_Poll_QB poll()
@@ -361,7 +363,7 @@ namespace App\Models {
      * @mixin _IH_PollOption_QB
      */
     class PollOption extends Model {}
-
+    
     /**
      * @property int $id
      * @property int $position
@@ -393,7 +395,7 @@ namespace App\Models {
      * @mixin _IH_Standing_QB
      */
     class Standing extends Model {}
-
+    
     /**
      * @property int $id
      * @property string $email
@@ -436,12 +438,14 @@ namespace App\Models {
      * @method static UserFactory factory(array|callable|int|null $count = null, array|callable $state = [])
      */
     class User extends Model {}
-
+    
     /**
      * @property int $id
      * @property string $title
      * @property bool $is_random
      * @property Carbon|null $published_at
+     * @property bool $is_for_home
+     * @property bool $is_for_post
      * @property Carbon|null $created_at
      * @property Carbon|null $updated_at
      * @property _IH_MediaFile_C|MediaFile[] $mediaFiles
@@ -456,11 +460,11 @@ namespace App\Models {
      * @method false|int increment(string $column, float|int $amount = 1, array $extra = [])
      * @method false|int decrement(string $column, float|int $amount = 1, array $extra = [])
      * @method static _IH_Video_C|Video[] all()
-     * @foreignLinks
+     * @foreignLinks 
      * @mixin _IH_Video_QB
      */
     class Video extends Model {}
-
+    
     /**
      * @property Video $video
      * @method BelongsTo|_IH_Video_QB video()
@@ -476,7 +480,23 @@ namespace App\Models {
      * @mixin _IH_VideoAd_QB
      */
     class VideoAd extends Model {}
-
+    
+    /**
+     * @property Video $video
+     * @method BelongsTo|_IH_Video_QB video()
+     * @method static _IH_VideoSpec_QB onWriteConnection()
+     * @method _IH_VideoSpec_QB newQuery()
+     * @method static _IH_VideoSpec_QB on(null|string $connection = null)
+     * @method static _IH_VideoSpec_QB query()
+     * @method static _IH_VideoSpec_QB with(array|string $relations)
+     * @method _IH_VideoSpec_QB newModelQuery()
+     * @method false|int increment(string $column, float|int $amount = 1, array $extra = [])
+     * @method false|int decrement(string $column, float|int $amount = 1, array $extra = [])
+     * @method static _IH_VideoSpec_C|VideoSpec[] all()
+     * @mixin _IH_VideoSpec_QB
+     */
+    class VideoSpec extends Model {}
+    
     /**
      * @property Calendario $calendario
      * @method BelongsTo|_IH_Calendario_QB calendario()

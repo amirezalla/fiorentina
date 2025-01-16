@@ -1,4 +1,4 @@
-<?php //9b368e42571639616f0b721cf57b3382
+<?php //13caafa54d0a5a957251da947c3feceb
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Menu\Models {
@@ -12,7 +12,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method MenuLocation|null getOrPut($key, $value)
      * @method MenuLocation|$this shift(int $count = 1)
@@ -38,7 +38,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_MenuLocation_QB whereId($value)
      * @method _IH_MenuLocation_QB whereMenuId($value)
@@ -48,6 +48,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
      * @method MenuLocation baseSole(array|string $columns = ['*'])
      * @method MenuLocation create(array $attributes = [])
      * @method MenuLocation createOrFirst(array $attributes = [], array $values = [])
+     * @method MenuLocation createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MenuLocation_C|MenuLocation[] cursor()
      * @method MenuLocation|null|_IH_MenuLocation_C|MenuLocation[] find($id, array|string $columns = ['*'])
      * @method _IH_MenuLocation_C|MenuLocation[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -70,12 +71,13 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
      * @method MenuLocation make(array $attributes = [])
      * @method MenuLocation newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MenuLocation[]|_IH_MenuLocation_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MenuLocation restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MenuLocation[]|_IH_MenuLocation_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MenuLocation sole(array|string $columns = ['*'])
      * @method MenuLocation updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MenuLocation_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MenuNode|null getOrPut($key, $value)
      * @method MenuNode|$this shift(int $count = 1)
@@ -101,7 +103,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_MenuNode_QB whereId($value)
      * @method _IH_MenuNode_QB whereMenuId($value)
@@ -120,6 +122,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
      * @method MenuNode baseSole(array|string $columns = ['*'])
      * @method MenuNode create(array $attributes = [])
      * @method MenuNode createOrFirst(array $attributes = [], array $values = [])
+     * @method MenuNode createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MenuNode_C|MenuNode[] cursor()
      * @method MenuNode|null|_IH_MenuNode_C|MenuNode[] find($id, array|string $columns = ['*'])
      * @method _IH_MenuNode_C|MenuNode[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -142,12 +145,13 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
      * @method MenuNode make(array $attributes = [])
      * @method MenuNode newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MenuNode[]|_IH_MenuNode_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MenuNode restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MenuNode[]|_IH_MenuNode_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MenuNode sole(array|string $columns = ['*'])
      * @method MenuNode updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MenuNode_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Menu|null getOrPut($key, $value)
      * @method Menu|$this shift(int $count = 1)
@@ -173,7 +177,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Menu_QB whereId($value)
      * @method _IH_Menu_QB whereName($value)
@@ -184,6 +188,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
      * @method Menu baseSole(array|string $columns = ['*'])
      * @method Menu create(array $attributes = [])
      * @method Menu createOrFirst(array $attributes = [], array $values = [])
+     * @method Menu createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Menu_C|Menu[] cursor()
      * @method Menu|null|_IH_Menu_C|Menu[] find($id, array|string $columns = ['*'])
      * @method _IH_Menu_C|Menu[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -206,6 +211,7 @@ namespace LaravelIdea\Helper\Botble\Menu\Models {
      * @method Menu make(array $attributes = [])
      * @method Menu newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Menu[]|_IH_Menu_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Menu restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Menu[]|_IH_Menu_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Menu sole(array|string $columns = ['*'])
      * @method Menu updateOrCreate(array $attributes, array $values = [])

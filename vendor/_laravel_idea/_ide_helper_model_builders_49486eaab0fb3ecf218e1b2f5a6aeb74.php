@@ -1,4 +1,4 @@
-<?php //e9e59aca23eccb9cc8b8e159f523402f
+<?php //042339daf2640f596f410e5d8aa52900
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\RequestLog\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\RequestLog\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method RequestLog|null getOrPut($key, $value)
      * @method RequestLog|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\RequestLog\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_RequestLog_QB whereId($value)
      * @method _IH_RequestLog_QB whereStatusCode($value)
@@ -49,6 +49,7 @@ namespace LaravelIdea\Helper\Botble\RequestLog\Models {
      * @method RequestLog baseSole(array|string $columns = ['*'])
      * @method RequestLog create(array $attributes = [])
      * @method RequestLog createOrFirst(array $attributes = [], array $values = [])
+     * @method RequestLog createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_RequestLog_C|RequestLog[] cursor()
      * @method RequestLog|null|_IH_RequestLog_C|RequestLog[] find($id, array|string $columns = ['*'])
      * @method _IH_RequestLog_C|RequestLog[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -71,6 +72,7 @@ namespace LaravelIdea\Helper\Botble\RequestLog\Models {
      * @method RequestLog make(array $attributes = [])
      * @method RequestLog newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|RequestLog[]|_IH_RequestLog_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method RequestLog restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|RequestLog[]|_IH_RequestLog_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method RequestLog sole(array|string $columns = ['*'])
      * @method RequestLog updateOrCreate(array $attributes, array $values = [])

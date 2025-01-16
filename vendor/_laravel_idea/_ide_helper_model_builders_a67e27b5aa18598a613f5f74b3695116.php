@@ -1,4 +1,4 @@
-<?php //db4ca0d99195c596f3793d8727ec236e
+<?php //1bdcdfcbc725125120be061b33a88df9
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Revision {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\Revision {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method Revision|null getOrPut($key, $value)
      * @method Revision|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\Revision {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Revision_QB whereId($value)
      * @method _IH_Revision_QB whereRevisionableType($value)
@@ -49,6 +49,7 @@ namespace LaravelIdea\Helper\Botble\Revision {
      * @method Revision baseSole(array|string $columns = ['*'])
      * @method Revision create(array $attributes = [])
      * @method Revision createOrFirst(array $attributes = [], array $values = [])
+     * @method Revision createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Revision_C|Revision[] cursor()
      * @method Revision|null|_IH_Revision_C|Revision[] find($id, array|string $columns = ['*'])
      * @method _IH_Revision_C|Revision[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -71,6 +72,7 @@ namespace LaravelIdea\Helper\Botble\Revision {
      * @method Revision make(array $attributes = [])
      * @method Revision newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Revision[]|_IH_Revision_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Revision restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Revision[]|_IH_Revision_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Revision sole(array|string $columns = ['*'])
      * @method Revision updateOrCreate(array $attributes, array $values = [])

@@ -1,4 +1,4 @@
-<?php //012e653fd2049876d21dd619dbfb767c
+<?php //fbf0de25db293d586db99b97988f477d
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\AuditLog\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\AuditLog\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method AuditHistory|null getOrPut($key, $value)
      * @method AuditHistory|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\AuditLog\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_AuditHistory_QB whereId($value)
      * @method _IH_AuditHistory_QB whereUserId($value)
@@ -54,6 +54,7 @@ namespace LaravelIdea\Helper\Botble\AuditLog\Models {
      * @method AuditHistory baseSole(array|string $columns = ['*'])
      * @method AuditHistory create(array $attributes = [])
      * @method AuditHistory createOrFirst(array $attributes = [], array $values = [])
+     * @method AuditHistory createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_AuditHistory_C|AuditHistory[] cursor()
      * @method AuditHistory|null|_IH_AuditHistory_C|AuditHistory[] find($id, array|string $columns = ['*'])
      * @method _IH_AuditHistory_C|AuditHistory[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -76,6 +77,7 @@ namespace LaravelIdea\Helper\Botble\AuditLog\Models {
      * @method AuditHistory make(array $attributes = [])
      * @method AuditHistory newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|AuditHistory[]|_IH_AuditHistory_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method AuditHistory restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|AuditHistory[]|_IH_AuditHistory_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method AuditHistory sole(array|string $columns = ['*'])
      * @method AuditHistory updateOrCreate(array $attributes, array $values = [])

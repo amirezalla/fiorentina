@@ -1,4 +1,4 @@
-<?php //4da3aa03bc5426efac7ce713cedc1f1a
+<?php //6b64f98d784eb070b160da325d660cbf
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Language\Models {
@@ -11,7 +11,7 @@ namespace LaravelIdea\Helper\Botble\Language\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method LanguageMeta|null getOrPut($key, $value)
      * @method LanguageMeta|$this shift(int $count = 1)
@@ -37,7 +37,7 @@ namespace LaravelIdea\Helper\Botble\Language\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_LanguageMeta_QB whereLangMetaId($value)
      * @method _IH_LanguageMeta_QB whereLangMetaCode($value)
@@ -47,6 +47,7 @@ namespace LaravelIdea\Helper\Botble\Language\Models {
      * @method LanguageMeta baseSole(array|string $columns = ['*'])
      * @method LanguageMeta create(array $attributes = [])
      * @method LanguageMeta createOrFirst(array $attributes = [], array $values = [])
+     * @method LanguageMeta createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_LanguageMeta_C|LanguageMeta[] cursor()
      * @method LanguageMeta|null|_IH_LanguageMeta_C|LanguageMeta[] find($id, array|string $columns = ['*'])
      * @method _IH_LanguageMeta_C|LanguageMeta[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -69,12 +70,13 @@ namespace LaravelIdea\Helper\Botble\Language\Models {
      * @method LanguageMeta make(array $attributes = [])
      * @method LanguageMeta newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|LanguageMeta[]|_IH_LanguageMeta_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method LanguageMeta restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|LanguageMeta[]|_IH_LanguageMeta_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method LanguageMeta sole(array|string $columns = ['*'])
      * @method LanguageMeta updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_LanguageMeta_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Language|null getOrPut($key, $value)
      * @method Language|$this shift(int $count = 1)
@@ -100,7 +102,7 @@ namespace LaravelIdea\Helper\Botble\Language\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Language_QB whereLangId($value)
      * @method _IH_Language_QB whereLangName($value)
@@ -113,6 +115,7 @@ namespace LaravelIdea\Helper\Botble\Language\Models {
      * @method Language baseSole(array|string $columns = ['*'])
      * @method Language create(array $attributes = [])
      * @method Language createOrFirst(array $attributes = [], array $values = [])
+     * @method Language createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Language_C|Language[] cursor()
      * @method Language|null|_IH_Language_C|Language[] find($id, array|string $columns = ['*'])
      * @method _IH_Language_C|Language[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -135,6 +138,7 @@ namespace LaravelIdea\Helper\Botble\Language\Models {
      * @method Language make(array $attributes = [])
      * @method Language newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Language[]|_IH_Language_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Language restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Language[]|_IH_Language_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Language sole(array|string $columns = ['*'])
      * @method Language updateOrCreate(array $attributes, array $values = [])

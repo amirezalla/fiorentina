@@ -1,4 +1,4 @@
-<?php //1d10db6c9c8d0df53d3d3c850bc5932c
+<?php //ec63a60c39af34d1c1ed570283bdf95c
 /** @noinspection all */
 
 namespace Botble\CustomField\Models {
@@ -19,7 +19,7 @@ namespace Botble\CustomField\Models {
     use LaravelIdea\Helper\Botble\CustomField\Models\_IH_FieldGroup_QB;
     use LaravelIdea\Helper\Botble\CustomField\Models\_IH_FieldItem_C;
     use LaravelIdea\Helper\Botble\CustomField\Models\_IH_FieldItem_QB;
-
+    
     /**
      * @property int $id
      * @property string $use_for
@@ -28,7 +28,7 @@ namespace Botble\CustomField\Models {
      * @property string $type
      * @property $slug
      * @property string|null $value
-     * @property-read false|mixed $resolved_value attribute
+     * @property-read false|mixed|null|string $resolved_value attribute
      * @property _IH_MetaBox_C|MetaBox[] $metadata
      * @property-read int $metadata_count
      * @method MorphToMany|_IH_MetaBox_QB metadata()
@@ -44,11 +44,11 @@ namespace Botble\CustomField\Models {
      * @method false|int decrement(string $column, float|int $amount = 1, array $extra = [])
      * @method static _IH_CustomField_C|CustomField[] all()
      * @ownLinks field_item_id,\Botble\CustomField\Models\FieldItem,id
-     * @foreignLinks
+     * @foreignLinks 
      * @mixin _IH_CustomField_QB
      */
     class CustomField extends Model {}
-
+    
     /**
      * @property int $id
      * @property $title
@@ -78,7 +78,7 @@ namespace Botble\CustomField\Models {
      * @mixin _IH_FieldGroup_QB
      */
     class FieldGroup extends Model {}
-
+    
     /**
      * @property int $id
      * @property int $field_group_id

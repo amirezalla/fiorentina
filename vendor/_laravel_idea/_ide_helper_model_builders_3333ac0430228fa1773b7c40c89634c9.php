@@ -1,4 +1,4 @@
-<?php //45cfed547ee7d3f15b8be2ddb95ef199
+<?php //2d16da51b16857f3fbb0df8eaab3f5a7
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Widget\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\Widget\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method Widget|null getOrPut($key, $value)
      * @method Widget|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\Widget\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Widget_QB whereId($value)
      * @method _IH_Widget_QB whereWidgetId($value)
@@ -49,6 +49,7 @@ namespace LaravelIdea\Helper\Botble\Widget\Models {
      * @method Widget baseSole(array|string $columns = ['*'])
      * @method Widget create(array $attributes = [])
      * @method Widget createOrFirst(array $attributes = [], array $values = [])
+     * @method Widget createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Widget_C|Widget[] cursor()
      * @method Widget|null|_IH_Widget_C|Widget[] find($id, array|string $columns = ['*'])
      * @method _IH_Widget_C|Widget[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -71,6 +72,7 @@ namespace LaravelIdea\Helper\Botble\Widget\Models {
      * @method Widget make(array $attributes = [])
      * @method Widget newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Widget[]|_IH_Widget_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Widget restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Widget[]|_IH_Widget_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Widget sole(array|string $columns = ['*'])
      * @method Widget updateOrCreate(array $attributes, array $values = [])

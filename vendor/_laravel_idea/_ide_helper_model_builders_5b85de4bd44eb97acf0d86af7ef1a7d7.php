@@ -1,4 +1,4 @@
-<?php //9e16cbf07848d2fdddf1e9f1abeef195
+<?php //177230d592db3d6d4a780f0afacaa5e9
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\FriendsOfBotble\Comment\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\FriendsOfBotble\Comment\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method Comment|null getOrPut($key, $value)
      * @method Comment|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\FriendsOfBotble\Comment\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Comment_QB whereId($value)
      * @method _IH_Comment_QB whereReplyTo($value)
@@ -57,6 +57,7 @@ namespace LaravelIdea\Helper\FriendsOfBotble\Comment\Models {
      * @method Comment baseSole(array|string $columns = ['*'])
      * @method Comment create(array $attributes = [])
      * @method Comment createOrFirst(array $attributes = [], array $values = [])
+     * @method Comment createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Comment_C|Comment[] cursor()
      * @method Comment|null|_IH_Comment_C|Comment[] find($id, array|string $columns = ['*'])
      * @method _IH_Comment_C|Comment[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -79,6 +80,7 @@ namespace LaravelIdea\Helper\FriendsOfBotble\Comment\Models {
      * @method Comment make(array $attributes = [])
      * @method Comment newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Comment[]|_IH_Comment_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Comment restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Comment[]|_IH_Comment_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Comment sole(array|string $columns = ['*'])
      * @method Comment updateOrCreate(array $attributes, array $values = [])

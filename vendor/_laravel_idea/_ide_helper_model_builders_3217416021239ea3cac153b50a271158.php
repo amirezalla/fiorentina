@@ -1,4 +1,4 @@
-<?php //55368c1e3f0267f3242f9ed64f31b938
+<?php //b9a3c6f81e43cc832ef349794fcdb883
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\VigStudio\VigSeo\Models {
@@ -11,7 +11,7 @@ namespace LaravelIdea\Helper\VigStudio\VigSeo\Models {
     use LaravelIdea\Helper\_BaseCollection;
     use VigStudio\VigSeo\Models\VigSeo;
     use VigStudio\VigSeo\Models\VigSeoTranslation;
-
+    
     /**
      * @method VigSeoTranslation|null getOrPut($key, $value)
      * @method VigSeoTranslation|$this shift(int $count = 1)
@@ -37,11 +37,12 @@ namespace LaravelIdea\Helper\VigStudio\VigSeo\Models {
             return [];
         }
     }
-
+    
     /**
      * @method VigSeoTranslation baseSole(array|string $columns = ['*'])
      * @method VigSeoTranslation create(array $attributes = [])
      * @method VigSeoTranslation createOrFirst(array $attributes = [], array $values = [])
+     * @method VigSeoTranslation createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_VigSeoTranslation_C|VigSeoTranslation[] cursor()
      * @method VigSeoTranslation|null|_IH_VigSeoTranslation_C|VigSeoTranslation[] find($id, array|string $columns = ['*'])
      * @method _IH_VigSeoTranslation_C|VigSeoTranslation[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -64,12 +65,13 @@ namespace LaravelIdea\Helper\VigStudio\VigSeo\Models {
      * @method VigSeoTranslation make(array $attributes = [])
      * @method VigSeoTranslation newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|VigSeoTranslation[]|_IH_VigSeoTranslation_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method VigSeoTranslation restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|VigSeoTranslation[]|_IH_VigSeoTranslation_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method VigSeoTranslation sole(array|string $columns = ['*'])
      * @method VigSeoTranslation updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_VigSeoTranslation_QB extends _BaseBuilder {}
-
+    
     /**
      * @method VigSeo|null getOrPut($key, $value)
      * @method VigSeo|$this shift(int $count = 1)
@@ -95,11 +97,12 @@ namespace LaravelIdea\Helper\VigStudio\VigSeo\Models {
             return [];
         }
     }
-
+    
     /**
      * @method VigSeo baseSole(array|string $columns = ['*'])
      * @method VigSeo create(array $attributes = [])
      * @method VigSeo createOrFirst(array $attributes = [], array $values = [])
+     * @method VigSeo createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_VigSeo_C|VigSeo[] cursor()
      * @method VigSeo|null|_IH_VigSeo_C|VigSeo[] find($id, array|string $columns = ['*'])
      * @method _IH_VigSeo_C|VigSeo[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -122,6 +125,7 @@ namespace LaravelIdea\Helper\VigStudio\VigSeo\Models {
      * @method VigSeo make(array $attributes = [])
      * @method VigSeo newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|VigSeo[]|_IH_VigSeo_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method VigSeo restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|VigSeo[]|_IH_VigSeo_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method VigSeo sole(array|string $columns = ['*'])
      * @method VigSeo updateOrCreate(array $attributes, array $values = [])

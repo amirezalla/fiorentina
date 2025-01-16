@@ -1,4 +1,4 @@
-<?php //76af461b8f06f2fb40c898b98b803b50
+<?php //f88d8cd6e9b3610e0db4dcd7f49e1ad5
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Illuminate\Notifications {
@@ -10,11 +10,12 @@ namespace LaravelIdea\Helper\Illuminate\Notifications {
     use Illuminate\Pagination\LengthAwarePaginator;
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
-
+    
     /**
      * @method DatabaseNotification baseSole(array|string $columns = ['*'])
      * @method DatabaseNotification create(array $attributes = [])
      * @method DatabaseNotification createOrFirst(array $attributes = [], array $values = [])
+     * @method DatabaseNotification createOrRestore(array $attributes = [], array $values = [])
      * @method DatabaseNotificationCollection|DatabaseNotification[] cursor()
      * @method DatabaseNotification|null|DatabaseNotificationCollection|DatabaseNotification[] find($id, array|string $columns = ['*'])
      * @method DatabaseNotificationCollection|DatabaseNotification[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -37,6 +38,7 @@ namespace LaravelIdea\Helper\Illuminate\Notifications {
      * @method DatabaseNotification make(array $attributes = [])
      * @method DatabaseNotification newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|DatabaseNotification[]|DatabaseNotificationCollection paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method DatabaseNotification restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|DatabaseNotification[]|DatabaseNotificationCollection simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method DatabaseNotification sole(array|string $columns = ['*'])
      * @method DatabaseNotification updateOrCreate(array $attributes, array $values = [])

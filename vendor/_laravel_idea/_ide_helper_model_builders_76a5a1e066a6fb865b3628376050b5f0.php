@@ -1,4 +1,4 @@
-<?php //7301825dac8b52b836ec22fb75444438
+<?php //e1ed93fc75b30ac421b58644fb2cfdb0
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\App\Models {
@@ -24,6 +24,7 @@ namespace LaravelIdea\Helper\App\Models {
     use App\Models\User;
     use App\Models\Video;
     use App\Models\VideoAd;
+    use App\Models\VideoSpec;
     use App\Models\Vote;
     use Illuminate\Contracts\Database\Query\Expression;
     use Illuminate\Contracts\Support\Arrayable;
@@ -31,7 +32,7 @@ namespace LaravelIdea\Helper\App\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method AdPosition|null getOrPut($key, $value)
      * @method AdPosition|$this shift(int $count = 1)
@@ -57,11 +58,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method AdPosition baseSole(array|string $columns = ['*'])
      * @method AdPosition create(array $attributes = [])
      * @method AdPosition createOrFirst(array $attributes = [], array $values = [])
+     * @method AdPosition createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_AdPosition_C|AdPosition[] cursor()
      * @method AdPosition|null|_IH_AdPosition_C|AdPosition[] find($id, array|string $columns = ['*'])
      * @method _IH_AdPosition_C|AdPosition[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -84,12 +86,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method AdPosition make(array $attributes = [])
      * @method AdPosition newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|AdPosition[]|_IH_AdPosition_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method AdPosition restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|AdPosition[]|_IH_AdPosition_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method AdPosition sole(array|string $columns = ['*'])
      * @method AdPosition updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_AdPosition_QB extends _BaseBuilder {}
-
+    
     /**
      * @method AdType|null getOrPut($key, $value)
      * @method AdType|$this shift(int $count = 1)
@@ -115,11 +118,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method AdType baseSole(array|string $columns = ['*'])
      * @method AdType create(array $attributes = [])
      * @method AdType createOrFirst(array $attributes = [], array $values = [])
+     * @method AdType createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_AdType_C|AdType[] cursor()
      * @method AdType|null|_IH_AdType_C|AdType[] find($id, array|string $columns = ['*'])
      * @method _IH_AdType_C|AdType[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -142,12 +146,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method AdType make(array $attributes = [])
      * @method AdType newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|AdType[]|_IH_AdType_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method AdType restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|AdType[]|_IH_AdType_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method AdType sole(array|string $columns = ['*'])
      * @method AdType updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_AdType_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Ad|null getOrPut($key, $value)
      * @method Ad|$this shift(int $count = 1)
@@ -173,11 +178,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method Ad baseSole(array|string $columns = ['*'])
      * @method Ad create(array $attributes = [])
      * @method Ad createOrFirst(array $attributes = [], array $values = [])
+     * @method Ad createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Ad_C|Ad[] cursor()
      * @method Ad|null|_IH_Ad_C|Ad[] find($id, array|string $columns = ['*'])
      * @method _IH_Ad_C|Ad[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -200,14 +206,16 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Ad make(array $attributes = [])
      * @method Ad newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Ad[]|_IH_Ad_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Ad restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Ad[]|_IH_Ad_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Ad sole(array|string $columns = ['*'])
      * @method Ad updateOrCreate(array $attributes, array $values = [])
+     * @method _IH_Ad_QB inRandomOrderByWeight()
      * @method _IH_Ad_QB typeAnnuncioImmagine()
      * @method _IH_Ad_QB typeGoogleAds()
      */
     class _IH_Ad_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Calendario|null getOrPut($key, $value)
      * @method Calendario|$this shift(int $count = 1)
@@ -233,11 +241,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method Calendario baseSole(array|string $columns = ['*'])
      * @method Calendario create(array $attributes = [])
      * @method Calendario createOrFirst(array $attributes = [], array $values = [])
+     * @method Calendario createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Calendario_C|Calendario[] cursor()
      * @method Calendario|null|_IH_Calendario_C|Calendario[] find($id, array|string $columns = ['*'])
      * @method _IH_Calendario_C|Calendario[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -260,12 +269,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Calendario make(array $attributes = [])
      * @method Calendario newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Calendario[]|_IH_Calendario_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Calendario restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Calendario[]|_IH_Calendario_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Calendario sole(array|string $columns = ['*'])
      * @method Calendario updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Calendario_QB extends _BaseBuilder {}
-
+    
     /**
      * @method LiveChat|null getOrPut($key, $value)
      * @method LiveChat|$this shift(int $count = 1)
@@ -291,11 +301,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method LiveChat baseSole(array|string $columns = ['*'])
      * @method LiveChat create(array $attributes = [])
      * @method LiveChat createOrFirst(array $attributes = [], array $values = [])
+     * @method LiveChat createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_LiveChat_C|LiveChat[] cursor()
      * @method LiveChat|null|_IH_LiveChat_C|LiveChat[] find($id, array|string $columns = ['*'])
      * @method _IH_LiveChat_C|LiveChat[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -318,12 +329,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method LiveChat make(array $attributes = [])
      * @method LiveChat newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|LiveChat[]|_IH_LiveChat_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method LiveChat restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|LiveChat[]|_IH_LiveChat_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method LiveChat sole(array|string $columns = ['*'])
      * @method LiveChat updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_LiveChat_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MatchCommentary|null getOrPut($key, $value)
      * @method MatchCommentary|$this shift(int $count = 1)
@@ -349,11 +361,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method MatchCommentary baseSole(array|string $columns = ['*'])
      * @method MatchCommentary create(array $attributes = [])
      * @method MatchCommentary createOrFirst(array $attributes = [], array $values = [])
+     * @method MatchCommentary createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MatchCommentary_C|MatchCommentary[] cursor()
      * @method MatchCommentary|null|_IH_MatchCommentary_C|MatchCommentary[] find($id, array|string $columns = ['*'])
      * @method _IH_MatchCommentary_C|MatchCommentary[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -376,12 +389,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method MatchCommentary make(array $attributes = [])
      * @method MatchCommentary newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MatchCommentary[]|_IH_MatchCommentary_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MatchCommentary restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MatchCommentary[]|_IH_MatchCommentary_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MatchCommentary sole(array|string $columns = ['*'])
      * @method MatchCommentary updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MatchCommentary_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MatchLineups|null getOrPut($key, $value)
      * @method MatchLineups|$this shift(int $count = 1)
@@ -407,11 +421,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method MatchLineups baseSole(array|string $columns = ['*'])
      * @method MatchLineups create(array $attributes = [])
      * @method MatchLineups createOrFirst(array $attributes = [], array $values = [])
+     * @method MatchLineups createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MatchLineups_C|MatchLineups[] cursor()
      * @method MatchLineups|null|_IH_MatchLineups_C|MatchLineups[] find($id, array|string $columns = ['*'])
      * @method _IH_MatchLineups_C|MatchLineups[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -434,12 +449,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method MatchLineups make(array $attributes = [])
      * @method MatchLineups newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MatchLineups[]|_IH_MatchLineups_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MatchLineups restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MatchLineups[]|_IH_MatchLineups_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MatchLineups sole(array|string $columns = ['*'])
      * @method MatchLineups updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MatchLineups_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MatchStatics|null getOrPut($key, $value)
      * @method MatchStatics|$this shift(int $count = 1)
@@ -465,11 +481,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method MatchStatics baseSole(array|string $columns = ['*'])
      * @method MatchStatics create(array $attributes = [])
      * @method MatchStatics createOrFirst(array $attributes = [], array $values = [])
+     * @method MatchStatics createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MatchStatics_C|MatchStatics[] cursor()
      * @method MatchStatics|null|_IH_MatchStatics_C|MatchStatics[] find($id, array|string $columns = ['*'])
      * @method _IH_MatchStatics_C|MatchStatics[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -492,12 +509,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method MatchStatics make(array $attributes = [])
      * @method MatchStatics newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MatchStatics[]|_IH_MatchStatics_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MatchStatics restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MatchStatics[]|_IH_MatchStatics_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MatchStatics sole(array|string $columns = ['*'])
      * @method MatchStatics updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MatchStatics_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MatchSummary|null getOrPut($key, $value)
      * @method MatchSummary|$this shift(int $count = 1)
@@ -523,11 +541,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method MatchSummary baseSole(array|string $columns = ['*'])
      * @method MatchSummary create(array $attributes = [])
      * @method MatchSummary createOrFirst(array $attributes = [], array $values = [])
+     * @method MatchSummary createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MatchSummary_C|MatchSummary[] cursor()
      * @method MatchSummary|null|_IH_MatchSummary_C|MatchSummary[] find($id, array|string $columns = ['*'])
      * @method _IH_MatchSummary_C|MatchSummary[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -550,12 +569,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method MatchSummary make(array $attributes = [])
      * @method MatchSummary newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MatchSummary[]|_IH_MatchSummary_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MatchSummary restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MatchSummary[]|_IH_MatchSummary_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MatchSummary sole(array|string $columns = ['*'])
      * @method MatchSummary updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MatchSummary_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Matches|null getOrPut($key, $value)
      * @method Matches|$this shift(int $count = 1)
@@ -581,7 +601,7 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Matches_QB whereId($value)
      * @method _IH_Matches_QB whereMatchId($value)
@@ -605,6 +625,7 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Matches baseSole(array|string $columns = ['*'])
      * @method Matches create(array $attributes = [])
      * @method Matches createOrFirst(array $attributes = [], array $values = [])
+     * @method Matches createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Matches_C|Matches[] cursor()
      * @method Matches|null|_IH_Matches_C|Matches[] find($id, array|string $columns = ['*'])
      * @method _IH_Matches_C|Matches[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -627,12 +648,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Matches make(array $attributes = [])
      * @method Matches newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Matches[]|_IH_Matches_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Matches restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Matches[]|_IH_Matches_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Matches sole(array|string $columns = ['*'])
      * @method Matches updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Matches_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Message|null getOrPut($key, $value)
      * @method Message|$this shift(int $count = 1)
@@ -658,11 +680,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method Message baseSole(array|string $columns = ['*'])
      * @method Message create(array $attributes = [])
      * @method Message createOrFirst(array $attributes = [], array $values = [])
+     * @method Message createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Message_C|Message[] cursor()
      * @method Message|null|_IH_Message_C|Message[] find($id, array|string $columns = ['*'])
      * @method _IH_Message_C|Message[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -685,12 +708,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Message make(array $attributes = [])
      * @method Message newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Message[]|_IH_Message_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Message restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Message[]|_IH_Message_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Message sole(array|string $columns = ['*'])
      * @method Message updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Message_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Notifica|null getOrPut($key, $value)
      * @method Notifica|$this shift(int $count = 1)
@@ -716,11 +740,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method Notifica baseSole(array|string $columns = ['*'])
      * @method Notifica create(array $attributes = [])
      * @method Notifica createOrFirst(array $attributes = [], array $values = [])
+     * @method Notifica createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Notifica_C|Notifica[] cursor()
      * @method Notifica|null|_IH_Notifica_C|Notifica[] find($id, array|string $columns = ['*'])
      * @method _IH_Notifica_C|Notifica[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -743,12 +768,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Notifica make(array $attributes = [])
      * @method Notifica newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Notifica[]|_IH_Notifica_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Notifica restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Notifica[]|_IH_Notifica_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Notifica sole(array|string $columns = ['*'])
      * @method Notifica updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Notifica_QB extends _BaseBuilder {}
-
+    
     /**
      * @method PlayerStats|null getOrPut($key, $value)
      * @method PlayerStats|$this shift(int $count = 1)
@@ -774,11 +800,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method PlayerStats baseSole(array|string $columns = ['*'])
      * @method PlayerStats create(array $attributes = [])
      * @method PlayerStats createOrFirst(array $attributes = [], array $values = [])
+     * @method PlayerStats createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_PlayerStats_C|PlayerStats[] cursor()
      * @method PlayerStats|null|_IH_PlayerStats_C|PlayerStats[] find($id, array|string $columns = ['*'])
      * @method _IH_PlayerStats_C|PlayerStats[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -801,12 +828,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method PlayerStats make(array $attributes = [])
      * @method PlayerStats newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|PlayerStats[]|_IH_PlayerStats_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method PlayerStats restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|PlayerStats[]|_IH_PlayerStats_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method PlayerStats sole(array|string $columns = ['*'])
      * @method PlayerStats updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_PlayerStats_QB extends _BaseBuilder {}
-
+    
     /**
      * @method PlayerVotes|null getOrPut($key, $value)
      * @method PlayerVotes|$this shift(int $count = 1)
@@ -832,11 +860,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method PlayerVotes baseSole(array|string $columns = ['*'])
      * @method PlayerVotes create(array $attributes = [])
      * @method PlayerVotes createOrFirst(array $attributes = [], array $values = [])
+     * @method PlayerVotes createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_PlayerVotes_C|PlayerVotes[] cursor()
      * @method PlayerVotes|null|_IH_PlayerVotes_C|PlayerVotes[] find($id, array|string $columns = ['*'])
      * @method _IH_PlayerVotes_C|PlayerVotes[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -859,12 +888,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method PlayerVotes make(array $attributes = [])
      * @method PlayerVotes newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|PlayerVotes[]|_IH_PlayerVotes_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method PlayerVotes restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|PlayerVotes[]|_IH_PlayerVotes_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method PlayerVotes sole(array|string $columns = ['*'])
      * @method PlayerVotes updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_PlayerVotes_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Player|null getOrPut($key, $value)
      * @method Player|$this shift(int $count = 1)
@@ -890,11 +920,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method Player baseSole(array|string $columns = ['*'])
      * @method Player create(array $attributes = [])
      * @method Player createOrFirst(array $attributes = [], array $values = [])
+     * @method Player createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Player_C|Player[] cursor()
      * @method Player|null|_IH_Player_C|Player[] find($id, array|string $columns = ['*'])
      * @method _IH_Player_C|Player[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -917,12 +948,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Player make(array $attributes = [])
      * @method Player newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Player[]|_IH_Player_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Player restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Player[]|_IH_Player_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Player sole(array|string $columns = ['*'])
      * @method Player updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Player_QB extends _BaseBuilder {}
-
+    
     /**
      * @method PollOption|null getOrPut($key, $value)
      * @method PollOption|$this shift(int $count = 1)
@@ -948,11 +980,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method PollOption baseSole(array|string $columns = ['*'])
      * @method PollOption create(array $attributes = [])
      * @method PollOption createOrFirst(array $attributes = [], array $values = [])
+     * @method PollOption createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_PollOption_C|PollOption[] cursor()
      * @method PollOption|null|_IH_PollOption_C|PollOption[] find($id, array|string $columns = ['*'])
      * @method _IH_PollOption_C|PollOption[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -975,12 +1008,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method PollOption make(array $attributes = [])
      * @method PollOption newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|PollOption[]|_IH_PollOption_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method PollOption restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|PollOption[]|_IH_PollOption_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method PollOption sole(array|string $columns = ['*'])
      * @method PollOption updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_PollOption_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Poll|null getOrPut($key, $value)
      * @method Poll|$this shift(int $count = 1)
@@ -1006,11 +1040,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method Poll baseSole(array|string $columns = ['*'])
      * @method Poll create(array $attributes = [])
      * @method Poll createOrFirst(array $attributes = [], array $values = [])
+     * @method Poll createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Poll_C|Poll[] cursor()
      * @method Poll|null|_IH_Poll_C|Poll[] find($id, array|string $columns = ['*'])
      * @method _IH_Poll_C|Poll[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -1033,12 +1068,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Poll make(array $attributes = [])
      * @method Poll newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Poll[]|_IH_Poll_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Poll restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Poll[]|_IH_Poll_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Poll sole(array|string $columns = ['*'])
      * @method Poll updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Poll_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Standing|null getOrPut($key, $value)
      * @method Standing|$this shift(int $count = 1)
@@ -1064,7 +1100,7 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Standing_QB whereId($value)
      * @method _IH_Standing_QB wherePosition($value)
@@ -1087,6 +1123,7 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Standing baseSole(array|string $columns = ['*'])
      * @method Standing create(array $attributes = [])
      * @method Standing createOrFirst(array $attributes = [], array $values = [])
+     * @method Standing createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Standing_C|Standing[] cursor()
      * @method Standing|null|_IH_Standing_C|Standing[] find($id, array|string $columns = ['*'])
      * @method _IH_Standing_C|Standing[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -1109,12 +1146,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Standing make(array $attributes = [])
      * @method Standing newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Standing[]|_IH_Standing_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Standing restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Standing[]|_IH_Standing_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Standing sole(array|string $columns = ['*'])
      * @method Standing updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Standing_QB extends _BaseBuilder {}
-
+    
     /**
      * @method User|null getOrPut($key, $value)
      * @method User|$this shift(int $count = 1)
@@ -1140,7 +1178,7 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_User_QB whereId($value)
      * @method _IH_User_QB whereEmail($value)
@@ -1160,6 +1198,7 @@ namespace LaravelIdea\Helper\App\Models {
      * @method User baseSole(array|string $columns = ['*'])
      * @method User create(array $attributes = [])
      * @method User createOrFirst(array $attributes = [], array $values = [])
+     * @method User createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_User_C|User[] cursor()
      * @method User|null|_IH_User_C|User[] find($id, array|string $columns = ['*'])
      * @method _IH_User_C|User[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -1182,12 +1221,13 @@ namespace LaravelIdea\Helper\App\Models {
      * @method User make(array $attributes = [])
      * @method User newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|User[]|_IH_User_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method User restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|User[]|_IH_User_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method User sole(array|string $columns = ['*'])
      * @method User updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_User_QB extends _BaseBuilder {}
-
+    
     /**
      * @method VideoAd|null getOrPut($key, $value)
      * @method VideoAd|$this shift(int $count = 1)
@@ -1213,11 +1253,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method VideoAd baseSole(array|string $columns = ['*'])
      * @method VideoAd create(array $attributes = [])
      * @method VideoAd createOrFirst(array $attributes = [], array $values = [])
+     * @method VideoAd createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_VideoAd_C|VideoAd[] cursor()
      * @method VideoAd|null|_IH_VideoAd_C|VideoAd[] find($id, array|string $columns = ['*'])
      * @method _IH_VideoAd_C|VideoAd[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -1240,12 +1281,73 @@ namespace LaravelIdea\Helper\App\Models {
      * @method VideoAd make(array $attributes = [])
      * @method VideoAd newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|VideoAd[]|_IH_VideoAd_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method VideoAd restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|VideoAd[]|_IH_VideoAd_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method VideoAd sole(array|string $columns = ['*'])
      * @method VideoAd updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_VideoAd_QB extends _BaseBuilder {}
-
+    
+    /**
+     * @method VideoSpec|null getOrPut($key, $value)
+     * @method VideoSpec|$this shift(int $count = 1)
+     * @method VideoSpec|null firstOrFail($key = null, $operator = null, $value = null)
+     * @method VideoSpec|$this pop(int $count = 1)
+     * @method VideoSpec|null pull($key, $default = null)
+     * @method VideoSpec|null last(callable $callback = null, $default = null)
+     * @method VideoSpec|$this random($number = null, bool $preserveKeys = false)
+     * @method VideoSpec|null sole($key = null, $operator = null, $value = null)
+     * @method VideoSpec|null get($key, $default = null)
+     * @method VideoSpec|null first(callable $callback = null, $default = null)
+     * @method VideoSpec|null firstWhere(callable|string $key, $operator = null, $value = null)
+     * @method VideoSpec|null find($key, $default = null)
+     * @method VideoSpec[] all()
+     */
+    class _IH_VideoSpec_C extends _BaseCollection {
+        /**
+         * @param int $size
+         * @return VideoSpec[][]
+         */
+        public function chunk($size)
+        {
+            return [];
+        }
+    }
+    
+    /**
+     * @method VideoSpec baseSole(array|string $columns = ['*'])
+     * @method VideoSpec create(array $attributes = [])
+     * @method VideoSpec createOrFirst(array $attributes = [], array $values = [])
+     * @method VideoSpec createOrRestore(array $attributes = [], array $values = [])
+     * @method _IH_VideoSpec_C|VideoSpec[] cursor()
+     * @method VideoSpec|null|_IH_VideoSpec_C|VideoSpec[] find($id, array|string $columns = ['*'])
+     * @method _IH_VideoSpec_C|VideoSpec[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
+     * @method VideoSpec|_IH_VideoSpec_C|VideoSpec[] findOr($id, array|\Closure|string $columns = ['*'], \Closure $callback = null)
+     * @method VideoSpec|_IH_VideoSpec_C|VideoSpec[] findOrFail($id, array|string $columns = ['*'])
+     * @method VideoSpec|_IH_VideoSpec_C|VideoSpec[] findOrNew($id, array|string $columns = ['*'])
+     * @method VideoSpec first(array|string $columns = ['*'])
+     * @method VideoSpec firstOr(array|\Closure|string $columns = ['*'], \Closure $callback = null)
+     * @method VideoSpec firstOrCreate(array $attributes = [], array $values = [])
+     * @method VideoSpec firstOrFail(array|string $columns = ['*'])
+     * @method VideoSpec firstOrNew(array $attributes = [], array $values = [])
+     * @method VideoSpec firstWhere(array|\Closure|Expression|string $column, $operator = null, $value = null, string $boolean = 'and')
+     * @method VideoSpec forceCreate(array $attributes)
+     * @method VideoSpec forceCreateQuietly(array $attributes = [])
+     * @method _IH_VideoSpec_C|VideoSpec[] fromQuery(string $query, array $bindings = [])
+     * @method _IH_VideoSpec_C|VideoSpec[] get(array|string $columns = ['*'])
+     * @method VideoSpec getModel()
+     * @method VideoSpec[] getModels(array|string $columns = ['*'])
+     * @method _IH_VideoSpec_C|VideoSpec[] hydrate(array $items)
+     * @method VideoSpec make(array $attributes = [])
+     * @method VideoSpec newModelInstance(array $attributes = [])
+     * @method LengthAwarePaginator|VideoSpec[]|_IH_VideoSpec_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method VideoSpec restoreOrCreate(array $attributes = [], array $values = [])
+     * @method Paginator|VideoSpec[]|_IH_VideoSpec_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method VideoSpec sole(array|string $columns = ['*'])
+     * @method VideoSpec updateOrCreate(array $attributes, array $values = [])
+     */
+    class _IH_VideoSpec_QB extends _BaseBuilder {}
+    
     /**
      * @method Video|null getOrPut($key, $value)
      * @method Video|$this shift(int $count = 1)
@@ -1271,17 +1373,20 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Video_QB whereId($value)
      * @method _IH_Video_QB whereTitle($value)
      * @method _IH_Video_QB whereIsRandom($value)
      * @method _IH_Video_QB wherePublishedAt($value)
+     * @method _IH_Video_QB whereIsForHome($value)
+     * @method _IH_Video_QB whereIsForPost($value)
      * @method _IH_Video_QB whereCreatedAt($value)
      * @method _IH_Video_QB whereUpdatedAt($value)
      * @method Video baseSole(array|string $columns = ['*'])
      * @method Video create(array $attributes = [])
      * @method Video createOrFirst(array $attributes = [], array $values = [])
+     * @method Video createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Video_C|Video[] cursor()
      * @method Video|null|_IH_Video_C|Video[] find($id, array|string $columns = ['*'])
      * @method _IH_Video_C|Video[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -1304,13 +1409,16 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Video make(array $attributes = [])
      * @method Video newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Video[]|_IH_Video_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Video restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Video[]|_IH_Video_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Video sole(array|string $columns = ['*'])
      * @method Video updateOrCreate(array $attributes, array $values = [])
+     * @method _IH_Video_QB onlyForHome()
+     * @method _IH_Video_QB onlyForPost()
      * @method _IH_Video_QB published()
      */
     class _IH_Video_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Vote|null getOrPut($key, $value)
      * @method Vote|$this shift(int $count = 1)
@@ -1336,11 +1444,12 @@ namespace LaravelIdea\Helper\App\Models {
             return [];
         }
     }
-
+    
     /**
      * @method Vote baseSole(array|string $columns = ['*'])
      * @method Vote create(array $attributes = [])
      * @method Vote createOrFirst(array $attributes = [], array $values = [])
+     * @method Vote createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Vote_C|Vote[] cursor()
      * @method Vote|null|_IH_Vote_C|Vote[] find($id, array|string $columns = ['*'])
      * @method _IH_Vote_C|Vote[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -1363,6 +1472,7 @@ namespace LaravelIdea\Helper\App\Models {
      * @method Vote make(array $attributes = [])
      * @method Vote newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Vote[]|_IH_Vote_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Vote restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Vote[]|_IH_Vote_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Vote sole(array|string $columns = ['*'])
      * @method Vote updateOrCreate(array $attributes, array $values = [])

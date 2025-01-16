@@ -1,10 +1,10 @@
-<?php //fab3075a55fb483311bed73b22d19beb
+<?php //a4c93f8dcd4ee9312b613ba184681d3f
 /** @noinspection all */
 
 namespace Illuminate\Database\Eloquent {
 
     use Illuminate\Support\HigherOrderTapProxy;
-
+    
     /**
      * @method static $this|Model|HigherOrderTapProxy|mixed createOrRestore(array $attributes = [], array $values = [])
      * @method static void downloadExcel(string $writerType = null, $withHeadings = false)
@@ -21,7 +21,7 @@ namespace Illuminate\Database\Eloquent {
 }
 
 namespace Illuminate\Http {
-
+    
     /**
      * @method static bool hasValidRelativeSignature()
      * @method static bool hasValidSignature($absolute = true)
@@ -33,7 +33,7 @@ namespace Illuminate\Http {
 }
 
 namespace Illuminate\Routing {
-
+    
     /**
      * @method static $this wherePrimaryKey(array|null|string $name = 'id')
      */
@@ -41,7 +41,7 @@ namespace Illuminate\Routing {
 }
 
 namespace Illuminate\Support {
-
+    
     /**
      * @method static $this debug()
      * @method static void downloadExcel(string $fileName, string $writerType = null, $withHeadings = false, array $responseHeaders = [])
@@ -50,10 +50,22 @@ namespace Illuminate\Support {
     class Collection {}
 }
 
+namespace Illuminate\Validation {
+
+    use Illuminate\Contracts\Foundation\Application;
+    use Illuminate\Foundation\Application as Application1;
+    use RyanChandler\LaravelCloudflareTurnstile\Rules\Turnstile;
+    
+    /**
+     * @method static Application|Application1|mixed|Turnstile turnstile()
+     */
+    class Rule {}
+}
+
 namespace Kris\LaravelFormBuilder\Supports {
 
     use Illuminate\Support\HtmlString;
-
+    
     /**
      * @method static HtmlString|void customLabel($name, $value, $options = [], $escapeHtml = true)
      */

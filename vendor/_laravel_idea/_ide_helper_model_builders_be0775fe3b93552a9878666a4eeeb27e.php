@@ -1,4 +1,4 @@
-<?php //3fcce225554d249a606d6ed01f233356
+<?php //e45ccb5ef3cb3481af8cbddc28c60b13
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\VigStudio\VigAutoTranslations\Http\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\VigStudio\VigAutoTranslations\Http\Models {
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
     use VigStudio\VigAutoTranslations\Http\Models\VigTranslate;
-
+    
     /**
      * @method VigTranslate|null getOrPut($key, $value)
      * @method VigTranslate|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\VigStudio\VigAutoTranslations\Http\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_VigTranslate_QB whereId($value)
      * @method _IH_VigTranslate_QB whereTextOriginal($value)
@@ -48,6 +48,7 @@ namespace LaravelIdea\Helper\VigStudio\VigAutoTranslations\Http\Models {
      * @method VigTranslate baseSole(array|string $columns = ['*'])
      * @method VigTranslate create(array $attributes = [])
      * @method VigTranslate createOrFirst(array $attributes = [], array $values = [])
+     * @method VigTranslate createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_VigTranslate_C|VigTranslate[] cursor()
      * @method VigTranslate|null|_IH_VigTranslate_C|VigTranslate[] find($id, array|string $columns = ['*'])
      * @method _IH_VigTranslate_C|VigTranslate[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -70,6 +71,7 @@ namespace LaravelIdea\Helper\VigStudio\VigAutoTranslations\Http\Models {
      * @method VigTranslate make(array $attributes = [])
      * @method VigTranslate newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|VigTranslate[]|_IH_VigTranslate_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method VigTranslate restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|VigTranslate[]|_IH_VigTranslate_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method VigTranslate sole(array|string $columns = ['*'])
      * @method VigTranslate updateOrCreate(array $attributes, array $values = [])

@@ -1,8 +1,8 @@
-<?php //10178c1ec40471a3c3ec09715e075ce6
+<?php //364f53f87bbdf1b3a4e616b7729674ec
 /** @noinspection all */
 
 namespace Barryvdh\Debugbar {
-
+    
     /**
      * @see \Illuminate\Support\Facades\Facade::clearResolvedInstances
      * @method static void clearResolvedInstances()
@@ -139,7 +139,7 @@ namespace Barryvdh\Debugbar {
 }
 
 namespace Barryvdh\Debugbar\Facades {
-
+    
     /**
      * @see \DebugBar\DebugBar::isDataPersisted
      * @method static bool isDataPersisted()
@@ -252,7 +252,7 @@ namespace Barryvdh\Debugbar\Facades {
 }
 
 namespace Botble\Analytics\Facades {
-
+    
     /**
      * @see \Botble\Analytics\Traits\OrderByMetricTrait::orderByMetricDesc
      * @method static \Botble\Analytics\Analytics|\Botble\Analytics\Traits\OrderByMetricTrait orderByMetricDesc(string $name)
@@ -321,7 +321,7 @@ namespace Botble\Analytics\Facades {
 }
 
 namespace Botble\Api\Facades {
-
+    
     /**
      * @see \Botble\Api\Supports\ApiHelper::setModelName
      * @method static \Botble\Api\Supports\ApiHelper setModelName(string $modelName)
@@ -346,7 +346,7 @@ namespace Botble\Api\Facades {
 }
 
 namespace Botble\Assets\Facades {
-
+    
     /**
      * @see \Botble\Assets\Assets::removeItemDirectly
      * @method static \Botble\Assets\Assets removeItemDirectly(array|string $assets, null|string $location = null)
@@ -383,7 +383,7 @@ namespace Botble\Assets\Facades {
 }
 
 namespace Botble\AuditLog\Facades {
-
+    
     /**
      * @see \Botble\AuditLog\AuditLog::getReferenceName
      * @method static string getReferenceName(string $screen, \Illuminate\Database\Eloquent\Model $data)
@@ -394,7 +394,7 @@ namespace Botble\AuditLog\Facades {
 }
 
 namespace Botble\Base\Facades {
-
+    
     /**
      * @see \Botble\Base\Supports\ActionHookEvent::removeListener
      * @method static \Botble\Base\Supports\ActionHookEvent removeListener(string $hook)
@@ -406,7 +406,7 @@ namespace Botble\Base\Facades {
      * @method static array getListeners()
      */
     class Action {}
-
+    
     /**
      * @see \Botble\Base\Supports\AdminAppearance::showMenuItemIcon
      * @method static bool showMenuItemIcon()
@@ -444,7 +444,7 @@ namespace Botble\Base\Facades {
      * @method static mixed|null getUserSetting(string $key, $default = null)
      */
     class AdminAppearance {}
-
+    
     /**
      * @see \Botble\Base\Helpers\AdminHelper::isInAdmin
      * @method static bool isInAdmin(bool $force = false)
@@ -454,7 +454,7 @@ namespace Botble\Base\Facades {
      * @method static \Illuminate\Routing\RouteRegistrar registerRoutes(callable|\Closure $closure, array $middleware = ['web', 'core', 'auth'])
      */
     class AdminHelper {}
-
+    
     /**
      * @see \Botble\Base\Supports\Assets::setConfig
      * @method static void setConfig(array $config)
@@ -500,7 +500,7 @@ namespace Botble\Base\Facades {
      * @method static null|string styleToHtml(string $name)
      */
     class Assets {}
-
+    
     /**
      * @see \Botble\Base\Helpers\BaseHelper::hasIcon
      * @method static bool hasIcon(null|string $name)
@@ -573,7 +573,7 @@ namespace Botble\Base\Facades {
      * @see \Botble\Base\Helpers\BaseHelper::removeSpecialCharacters
      * @method static array|null|string removeSpecialCharacters(null|string $string)
      * @see \Botble\Base\Helpers\BaseHelper::getHomepageUrl
-     * @method static mixed getHomepageUrl()
+     * @method static false|mixed|string getHomepageUrl()
      * @see \Botble\Base\Helpers\BaseHelper::clean
      * @method static array|null|string clean(array|null|string $dirty, array|string $config = null)
      * @see \Botble\Base\Helpers\BaseHelper::getDateFormat
@@ -598,7 +598,7 @@ namespace Botble\Base\Facades {
      * @method static array availableRichEditors()
      */
     class BaseHelper {}
-
+    
     /**
      * @see \Botble\Base\Supports\Breadcrumb::add
      * @method static \Botble\Base\Supports\Breadcrumb add(string $label, string $url = '')
@@ -624,7 +624,7 @@ namespace Botble\Base\Facades {
      * @method static \Botble\Base\Supports\Renderable beforeRendering(\Closure $beforeRenderCallback)
      */
     class Breadcrumb {}
-
+    
     /**
      * @see \Illuminate\Support\Traits\Macroable::macro
      * @method static void macro(string $name, callable|object $macro)
@@ -658,7 +658,7 @@ namespace Botble\Base\Facades {
      * @method static void register(string $name, callable $callback, bool $modify = false)
      */
     class Breadcrumbs {}
-
+    
     /**
      * @see \Botble\Base\Supports\DashboardMenu::afterRetrieved
      * @method static \Botble\Base\Supports\DashboardMenu afterRetrieved(\Closure $callback)
@@ -702,7 +702,7 @@ namespace Botble\Base\Facades {
      * @method static bool hasCache()
      */
     class DashboardMenu {}
-
+    
     /**
      * @see \Botble\Base\Supports\EmailHandler::setType
      * @method static \Botble\Base\Supports\EmailHandler setType(string $type)
@@ -758,7 +758,7 @@ namespace Botble\Base\Facades {
      * @method static \Botble\Base\Supports\EmailHandler setModule(string $module)
      */
     class EmailHandler {}
-
+    
     /**
      * @see \Botble\Base\Supports\ActionHookEvent::removeListener
      * @method static \Botble\Base\Supports\ActionHookEvent removeListener(string $hook)
@@ -770,8 +770,10 @@ namespace Botble\Base\Facades {
      * @method static array getListeners()
      */
     class Filter {}
-
+    
     /**
+     * @see \Kris\LaravelFormBuilder\Supports\FormBuilder::customLabel
+     * @method static \Illuminate\Support\HtmlString|void customLabel($name, $value, $options = [], $escapeHtml = true)
      * @see \Kris\LaravelFormBuilder\Supports\FormBuilder::date
      * @method static \Illuminate\Support\HtmlString date($name, $value = null, $options = [])
      * @see \Kris\LaravelFormBuilder\Supports\FormBuilder::select
@@ -878,11 +880,9 @@ namespace Botble\Base\Facades {
      * @method static bool hasComponent(string $name)
      * @see \Kris\LaravelFormBuilder\Supports\FormBuilder::open
      * @method static \Illuminate\Support\HtmlString open(array $options = [])
-     * @see \Kris\LaravelFormBuilder\Supports\FormBuilder::customLabel
-     * @method static \Illuminate\Support\HtmlString|void customLabel($name, $value, $options = [], $escapeHtml = true)
      */
     class Form {}
-
+    
     /**
      * @see \Kris\LaravelFormBuilder\Supports\HtmlBuilder::linkSecureAsset
      * @method static \Illuminate\Support\HtmlString linkSecureAsset($url, $title = null, $attributes = [], $escape = true)
@@ -946,7 +946,7 @@ namespace Botble\Base\Facades {
      * @method static void flushMacros()
      */
     class Html {}
-
+    
     /**
      * @see \Botble\Base\Supports\MacroableModels::removeMacro
      * @method static bool removeMacro(string $model, string $name)
@@ -964,7 +964,7 @@ namespace Botble\Base\Facades {
      * @method static array getAllMacros()
      */
     class MacroableModels {}
-
+    
     /**
      * @see \Botble\Base\Supports\MetaBox::addMetaBox
      * @method static void addMetaBox(string $id, string $title, array|callable|\Closure|string $callback, null|string $reference = null, string $context = 'advanced', string $priority = 'default', array|null $callbackArgs = null)
@@ -984,7 +984,7 @@ namespace Botble\Base\Facades {
      * @method static bool deleteMetaData(\Illuminate\Database\Eloquent\Model $object, string $key)
      */
     class MetaBox {}
-
+    
     /**
      * @see \Botble\Base\Supports\PageTitle::setTitle
      * @method static void setTitle(string $title)
@@ -996,7 +996,7 @@ namespace Botble\Base\Facades {
      * @method static null|string getTitle(bool $withSiteName = true)
      */
     class PageTitle {}
-
+    
     /**
      * @see \Botble\Base\Contracts\PanelSections\Manager::afterRendering
      * @method static \Botble\Base\Contracts\PanelSections\Manager afterRendering(callable|\Closure $callback, int $priority = 100)
@@ -1041,7 +1041,7 @@ namespace Botble\Base\Facades {
 }
 
 namespace Botble\Captcha\Facades {
-
+    
     /**
      * @see \Botble\Captcha\Contracts\Captcha::mathCaptchaEnabled
      * @method static bool mathCaptchaEnabled()
@@ -1080,7 +1080,7 @@ namespace Botble\Captcha\Facades {
 }
 
 namespace Botble\CustomField\Facades {
-
+    
     /**
      * @see \Botble\CustomField\Support\CustomFieldSupport::deleteCustomFields
      * @method static bool deleteCustomFields(\Illuminate\Database\Eloquent\Model|null $data)
@@ -1121,7 +1121,7 @@ namespace Botble\CustomField\Facades {
 }
 
 namespace Botble\Gallery\Facades {
-
+    
     /**
      * @see \Botble\Gallery\GallerySupport::removeModule
      * @method static \Botble\Gallery\GallerySupport removeModule(array|string $model)
@@ -1142,7 +1142,7 @@ namespace Botble\Gallery\Facades {
 }
 
 namespace Botble\Icon\Facades {
-
+    
     /**
      * @see \Botble\Icon\IconManager::createSvgDriver
      * @method static \Botble\Icon\IconDriver createSvgDriver()
@@ -1179,7 +1179,7 @@ namespace Botble\Icon\Facades {
 }
 
 namespace Botble\JsValidation\Facades {
-
+    
     /**
      * @see \Botble\JsValidation\JsValidatorFactory::formRequest
      * @method static \Botble\JsValidation\Javascript\JavascriptValidator formRequest($formRequest, $selector = null)
@@ -1192,7 +1192,7 @@ namespace Botble\JsValidation\Facades {
 }
 
 namespace Botble\Language\Facades {
-
+    
     /**
      * @see \Botble\Language\LanguageManager::getCurrentLocaleCode
      * @method static null|string getCurrentLocaleCode()
@@ -1307,7 +1307,7 @@ namespace Botble\Language\Facades {
 }
 
 namespace Botble\Media\Facades {
-
+    
     /**
      * @see \Botble\Media\RvMedia::uploadFromUrl
      * @method static array|null uploadFromUrl(string $url, int|string $folderId = 0, null|string $folderSlug = null, null|string $defaultMimetype = null)
@@ -1432,7 +1432,7 @@ namespace Botble\Media\Facades {
 }
 
 namespace Botble\Menu\Facades {
-
+    
     /**
      * @see \Botble\Menu\Menu::addMenuLocation
      * @method static \Botble\Menu\Menu addMenuLocation(string $location, string $description)
@@ -1479,7 +1479,7 @@ namespace Botble\Menu\Facades {
 }
 
 namespace Botble\Optimize\Facades {
-
+    
     /**
      * @see \Botble\Optimize\Supports\Optimizer::disable
      * @method static \Botble\Optimize\Supports\Optimizer disable()
@@ -1492,7 +1492,7 @@ namespace Botble\Optimize\Facades {
 }
 
 namespace Botble\SeoHelper\Facades {
-
+    
     /**
      * @see \Botble\SeoHelper\SeoHelper::setSeoOpenGraph
      * @method static \Botble\SeoHelper\SeoHelper setSeoOpenGraph(\Botble\SeoHelper\Contracts\SeoOpenGraphContract $seoOpenGraph)
@@ -1529,7 +1529,7 @@ namespace Botble\SeoHelper\Facades {
 }
 
 namespace Botble\Setting\Facades {
-
+    
     /**
      * @see \Botble\Setting\Supports\SettingStore::all
      * @method static array all()
@@ -1560,7 +1560,7 @@ namespace Botble\Setting\Facades {
 }
 
 namespace Botble\Shortcode\Facades {
-
+    
     /**
      * @see \Botble\Shortcode\Shortcode::generateShortcode
      * @method static string generateShortcode(string $name, array $attributes = [])
@@ -1593,7 +1593,7 @@ namespace Botble\Shortcode\Facades {
 }
 
 namespace Botble\Slug\Facades {
-
+    
     /**
      * @see \Botble\Slug\SlugHelper::getHelperText
      * @method static string getHelperText(string $prefix, null|string $postfix = '', null|string $separation = '')
@@ -1644,7 +1644,7 @@ namespace Botble\Slug\Facades {
 }
 
 namespace Botble\SocialLogin\Facades {
-
+    
     /**
      * @see \Botble\SocialLogin\Supports\SocialService::getDataDisable
      * @method static string getDataDisable(string $key)
@@ -1681,7 +1681,7 @@ namespace Botble\SocialLogin\Facades {
 }
 
 namespace Botble\Theme\Facades {
-
+    
     /**
      * @see \Botble\Theme\Supports\AdminBar::setLinksNoGroup
      * @method static \Botble\Theme\Supports\AdminBar setLinksNoGroup(array $links)
@@ -1701,7 +1701,7 @@ namespace Botble\Theme\Facades {
      * @method static \Botble\Theme\Supports\AdminBar registerLink(string $title, string $url, $group = null, string $permission = null)
      */
     class AdminBar {}
-
+    
     /**
      * @see \Botble\Theme\Manager::getAllThemes
      * @method static array getAllThemes()
@@ -1711,7 +1711,7 @@ namespace Botble\Theme\Facades {
      * @method static void registerTheme(array|string $theme)
      */
     class Manager {}
-
+    
     /**
      * @see \Botble\Theme\Supports\SiteMapManager::add
      * @method static \Botble\Theme\Supports\SiteMapManager add(string $url, null|string $date = null, string $priority = '1.0', string $sequence = 'daily')
@@ -1735,7 +1735,7 @@ namespace Botble\Theme\Facades {
      * @method static \Botble\Sitemap\Sitemap getSiteMap()
      */
     class SiteMapManager {}
-
+    
     /**
      * @see \Botble\Theme\Theme::typography
      * @method static \Botble\Theme\Typograhpy\Typography typography()
@@ -1891,7 +1891,7 @@ namespace Botble\Theme\Facades {
      * @method static \Botble\Theme\Theme append(string $region, string $value)
      */
     class Theme {}
-
+    
     /**
      * @see \Botble\Theme\ThemeOption::processFieldsArray
      * @method static void processFieldsArray(string $sectionId = '', array $fields = [])
@@ -1964,7 +1964,7 @@ namespace Botble\Theme\Facades {
 }
 
 namespace Botble\Widget\Facades {
-
+    
     /**
      * @see \Botble\Widget\Factories\WidgetFactory::getWidgets
      * @method static array getWidgets()
@@ -1974,7 +1974,7 @@ namespace Botble\Widget\Facades {
      * @method static \Illuminate\Support\HtmlString|null|string run()
      */
     class Widget {}
-
+    
     /**
      * @see \Botble\Widget\WidgetGroupCollection::setGroup
      * @method static \Botble\Widget\WidgetGroupCollection setGroup(array $args)
@@ -1995,7 +1995,7 @@ namespace Botble\Widget\Facades {
 }
 
 namespace Illuminate\Support\Facades {
-
+    
     /**
      * @see \Illuminate\Foundation\Application::currentLocale
      * @method static string currentLocale()
@@ -2261,7 +2261,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Container\Container getInstance()
      */
     class App {}
-
+    
     /**
      * @see \Illuminate\Foundation\Console\Kernel::setArtisan
      * @method static void setArtisan(\Illuminate\Console\Application|null $artisan)
@@ -2293,7 +2293,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Foundation\Bus\PendingDispatch queue(string $command, array $parameters = [])
      */
     class Artisan {}
-
+    
     /**
      * @see \Illuminate\Auth\AuthManager::setDefaultDriver
      * @method static void setDefaultDriver(string $name)
@@ -2411,7 +2411,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Auth\GuardHelpers forgetUser()
      */
     class Auth {}
-
+    
     /**
      * @see \Illuminate\View\Compilers\BladeCompiler::getCustomDirectives
      * @method static array getCustomDirectives()
@@ -2497,7 +2497,7 @@ namespace Illuminate\Support\Facades {
      * @method static string newComponentHash(string $component)
      */
     class Blade {}
-
+    
     /**
      * @see \Illuminate\Contracts\Broadcasting\Broadcaster::broadcast
      * @method static void broadcast(array $channels, string $event, array $payload = [])
@@ -2549,7 +2549,7 @@ namespace Illuminate\Support\Facades {
      * @method static void resolveAuthenticatedUserUsing(\Closure $callback)
      */
     class Broadcast {}
-
+    
     /**
      * @see \Illuminate\Bus\Dispatcher::chain
      * @method static \Illuminate\Foundation\Bus\PendingChain chain(array|\Illuminate\Support\Collection $jobs)
@@ -2631,7 +2631,7 @@ namespace Illuminate\Support\Facades {
      * @method static void assertBatchCount(int $count)
      */
     class Bus {}
-
+    
     /**
      * @see \Illuminate\Cache\CacheManager::resolve
      * @method static \Illuminate\Contracts\Cache\Repository resolve(string $name)
@@ -2737,7 +2737,7 @@ namespace Illuminate\Support\Facades {
      * @method static bool forever(string $key, $value)
      */
     class Cache {}
-
+    
     /**
      * @see \Illuminate\Config\Repository::all
      * @method static array all()
@@ -2771,7 +2771,7 @@ namespace Illuminate\Support\Facades {
      * @method static void flushMacros()
      */
     class Config {}
-
+    
     /**
      * @see \Illuminate\Support\Traits\Macroable::macro
      * @method static void macro(string $name, callable|object $macro)
@@ -2805,7 +2805,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Cookie\CookieJar flushQueuedCookies()
      */
     class Cookie {}
-
+    
     /**
      * @see \Illuminate\Encryption\Encrypter::getKey
      * @method static string getKey()
@@ -2823,7 +2823,7 @@ namespace Illuminate\Support\Facades {
      * @method static bool supported(string $key, string $cipher)
      */
     class Crypt {}
-
+    
     /**
      * @see \Illuminate\Database\Connection::logQuery
      * @method static void logQuery(string $query, array $bindings, float|null $time = null)
@@ -3039,7 +3039,7 @@ namespace Illuminate\Support\Facades {
      * @method static bool hasModifiedRecords()
      */
     class DB {}
-
+    
     /**
      * @see \Illuminate\Support\DateFactory::useCallable
      * @method static void useCallable(callable $callable)
@@ -3195,7 +3195,7 @@ namespace Illuminate\Support\Facades {
      * @method static array getLastErrors()
      */
     class Date {}
-
+    
     /**
      * @see \Illuminate\Events\Dispatcher::dispatch
      * @method static array|null dispatch(object|string $event, $payload = [], bool $halt = false)
@@ -3255,7 +3255,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Support\Testing\Fakes\EventFake except(array|string $eventsToDispatch)
      */
     class Event {}
-
+    
     /**
      * @see \Illuminate\Filesystem\Filesystem::ensureDirectoryExists
      * @method static void ensureDirectoryExists(string $path, int $mode = 0755, bool $recursive = true)
@@ -3363,7 +3363,7 @@ namespace Illuminate\Support\Facades {
      * @method static int append(string $path, string $data, bool $lock = false)
      */
     class File {}
-
+    
     /**
      * @see \Illuminate\Auth\Access\Gate::before
      * @method static \Illuminate\Auth\Access\Gate before(callable $callback)
@@ -3419,7 +3419,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Auth\Access\Response inspect(string $ability, array|mixed $arguments = [])
      */
     class Gate {}
-
+    
     /**
      * @see \Illuminate\Support\Manager::forgetDrivers
      * @method static \Illuminate\Support\Manager forgetDrivers()
@@ -3453,7 +3453,7 @@ namespace Illuminate\Support\Facades {
      * @method static array info(string $hashedValue)
      */
     class Hash {}
-
+    
     /**
      * @see \Illuminate\Http\Client\Factory::assertSentCount
      * @method static void assertSentCount(int $count)
@@ -3633,7 +3633,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Http\Client\PendingRequest asForm()
      */
     class Http {}
-
+    
     /**
      * @see \Illuminate\Translation\Translator::parseKey
      * @method static array parseKey(string $key)
@@ -3691,7 +3691,7 @@ namespace Illuminate\Support\Facades {
      * @method static void setSelector(\Illuminate\Translation\MessageSelector $selector)
      */
     class Lang {}
-
+    
     /**
      * @see \Illuminate\Log\LogManager::stack
      * @method static \Psr\Log\LoggerInterface stack(array $channels, null|string $channel = null)
@@ -3755,7 +3755,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Log\LogManager withoutContext()
      */
     class Log {}
-
+    
     /**
      * @see \Illuminate\Mail\Mailer::alwaysReplyTo
      * @method static void alwaysReplyTo(string $address, null|string $name = null)
@@ -3859,7 +3859,7 @@ namespace Illuminate\Support\Facades {
      * @method static void assertNotSent(\Closure|string $mailable, callable|null $callback = null)
      */
     class Mail {}
-
+    
     /**
      * @see \Illuminate\Support\Manager::forgetDrivers
      * @method static \Illuminate\Support\Manager forgetDrivers()
@@ -3923,7 +3923,7 @@ namespace Illuminate\Support\Facades {
      * @method static void flushMacros()
      */
     class Notification {}
-
+    
     /**
      * @see \Illuminate\Testing\ParallelTesting::callSetUpTestCaseCallbacks
      * @method static void callSetUpTestCaseCallbacks(\Illuminate\Foundation\Testing\TestCase $testCase)
@@ -3955,7 +3955,7 @@ namespace Illuminate\Support\Facades {
      * @method static void setUpTestCase(callable $callback)
      */
     class ParallelTesting {}
-
+    
     /**
      * @see \Illuminate\Contracts\Auth\PasswordBroker::sendResetLink
      * @method static string sendResetLink(array $credentials, \Closure $callback = null)
@@ -3979,7 +3979,7 @@ namespace Illuminate\Support\Facades {
      * @method static bool tokenExists(\Illuminate\Contracts\Auth\CanResetPassword $user, string $token)
      */
     class Password {}
-
+    
     /**
      * @see \Illuminate\Pipeline\Pipeline::through
      * @method static \Illuminate\Pipeline\Pipeline through(array|mixed $pipes)
@@ -4001,7 +4001,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Pipeline\Pipeline send($passable)
      */
     class Pipeline {}
-
+    
     /**
      * @see \Illuminate\Process\PendingProcess::withFakeHandlers
      * @method static \Illuminate\Process\PendingProcess withFakeHandlers(array $fakeHandlers)
@@ -4081,7 +4081,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Process\Factory recordIfRecording(\Illuminate\Process\PendingProcess $process, \Illuminate\Contracts\Process\ProcessResult $result)
      */
     class Process {}
-
+    
     /**
      * @see \Illuminate\Queue\QueueManager::addConnector
      * @method static void addConnector(string $driver, \Closure $resolver)
@@ -4177,7 +4177,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Support\Collection pushed(string $job, callable|null $callback = null)
      */
     class Queue {}
-
+    
     /**
      * @see \Illuminate\Cache\RateLimiter::availableIn
      * @method static int availableIn(string $key)
@@ -4207,7 +4207,7 @@ namespace Illuminate\Support\Facades {
      * @method static mixed attempts(string $key)
      */
     class RateLimiter {}
-
+    
     /**
      * @see \Illuminate\Support\Traits\Macroable::macro
      * @method static void macro(string $name, callable|object $macro)
@@ -4249,7 +4249,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Routing\UrlGenerator getUrlGenerator()
      */
     class Redirect {}
-
+    
     /**
      * @see \Illuminate\Redis\Connections\Connection::throttle
      * @method static \Illuminate\Redis\Limiters\DurationLimiterBuilder throttle(string $name)
@@ -4305,8 +4305,18 @@ namespace Illuminate\Support\Facades {
      * @method static void flushMacros()
      */
     class Redis {}
-
+    
     /**
+     * @see \Illuminate\Http\Request::hasValidSignature
+     * @method static bool hasValidSignature($absolute = true)
+     * @see \Illuminate\Http\Request::hasValidSignatureWhileIgnoring
+     * @method static bool hasValidSignatureWhileIgnoring($ignoreQuery = [], $absolute = true)
+     * @see \Illuminate\Http\Request::validateWithBag
+     * @method static void validateWithBag(string $errorBag, array $rules, ...$params)
+     * @see \Illuminate\Http\Request::hasValidRelativeSignature
+     * @method static bool hasValidRelativeSignature()
+     * @see \Illuminate\Http\Request::validate
+     * @method static array validate(array $rules, ...$params)
      * @see \Symfony\Component\HttpFoundation\Request::hasPreviousSession
      * @method static bool hasPreviousSession()
      * @see \Symfony\Component\HttpFoundation\Request::isMethod
@@ -4389,8 +4399,6 @@ namespace Illuminate\Support\Facades {
      * @method static bool preferSafeContent()
      * @see \Illuminate\Http\Concerns\InteractsWithContentTypes::matchesType
      * @method static bool matchesType(string $actual, string $type)
-     * @see \Illuminate\Http\Request::validate
-     * @method static array validate(array $rules, ...$params)
      * @see \Symfony\Component\HttpFoundation\Request::getTrustedProxies
      * @method static string[] getTrustedProxies()
      * @see \Symfony\Component\HttpFoundation\Request::getDefaultLocale
@@ -4567,8 +4575,6 @@ namespace Illuminate\Support\Facades {
      * @method static void setDefaultRequestLocale(string $locale)
      * @see \Symfony\Component\HttpFoundation\Request::setMethod
      * @method static void setMethod(string $method)
-     * @see \Illuminate\Http\Request::hasValidSignature
-     * @method static bool hasValidSignature(bool $absolute = true)
      * @see \Symfony\Component\HttpFoundation\Request::getPassword
      * @method static null|string getPassword()
      * @see \Symfony\Component\HttpFoundation\Request::getLocale
@@ -4623,8 +4629,6 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Http\Request capture()
      * @see \Symfony\Component\HttpFoundation\Request::getClientIp
      * @method static null|string getClientIp()
-     * @see \Illuminate\Http\Request::validateWithBag
-     * @method static array validateWithBag(string $errorBag, array $rules, ...$params)
      * @see \Illuminate\Http\Concerns\InteractsWithInput::hasCookie
      * @method static bool hasCookie(string $key)
      * @see \Symfony\Component\HttpFoundation\Request::getUser
@@ -4671,13 +4675,9 @@ namespace Illuminate\Support\Facades {
      * @method static mixed user(null|string $guard = null)
      * @see \Symfony\Component\HttpFoundation\Request::getLanguages
      * @method static string[] getLanguages()
-     * @see \Illuminate\Http\Request::hasValidRelativeSignature
-     * @method static bool hasValidRelativeSignature()
-     * @see \Illuminate\Http\Request::hasValidSignatureWhileIgnoring
-     * @method static bool hasValidSignatureWhileIgnoring($ignoreQuery = [], $absolute = true)
      */
     class Request {}
-
+    
     /**
      * @see \Illuminate\Routing\ResponseFactory::streamDownload
      * @method static \Symfony\Component\HttpFoundation\StreamedResponse streamDownload(callable $callback, null|string $name = null, array $headers = [], null|string $disposition = 'attachment')
@@ -4719,7 +4719,7 @@ namespace Illuminate\Support\Facades {
      * @method static void flushMacros()
      */
     class Response {}
-
+    
     /**
      * @see \Illuminate\Routing\RouteRegistrar::scopeBindings
      * @method static \Illuminate\Routing\RouteRegistrar scopeBindings()
@@ -4913,7 +4913,7 @@ namespace Illuminate\Support\Facades {
      * @method static bool uses(...$patterns)
      */
     class Route {}
-
+    
     /**
      * @see \Illuminate\Database\Schema\Builder::disableForeignKeyConstraints
      * @method static bool disableForeignKeyConstraints()
@@ -5005,7 +5005,7 @@ namespace Illuminate\Support\Facades {
      * @method static array getColumns(string $table)
      */
     class Schema {}
-
+    
     /**
      * @see \Illuminate\Session\Store::regenerateToken
      * @method static void regenerateToken()
@@ -5135,7 +5135,7 @@ namespace Illuminate\Support\Facades {
      * @method static void setId(null|string $id)
      */
     class Session {}
-
+    
     /**
      * @see \Illuminate\Filesystem\FilesystemManager::createS3Driver
      * @method static \Illuminate\Contracts\Filesystem\Cloud|\Illuminate\Filesystem\AwsS3V3Adapter createS3Driver(array $config)
@@ -5285,7 +5285,7 @@ namespace Illuminate\Support\Facades {
      * @method static bool|string append(string $path, string $data, string $separator = PHP_EOL)
      */
     class Storage {}
-
+    
     /**
      * @see \Illuminate\Routing\UrlGenerator::formatRoot
      * @method static string formatRoot(string $scheme, null|string $root = null)
@@ -5375,7 +5375,7 @@ namespace Illuminate\Support\Facades {
      * @method static string asset(string $path, bool|null $secure = null)
      */
     class URL {}
-
+    
     /**
      * @see \Illuminate\Validation\Factory::resolver
      * @method static void resolver(\Closure $resolver)
@@ -5407,7 +5407,7 @@ namespace Illuminate\Support\Facades {
      * @method static array validate(array $data, array $rules, array $messages = [], array $attributes = [])
      */
     class Validator {}
-
+    
     /**
      * @see \Illuminate\View\Concerns\ManagesLayouts::stopSection
      * @method static string stopSection(bool $overwrite = false)
@@ -5565,7 +5565,7 @@ namespace Illuminate\Support\Facades {
      * @method static void inject(string $section, string $content)
      */
     class View {}
-
+    
     /**
      * @see \Illuminate\Foundation\Vite::withEntryPoints
      * @method static \Illuminate\Foundation\Vite withEntryPoints(array $entryPoints)
@@ -5618,7 +5618,7 @@ namespace Illuminate\Support\Facades {
 }
 
 namespace Kris\LaravelFormBuilder\Facades {
-
+    
     /**
      * @see \Kris\LaravelFormBuilder\FormBuilder::getFormClass
      * @method static string getFormClass()
@@ -5641,7 +5641,7 @@ namespace Kris\LaravelFormBuilder\Facades {
 }
 
 namespace Laravel\Socialite\Facades {
-
+    
     /**
      * @see \Laravel\Socialite\SocialiteManager::setContainer
      * @method static \Laravel\Socialite\SocialiteManager setContainer(\Illuminate\Contracts\Container\Container $container)
@@ -5667,8 +5667,19 @@ namespace Laravel\Socialite\Facades {
     class Socialite {}
 }
 
-namespace Spatie\LaravelIgnition\Facades {
+namespace MikeMcLin\WpPassword\Facades {
+    
+    /**
+     * @see \MikeMcLin\WpPassword\Contracts\WpPassword::check
+     * @method static bool check(string $password, string $hash)
+     * @see \MikeMcLin\WpPassword\Contracts\WpPassword::make
+     * @method static string make(string $password)
+     */
+    class WpPassword {}
+}
 
+namespace Spatie\LaravelIgnition\Facades {
+    
     /**
      * @see \Spatie\FlareClient\Flare::applicationPath
      * @method static \Spatie\FlareClient\Flare applicationPath(string $applicationPath)
@@ -5751,7 +5762,7 @@ namespace Spatie\LaravelIgnition\Facades {
 }
 
 namespace Yajra\DataTables\Facades {
-
+    
     /**
      * @see \Illuminate\Support\Traits\Macroable::macro
      * @method static void macro(string $name, callable|object $macro)
@@ -5829,6 +5840,7 @@ namespace {
     class Js extends Illuminate\Support\Js {}
     class JsValidator extends Botble\JsValidation\Facades\JsValidator {}
     class Lang extends Illuminate\Support\Facades\Lang {}
+    class LaravelCloudflareTurnstile extends RyanChandler\LaravelCloudflareTurnstile\Facades\LaravelCloudflareTurnstile {}
     class Log extends Illuminate\Support\Facades\Log {}
     class MacroableModels extends Botble\Base\Facades\MacroableModels {}
     class Mail extends Illuminate\Support\Facades\Mail {}
@@ -5870,4 +5882,5 @@ namespace {
     class Vite extends Illuminate\Support\Facades\Vite {}
     class Widget extends Botble\Widget\Facades\Widget {}
     class WidgetGroup extends Botble\Widget\Facades\WidgetGroup {}
+    class WpPassword extends MikeMcLin\WpPassword\Facades\WpPassword {}
 }

@@ -1,4 +1,4 @@
-<?php //7d686c3f9e03ce74f53448722a1807a9
+<?php //da004c34c896b66701b678b1fe81eb5f
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Gallery\Models {
@@ -11,7 +11,7 @@ namespace LaravelIdea\Helper\Botble\Gallery\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method GalleryMeta|null getOrPut($key, $value)
      * @method GalleryMeta|$this shift(int $count = 1)
@@ -37,7 +37,7 @@ namespace LaravelIdea\Helper\Botble\Gallery\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_GalleryMeta_QB whereId($value)
      * @method _IH_GalleryMeta_QB whereImages($value)
@@ -48,6 +48,7 @@ namespace LaravelIdea\Helper\Botble\Gallery\Models {
      * @method GalleryMeta baseSole(array|string $columns = ['*'])
      * @method GalleryMeta create(array $attributes = [])
      * @method GalleryMeta createOrFirst(array $attributes = [], array $values = [])
+     * @method GalleryMeta createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_GalleryMeta_C|GalleryMeta[] cursor()
      * @method GalleryMeta|null|_IH_GalleryMeta_C|GalleryMeta[] find($id, array|string $columns = ['*'])
      * @method _IH_GalleryMeta_C|GalleryMeta[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -70,12 +71,13 @@ namespace LaravelIdea\Helper\Botble\Gallery\Models {
      * @method GalleryMeta make(array $attributes = [])
      * @method GalleryMeta newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|GalleryMeta[]|_IH_GalleryMeta_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method GalleryMeta restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|GalleryMeta[]|_IH_GalleryMeta_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method GalleryMeta sole(array|string $columns = ['*'])
      * @method GalleryMeta updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_GalleryMeta_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Gallery|null getOrPut($key, $value)
      * @method Gallery|$this shift(int $count = 1)
@@ -101,7 +103,7 @@ namespace LaravelIdea\Helper\Botble\Gallery\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Gallery_QB whereId($value)
      * @method _IH_Gallery_QB whereName($value)
@@ -116,6 +118,7 @@ namespace LaravelIdea\Helper\Botble\Gallery\Models {
      * @method Gallery baseSole(array|string $columns = ['*'])
      * @method Gallery create(array $attributes = [])
      * @method Gallery createOrFirst(array $attributes = [], array $values = [])
+     * @method Gallery createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Gallery_C|Gallery[] cursor()
      * @method Gallery|null|_IH_Gallery_C|Gallery[] find($id, array|string $columns = ['*'])
      * @method _IH_Gallery_C|Gallery[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -138,6 +141,7 @@ namespace LaravelIdea\Helper\Botble\Gallery\Models {
      * @method Gallery make(array $attributes = [])
      * @method Gallery newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Gallery[]|_IH_Gallery_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Gallery restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Gallery[]|_IH_Gallery_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Gallery sole(array|string $columns = ['*'])
      * @method Gallery updateOrCreate(array $attributes, array $values = [])

@@ -1,4 +1,4 @@
-<?php //7bc70620745417eb97e5274a6ec244e8
+<?php //c4db3152b2e49bca5d37020cf87d39cf
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Member\Models {
@@ -11,7 +11,7 @@ namespace LaravelIdea\Helper\Botble\Member\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method MemberActivityLog|null getOrPut($key, $value)
      * @method MemberActivityLog|$this shift(int $count = 1)
@@ -37,7 +37,7 @@ namespace LaravelIdea\Helper\Botble\Member\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_MemberActivityLog_QB whereId($value)
      * @method _IH_MemberActivityLog_QB whereAction($value)
@@ -51,6 +51,7 @@ namespace LaravelIdea\Helper\Botble\Member\Models {
      * @method MemberActivityLog baseSole(array|string $columns = ['*'])
      * @method MemberActivityLog create(array $attributes = [])
      * @method MemberActivityLog createOrFirst(array $attributes = [], array $values = [])
+     * @method MemberActivityLog createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MemberActivityLog_C|MemberActivityLog[] cursor()
      * @method MemberActivityLog|null|_IH_MemberActivityLog_C|MemberActivityLog[] find($id, array|string $columns = ['*'])
      * @method _IH_MemberActivityLog_C|MemberActivityLog[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -73,12 +74,13 @@ namespace LaravelIdea\Helper\Botble\Member\Models {
      * @method MemberActivityLog make(array $attributes = [])
      * @method MemberActivityLog newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MemberActivityLog[]|_IH_MemberActivityLog_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MemberActivityLog restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MemberActivityLog[]|_IH_MemberActivityLog_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MemberActivityLog sole(array|string $columns = ['*'])
      * @method MemberActivityLog updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MemberActivityLog_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Member|null getOrPut($key, $value)
      * @method Member|$this shift(int $count = 1)
@@ -104,7 +106,7 @@ namespace LaravelIdea\Helper\Botble\Member\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Member_QB whereId($value)
      * @method _IH_Member_QB whereFirstName($value)
@@ -125,6 +127,7 @@ namespace LaravelIdea\Helper\Botble\Member\Models {
      * @method Member baseSole(array|string $columns = ['*'])
      * @method Member create(array $attributes = [])
      * @method Member createOrFirst(array $attributes = [], array $values = [])
+     * @method Member createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Member_C|Member[] cursor()
      * @method Member|null|_IH_Member_C|Member[] find($id, array|string $columns = ['*'])
      * @method _IH_Member_C|Member[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -147,6 +150,7 @@ namespace LaravelIdea\Helper\Botble\Member\Models {
      * @method Member make(array $attributes = [])
      * @method Member newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Member[]|_IH_Member_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Member restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Member[]|_IH_Member_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Member sole(array|string $columns = ['*'])
      * @method Member updateOrCreate(array $attributes, array $values = [])

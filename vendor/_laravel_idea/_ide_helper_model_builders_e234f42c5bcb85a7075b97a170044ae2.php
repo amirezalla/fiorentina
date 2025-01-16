@@ -1,4 +1,4 @@
-<?php //035925f0cd95ecbcd15dfc7c5c1f1849
+<?php //8ed0661d419c8327d2d41a32e243e694
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Slug\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\Slug\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method Slug|null getOrPut($key, $value)
      * @method Slug|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\Slug\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Slug_QB whereId($value)
      * @method _IH_Slug_QB whereReferenceId($value)
@@ -47,6 +47,7 @@ namespace LaravelIdea\Helper\Botble\Slug\Models {
      * @method Slug baseSole(array|string $columns = ['*'])
      * @method Slug create(array $attributes = [])
      * @method Slug createOrFirst(array $attributes = [], array $values = [])
+     * @method Slug createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Slug_C|Slug[] cursor()
      * @method Slug|null|_IH_Slug_C|Slug[] find($id, array|string $columns = ['*'])
      * @method _IH_Slug_C|Slug[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -69,6 +70,7 @@ namespace LaravelIdea\Helper\Botble\Slug\Models {
      * @method Slug make(array $attributes = [])
      * @method Slug newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Slug[]|_IH_Slug_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Slug restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Slug[]|_IH_Slug_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Slug sole(array|string $columns = ['*'])
      * @method Slug updateOrCreate(array $attributes, array $values = [])

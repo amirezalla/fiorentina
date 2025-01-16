@@ -1,4 +1,4 @@
-<?php //3d8ab7362bd133b0784f76320e43ef44
+<?php //92e64c28eb9e5db9f51a0ca14ea0be15
 /** @noinspection all */
 
 namespace Botble\Base\Models {
@@ -9,7 +9,7 @@ namespace Botble\Base\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\Botble\Base\Models\_IH_AdminNotification_C;
     use LaravelIdea\Helper\_BaseBuilder;
-
+    
     /**
      * @method AdminNotificationQueryBuilder whereId($value)
      * @method AdminNotificationQueryBuilder whereTitle($value)
@@ -23,6 +23,7 @@ namespace Botble\Base\Models {
      * @method AdminNotification baseSole(array|string $columns = ['*'])
      * @method AdminNotification create(array $attributes = [])
      * @method AdminNotification createOrFirst(array $attributes = [], array $values = [])
+     * @method AdminNotification createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_AdminNotification_C|AdminNotification[] cursor()
      * @method AdminNotification|null|_IH_AdminNotification_C|AdminNotification[] find($id, array|string $columns = ['*'])
      * @method _IH_AdminNotification_C|AdminNotification[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -45,6 +46,7 @@ namespace Botble\Base\Models {
      * @method AdminNotification make(array $attributes = [])
      * @method AdminNotification newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|AdminNotification[]|_IH_AdminNotification_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method AdminNotification restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|AdminNotification[]|_IH_AdminNotification_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method AdminNotification sole(array|string $columns = ['*'])
      * @method AdminNotification updateOrCreate(array $attributes, array $values = [])

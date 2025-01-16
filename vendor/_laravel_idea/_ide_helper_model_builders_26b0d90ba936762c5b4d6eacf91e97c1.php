@@ -1,4 +1,4 @@
-<?php //94f463b6dbd115f94cdbb50bb4eb3621
+<?php //0548167a46e4579996ca40de58d96616
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Api\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\Api\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method PersonalAccessToken|null getOrPut($key, $value)
      * @method PersonalAccessToken|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\Api\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_PersonalAccessToken_QB whereId($value)
      * @method _IH_PersonalAccessToken_QB whereTokenableId($value)
@@ -51,6 +51,7 @@ namespace LaravelIdea\Helper\Botble\Api\Models {
      * @method PersonalAccessToken baseSole(array|string $columns = ['*'])
      * @method PersonalAccessToken create(array $attributes = [])
      * @method PersonalAccessToken createOrFirst(array $attributes = [], array $values = [])
+     * @method PersonalAccessToken createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_PersonalAccessToken_C|PersonalAccessToken[] cursor()
      * @method PersonalAccessToken|null|_IH_PersonalAccessToken_C|PersonalAccessToken[] find($id, array|string $columns = ['*'])
      * @method _IH_PersonalAccessToken_C|PersonalAccessToken[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -73,6 +74,7 @@ namespace LaravelIdea\Helper\Botble\Api\Models {
      * @method PersonalAccessToken make(array $attributes = [])
      * @method PersonalAccessToken newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|PersonalAccessToken[]|_IH_PersonalAccessToken_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method PersonalAccessToken restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|PersonalAccessToken[]|_IH_PersonalAccessToken_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method PersonalAccessToken sole(array|string $columns = ['*'])
      * @method PersonalAccessToken updateOrCreate(array $attributes, array $values = [])

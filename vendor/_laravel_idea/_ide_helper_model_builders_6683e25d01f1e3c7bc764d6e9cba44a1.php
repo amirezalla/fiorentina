@@ -1,4 +1,4 @@
-<?php //945d5bea2334d4dd3792fec27b78e713
+<?php //8c8239d179c1e1ccd3c445899ba57f90
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Media\Models {
@@ -12,7 +12,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method MediaFile|null getOrPut($key, $value)
      * @method MediaFile|$this shift(int $count = 1)
@@ -38,7 +38,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_MediaFile_QB whereId($value)
      * @method _IH_MediaFile_QB whereUserId($value)
@@ -55,6 +55,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
      * @method MediaFile baseSole(array|string $columns = ['*'])
      * @method MediaFile create(array $attributes = [])
      * @method MediaFile createOrFirst(array $attributes = [], array $values = [])
+     * @method MediaFile createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MediaFile_C|MediaFile[] cursor()
      * @method MediaFile|null|_IH_MediaFile_C|MediaFile[] find($id, array|string $columns = ['*'])
      * @method _IH_MediaFile_C|MediaFile[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -77,12 +78,13 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
      * @method MediaFile make(array $attributes = [])
      * @method MediaFile newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MediaFile[]|_IH_MediaFile_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MediaFile restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MediaFile[]|_IH_MediaFile_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MediaFile sole(array|string $columns = ['*'])
      * @method MediaFile updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MediaFile_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MediaFolder|null getOrPut($key, $value)
      * @method MediaFolder|$this shift(int $count = 1)
@@ -108,7 +110,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_MediaFolder_QB whereId($value)
      * @method _IH_MediaFolder_QB whereUserId($value)
@@ -122,6 +124,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
      * @method MediaFolder baseSole(array|string $columns = ['*'])
      * @method MediaFolder create(array $attributes = [])
      * @method MediaFolder createOrFirst(array $attributes = [], array $values = [])
+     * @method MediaFolder createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MediaFolder_C|MediaFolder[] cursor()
      * @method MediaFolder|null|_IH_MediaFolder_C|MediaFolder[] find($id, array|string $columns = ['*'])
      * @method _IH_MediaFolder_C|MediaFolder[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -144,12 +147,13 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
      * @method MediaFolder make(array $attributes = [])
      * @method MediaFolder newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MediaFolder[]|_IH_MediaFolder_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MediaFolder restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MediaFolder[]|_IH_MediaFolder_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MediaFolder sole(array|string $columns = ['*'])
      * @method MediaFolder updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_MediaFolder_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MediaSetting|null getOrPut($key, $value)
      * @method MediaSetting|$this shift(int $count = 1)
@@ -175,7 +179,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_MediaSetting_QB whereId($value)
      * @method _IH_MediaSetting_QB whereValue($value)
@@ -186,6 +190,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
      * @method MediaSetting baseSole(array|string $columns = ['*'])
      * @method MediaSetting create(array $attributes = [])
      * @method MediaSetting createOrFirst(array $attributes = [], array $values = [])
+     * @method MediaSetting createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MediaSetting_C|MediaSetting[] cursor()
      * @method MediaSetting|null|_IH_MediaSetting_C|MediaSetting[] find($id, array|string $columns = ['*'])
      * @method _IH_MediaSetting_C|MediaSetting[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -208,6 +213,7 @@ namespace LaravelIdea\Helper\Botble\Media\Models {
      * @method MediaSetting make(array $attributes = [])
      * @method MediaSetting newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MediaSetting[]|_IH_MediaSetting_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MediaSetting restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MediaSetting[]|_IH_MediaSetting_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MediaSetting sole(array|string $columns = ['*'])
      * @method MediaSetting updateOrCreate(array $attributes, array $values = [])

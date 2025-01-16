@@ -1,4 +1,4 @@
-<?php //05ee109e7928578f1227cd421a74e5b7
+<?php //037aa83b1ba5596409897abe3521cccf
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Base\Models {
@@ -12,7 +12,7 @@ namespace LaravelIdea\Helper\Botble\Base\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method AdminNotification|null getOrPut($key, $value)
      * @method AdminNotification|$this shift(int $count = 1)
@@ -38,7 +38,7 @@ namespace LaravelIdea\Helper\Botble\Base\Models {
             return [];
         }
     }
-
+    
     /**
      * @method BaseModel|null getOrPut($key, $value)
      * @method BaseModel|$this shift(int $count = 1)
@@ -64,11 +64,12 @@ namespace LaravelIdea\Helper\Botble\Base\Models {
             return [];
         }
     }
-
+    
     /**
      * @method BaseModel baseSole(array|string $columns = ['*'])
      * @method BaseModel create(array $attributes = [])
      * @method BaseModel createOrFirst(array $attributes = [], array $values = [])
+     * @method BaseModel createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_BaseModel_C|BaseModel[] cursor()
      * @method BaseModel|null|_IH_BaseModel_C|BaseModel[] find($id, array|string $columns = ['*'])
      * @method _IH_BaseModel_C|BaseModel[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -91,12 +92,13 @@ namespace LaravelIdea\Helper\Botble\Base\Models {
      * @method BaseModel make(array $attributes = [])
      * @method BaseModel newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|BaseModel[]|_IH_BaseModel_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method BaseModel restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|BaseModel[]|_IH_BaseModel_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method BaseModel sole(array|string $columns = ['*'])
      * @method BaseModel updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_BaseModel_QB extends _BaseBuilder {}
-
+    
     /**
      * @method MetaBox|null getOrPut($key, $value)
      * @method MetaBox|$this shift(int $count = 1)
@@ -122,7 +124,7 @@ namespace LaravelIdea\Helper\Botble\Base\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_MetaBox_QB whereId($value)
      * @method _IH_MetaBox_QB whereMetaKey($value)
@@ -134,6 +136,7 @@ namespace LaravelIdea\Helper\Botble\Base\Models {
      * @method MetaBox baseSole(array|string $columns = ['*'])
      * @method MetaBox create(array $attributes = [])
      * @method MetaBox createOrFirst(array $attributes = [], array $values = [])
+     * @method MetaBox createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_MetaBox_C|MetaBox[] cursor()
      * @method MetaBox|null|_IH_MetaBox_C|MetaBox[] find($id, array|string $columns = ['*'])
      * @method _IH_MetaBox_C|MetaBox[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -156,6 +159,7 @@ namespace LaravelIdea\Helper\Botble\Base\Models {
      * @method MetaBox make(array $attributes = [])
      * @method MetaBox newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|MetaBox[]|_IH_MetaBox_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method MetaBox restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|MetaBox[]|_IH_MetaBox_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method MetaBox sole(array|string $columns = ['*'])
      * @method MetaBox updateOrCreate(array $attributes, array $values = [])

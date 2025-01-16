@@ -1,4 +1,4 @@
-<?php //bcefac85d468a21dc3ffe66fecb2b8b7
+<?php //8469979bc7fc4b1454a6d5319a529928
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Block\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\Block\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method Block|null getOrPut($key, $value)
      * @method Block|$this shift(int $count = 1)
@@ -36,7 +36,7 @@ namespace LaravelIdea\Helper\Botble\Block\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Block_QB whereId($value)
      * @method _IH_Block_QB whereName($value)
@@ -50,6 +50,7 @@ namespace LaravelIdea\Helper\Botble\Block\Models {
      * @method Block baseSole(array|string $columns = ['*'])
      * @method Block create(array $attributes = [])
      * @method Block createOrFirst(array $attributes = [], array $values = [])
+     * @method Block createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Block_C|Block[] cursor()
      * @method Block|null|_IH_Block_C|Block[] find($id, array|string $columns = ['*'])
      * @method _IH_Block_C|Block[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -72,6 +73,7 @@ namespace LaravelIdea\Helper\Botble\Block\Models {
      * @method Block make(array $attributes = [])
      * @method Block newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Block[]|_IH_Block_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Block restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Block[]|_IH_Block_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Block sole(array|string $columns = ['*'])
      * @method Block updateOrCreate(array $attributes, array $values = [])

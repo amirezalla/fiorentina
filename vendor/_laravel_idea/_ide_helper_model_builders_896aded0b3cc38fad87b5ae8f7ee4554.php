@@ -1,4 +1,4 @@
-<?php //ddd4d29ec5a9e698c2bffde40ebb3227
+<?php //a7143c084242fee47f1fdc89ef0c7b60
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\Blog\Models {
@@ -12,7 +12,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method Category|null getOrPut($key, $value)
      * @method Category|$this shift(int $count = 1)
@@ -38,7 +38,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Category_QB whereId($value)
      * @method _IH_Category_QB whereName($value)
@@ -56,6 +56,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
      * @method Category baseSole(array|string $columns = ['*'])
      * @method Category create(array $attributes = [])
      * @method Category createOrFirst(array $attributes = [], array $values = [])
+     * @method Category createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Category_C|Category[] cursor()
      * @method Category|null|_IH_Category_C|Category[] find($id, array|string $columns = ['*'])
      * @method _IH_Category_C|Category[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -78,12 +79,13 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
      * @method Category make(array $attributes = [])
      * @method Category newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Category[]|_IH_Category_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Category restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Category[]|_IH_Category_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Category sole(array|string $columns = ['*'])
      * @method Category updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_Category_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Post|null getOrPut($key, $value)
      * @method Post|$this shift(int $count = 1)
@@ -109,7 +111,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Post_QB whereId($value)
      * @method _IH_Post_QB whereName($value)
@@ -127,6 +129,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
      * @method Post baseSole(array|string $columns = ['*'])
      * @method Post create(array $attributes = [])
      * @method Post createOrFirst(array $attributes = [], array $values = [])
+     * @method Post createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Post_C|Post[] cursor()
      * @method Post|null|_IH_Post_C|Post[] find($id, array|string $columns = ['*'])
      * @method _IH_Post_C|Post[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -149,6 +152,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
      * @method Post make(array $attributes = [])
      * @method Post newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Post[]|_IH_Post_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Post restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Post[]|_IH_Post_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Post sole(array|string $columns = ['*'])
      * @method Post updateOrCreate(array $attributes, array $values = [])
@@ -156,7 +160,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
      * @method _IH_Post_QB unpublished()
      */
     class _IH_Post_QB extends _BaseBuilder {}
-
+    
     /**
      * @method Tag|null getOrPut($key, $value)
      * @method Tag|$this shift(int $count = 1)
@@ -182,7 +186,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_Tag_QB whereId($value)
      * @method _IH_Tag_QB whereName($value)
@@ -195,6 +199,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
      * @method Tag baseSole(array|string $columns = ['*'])
      * @method Tag create(array $attributes = [])
      * @method Tag createOrFirst(array $attributes = [], array $values = [])
+     * @method Tag createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_Tag_C|Tag[] cursor()
      * @method Tag|null|_IH_Tag_C|Tag[] find($id, array|string $columns = ['*'])
      * @method _IH_Tag_C|Tag[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -217,6 +222,7 @@ namespace LaravelIdea\Helper\Botble\Blog\Models {
      * @method Tag make(array $attributes = [])
      * @method Tag newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|Tag[]|_IH_Tag_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method Tag restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|Tag[]|_IH_Tag_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method Tag sole(array|string $columns = ['*'])
      * @method Tag updateOrCreate(array $attributes, array $values = [])

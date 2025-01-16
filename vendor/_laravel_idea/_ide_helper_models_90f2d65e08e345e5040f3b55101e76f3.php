@@ -1,4 +1,4 @@
-<?php //62b95b24c6e6412aa11c2af2ba52623d
+<?php //c7fb056d091494543647cee0fc4b86bd
 /** @noinspection all */
 
 namespace Botble\Member\Models {
@@ -25,7 +25,7 @@ namespace Botble\Member\Models {
     use LaravelIdea\Helper\Illuminate\Notifications\_IH_DatabaseNotification_QB;
     use LaravelIdea\Helper\Laravel\Sanctum\_IH_PersonalAccessToken_C;
     use LaravelIdea\Helper\Laravel\Sanctum\_IH_PersonalAccessToken_QB;
-
+    
     /**
      * @property int $id
      * @property $first_name
@@ -46,7 +46,7 @@ namespace Botble\Member\Models {
      * @property-read null|string $avatar_thumb_url attribute
      * @property-read string $avatar_url attribute
      * @property-read string $name attribute
-     * @property mixed $upload_folder attribute
+     * @property false|mixed|string $upload_folder attribute
      * @property MediaFile|null $avatar
      * @method BelongsTo|_IH_MediaFile_QB avatar()
      * @property _IH_MetaBox_C|MetaBox[] $metadata
@@ -80,7 +80,7 @@ namespace Botble\Member\Models {
      * @mixin _IH_Member_QB
      */
     class Member extends Model {}
-
+    
     /**
      * @property int $id
      * @property $action

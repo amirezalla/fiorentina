@@ -1,4 +1,4 @@
-<?php //a23d255c6d2f75679f195395418d6809
+<?php //93b29324da8836f852c9a588fa5d7d63
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\CustomField\Models {
@@ -12,7 +12,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method CustomField|null getOrPut($key, $value)
      * @method CustomField|$this shift(int $count = 1)
@@ -38,7 +38,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_CustomField_QB whereId($value)
      * @method _IH_CustomField_QB whereUseFor($value)
@@ -50,6 +50,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
      * @method CustomField baseSole(array|string $columns = ['*'])
      * @method CustomField create(array $attributes = [])
      * @method CustomField createOrFirst(array $attributes = [], array $values = [])
+     * @method CustomField createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_CustomField_C|CustomField[] cursor()
      * @method CustomField|null|_IH_CustomField_C|CustomField[] find($id, array|string $columns = ['*'])
      * @method _IH_CustomField_C|CustomField[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -72,12 +73,13 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
      * @method CustomField make(array $attributes = [])
      * @method CustomField newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|CustomField[]|_IH_CustomField_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method CustomField restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|CustomField[]|_IH_CustomField_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method CustomField sole(array|string $columns = ['*'])
      * @method CustomField updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_CustomField_QB extends _BaseBuilder {}
-
+    
     /**
      * @method FieldGroup|null getOrPut($key, $value)
      * @method FieldGroup|$this shift(int $count = 1)
@@ -103,7 +105,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_FieldGroup_QB whereId($value)
      * @method _IH_FieldGroup_QB whereTitle($value)
@@ -117,6 +119,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
      * @method FieldGroup baseSole(array|string $columns = ['*'])
      * @method FieldGroup create(array $attributes = [])
      * @method FieldGroup createOrFirst(array $attributes = [], array $values = [])
+     * @method FieldGroup createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_FieldGroup_C|FieldGroup[] cursor()
      * @method FieldGroup|null|_IH_FieldGroup_C|FieldGroup[] find($id, array|string $columns = ['*'])
      * @method _IH_FieldGroup_C|FieldGroup[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -139,12 +142,13 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
      * @method FieldGroup make(array $attributes = [])
      * @method FieldGroup newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|FieldGroup[]|_IH_FieldGroup_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method FieldGroup restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|FieldGroup[]|_IH_FieldGroup_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method FieldGroup sole(array|string $columns = ['*'])
      * @method FieldGroup updateOrCreate(array $attributes, array $values = [])
      */
     class _IH_FieldGroup_QB extends _BaseBuilder {}
-
+    
     /**
      * @method FieldItem|null getOrPut($key, $value)
      * @method FieldItem|$this shift(int $count = 1)
@@ -170,7 +174,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
             return [];
         }
     }
-
+    
     /**
      * @method _IH_FieldItem_QB whereId($value)
      * @method _IH_FieldItem_QB whereFieldGroupId($value)
@@ -184,6 +188,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
      * @method FieldItem baseSole(array|string $columns = ['*'])
      * @method FieldItem create(array $attributes = [])
      * @method FieldItem createOrFirst(array $attributes = [], array $values = [])
+     * @method FieldItem createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_FieldItem_C|FieldItem[] cursor()
      * @method FieldItem|null|_IH_FieldItem_C|FieldItem[] find($id, array|string $columns = ['*'])
      * @method _IH_FieldItem_C|FieldItem[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -206,6 +211,7 @@ namespace LaravelIdea\Helper\Botble\CustomField\Models {
      * @method FieldItem make(array $attributes = [])
      * @method FieldItem newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|FieldItem[]|_IH_FieldItem_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method FieldItem restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|FieldItem[]|_IH_FieldItem_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method FieldItem sole(array|string $columns = ['*'])
      * @method FieldItem updateOrCreate(array $attributes, array $values = [])

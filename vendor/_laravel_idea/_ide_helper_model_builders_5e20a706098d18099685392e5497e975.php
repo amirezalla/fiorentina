@@ -1,4 +1,4 @@
-<?php //c1a72721fd6cd83e78f5f4db63902c11
+<?php //2e4b23a0e5f02e4c9693de29dd4ae2fe
 /** @noinspection all */
 
 namespace LaravelIdea\Helper\Botble\LanguageAdvanced\Models {
@@ -10,7 +10,7 @@ namespace LaravelIdea\Helper\Botble\LanguageAdvanced\Models {
     use Illuminate\Pagination\Paginator;
     use LaravelIdea\Helper\_BaseBuilder;
     use LaravelIdea\Helper\_BaseCollection;
-
+    
     /**
      * @method TranslationResolver|null getOrPut($key, $value)
      * @method TranslationResolver|$this shift(int $count = 1)
@@ -36,11 +36,12 @@ namespace LaravelIdea\Helper\Botble\LanguageAdvanced\Models {
             return [];
         }
     }
-
+    
     /**
      * @method TranslationResolver baseSole(array|string $columns = ['*'])
      * @method TranslationResolver create(array $attributes = [])
      * @method TranslationResolver createOrFirst(array $attributes = [], array $values = [])
+     * @method TranslationResolver createOrRestore(array $attributes = [], array $values = [])
      * @method _IH_TranslationResolver_C|TranslationResolver[] cursor()
      * @method TranslationResolver|null|_IH_TranslationResolver_C|TranslationResolver[] find($id, array|string $columns = ['*'])
      * @method _IH_TranslationResolver_C|TranslationResolver[] findMany(array|Arrayable $ids, array|string $columns = ['*'])
@@ -63,6 +64,7 @@ namespace LaravelIdea\Helper\Botble\LanguageAdvanced\Models {
      * @method TranslationResolver make(array $attributes = [])
      * @method TranslationResolver newModelInstance(array $attributes = [])
      * @method LengthAwarePaginator|TranslationResolver[]|_IH_TranslationResolver_C paginate(\Closure|int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
+     * @method TranslationResolver restoreOrCreate(array $attributes = [], array $values = [])
      * @method Paginator|TranslationResolver[]|_IH_TranslationResolver_C simplePaginate(int|null $perPage = null, array|string $columns = ['*'], string $pageName = 'page', int|null $page = null)
      * @method TranslationResolver sole(array|string $columns = ['*'])
      * @method TranslationResolver updateOrCreate(array $attributes, array $values = [])
