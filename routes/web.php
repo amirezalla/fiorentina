@@ -36,11 +36,8 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     foreach ($tables as $table) {
         $result[$table] = DB::connection('mysql2')->table($table)->limit(5)->get()->toArray();
     }
-    $usersCount = DB::connection('mysql2')->table("frntn_users")->count();
-    $max_page = ceil($usersCount / 100);
-    foreach (range(0, $max_page - 1) as $i) {
-        \App\Jobs\ImportUserFromWpUsersDatabase::dispatch($i * 100)->delay(now()->addMinutes($i * 2));
-    }
+    $importPwDatabase = new \App\Classes\ImportPwDatabase();
+    $importPwDatabase->importUsers();
     dd("ok");
     dd($users, $result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
