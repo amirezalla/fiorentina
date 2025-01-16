@@ -31,15 +31,15 @@ use App\Http\Controllers\VideoController;
 
 
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
+    $importPwDatabase = new \App\Classes\ImportPwDatabase();
+//    $importPwDatabase->importUsers();
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina)->toArray();
     $result = [];
     foreach ($tables as $table) {
         $result[$table] = DB::connection('mysql2')->table($table)->limit(5)->get()->toArray();
     }
-    $importPwDatabase = new \App\Classes\ImportPwDatabase();
-    $importPwDatabase->importUsers();
-    dd("ok");
-    dd($users, $result);
+
+    dd($result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;
     $items = DB::connection('mysql2')
