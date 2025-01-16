@@ -6,6 +6,7 @@ use App\Jobs\ImportUserFromWpUsersDatabase;
 use Botble\ACL\Models\User;
 use Botble\Blog\Models\Post;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class ImportPwDatabase
@@ -35,6 +36,8 @@ class ImportPwDatabase
             ->get()
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();
+        $response = Http::get('https://www.laviola.it/?p=554494');
+        dd($response->json());
         $res = [];
         foreach ($posts as $key => $post) {
             $res[$key]['post'] = $post;
