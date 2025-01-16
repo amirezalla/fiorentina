@@ -32,8 +32,8 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     $importPwDatabase = new \App\Classes\ImportPwDatabase();
-//    $importPwDatabase->importUsers();
     $importPwDatabase->importUsers();
+//    $importPwDatabase->importPosts();
     dd("ok");
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina)->toArray();
     $result = [];
