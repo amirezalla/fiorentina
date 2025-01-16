@@ -32,20 +32,27 @@ use App\Http\Controllers\VideoController;
 
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina)->toArray();
-    $result=[];
+    $result = [];
     foreach ($tables as $table) {
-        $result[$table]=DB::connection('mysql2')->table($table)->limit(5)->get()->toArray();
+        $result[$table] = DB::connection('mysql2')->table($table)->limit(5)->get()->toArray();
     }
     $usersCount = DB::connection('mysql2')->table("frntn_users")->count();
-    dd(ceil($usersCount / 100),$usersCount / 100,$result);
+    $max_page = ceil($usersCount / 100);
+    $users = DB::connection('mysql2')
+        ->table("frntn_users")
+        ->skip($max_page * 0)
+        ->limit(100)
+        ->get()
+        ->toArray();
+    dd($users, $result);
     $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
     $number = $request->filled('number') ? $request->number : 1;
     $items = DB::connection('mysql2')
         ->table('frntn_posts')
         ->limit(100)
-        ->where('post_name','ferrari-ho-sentito-il-presidente-siamo-tutti-uniti-col-mister-usciremo-dal-momento-difficile')
+        ->where('post_name', 'ferrari-ho-sentito-il-presidente-siamo-tutti-uniti-col-mister-usciremo-dal-momento-difficile')
         ->get();
-    dd($items,$tables);
+    dd($items, $tables);
 });
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
@@ -112,7 +119,6 @@ Route::get('/undo-commentary', [DirettaController::class, 'undoCommentary'])->na
 Route::get('/undo-chat', [DirettaController::class, 'undoChat'])->name('undo-chat');
 Route::post('/update-commentary', [DirettaController::class, 'updateCommentary'])->name('update-commentary');
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
-
 
 
 // then create a controller for import and be sure to separate the confirmed ones
