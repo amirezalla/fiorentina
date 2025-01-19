@@ -141,7 +141,7 @@ public function singlePost($postId=554650)
         $post->save();
         $slug= new Slug();
         $slug->fill([
-            'key'=>$wpPost,
+            'key'=>$wpPost->post_name,
             'reference_id'=>$post->id,
             'reference_type'=>'Botble\Blog\Models\Post'
         ]);
