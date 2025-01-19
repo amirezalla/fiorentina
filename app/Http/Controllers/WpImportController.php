@@ -10,7 +10,7 @@ use Botble\Base\Supports\Breadcrumb;
 use Botble\Base\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage; // Correct import for Storage
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -76,10 +76,6 @@ class WpImportController extends BaseController
         ], 500);
     }
 }
-
-
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Http;
 
 public function singlePost($postId=554650)
 {
