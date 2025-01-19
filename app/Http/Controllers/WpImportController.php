@@ -19,6 +19,7 @@ use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\DB;
 use Botble\Member\Models\Member;
 use Botble\Blog\Models\Post;
+use Botble\Slug\Models\Slug;
 
 
 
@@ -129,15 +130,22 @@ public function singlePost($postId=554650)
             'description' => $wpPost->post_excerpt,
             'content' => $wpPost->post_content,
             'image' => $storedImagePath, // Save the local storage path of the image
-            'is_featured' => $postMeta['mvp_featured_image'] === 'show' ? 1 : 0,
+            'is_featured' => 0,
             'format_type' => $postMeta['mvp_post_template'] ?? null,
             'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
             'author_id' => $wpPost->post_author,
-            'author_type' => 'User',
+            'author_type' => 'Botble\ACL\Models\User',
             'published_at' => $wpPost->post_date,
         ]);
 
         $post->save();
+        $slug= new Slug();
+        $slug->fill([
+            'key'=>$wpPost,
+            'reference_id'=>$post->id,
+            'reference_type'=>'Botble\Blog\Models\Post'
+        ]);
+        $slug->save();
 
         return response()->json([
             'message' => 'Post imported successfully!',
