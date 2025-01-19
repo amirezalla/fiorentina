@@ -31,13 +31,12 @@ class ImportPwDatabase
         $posts = DB::connection('mysql2')
             ->table('frntn_posts')
             ->where('post_parent', 0)
-            ->limit(10)
+            ->limit(100)
             ->orderByDesc('id')
             ->get()
             ->map(fn($i) => json_decode(json_encode($i), true))
             ->toArray();
-        $response = Http::get('https://www.laviola.it/?p=554494');
-        dd($response->body());
+        dd($posts);
         $res = [];
         foreach ($posts as $key => $post) {
             $res[$key]['post'] = $post;
