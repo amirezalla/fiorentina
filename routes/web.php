@@ -26,6 +26,7 @@ use App\Http\Controllers\NotificaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\WpImportController;
 
 
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
