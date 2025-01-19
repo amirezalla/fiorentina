@@ -29,7 +29,7 @@ class WpImportController extends BaseController
             $users = DB::connection('mysql2')
                 ->table('frntn_users')
                 ->get();
-            if (!$user) {
+            if (!$users) {
                 return response()->json(['message' => 'Users not found in frntn_users table.'], 404);
             }
             foreach($users as $user){
