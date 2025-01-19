@@ -28,7 +28,7 @@ class WpImportController extends BaseController
             // Fetch the user_login as 'Amirezalla' from the frntn_users table
             $users = DB::connection('mysql2')
                 ->table('frntn_users')
-                ->all();
+                ->get();
             if (!$user) {
                 return response()->json(['message' => 'Users not found in frntn_users table.'], 404);
             }
