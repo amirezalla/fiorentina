@@ -17,8 +17,6 @@ use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
-use Botble\Member\Models\Member;
 
 
 use App\Http\Controllers\AdController;
@@ -118,44 +116,5 @@ Route::post('/update-commentary', [DirettaController::class, 'updateCommentary']
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 
 
-// then create a controller for import and be sure to separate the confirmed ones
-Route::get('/check-db-connection', function () {
-    try {
-        // Fetch the user_login as 'Amirezalla' from the frntn_users table
-        $user = DB::connection('mysql2')
-            ->table('frntn_users')
-            ->where('user_login', 'Amirezalla')
-            ->first();
-        if (!$user) {
-            return response()->json(['message' => 'User not found in frntn_users table.'], 404);
-        }
+Route::get('/import-users-wp', [WpImportController::class, 'users']);
 
-        // Import the user data into the Member model
-        $member = new Member();
-        $member->setRawAttributes([
-            'id' => $user->ID,
-            'first_name' => $user->user_nicename, // Assuming `user_nicename` is the first name
-            'last_name' => '',                   // No last name field in the source table
-            'email' => $user->user_email,
-            'password' => $user->user_pass,      // Use raw WordPress-hashed password
-            'avatar_id' => null,                 // Set null or default value
-            'confirmed_at' => '2024-09-24 13:42:15',
-            'dob' => null,                       // Set null or default value
-            'phone' => null,                     // Set null or default value
-            'description' => null,               // Set null or default value
-            'gender' => null,                    // Set null or default value
-        ]);
-
-        $member->save();
-
-        return response()->json([
-            'message' => 'User imported successfully!',
-            'data' => $member
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error importing user.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-});
