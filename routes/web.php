@@ -119,6 +119,5 @@ Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])-
 
 Route::get('/import-users-wp', [WpImportController::class, 'users']);
 Route::get('/import-single-post-wp', [WpImportController::class, 'singlePost']);
-Route::get('/import-categories', [WpImportController::class, 'categories']);
 
 
