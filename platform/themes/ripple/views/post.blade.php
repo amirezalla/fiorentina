@@ -12,6 +12,7 @@
 <article class="post post--single">
     <header class="post__header" style="padding-top: 20px">
         @php
+            dd($post);
             $category = \Illuminate\Support\Facades\DB::connection('mysql')
                 ->table('post_categories')
                 ->where('post_id', $post->id)
