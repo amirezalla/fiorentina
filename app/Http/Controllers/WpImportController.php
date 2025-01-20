@@ -101,6 +101,7 @@ public function singlePost($postId=554810)
 
         // Initialize variables for image handling
         $featuredImageId = $postMeta['_thumbnail_id'] ?? null;
+        $primaryCategoryId = $postMeta['_yoast_wpseo_primary_category'] ?? null;
         $featuredImageUrl = null;
         $storedImagePath = null;
 
@@ -140,6 +141,11 @@ public function singlePost($postId=554810)
         ]);
 
         $post->save();
+        if ($categoryId) {
+            DB::table('post_categories')->insert([
+                'post_id' => $post->id,
+                'category_id' => $categoryId,
+            ]);
         $slug= new Slug();
         $slug->fill([
             'key'=>$wpPost->post_name,
@@ -161,6 +167,47 @@ public function singlePost($postId=554810)
     }
 }
 
+public function categories()
+{
+    try {
+        // Fetch all terms from the `frntn_terms` table
+        $terms = DB::connection('mysql2')
+            ->table('frntn_terms')
+            ->get();
 
+        foreach ($terms as $term) {
+            // Check if the category already exists in the `categories` table
+            $existingCategory = Category::where('name', $term->name)->first();
+            if ($existingCategory) {
+                continue; // Skip if category already exists
+            }
 
+            // Create and save the category
+            $category = new Category();
+            $category->fill([
+                'name' => $term->name,
+                'description' => null, // Set to null or map from another source if available
+                'parent_id' => 0, // Default to no parent (adjust logic for hierarchical categories)
+                'icon' => null, // Default to null or provide logic for icons
+                'is_featured' => 0, // Default to not featured
+                'order' => $term->term_order ?? 0, // Use `term_order` or default to 0
+                'is_default' => 0, // Default to not default
+                'status' => 'published', // Default to published
+                'author_id' => 1, // Set default author or map as needed
+                'author_type' => 'Botble\ACL\Models\User', // Default author type
+            ]);
+
+            $category->save();
+        }
+
+        return response()->json([
+            'message' => 'Categories imported successfully!',
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error importing categories.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
 }
