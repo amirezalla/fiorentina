@@ -9,7 +9,7 @@
 
 @if ($post->author->name)
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-7" style="padding-top:6px">
             <span class="created_at " style="color: gray;">
                 {!! BaseHelper::renderIcon('ti ti-clock') !!} {{ $formattedDate }}
             </span>
@@ -21,7 +21,7 @@
             <span class="author-name">{{ $post->author->name }}</span>
 
         </div>
-        <div class="col-lg-6 d-flex justify-content-end pr-30">
+        <div class="col-lg-5 d-flex justify-content-end pr-30">
             <div class="social-buttons">
                 <a href="#" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="social-btn twitter"><i class="fab fa-twitter"></i></a>
