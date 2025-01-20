@@ -145,7 +145,7 @@ public function singlePost($postId=554810)
             if ($categoryId) {
                 DB::table('post_categories')->insert([
                     'post_id' => $post->id,
-                    'category_id' => $categoryId,
+                    'category_id' => $primaryCategoryId,
                 ]);
             $slug= new Slug();
             $slug->fill([
