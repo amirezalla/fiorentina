@@ -142,11 +142,9 @@ public function singlePost($postId=554810)
             ]);
 
             $post->save();
-            if ($primaryCategoryId) {
-                DB::table('post_categories')->insert([
-                    'post_id' => $post->id,
-                    'category_id' => $primaryCategoryId,
-                ]);
+            if($primaryCategoryId){
+                $this->category($primaryCategoryId,$post->id);
+            }
             $slug= new Slug();
             $slug->fill([
                 'key'=>$wpPost->post_name,
@@ -161,31 +159,26 @@ public function singlePost($postId=554810)
                 'image_path' => $storedImagePath,
             ], 200);
         }
-    }catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error importing post.',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error importing post.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
 }
 
 
+private function category($primaryCategoryId,$post_id){
+    try{
 
-public function categories()
-{
-    try {
-        // Fetch all terms from the `frntn_terms` table
-        $terms = DB::connection('mysql2')
+
+        $term = DB::connection('mysql2')
             ->table('frntn_terms')
-            ->get();
-
-        foreach ($terms as $term) {
-            // Check if the category already exists in the `categories` table
-            $existingCategory = Category::where('name', $term->name)->first();
-            if ($existingCategory) {
-                continue; // Skip if category already exists
-            }
-
+            ->where('term_id',$primaryCategoryId)
+            ->first();
+        $slug= new Slug();
+        $existingCategory = Category::where('name', $term->name)->first();
+        if (!$existingCategory) {
             // Create and save the category
             $category = new Category();
             $category->fill([
@@ -200,19 +193,28 @@ public function categories()
                 'author_id' => 1, // Set default author or map as needed
                 'author_type' => 'Botble\ACL\Models\User', // Default author type
             ]);
-
             $category->save();
-        }
+            $slug->fill([
+                'key'=>$term->name,
+                'reference_id'=>$primaryCategoryId,
+                'reference_type'=>'Botble\Blog\Models\Category'
+            ]);
+            $slug->save();
+        }    
+        DB::table('post_categories')->insert([
+            'post_id' => $post_id,
+            'category_id' => $primaryCategoryId,
+        ]);
 
+
+    }catch (\Exception $e) {
         return response()->json([
-            'message' => 'Categories imported successfully!',
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error importing categories.',
+            'message' => 'Error importing category.',
             'error' => $e->getMessage(),
         ], 500);
     }
 }
+
+
 
 }
