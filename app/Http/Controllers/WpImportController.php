@@ -265,6 +265,90 @@ private function category($primaryCategoryId,$post_id){
         }
     }
 
-
+    public function generateSEO($postId=554825)
+    {
+        try {
+            // Retrieve the post
+            $post = DB::table('posts')->where('id', $postId)->first();
+    
+            if (!$post) {
+                return response()->json(['message' => 'Post not found.'], 404);
+            }
+    
+            // Generate SEO content using ChatGPT API
+            $apiKey = env('GPT_API'); // Replace with your actual API key
+            $apiUrl = 'https://api.openai.com/v1/chat/completions';
+    
+            $prompt = "Generate SEO metadata for the following post:
+            Title: {$post->name}
+            Content: {$post->content}
+            Provide keywords and a meta description.";
+    
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer $apiKey",
+                'Content-Type' => 'application/json',
+            ])->post($apiUrl, [
+                'model' => 'gpt-4',
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are an SEO assistant.'],
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+                'max_tokens' => 100,
+            ]);
+    
+            $data = $response->json();
+    
+            if (!isset($data['choices'][0]['message']['content'])) {
+                return response()->json(['message' => 'Failed to generate SEO content.'], 500);
+            }
+    
+            $seoContent = $data['choices'][0]['message']['content'];
+    
+            // Parse ChatGPT response for keywords and meta description
+            $keywords = []; // Extract keywords from response (custom parsing logic may be needed)
+            preg_match('/Keywords: (.*)/i', $seoContent, $keywordMatches);
+            if (!empty($keywordMatches[1])) {
+                $keywords = explode(',', $keywordMatches[1]);
+            }
+    
+            $metaDescription = '';
+            preg_match('/Meta Description: (.*)/i', $seoContent, $metaDescriptionMatches);
+            if (!empty($metaDescriptionMatches[1])) {
+                $metaDescription = trim($metaDescriptionMatches[1]);
+            }
+    
+            // Save SEO data to the `meta_boxes` table
+            DB::table('meta_boxes')->insert([
+                [
+                    'meta_key' => 'vig_seo_keywords',
+                    'meta_value' => json_encode(['keywords' => $keywords]),
+                    'reference_id' => $postId,
+                    'reference_type' => 'Botble\Blog\Models\Post',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'meta_key' => 'seo_meta',
+                    'meta_value' => json_encode(['index' => 'index', 'description' => $metaDescription]),
+                    'reference_id' => $postId,
+                    'reference_type' => 'Botble\Blog\Models\Post',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+            ]);
+    
+            return response()->json([
+                'message' => 'SEO metadata generated and saved successfully.',
+                'seo_content' => $seoContent,
+            ], 200);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error generating SEO metadata.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
 
 }
