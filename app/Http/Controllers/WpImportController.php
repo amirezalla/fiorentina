@@ -19,6 +19,7 @@ use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\DB;
 use Botble\Member\Models\Member;
 use Botble\Blog\Models\Post;
+use Botble\Blog\Models\Category;
 use Botble\Slug\Models\Slug;
 
 
