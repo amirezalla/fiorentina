@@ -277,7 +277,7 @@ private function category($primaryCategoryId,$post_id){
 
             // Generate SEO content using ChatGPT API
             $apiKey = $this->decryptApiKey(env('GPT_API'),'amir'); // Replace with your actual API key
-            dd('aw');
+            dd(env('GPT_API'));
 
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
     
