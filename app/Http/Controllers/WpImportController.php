@@ -276,7 +276,7 @@ private function category($primaryCategoryId,$post_id){
             }
     
             // Generate SEO content using ChatGPT API
-            $apiKey = env('GPT_API'); // Replace with your actual API key
+            $apiKey = "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"; // Replace with your actual API key
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
     
             $prompt = "Generate SEO metadata for the following post:
