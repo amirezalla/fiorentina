@@ -18,8 +18,7 @@
             @else
                 <span class="post-author " style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}
             @endif
-            @dd($post->author)
-            <span class="author-name">{{ $post->author->name }}</span>
+            <span class="author-name">{{ $post->author->first_name }} {{ $post->author->last_name }}</span>
 
         </div>
         <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom: 14px">
