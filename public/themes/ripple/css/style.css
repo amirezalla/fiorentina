@@ -5180,5 +5180,8 @@ header>.container {
         width: 100%;
     }
 
+    .ck-content {
+        color: #000 !important;
+    }
 
 }
