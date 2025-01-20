@@ -278,6 +278,7 @@ private function category($primaryCategoryId,$post_id){
             // Generate SEO content using ChatGPT API
             $apiKey = env('GPT_API'); // Replace with your actual API key
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
+            dd($apiKey);
     
             $prompt = "Generate SEO metadata for the following post:
             Title: {$post->name}
