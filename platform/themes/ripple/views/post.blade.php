@@ -16,7 +16,6 @@
                 ->table('post_categories')
                 ->where('post_id', $post->id)
                 ->first();
-            dd($category);
             if ($category) {
                 $cat = \Illuminate\Support\Facades\DB::connection('mysql')
                     ->table('categories')
