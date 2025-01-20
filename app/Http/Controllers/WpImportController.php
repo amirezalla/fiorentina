@@ -288,7 +288,7 @@ private function category($primaryCategoryId,$post_id){
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
             ])->post($apiUrl, [
-                'model' => 'gpt-4',
+                'model' => 'gpt-3.5-turbo-16k',
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an SEO assistant.'],
                     ['role' => 'user', 'content' => $prompt],
