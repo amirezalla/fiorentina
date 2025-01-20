@@ -44,7 +44,7 @@
 
     <div class="col-lg-12 d-flex justify-content-center img-in-post">
         <div>
-            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy']) }}
+            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:775px;height:475px;']) }}
         </div>
     </div>
     @include('ads.includes.dblog-title')
