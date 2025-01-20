@@ -19,8 +19,9 @@
             if ($category) {
                 $cat = \Illuminate\Support\Facades\DB::connection('mysql')
                     ->table('categories')
-                    ->where('id', $category->id)
+                    ->where('id', $category->category_id)
                     ->first();
+                dd($cat);
             }
         @endphp
         @if ($post->first_category?->name)
