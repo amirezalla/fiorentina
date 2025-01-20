@@ -133,7 +133,7 @@ public function singlePost($postId=554650)
             'is_featured' => 0,
             'format_type' => $postMeta['mvp_post_template'] ?? null,
             'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
-            'author_id' => $wpPost->post_author,
+            'author_id' => 1,
             'author_type' => 'Botble\ACL\Models\User',
             'published_at' => $wpPost->post_date,
         ]);
