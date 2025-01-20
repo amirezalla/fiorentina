@@ -60,7 +60,7 @@
                                 <article class="post post__widget clearfix">
                                     <div class="post__thumbnail">
                                         <?php
-                                        $imageUrl = RvMedia::image($post->image, $post->name, 'thumb', attributes: ['loading' => 'lazy']);
+                                        $imageUrl = RvMedia::image($post->image, $post->name, 'thumb', attributes: ['loading' => 'lazy', 'style' => 'height:65px']);
                                         $fallbackUrl = "https://laviola.collaudo.biz/storage/{$post->image}";
                                         
                                         // Check if the image exists via HTTP request
@@ -68,7 +68,7 @@
                                         $isValid = $headers && strpos($headers[0], '200 OK') !== false;
                                         ?>
                                         <img src="{{ $isValid ? $imageUrl : $fallbackUrl }}" loading="lazy"
-                                            alt="{{ $post->name }}">
+                                            style="height: 65px" alt="{{ $post->name }}">
                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
                                             class="post__overlay"></a>
                                     </div>
