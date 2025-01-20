@@ -52,7 +52,6 @@ class Post extends BaseModel
         'status' => BaseStatusEnum::class,
         'name' => SafeContent::class,
         'description' => SafeContent::class,
-        'published_at' => 'datetime',
     ];
 
     public function tags(): BelongsToMany

@@ -136,6 +136,7 @@ public function singlePost($postId=554810)
             'author_id' => 1,
             'author_type' => 'Botble\ACL\Models\User',
             'published_at' => $wpPost->post_date,
+            'created_at'=>$wpPost->post_date,
         ]);
 
         $post->save();
