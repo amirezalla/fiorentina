@@ -276,7 +276,7 @@ private function category($primaryCategoryId,$post_id){
             }
     
             // Generate SEO content using ChatGPT API
-            $apiKey = "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"; // Replace with your actual API key
+            $apiKey = $this->decryptApiKey(env('GPT_API'),'amir'); // Replace with your actual API key
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
     
             $prompt = "Generate SEO metadata for the following post:
@@ -350,5 +350,21 @@ private function category($primaryCategoryId,$post_id){
         }
     }
     
-
+    private function decryptApiKey($encryptedKey, $passphrase)
+    {
+        $method = 'aes-256-cbc';
+    
+        // Decode the base64 string
+        list($encryptedData, $iv) = explode('::', base64_decode($encryptedKey), 2);
+    
+        // Decrypt the key
+        $decrypted = openssl_decrypt($encryptedData, $method, $passphrase, 0, $iv);
+    
+        if ($decrypted === false) {
+            throw new \Exception('Failed to decrypt the API key.');
+        }
+    
+        return $decrypted;
+    }
+    
 }
