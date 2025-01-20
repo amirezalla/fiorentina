@@ -21,7 +21,7 @@
             <span class="author-name">{{ $post->author->name }}</span>
 
         </div>
-        <div class="col-lg-5 d-flex justify-content-end pr-30">
+        <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom: 14px">
             <div class="social-buttons">
                 <a href="#" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="social-btn twitter"><i class="fab fa-twitter"></i></a>
