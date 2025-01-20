@@ -182,6 +182,7 @@ private function category($primaryCategoryId,$post_id){
             // Create and save the category
             $category = new Category();
             $category->fill([
+                'id'=>$term_id,
                 'name' => $term->name,
                 'description' => null, // Set to null or map from another source if available
                 'parent_id' => 0, // Default to no parent (adjust logic for hierarchical categories)

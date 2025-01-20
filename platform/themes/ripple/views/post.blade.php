@@ -21,7 +21,6 @@
                     ->table('categories')
                     ->where('id', $category->category_id)
                     ->first();
-                dd($cat);
             }
         @endphp
         @if ($post->first_category?->name)

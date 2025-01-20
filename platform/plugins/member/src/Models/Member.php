@@ -41,6 +41,7 @@ class Member extends BaseModel implements
     protected $table = 'members';
 
     protected $fillable = [
+        'id',
         'first_name',
         'last_name',
         'email',
