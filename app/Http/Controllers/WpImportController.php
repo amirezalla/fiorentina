@@ -274,10 +274,11 @@ private function category($primaryCategoryId,$post_id){
             if (!$post) {
                 return response()->json(['message' => 'Post not found.'], 404);
             }
-            dd('aw');
 
             // Generate SEO content using ChatGPT API
             $apiKey = $this->decryptApiKey(env('GPT_API'),'amir'); // Replace with your actual API key
+            dd('aw');
+
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
     
             $prompt = "Generate SEO metadata for the following post:
