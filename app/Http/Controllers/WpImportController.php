@@ -265,7 +265,6 @@ private function category($primaryCategoryId,$post_id){
         }
     }
 
-<<<<<<< HEAD
     public function generateSEO($postId=37)
     {
         try {
@@ -351,8 +350,5 @@ private function category($primaryCategoryId,$post_id){
         }
     }
     
-=======
-
->>>>>>> parent of 0f2184e0 (1314)
 
 }
