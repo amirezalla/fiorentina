@@ -295,9 +295,8 @@ private function category($primaryCategoryId,$post_id){
                 ],
                 'max_tokens' => 100,
             ]);
-    
-            $data = $response->json();
             dd($data);
+            $data = $response->json();
             if (!isset($data['choices'][0]['message']['content'])) {
                 return response()->json(['message' => 'Failed to generate SEO content.'], 500);
             }
