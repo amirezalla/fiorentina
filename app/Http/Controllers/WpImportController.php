@@ -142,7 +142,7 @@ public function singlePost($postId=554810)
             ]);
 
             $post->save();
-            if ($categoryId) {
+            if ($primaryCategoryId) {
                 DB::table('post_categories')->insert([
                     'post_id' => $post->id,
                     'category_id' => $primaryCategoryId,
