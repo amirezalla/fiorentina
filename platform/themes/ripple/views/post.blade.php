@@ -11,18 +11,6 @@
 
 <article class="post post--single">
     <header class="post__header" style="padding-top: 20px">
-        @php
-            $category = \Illuminate\Support\Facades\DB::connection('mysql')
-                ->table('post_categories')
-                ->where('post_id', $post->id)
-                ->first();
-            if ($category) {
-                $cat = \Illuminate\Support\Facades\DB::connection('mysql')
-                    ->table('categories')
-                    ->where('id', $category->category_id)
-                    ->first();
-            }
-        @endphp
         @if ($post->first_category?->name)
             <span class="post-category"
                 style="display: block;
@@ -31,13 +19,7 @@
                 <a class="category-label" href="{{ $post->first_category->url }}">{{ $post->first_category->name }}</a>
             </span>
         @endif
-        @if ($cat)
-            <span class="post-category" style="display: block;
-width: fit-content;
-margin-bottom: 10px;">
-                <a class="category-label" href="">{{ $cat->name }}</a>
-            </span>
-        @endif
+
         <h1 class="post__title post__title_in">{{ $post->name }}</h1>
         <div class="post__meta">
             {!! Theme::partial('blog.post-meta', compact('post')) !!}
