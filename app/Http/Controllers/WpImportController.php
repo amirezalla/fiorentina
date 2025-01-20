@@ -283,7 +283,7 @@ private function category($primaryCategoryId,$post_id){
             Title: {$post->name}
             Content: {$post->content}
             Provide keywords and a meta description.";
-    
+                dd('aw');
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
@@ -295,7 +295,6 @@ private function category($primaryCategoryId,$post_id){
                 ],
                 'max_tokens' => 100,
             ]);
-            dd($data);
             $data = $response->json();
             if (!isset($data['choices'][0]['message']['content'])) {
                 return response()->json(['message' => 'Failed to generate SEO content.'], 500);
