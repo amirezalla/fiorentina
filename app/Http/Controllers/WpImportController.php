@@ -265,7 +265,7 @@ private function category($primaryCategoryId,$post_id){
         }
     }
 
-    public function generateSEO($postId=554825)
+    public function generateSEO($postId=37)
     {
         try {
             // Retrieve the post
