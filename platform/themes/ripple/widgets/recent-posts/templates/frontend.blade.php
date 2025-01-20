@@ -58,7 +58,7 @@
                         @foreach ($recentPosts as $post)
                             <li>
                                 <article class="post post__widget clearfix">
-                                    <div>
+                                    <div class="post__thumbnail">
                                         <?php
                                         $imageUrl = RvMedia::image($post->image, $post->name, 'thumb', attributes: ['loading' => 'lazy']);
                                         $fallbackUrl = "https://laviola.collaudo.biz/storage/{$post->image}";
@@ -68,7 +68,9 @@
                                         $isValid = $headers && strpos($headers[0], '200 OK') !== false;
                                         ?>
                                         <img src="{{ $isValid ? $imageUrl : $fallbackUrl }}" loading="lazy"
-                                            style="width:775px;height:475px;" alt="{{ $post->name }}">
+                                            alt="{{ $post->name }}">
+                                        <a href="{{ $post->url }}" title="{{ $post->name }}"
+                                            class="post__overlay"></a>
                                     </div>
                                     <header class="post__header">
                                         <h4 class="post__title text-truncate-2"><a href="{{ $post->url }}"
