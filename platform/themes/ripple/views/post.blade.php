@@ -23,7 +23,7 @@
                     ->first();
             }
         @endphp
-        @if ($post->first_category?->name)
+        {{-- @if ($post->first_category?->name)
             <span class="post-category"
                 style="display: block;
             width: fit-content;
@@ -37,7 +37,7 @@ width: fit-content;
 margin-bottom: 10px;">
                 <a class="category-label" href="{{ $cat->url }}">{{ $cat->name }}</a>
             </span>
-        @endif
+        @endif --}}
         <h1 class="post__title post__title_in">{{ $post->name }}</h1>
         <div class="post__meta">
             {!! Theme::partial('blog.post-meta', compact('post')) !!}
