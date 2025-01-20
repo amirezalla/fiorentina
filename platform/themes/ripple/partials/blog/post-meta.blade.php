@@ -1,6 +1,6 @@
 @php
     use Carbon\Carbon;
-    $date = Carbon::parse($post->created_at);
+    $date = Carbon::parse($post->published_at);
     $formattedDate = $date->format('j F Y - H:i');
 
 @endphp
