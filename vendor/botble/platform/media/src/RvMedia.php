@@ -248,9 +248,9 @@ class RvMedia
     
             return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
-    
+        return $path;
         // Return a properly generated temporary URL, ensuring no leading slash
-        return Storage::temporaryUrl($path, now()->addMinutes(15));
+        // return Storage::temporaryUrl($path, now()->addMinutes(15));
     }
 
     public function getDefaultImage(bool $relative = false, ?string $size = null): string
