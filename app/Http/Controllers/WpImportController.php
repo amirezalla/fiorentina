@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManager;
+use Botble\Media\RvMedia;
+
 
 use Illuminate\Support\Facades\DB;
 use Botble\Member\Models\Member;
@@ -28,6 +30,9 @@ use Botble\Slug\Models\Slug;
 class WpImportController extends BaseController
 {
 
+    public function __construct(protected RvMedia $rvMedia)
+    {
+    }
     public function users()
 {
     try {
@@ -118,10 +123,11 @@ public function singlePost($postId=554877)
                     $imageContents = Http::get($featuredImageUrl)->body();
                     $imageExtension = pathinfo($featuredImageUrl, PATHINFO_EXTENSION);
                     $imageName = 'featured_' . $featuredImageId . '.' . $imageExtension;
-
+                    $folderId = 0;              // or an existing ID if you have one
+                    $folderSlug = 'posts';
                     // Save the image in the storage/app/public/posts directory
-                    $storedImagePath = 'posts/' . $imageName;
-                    Storage::disk('wasabi')->put($storedImagePath, $imageContents);
+                    $storedImagePath = $imageName;
+                    $result = $this->rvMedia->uploadFromUrl($featuredImageUrl, $folderId, $folderSlug);
                 }
             }
 
