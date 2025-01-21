@@ -85,7 +85,7 @@ class WpImportController extends BaseController
     }
 }
 
-public function singlePost($postId=554877)
+public function singlePost($postId=554879)
 {
     try {
             // Fetch the post from the WordPress `frntn_posts` table
