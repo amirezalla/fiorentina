@@ -246,8 +246,9 @@ class RvMedia
 
             return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
+        return Storage::temporaryUrl($path, now()->addMinutes(15)); // Adjust expiration time as needed
 
-        return Storage::url($path);
+        // return Storage::url($path);
     }
 
     public function getDefaultImage(bool $relative = false, ?string $size = null): string
