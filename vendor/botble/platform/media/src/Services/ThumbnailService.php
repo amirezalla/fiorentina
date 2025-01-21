@@ -45,7 +45,9 @@ class ThumbnailService
 
     public function getImage(): string
     {
-        return $this->imagePath;
+
+        return Storage::temporaryUrl($this->imagePath, now()->addMinutes(15)); // Adjust expiration time as needed
+
     }
 
     public function setSize(int|string $width, int|string $height = 'auto'): self
