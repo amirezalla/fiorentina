@@ -55,7 +55,18 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
-
+        'wasabi' => [
+            'driver' => 's3',
+            'key' => env('SSCN8V6RQDECYNDM2TT8'),
+            'secret' => env('BNR9iTAc94XrHXfmlaBiOFGEV0kwC3GYwnt3MeJs'),
+            'region' => env('eu-south-1'),
+            'bucket' => env('laviola'),
+            'url' => env('https://s3.eu-south-1.wasabisys.com'),
+            'endpoint' => env('https://s3.eu-south-1.wasabisys.com'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'throw' => false,
+        ],
+     
     ],
 
     /*

@@ -80,7 +80,7 @@ class WpImportController extends BaseController
     }
 }
 
-public function singlePost($postId=554825)
+public function singlePost($postId=554877)
 {
     try {
             // Fetch the post from the WordPress `frntn_posts` table
@@ -121,7 +121,7 @@ public function singlePost($postId=554825)
 
                     // Save the image in the storage/app/public/posts directory
                     $storedImagePath = 'posts/' . $imageName;
-                    Storage::disk('public')->put($storedImagePath, $imageContents);
+                    Storage::disk('wasabi')->put($storedImagePath, $imageContents);
                 }
             }
 
