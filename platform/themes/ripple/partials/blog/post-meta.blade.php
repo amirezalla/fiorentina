@@ -46,7 +46,7 @@
         <div>
             <?php
             $imageUrl = RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:775px;height:475px;']);
-            $fallbackUrl = "https://laviola.collaudo.biz/storage/{$post->image}";
+            $fallbackUrl = "https://s3.eu-south-1.wasabisys.com/laviola/{$post->image}";
             
             // Check if the image exists via HTTP request
             $headers = @get_headers($imageUrl);

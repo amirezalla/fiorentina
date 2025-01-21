@@ -2,7 +2,17 @@
     @foreach ($posts as $post)
         <article class="post post__horizontal mb-40 clearfix">
             <div class="post__thumbnail">
-                {{ RvMedia::image($post->image, $post->name, 'medium') }}
+                @php
+                <?php
+                $imageUrl = RvMedia::image($post->image, $post->name, 'medium');
+                $fallbackUrl = "https://s3.eu-south-1.wasabisys.com/laviola/{$post->image}";
+                
+                // Check if the image exists via HTTP request
+                $headers = @get_headers($imageUrl);
+                $isValid = $headers && strpos($headers[0], '200 OK') !== false;
+                ?>                    
+                @endphp
+                <img src="{{ $isValid ? $imageUrl : $fallbackUrl }}" loading="lazy" alt="{{ $post->name }}">
                 <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
             </div>
             <div class="post__content-wrap">
