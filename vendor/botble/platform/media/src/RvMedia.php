@@ -221,13 +221,6 @@ class RvMedia
         if ($relativePath) {
             return $url;
         }
-        
-        // Check if the storage driver is private and generate a pre-signed URL
-        if ($this->isUsingCloud() && config('filesystems.disks.' . config('filesystems.default') . '.visibility') === 'private') {
-            return Storage::temporaryUrl($url, now()->addMinutes(60)); // Adjust expiration time as needed
-        }
-        
-        return $this->url($url);
 
         if ($url == '__image__') {
             return $this->url($default);
@@ -239,21 +232,23 @@ class RvMedia
     public function url(?string $path): string
     {
         $path = trim($path);
-    
+
         if (Str::contains($path, ['http://', 'https://'])) {
             return $path;
         }
-    
-        $defaultDisk = config('filesystems.default');
-        
-        // Check for private storage and generate a pre-signed URL
-        if ($this->isUsingCloud() && config("filesystems.disks.$defaultDisk.visibility") === 'private') {
-            return Storage::temporaryUrl($path, now()->addMinutes(60)); // Adjust expiration time as needed
+
+        if (config('filesystems.default') === 'do_spaces' && (int) setting('media_do_spaces_cdn_enabled')) {
+            $customDomain = setting('media_do_spaces_cdn_custom_domain');
+
+            if ($customDomain) {
+                return $customDomain . '/' . ltrim($path, '/');
+            }
+
+            return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
-    
+
         return Storage::url($path);
     }
-    
 
     public function getDefaultImage(bool $relative = false, ?string $size = null): string
     {
@@ -816,15 +811,9 @@ class RvMedia
 
     public function getUploadURL(): string
     {
-        $uploadURL = str_replace('/index.php', '', $this->getConfig('default_upload_url'));
-    
-        // If the storage is private, return a temporary upload URL
-        if ($this->isUsingCloud() && config('filesystems.disks.' . config('filesystems.default') . '.visibility') === 'private') {
-            $uploadURL = Storage::temporaryUrl('uploads/', now()->addMinutes(15)); // Adjust expiration time and path
-        }
-    
-        return $uploadURL;
+        return str_replace('/index.php', '', $this->getConfig('default_upload_url'));
     }
+
     public function setUploadPathAndURLToPublic(): static
     {
         add_action('init', function () {
