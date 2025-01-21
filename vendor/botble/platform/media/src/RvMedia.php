@@ -248,7 +248,8 @@ class RvMedia
         }
  
             // Return a properly generated temporary URL
-            return Storage::url($path, now()->addMinutes(15)); // Adjust expiration time
+            $extractedPath= Storage::url($path, now()->addMinutes(15)); // Adjust expiration time
+            return $extractedPath = preg_replace('#^(https://s3\.eu-south-1\.wasabisys\.com/)#', '', $extractedPath);
 
         // return Storage::url($path);
     }
