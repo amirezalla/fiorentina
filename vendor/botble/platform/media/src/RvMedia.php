@@ -247,22 +247,8 @@ class RvMedia
             return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
  
-            // Clean any double slashes after "wasabisys.com"
-            $cleanPath = preg_replace('#(wasabisys\.com)//+#', '$1/', Storage::url($path));
-
-            // Parse the URL and extract the portion after "https://s3.eu-south-1.wasabisys.com/"
-            $baseUrl = 'https://s3.eu-south-1.wasabisys.com/';
-            if (Str::startsWith($cleanPath, $baseUrl)) {
-                $extractedPath = substr($cleanPath, strlen($baseUrl));
-            } else {
-                $extractedPath = $cleanPath; // If the base URL is missing, keep the original path
-            }
-
-            // Decode the path if it contains encoded characters like "%3A" (e.g., https://...)
-            $extractedPath = urldecode($extractedPath);
-
             // Return a properly generated temporary URL
-            return Storage::temporaryUrl($extractedPath, now()->addMinutes(15)); // Adjust expiration time
+            return Storage::url($path, now()->addMinutes(15)); // Adjust expiration time
 
         // return Storage::url($path);
     }
