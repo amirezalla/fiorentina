@@ -44,19 +44,9 @@
 
     <div class="col-lg-12 d-flex justify-content-center img-in-post">
         <div>
-            <?php
-            $imageUrl = RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:775px;height:475px;']);
-            $fallbackUrl = Storage::disk('wasabi')->temporaryUrl(
-                $post->image, // Path to the file
-                now()->addMinutes(10), // URL expiration time
-            );
-            
-            // Check if the image exists via HTTP request
-            $headers = @get_headers($imageUrl);
-            $isValid = $headers && strpos($headers[0], '200 OK') !== false;
-            ?>
-            <img src="{{ $isValid ? $imageUrl : $fallbackUrl }}" loading="lazy" style="width:775px;height:475px;"
-                alt="{{ $post->name }}">
+
+
+            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:775px;height:475px;']) }}
         </div>
     </div>
     @include('ads.includes.dblog-title')
