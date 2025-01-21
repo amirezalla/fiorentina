@@ -246,11 +246,9 @@ class RvMedia
 
             return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
+        
+        $path = preg_replace('#(wasabisys\.com)//+#', '$1/', $path);
 
-        if (strpos($path, 'wasabisys.com//') !== false) {
-            // Replace the double slashes "//" with a single slash "/"
-            $path = str_replace('wasabisys.com//', 'wasabisys.com', $path);
-        }        
         return Storage::temporaryUrl($path, now()->addMinutes(15)); // Adjust expiration time as needed
 
         // return Storage::url($path);
