@@ -46,7 +46,10 @@
         <div>
             <?php
             $imageUrl = RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:775px;height:475px;']);
-            $fallbackUrl = "https://s3.eu-south-1.wasabisys.com/laviola/{$post->image}";
+            $fallbackUrlurl = Storage::disk('wasabi')->temporaryUrl(
+                $post->image, // Path to the file
+                now()->addMinutes(10), // URL expiration time
+            );
             
             // Check if the image exists via HTTP request
             $headers = @get_headers($imageUrl);
