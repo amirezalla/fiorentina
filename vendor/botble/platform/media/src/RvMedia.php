@@ -246,12 +246,13 @@ class RvMedia
 
             return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
-        if (Str::contains(Storage::url($path), ['wasabisys'])) {
+ 
+        $cleanPath = preg_replace('#(wasabisys\.com)//+#', '$1/', Storage::url($path));
 
-            dd($path);
-        }
-
-        return Storage::temporaryUrl($path, now()->addMinutes(15)); // Adjust expiration time as needed
+        // Extract the portion after "https://s3.eu-south-1.wasabisys.com/"
+        $extractedPath = preg_replace('#https://s3\.eu-south-1\.wasabisys\.com/#', '', $cleanPath);
+        
+        return Storage::temporaryUrl($extractedPath, now()->addMinutes(15)); // Adjust expiration time as needed
 
         // return Storage::url($path);
     }
