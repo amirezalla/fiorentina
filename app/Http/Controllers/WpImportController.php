@@ -128,6 +128,7 @@ public function singlePost($postId=554879)
                     // Save the image in the storage/app/public/posts directory
                     $storedImagePath = $imageName;
                     $result = $this->rvMedia->uploadFromUrl($featuredImageUrl, $folderId, $folderSlug);
+                    dd($result);
                     
                 }
             }
