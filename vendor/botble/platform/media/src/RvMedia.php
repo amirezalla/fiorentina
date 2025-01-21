@@ -246,7 +246,7 @@ class RvMedia
 
             return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
-        if (Str::contains($path, ['wasabisys'])) {
+        if (Str::contains($path, ['wasabi'])) {
 
             dd($path);
         }
