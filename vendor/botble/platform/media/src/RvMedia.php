@@ -228,29 +228,29 @@ class RvMedia
 
         return $this->url($url);
     }
-
     public function url(?string $path): string
     {
-        $path = trim($path);
-
+        // Remove leading and trailing slashes
+        // (or just leading, depending on your needs)
+        $path = trim($path, '/');
+    
         if (Str::contains($path, ['http://', 'https://'])) {
             return $path;
         }
-
+    
         if (config('filesystems.default') === 'do_spaces' && (int) setting('media_do_spaces_cdn_enabled')) {
             $customDomain = setting('media_do_spaces_cdn_custom_domain');
-
+    
             if ($customDomain) {
+                // Ensure no leading slash is left in $path
                 return $customDomain . '/' . ltrim($path, '/');
             }
-
+    
             return str_replace('.digitaloceanspaces.com', '.cdn.digitaloceanspaces.com', Storage::url($path));
         }
- 
-            // Return a properly generated temporary URL
-            return  Storage::temporaryUrl($path,now()->addMinutes(15)); // Adjust expiration time
-
-        // return Storage::url($path);
+    
+        // Return a properly generated temporary URL, ensuring no leading slash
+        return Storage::temporaryUrl($path, now()->addMinutes(15));
     }
 
     public function getDefaultImage(bool $relative = false, ?string $size = null): string
