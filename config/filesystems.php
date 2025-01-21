@@ -63,6 +63,7 @@ return [
             'bucket' => 'laviola',
             'url' => 'https://s3.eu-south-1.wasabisys.com',
             'endpoint' => 'https://s3.eu-south-1.wasabisys.com',
+            'visibility' => 'private', // Ensure private access 
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
             'throw' => false,
         ],
