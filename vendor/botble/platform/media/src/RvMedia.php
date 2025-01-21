@@ -248,7 +248,7 @@ class RvMedia
         }
  
             // Return a properly generated temporary URL
-            return  Storage::temporaryUrl($path); // Adjust expiration time
+            return  Storage::temporaryUrl($path,now()->addMinutes(15)); // Adjust expiration time
 
         // return Storage::url($path);
     }
