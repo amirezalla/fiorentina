@@ -138,7 +138,7 @@ public function singlePost($postId=554879)
                 'name' => $wpPost->post_title,
                 'description' => $wpPost->post_excerpt,
                 'content' => $wpPost->post_content,
-                'image' => $result['url'], // Save the local storage path of the image
+                'image' => $result[1]->url, // Save the local storage path of the image
                 'is_featured' => 0,
                 'format_type' => $postMeta['mvp_post_template'] ?? null,
                 'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
