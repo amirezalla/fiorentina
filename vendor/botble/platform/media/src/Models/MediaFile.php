@@ -87,41 +87,50 @@ class MediaFile extends BaseModel
     }
 
     protected function previewUrl(): Attribute
-    {
-        return Attribute::get(function (): ?string {
-            $preview = null;
+{
+    return Attribute::get(function (): ?string {
+        $preview = null;
 
-            switch ($this->type) {
-                case 'image':
-                case 'pdf':
-                case 'text':
-                case 'video':
+        switch ($this->type) {
+            case 'image':
+            case 'pdf':
+            case 'text':
+            case 'video':
+                if (config('filesystems.disks.' . config('filesystems.default') . '.visibility') === 'private') {
+                    // Generate a temporary URL for private files
+                    $preview = Storage::temporaryUrl($this->url, now()->addMinutes(15));
+                } else {
+                    // Use public URL for public files
                     $preview = RvMedia::url($this->url);
+                }
+                break;
 
-                    break;
-                case 'document':
-                    if ($this->mime_type === 'application/pdf') {
+            case 'document':
+                if ($this->mime_type === 'application/pdf') {
+                    if (config('filesystems.disks.' . config('filesystems.default') . '.visibility') === 'private') {
+                        $preview = Storage::temporaryUrl($this->url, now()->addMinutes(15));
+                    } else {
                         $preview = RvMedia::url($this->url);
-
-                        break;
                     }
-
-                    $config = config('core.media.media.preview.document', []);
-                    if (
-                        Arr::get($config, 'enabled') &&
-                        Request::ip() !== '127.0.0.1' &&
-                        in_array($this->mime_type, Arr::get($config, 'mime_types', [])) &&
-                        $url = Arr::get($config, 'providers.' . Arr::get($config, 'default'))
-                    ) {
-                        $preview = Str::replace('{url}', urlencode(RvMedia::url($this->url)), $url);
-                    }
-
                     break;
-            }
+                }
 
-            return $preview;
-        });
-    }
+                $config = config('core.media.media.preview.document', []);
+                if (
+                    Arr::get($config, 'enabled') &&
+                    Request::ip() !== '127.0.0.1' &&
+                    in_array($this->mime_type, Arr::get($config, 'mime_types', [])) &&
+                    $url = Arr::get($config, 'providers.' . Arr::get($config, 'default'))
+                ) {
+                    $preview = Str::replace('{url}', urlencode(RvMedia::url($this->url)), $url);
+                }
+                break;
+        }
+
+        return $preview;
+    });
+}
+
 
     protected function previewType(): Attribute
     {
