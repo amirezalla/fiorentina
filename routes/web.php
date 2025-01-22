@@ -34,7 +34,21 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Schema::dropIfExists('likes');
     \Illuminate\Support\Facades\Schema::dropIfExists('dislikes');
     \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-    Schema::create('menus', function (Blueprint $table) {
+    Schema::create('likes', function (Blueprint $table) {
+        $table->foreignId('comment_id')
+            ->references('id')
+            ->on('comments')
+            ->cascadeOnUpdate()
+            ->cascadeOnDelete();
+        $table->foreignId('member_id')
+            ->references('id')
+            ->on('members')
+            ->cascadeOnUpdate()
+            ->cascadeOnDelete();
+        $table->primary(['comment_id','member_id']);
+        $table->timestamps();
+    });
+    Schema::create('dislikes', function (Blueprint $table) {
         $table->foreignId('comment_id')
             ->references('id')
             ->on('comments')
