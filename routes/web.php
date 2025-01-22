@@ -34,10 +34,10 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Schema::dropIfExists('likes');
     \Illuminate\Support\Facades\Schema::dropIfExists('dislikes');
     \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-    Schema::create('likes', function (Blueprint $table) {
+    \Illuminate\Support\Facades\Schema::create('likes', function (Blueprint $table) {
         $table->foreignId('comment_id')
             ->references('id')
-            ->on('comments')
+            ->on('fob_comments')
             ->cascadeOnUpdate()
             ->cascadeOnDelete();
         $table->foreignId('member_id')
@@ -48,10 +48,10 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
         $table->primary(['comment_id','member_id']);
         $table->timestamps();
     });
-    Schema::create('dislikes', function (Blueprint $table) {
+    \Illuminate\Support\Facades\Schema::create('dislikes', function (Blueprint $table) {
         $table->foreignId('comment_id')
             ->references('id')
-            ->on('comments')
+            ->on('fob_comments')
             ->cascadeOnUpdate()
             ->cascadeOnDelete();
         $table->foreignId('member_id')
