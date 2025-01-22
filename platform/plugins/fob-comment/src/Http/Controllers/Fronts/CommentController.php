@@ -45,6 +45,7 @@ class CommentController extends BaseController
             })
             ->where('reply_to', null)
             ->with(['replies']);
+        $query->orderByDesc('created_at');
         /*if ($request->filled('sort') && $request->get('sort') == "must-reaction") {
             $query->orderByDesc('likes_count');
         } else if ($request->filled('sort') && $request->get('sort') == "must-replies") {
