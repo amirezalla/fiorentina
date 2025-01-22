@@ -110,6 +110,7 @@ class CommentController extends BaseController
         $comment = Comment::query()
             ->where('status', CommentStatus::APPROVED)
             ->findOrFail($comment);
+        dd($request->user(),$request->user('web'),auth()->user(),auth('web')->user());
         if (is_null($request->user())) {
             return response()->json([
                 'message' => "Unauthenticated.",
