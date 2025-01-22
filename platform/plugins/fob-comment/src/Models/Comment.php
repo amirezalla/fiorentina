@@ -5,6 +5,7 @@ namespace FriendsOfBotble\Comment\Models;
 use Botble\ACL\Contracts\HasPermissions;
 use Botble\ACL\Models\User;
 use Botble\Base\Models\BaseModel;
+use Botble\Member\Models\Member;
 use FriendsOfBotble\Comment\Enums\CommentStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -45,7 +46,7 @@ class Comment extends BaseModel
      */
     public function likes(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'likes')->withTimestamps();
+        return $this->belongsToMany(Member::class,'likes')->withTimestamps();
     }
 
     /**
@@ -53,7 +54,7 @@ class Comment extends BaseModel
      */
     public function dislikes(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'dislikes')->withTimestamps();
+        return $this->belongsToMany(Member::class,'dislikes')->withTimestamps();
     }
 
     public function author(): MorphTo
