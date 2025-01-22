@@ -45,7 +45,7 @@ class CommentController extends BaseController
             })
             ->where('reply_to', null)
             ->with(['replies']);
-        if ($request->filled('sort') && $request->get('sort') == "must-reaction") {
+        /*if ($request->filled('sort') && $request->get('sort') == "must-reaction") {
             $query->orderByDesc('likes_count');
         } else if ($request->filled('sort') && $request->get('sort') == "must-replies") {
             $query->orderByDesc('replies_count');
@@ -56,7 +56,7 @@ class CommentController extends BaseController
             $query->orderBy('created_at');
         } else {
             $query->orderBy('created_at', CommentHelper::getCommentOrder());
-        }
+        }*/
         $comments = apply_filters('fob_comment_list_query', $query, $request)->paginate(10);
         $count = CommentHelper::getCommentsCount($reference);
 
