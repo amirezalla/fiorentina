@@ -137,15 +137,16 @@ class CommentController extends BaseController
         $comment = Comment::query()
             ->where('status', CommentStatus::APPROVED)
             ->findOrFail($comment);
-        if (is_null($request->user())) {
+        $member = $request->user('member');
+        if (is_null($member)) {
             return response()->json([
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        if ($comment->dislikes->contains($request->user()->id)) {
-            $comment->dislikes()->detach($request->user()->id);
+        if ($comment->dislikes->contains($member->id)) {
+            $comment->dislikes()->detach($member->id);
         } else {
-            $comment->dislikes()->attach($request->user()->id);
+            $comment->dislikes()->attach($member->id);
         }
         return response()->json([
             'message' => "Success",
