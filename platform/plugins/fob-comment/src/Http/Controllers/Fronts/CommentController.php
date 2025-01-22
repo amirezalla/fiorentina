@@ -50,7 +50,8 @@ class CommentController extends BaseController
         } elseif ($request->filled('sort2') && $request->get('sort2') == "oldest") {
             $query->orderBy('created_at');
         } else {
-            $query->orderBy('created_at', CommentHelper::getCommentOrder());
+            $query->orderByDesc('created_at');
+//            $query->orderBy('created_at', CommentHelper::getCommentOrder());
         }
         /*if ($request->filled('sort') && $request->get('sort') == "must-reaction") {
             $query->orderByDesc('likes_count');
