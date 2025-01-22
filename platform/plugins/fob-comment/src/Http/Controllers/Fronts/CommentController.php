@@ -45,15 +45,7 @@ class CommentController extends BaseController
             })
             ->where('reply_to', null)
             ->with(['replies']);
-        if ($request->filled('sort2') && $request->get('sort2') == "latest") {
-            $query->orderByDesc('created_at');
-        } elseif ($request->filled('sort2') && $request->get('sort2') == "oldest") {
-            $query->orderBy('created_at');
-        } else {
-            $query->orderByDesc('created_at');
-//            $query->orderBy('created_at', CommentHelper::getCommentOrder());
-        }
-        /*if ($request->filled('sort') && $request->get('sort') == "must-reaction") {
+        if ($request->filled('sort') && $request->get('sort') == "must-reaction") {
             $query->orderByDesc('likes_count');
         } else if ($request->filled('sort') && $request->get('sort') == "must-replies") {
             $query->orderByDesc('replies_count');
@@ -63,8 +55,9 @@ class CommentController extends BaseController
         } elseif ($request->filled('sort2') && $request->get('sort2') == "oldest") {
             $query->orderBy('created_at');
         } else {
-            $query->orderBy('created_at', CommentHelper::getCommentOrder());
-        }*/
+            $query->orderByDesc('created_at');
+//            $query->orderBy('created_at', CommentHelper::getCommentOrder());
+        }
         $comments = apply_filters('fob_comment_list_query', $query, $request)->paginate(10);
         $count = CommentHelper::getCommentsCount($reference);
 
