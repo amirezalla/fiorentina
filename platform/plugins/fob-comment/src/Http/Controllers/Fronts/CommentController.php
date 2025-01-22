@@ -116,12 +116,11 @@ class CommentController extends BaseController
                 'message' => "Unauthenticated.",
             ], Response::HTTP_UNAUTHORIZED);
         }
-        $comment->likes()->sync($member->id);
-        /*if ($comment->likes->contains($request->user()->id)) {
-            $comment->likes()->detach($request->user()->id);
+        if ($comment->likes->contains($member->id)) {
+            $comment->likes()->detach($member->id);
         } else {
-            $comment->likes()->attach($request->user()->id);
-        }*/
+            $comment->likes()->attach($member->id);
+        }
         return response()->json([
             'message' => "Success",
             'count' => number_format($comment->likes()->count()),
