@@ -28,6 +28,7 @@ class Post extends BaseModel
     ];
 
     protected $fillable = [
+        'id',
         'name',
         'description',
         'content',

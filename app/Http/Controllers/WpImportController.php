@@ -144,6 +144,7 @@ private function processPosts($wpPosts)
 
         // Prepare post data
         $postsToInsert[] = [
+            'id'=>$wpPost->ID,
             'name' => $wpPost->post_title,
             'description' => $wpPost->post_excerpt,
             'content' => $wpPost->post_content,
