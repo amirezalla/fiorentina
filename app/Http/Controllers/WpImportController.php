@@ -147,11 +147,11 @@ public function importMetaForPosts()
                     ->where('ID', $featuredImageId)
                     ->value('guid')
                 : null;
-            dd($featuredImageUrl);
 
             $storedImagePath = null;
             if ($featuredImageUrl) {
                 $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
+                dd($storedImagePath);
             }
 
             $post->update([
