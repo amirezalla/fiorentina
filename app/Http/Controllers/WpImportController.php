@@ -137,7 +137,7 @@ public function importMetaForPosts()
                 ->where('post_id', $post->id)
                 ->get()
                 ->pluck('meta_value', 'meta_key');
-            dd($meta);
+
 
             // Process featured image
             $featuredImageId = $meta['_thumbnail_id'] ?? null;
@@ -147,6 +147,7 @@ public function importMetaForPosts()
                     ->where('ID', $featuredImageId)
                     ->value('guid')
                 : null;
+            dd($featuredImageUrl);
 
             $storedImagePath = null;
             if ($featuredImageUrl) {
