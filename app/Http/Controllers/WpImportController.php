@@ -130,7 +130,7 @@ public function importPostsWithoutMeta()
 public function importMetaForPosts()
 {
     try {
-        $posts = Post::whereNull('image'); // Fetch all posts from the Laravel database
+        $posts = Post::whereNull('image')->get(); // Fetch all posts from the Laravel database
 
         foreach ($posts as $post) {
             $meta = DB::connection('mysql2')
