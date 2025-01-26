@@ -131,13 +131,13 @@ public function importMetaForPosts()
 {
     try {
         $posts = Post::whereNull('image')->get(); // Fetch all posts from the Laravel database
-        dd($posts);
         foreach ($posts as $post) {
             $meta = DB::connection('mysql2')
                 ->table('frntn_postmeta')
                 ->where('post_id', $post->id)
                 ->get()
                 ->pluck('meta_value', 'meta_key');
+            dd($meta);
 
             // Process featured image
             $featuredImageId = $meta['_thumbnail_id'] ?? null;
