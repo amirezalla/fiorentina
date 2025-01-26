@@ -150,6 +150,7 @@ public function importMetaForPosts()
 
             $storedImagePath = null;
             if ($featuredImageUrl) {
+                dd($this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts'));
                 $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
                 dd($storedImagePath);
             }
