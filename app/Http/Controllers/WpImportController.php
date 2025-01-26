@@ -84,97 +84,19 @@ class WpImportController extends BaseController
         ], 500);
     }
 }
-
 public function importPosts()
 {
     try {
-        // Fetch all WordPress posts
-        $wpPosts = DB::connection('mysql2')
+        // Fetch all WordPress posts in chunks
+        DB::connection('mysql2')
             ->table('frntn_posts')
             ->where('post_type', 'post')
-            ->where('post_date_gmt','>','2025-01-01 00:00:00')
-            ->get();
+            ->where('post_date_gmt', '>', '2025-01-01 00:00:00')
+            ->chunk(20, function ($wpPosts) {
+                $this->processPosts($wpPosts);
+            });
 
-        if ($wpPosts->isEmpty()) {
-            return response()->json(['message' => 'No posts found.'], 404);
-        }
-
-        // Fetch all metadata in a single query
-        $postIds = $wpPosts->pluck('ID');
-        $postMeta = DB::connection('mysql2')
-            ->table('frntn_postmeta')
-            ->whereIn('post_id', $postIds)
-            ->get()
-            ->groupBy('post_id');
-
-
-
-        // Prepare data for bulk insert
-        $postsToInsert = [];
-        $slugsToInsert = [];
-        $now = now();
-
-        foreach ($wpPosts as $wpPost) {
-            $meta = $postMeta[$wpPost->ID] ?? collect();
-            $metaValues = $meta->pluck('meta_value', 'meta_key');
-
-            // Determine category ID
-            $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? null;
-            $categoryId = null;
-
-            // Handle featured image
-            $featuredImageId = $metaValues['_thumbnail_id'] ?? null;
-            $featuredImageUrl = $featuredImageId
-                ? DB::connection('mysql2')
-                    ->table('frntn_posts')
-                    ->where('ID', $featuredImageId)
-                    ->value('guid')
-                : null;
-
-            $storedImagePath = null;
-            if ($featuredImageUrl) {
-                // Upload image and get its path
-                $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
-            }
-
-
-
-
-
-            // Prepare post data
-            $postsToInsert[] = [
-                'name' => $wpPost->post_title,
-                'description' => $wpPost->post_excerpt,
-                'content' => $wpPost->post_content,
-                'image' => null, // Add logic to handle images if required
-                'is_featured' => 0,
-                'format_type' => $metaValues['mvp_post_template'] ?? null,
-                'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
-                'author_id' => 1,
-                'author_type' => 'Botble\ACL\Models\User',
-                'published_at' => $wpPost->post_date,
-                'category_id' => $primaryCategoryId ?? null,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-
-            // Prepare slug data
-            $slugsToInsert[] = [
-                'key' => $wpPost->post_name,
-                'reference_id' => $wpPost->ID,
-                'reference_type' => 'Botble\Blog\Models\Post',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-        }
-
-        // Bulk insert posts
-        Post::insert($postsToInsert);
-
-        // Bulk insert slugs
-        Slug::insert($slugsToInsert);
-
-        return response()->json(['message' => 'Posts imported successfully!'], 200);
+        return response()->json(['message' => 'Posts imported successfully in chunks!'], 200);
 
     } catch (\Exception $e) {
         return response()->json([
@@ -183,6 +105,79 @@ public function importPosts()
         ], 500);
     }
 }
+
+private function processPosts($wpPosts)
+{
+    // Fetch metadata for the chunked posts
+    $postIds = $wpPosts->pluck('ID');
+    $postMeta = DB::connection('mysql2')
+        ->table('frntn_postmeta')
+        ->whereIn('post_id', $postIds)
+        ->get()
+        ->groupBy('post_id');
+
+    $postsToInsert = [];
+    $slugsToInsert = [];
+    $now = now();
+
+    foreach ($wpPosts as $wpPost) {
+        $meta = $postMeta[$wpPost->ID] ?? collect();
+        $metaValues = $meta->pluck('meta_value', 'meta_key');
+
+        // Determine category ID
+        $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? null;
+
+        // Handle featured image
+        $featuredImageId = $metaValues['_thumbnail_id'] ?? null;
+        $featuredImageUrl = $featuredImageId
+            ? DB::connection('mysql2')
+                ->table('frntn_posts')
+                ->where('ID', $featuredImageId)
+                ->value('guid')
+            : null;
+
+        $storedImagePath = null;
+        if ($featuredImageUrl) {
+            $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
+        }
+
+        // Prepare post data
+        $postsToInsert[] = [
+            'name' => $wpPost->post_title,
+            'description' => $wpPost->post_excerpt,
+            'content' => $wpPost->post_content,
+            'image' => $storedImagePath,
+            'is_featured' => 0,
+            'format_type' => $metaValues['mvp_post_template'] ?? null,
+            'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
+            'author_id' => 1,
+            'author_type' => 'Botble\ACL\Models\User',
+            'published_at' => $wpPost->post_date,
+            'category_id' => $primaryCategoryId ?? null,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+
+        // Prepare slug data
+        $slugsToInsert[] = [
+            'key' => $wpPost->post_name,
+            'reference_id' => $wpPost->ID,
+            'reference_type' => 'Botble\Blog\Models\Post',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+    }
+
+    // Bulk insert posts and slugs
+    if (!empty($postsToInsert)) {
+        Post::insert($postsToInsert);
+    }
+
+    if (!empty($slugsToInsert)) {
+        Slug::insert($slugsToInsert);
+    }
+}
+
 
 
 public function deleteTodayImportedPosts()
