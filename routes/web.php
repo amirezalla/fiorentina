@@ -155,5 +155,5 @@ Route::get('/import-post-wp', [WpImportController::class, 'importPosts']);
 Route::get('/import-comment-post', [WpImportController::class, 'importComment']);
 Route::get('/generate-seo', [WpImportController::class, 'generateSEO']);
 
-Route::delete('/delete-today-posts', [WpImportController::class, 'deleteTodayImportedPosts']);
+Route::get('/delete-today-posts', [WpImportController::class, 'deleteTodayImportedPosts']);
 
