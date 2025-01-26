@@ -156,8 +156,8 @@ private function processPosts($wpPosts)
             'author_type' => 'Botble\ACL\Models\User',
             'published_at' => $wpPost->post_date,
             'category_id' => $primaryCategoryId,
-            'created_at' => $now,
-            'updated_at' => $now,
+            'created_at' => $wpPost->post_date_gmt,
+            'updated_at' => $wpPost->post_date_gmt,
         ];
 
         // Prepare slug data
@@ -165,8 +165,8 @@ private function processPosts($wpPosts)
             'key' => $wpPost->post_name,
             'reference_id' => $wpPost->ID,
             'reference_type' => 'Botble\Blog\Models\Post',
-            'created_at' => $now,
-            'updated_at' => $now,
+            'created_at' => $wpPost->post_date_gmt,
+            'updated_at' => $wpPost->post_date_gmt,
         ];
     }
 
@@ -190,7 +190,7 @@ public function deleteTodayImportedPosts()
 
         // Fetch post IDs created today
         $postIds = DB::table('posts')
-            ->whereDate('created_at', $today)
+            ->whereDate('created_at','>', '2025-01-01 00:00:00')
             ->pluck('id');
 
         if ($postIds->isEmpty()) {
