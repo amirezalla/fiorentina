@@ -150,17 +150,39 @@ public function importMetaForPosts()
 
             $storedImagePath = null;
             if ($featuredImageUrl) {
-                $tempPath = storage_path('app/temp_image.jpg'); // Temporary storage path
-                file_put_contents($tempPath, file_get_contents($featuredImageUrl)); // Download the image
+                // Generate a temporary file path
+                $tempPath = storage_path('app/temp_images/' . uniqid() . '.jpg');
+                $tempDir = dirname($tempPath);
             
-                // Rename and re-upload
-                $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'posts');
+                // Ensure the temp directory exists
+                if (!file_exists($tempDir)) {
+                    mkdir($tempDir, 0755, true);
+                }
+            
+                // Download the image
+                try {
+                    file_put_contents($tempPath, file_get_contents($featuredImageUrl));
+                } catch (\Exception $e) {
+                    throw new \Exception('Failed to download image: ' . $e->getMessage());
+                }
+            
+                // Sanitize filename for upload
+                $pathInfo = pathinfo($featuredImageUrl);
+                $sanitizedFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $pathInfo['filename']);
+                $newFilePath = "{$tempDir}/{$sanitizedFileName}.{$pathInfo['extension']}";
+            
+                // Rename the file locally
+                rename($tempPath, $newFilePath);
+            
+                // Upload the sanitized file
+                $uploadResult = $this->rvMedia->uploadFromPath($newFilePath, 0, 'posts');
+                unlink($newFilePath); // Clean up the temporary file after uploading
+            
                 if (!empty($uploadResult['error'])) {
                     throw new \Exception($uploadResult['message']);
                 }
             
                 $storedImagePath = $uploadResult['data']->url ?? null;
-                unlink($tempPath); // Clean up the temporary file
                 dd($storedImagePath);
             }
             
