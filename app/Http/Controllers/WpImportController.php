@@ -183,7 +183,6 @@ public function importMetaForPosts()
                 }
             
                 $storedImagePath = $uploadResult['data']->url ?? null;
-                dd($storedImagePath);
             }
             
             
