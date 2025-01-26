@@ -210,9 +210,8 @@ public function importSlugsForPosts()
         $slugsToInsert = [];
 
         foreach ($posts as $post) {
-            dd($post);
             $slugsToInsert[] = [
-                'key' => $post->slug, // Use the existing slug from the model
+                'key' => $post->plain_slug, // Use the existing slug from the model
                 'reference_id' => $post->id,
                 'reference_type' => 'Botble\Blog\Models\Post',
                 'created_at' => $post->created_at,
