@@ -150,10 +150,24 @@ public function importMetaForPosts()
 
             $storedImagePath = null;
             if ($featuredImageUrl) {
-                dd($this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts'));
-                $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
+                // Parse the URL to extract the file name
+                $pathInfo = pathinfo($featuredImageUrl);
+                $fileExtension = $pathInfo['extension'];
+                $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $pathInfo['filename']); // Sanitize the file name
+                $sanitizedUrl = "{$pathInfo['dirname']}/{$fileName}.{$fileExtension}";
+            
+                // Upload using the sanitized URL
+                $uploadResult = $this->rvMedia->uploadFromUrl($sanitizedUrl, 0, 'posts');
+                
+            
+                if (!empty($uploadResult['error'])) {
+                    throw new \Exception($uploadResult['message']); // Handle upload errors
+                }
+            
+                $storedImagePath = $uploadResult['data']->url ?? null;
                 dd($storedImagePath);
             }
+            
 
             $post->update([
                 'image' => $storedImagePath,
