@@ -210,7 +210,7 @@ public function importSlugsForPosts()
         $slugsToInsert = [];
 
         foreach ($posts as $post) {
-            dd($post);
+            dd($post->slug);
             $slugsToInsert[] = [
                 'key' => $post->slug, // Use the existing slug from the model
                 'reference_id' => $post->id,
