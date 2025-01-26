@@ -208,9 +208,9 @@ public function importSlugsForPosts()
     try {
         $posts = Post::all(); // Fetch all posts from the Laravel database
         $slugsToInsert = [];
-        dd($post);
 
         foreach ($posts as $post) {
+            dd($post);
             $slugsToInsert[] = [
                 'key' => $post->slug, // Use the existing slug from the model
                 'reference_id' => $post->id,
