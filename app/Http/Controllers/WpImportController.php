@@ -17,7 +17,7 @@ use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManager;
 use Botble\Media\RvMedia;
 
-
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Botble\Member\Models\Member;
 use Botble\Blog\Models\Post;
@@ -85,93 +85,143 @@ class WpImportController extends BaseController
     }
 }
 
-public function singlePost($postId=554879)
+public function importPosts()
 {
     try {
-            // Fetch the post from the WordPress `frntn_posts` table
-            $wpPost = DB::connection('mysql2')
-                ->table('frntn_posts')
-                ->where('ID', $postId)
-                ->where('post_type', 'post') // Ensure it's a post
-                ->first();
+        // Fetch all WordPress posts
+        $wpPosts = DB::connection('mysql2')
+            ->table('frntn_posts')
+            ->where('post_type', 'post')
+            ->where('post_date_gmt','>','2025-01-01 00:00:00')
+            ->get();
 
-            if (!$wpPost) {
-                return response()->json(['message' => 'Post not found.'], 404);
-            }
+        if ($wpPosts->isEmpty()) {
+            return response()->json(['message' => 'No posts found.'], 404);
+        }
 
-            // Fetch post metadata
-            $postMeta = DB::connection('mysql2')
-                ->table('frntn_postmeta')
-                ->where('post_id', $postId)
-                ->pluck('meta_value', 'meta_key');
+        // Fetch all metadata in a single query
+        $postIds = $wpPosts->pluck('ID');
+        $postMeta = DB::connection('mysql2')
+            ->table('frntn_postmeta')
+            ->whereIn('post_id', $postIds)
+            ->get()
+            ->groupBy('post_id');
 
-            // Initialize variables for image handling
-            $featuredImageId = $postMeta['_thumbnail_id'] ?? null;
-            $primaryCategoryId = $postMeta['_yoast_wpseo_primary_category'] ?? null;
-            $featuredImageUrl = null;
-            $storedImagePath = null;
 
-            // Retrieve the featured image URL using `_thumbnail_id`
-            if ($featuredImageId) {
-                $featuredImageUrl = DB::connection('mysql2')
+
+        // Prepare data for bulk insert
+        $postsToInsert = [];
+        $slugsToInsert = [];
+        $now = now();
+
+        foreach ($wpPosts as $wpPost) {
+            $meta = $postMeta[$wpPost->ID] ?? collect();
+            $metaValues = $meta->pluck('meta_value', 'meta_key');
+
+            // Determine category ID
+            $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? null;
+            $categoryId = null;
+
+            // Handle featured image
+            $featuredImageId = $metaValues['_thumbnail_id'] ?? null;
+            $featuredImageUrl = $featuredImageId
+                ? DB::connection('mysql2')
                     ->table('frntn_posts')
                     ->where('ID', $featuredImageId)
-                    ->value('guid');
+                    ->value('guid')
+                : null;
 
-                if ($featuredImageUrl) {
-                    // Download the image and save it to storage
-                    $imageContents = Http::get($featuredImageUrl)->body();
-                    $imageExtension = pathinfo($featuredImageUrl, PATHINFO_EXTENSION);
-                    $imageName = 'featured_' . $featuredImageId . '.' . $imageExtension;
-                    $folderId = 0;              // or an existing ID if you have one
-                    $folderSlug = 'posts';
-                    // Save the image in the storage/app/public/posts directory
-                    $storedImagePath = $imageName;
-                    $result = $this->rvMedia->uploadFromUrl($featuredImageUrl, $folderId, $folderSlug);
-                    
-                }
+            $storedImagePath = null;
+            if ($featuredImageUrl) {
+                // Upload image and get its path
+                $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
             }
 
-            // Save the post data to your `Post` model
-            $post = new Post();
-            $post->fill([
+
+
+
+
+            // Prepare post data
+            $postsToInsert[] = [
                 'name' => $wpPost->post_title,
                 'description' => $wpPost->post_excerpt,
                 'content' => $wpPost->post_content,
-                'image' => $result['data']->url, // Save the local storage path of the image
+                'image' => null, // Add logic to handle images if required
                 'is_featured' => 0,
-                'format_type' => $postMeta['mvp_post_template'] ?? null,
+                'format_type' => $metaValues['mvp_post_template'] ?? null,
                 'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
                 'author_id' => 1,
                 'author_type' => 'Botble\ACL\Models\User',
                 'published_at' => $wpPost->post_date,
-                'created_at'=>$wpPost->post_date,
-            ]);
+                'category_id' => $primaryCategoryId ?? null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
 
-            $post->save();
-            if($primaryCategoryId){
-                $this->category($primaryCategoryId,$post->id);
-            }
-            $slug= new Slug();
-            $slug->fill([
-                'key'=>$wpPost->post_name,
-                'reference_id'=>$post->id,
-                'reference_type'=>'Botble\Blog\Models\Post'
-            ]);
-            $slug->save();
+            // Prepare slug data
+            $slugsToInsert[] = [
+                'key' => $wpPost->post_name,
+                'reference_id' => $wpPost->ID,
+                'reference_type' => 'Botble\Blog\Models\Post',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
 
-            return response()->json([
-                'message' => 'Post imported successfully!',
-                'post' => $post,
-                'image_path' => $storedImagePath,
-            ], 200);
+        // Bulk insert posts
+        Post::insert($postsToInsert);
+
+        // Bulk insert slugs
+        Slug::insert($slugsToInsert);
+
+        return response()->json(['message' => 'Posts imported successfully!'], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error importing posts.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
+public function deleteTodayImportedPosts()
+{
+    try {
+        // Get today's date
+        $today = Carbon::today();
+
+        // Fetch post IDs created today
+        $postIds = DB::table('posts')
+            ->whereDate('created_at', $today)
+            ->pluck('id');
+
+        if ($postIds->isEmpty()) {
+            return response()->json(['message' => 'No posts found for today.'], 404);
         }
-        catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error importing post.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+
+        // Delete associated slugs
+        DB::table('slugs')
+            ->whereIn('reference_id', $postIds)
+            ->where('reference_type', 'Botble\Blog\Models\Post')
+            ->delete();
+
+        // Delete the posts
+        DB::table('posts')
+            ->whereIn('id', $postIds)
+            ->delete();
+
+        return response()->json([
+            'message' => 'Posts and slugs created today have been deleted successfully.',
+            'deleted_post_ids' => $postIds,
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error deleting posts and slugs.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
 }
 
 

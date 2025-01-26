@@ -38,6 +38,8 @@ class Post extends BaseModel
         'author_id',
         'author_type',
         'published_at',
+        'category_id', // Add this
+
     ];
 
     protected static function booted(): void
