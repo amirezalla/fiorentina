@@ -126,7 +126,7 @@ private function processPosts($wpPosts)
         $metaValues = $meta->pluck('meta_value', 'meta_key');
 
         // Determine category ID
-        $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? null;
+        $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? 0;
 
         // Handle featured image
         $featuredImageId = $metaValues['_thumbnail_id'] ?? null;
@@ -154,7 +154,7 @@ private function processPosts($wpPosts)
             'author_id' => 1,
             'author_type' => 'Botble\ACL\Models\User',
             'published_at' => $wpPost->post_date,
-            'category_id' => $primaryCategoryId ?? null,
+            'category_id' => $primaryCategoryId,
             'created_at' => $now,
             'updated_at' => $now,
         ];
