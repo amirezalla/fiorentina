@@ -151,9 +151,12 @@ Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])-
 
 
 Route::get('/import-users-wp', [WpImportController::class, 'users']);
-Route::get('/import-post-wp', [WpImportController::class, 'importPosts']);
 Route::get('/import-comment-post', [WpImportController::class, 'importComment']);
 Route::get('/generate-seo', [WpImportController::class, 'generateSEO']);
 
 Route::get('/delete-today-posts', [WpImportController::class, 'deleteTodayImportedPosts']);
+
+Route::get('/import-posts', [WpImportController::class, 'importPostsWithoutMeta']);
+Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
+Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 

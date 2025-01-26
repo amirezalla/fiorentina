@@ -84,20 +84,40 @@ class WpImportController extends BaseController
         ], 500);
     }
 }
-public function importPosts()
+
+public function importPostsWithoutMeta()
 {
     try {
-        // Fetch all WordPress posts in chunks
         DB::connection('mysql2')
             ->table('frntn_posts')
             ->where('post_type', 'post')
             ->where('post_date_gmt', '>', '2025-01-01 00:00:00')
-            ->orderBy('ID') // Add this line to specify the order
-            ->chunk(30, function ($wpPosts) {
-                $this->processPosts($wpPosts);
+            ->orderBy('ID')
+            ->chunk(100, function ($wpPosts) {
+                $postsToInsert = [];
+
+                foreach ($wpPosts as $wpPost) {
+                    $postsToInsert[] = [
+                        'id' => $wpPost->ID,
+                        'name' => $wpPost->post_title,
+                        'description' => $wpPost->post_excerpt,
+                        'content' => $wpPost->post_content,
+                        'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
+                        'author_id' => 1,
+                        'author_type' => 'Botble\ACL\Models\User',
+                        'published_at' => $wpPost->post_date,
+                        'created_at' => $wpPost->post_date_gmt,
+                        'updated_at' => $wpPost->post_date_gmt,
+                        'slug'=>$wpPost->post_name
+                    ];
+                }
+
+                if (!empty($postsToInsert)) {
+                    Post::insert($postsToInsert);
+                }
             });
 
-        return response()->json(['message' => 'Posts imported successfully in chunks!'], 200);
+        return response()->json(['message' => 'Posts imported successfully without meta!'], 200);
 
     } catch (\Exception $e) {
         return response()->json([
@@ -107,78 +127,79 @@ public function importPosts()
     }
 }
 
-private function processPosts($wpPosts)
+public function importMetaForPosts()
 {
-    // Fetch metadata for the chunked posts
-    $postIds = $wpPosts->pluck('ID');
-    $postMeta = DB::connection('mysql2')
-        ->table('frntn_postmeta')
-        ->whereIn('post_id', $postIds)
-        ->get()
-        ->groupBy('post_id');
+    try {
+        $posts = Post::all(); // Fetch all posts from the Laravel database
 
-    $postsToInsert = [];
-    $slugsToInsert = [];
-    $now = now();
+        foreach ($posts as $post) {
+            $meta = DB::connection('mysql2')
+                ->table('frntn_postmeta')
+                ->where('post_id', $post->id)
+                ->get()
+                ->pluck('meta_value', 'meta_key');
 
-    foreach ($wpPosts as $wpPost) {
-        $meta = $postMeta[$wpPost->ID] ?? collect();
-        $metaValues = $meta->pluck('meta_value', 'meta_key');
+            // Process featured image
+            $featuredImageId = $meta['_thumbnail_id'] ?? null;
+            $featuredImageUrl = $featuredImageId
+                ? DB::connection('mysql2')
+                    ->table('frntn_posts')
+                    ->where('ID', $featuredImageId)
+                    ->value('guid')
+                : null;
 
-        // Determine category ID
-        $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? 0;
+            $storedImagePath = null;
+            if ($featuredImageUrl) {
+                $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
+            }
 
-        // Handle featured image
-        $featuredImageId = $metaValues['_thumbnail_id'] ?? null;
-        $featuredImageUrl = $featuredImageId
-            ? DB::connection('mysql2')
-                ->table('frntn_posts')
-                ->where('ID', $featuredImageId)
-                ->value('guid')
-            : null;
-
-        $storedImagePath = null;
-        if ($featuredImageUrl) {
-            $storedImagePath = $this->rvMedia->uploadFromUrl($featuredImageUrl, 0, 'posts')['data']->url ?? null;
+            $post->update([
+                'image' => $storedImagePath,
+                'format_type' => 'post',
+            ]);
         }
 
-        // Prepare post data
-        $postsToInsert[] = [
-            'id'=>$wpPost->ID,
-            'name' => $wpPost->post_title,
-            'description' => $wpPost->post_excerpt,
-            'content' => $wpPost->post_content,
-            'image' => $storedImagePath,
-            'is_featured' => 0,
-            'format_type' => $metaValues['mvp_post_template'] ?? null,
-            'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
-            'author_id' => 1,
-            'author_type' => 'Botble\ACL\Models\User',
-            'published_at' => $wpPost->post_date,
-            'category_id' => $primaryCategoryId,
-            'created_at' => $wpPost->post_date_gmt,
-            'updated_at' => $wpPost->post_date_gmt,
-        ];
+        return response()->json(['message' => 'Post meta imported successfully!'], 200);
 
-        // Prepare slug data
-        $slugsToInsert[] = [
-            'key' => $wpPost->post_name,
-            'reference_id' => $wpPost->ID,
-            'reference_type' => 'Botble\Blog\Models\Post',
-            'created_at' => $wpPost->post_date_gmt,
-            'updated_at' => $wpPost->post_date_gmt,
-        ];
-    }
-
-    // Bulk insert posts and slugs
-    if (!empty($postsToInsert)) {
-        Post::insert($postsToInsert);
-    }
-
-    if (!empty($slugsToInsert)) {
-        Slug::insert($slugsToInsert);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error importing post meta.',
+            'error' => $e->getMessage(),
+        ], 500);
     }
 }
+
+public function importSlugsForPosts()
+{
+    try {
+        $posts = Post::all(); // Fetch all posts from the Laravel database
+        $slugsToInsert = [];
+
+        foreach ($posts as $post) {
+            $slugsToInsert[] = [
+                'key' => $post->slug, // Use the existing slug from the model
+                'reference_id' => $post->id,
+                'reference_type' => 'Botble\Blog\Models\Post',
+                'created_at' => $post->created_at,
+                'updated_at' => $post->updated_at,
+            ];
+        }
+
+        if (!empty($slugsToInsert)) {
+            Slug::insert($slugsToInsert); // Bulk insert the slugs
+        }
+
+        return response()->json(['message' => 'Slugs imported successfully!'], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error importing slugs.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
 
 
 

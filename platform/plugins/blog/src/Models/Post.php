@@ -40,6 +40,7 @@ class Post extends BaseModel
         'author_type',
         'published_at',
         'category_id', // Add this
+        'slug'
 
     ];
 
