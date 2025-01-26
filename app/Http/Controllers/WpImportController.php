@@ -92,7 +92,8 @@ public function importPosts()
             ->table('frntn_posts')
             ->where('post_type', 'post')
             ->where('post_date_gmt', '>', '2025-01-01 00:00:00')
-            ->chunk(20, function ($wpPosts) {
+            ->orderBy('ID') // Add this line to specify the order
+            ->chunk(30, function ($wpPosts) {
                 $this->processPosts($wpPosts);
             });
 
