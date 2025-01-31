@@ -450,8 +450,8 @@ public static function importComment($postId)
                 'email' => $comment->comment_author_email,
                 'content' => strip_tags($comment->comment_content), // Sanitize content
                 'status' => $comment->comment_approved === '1' ? CommentStatus::APPROVED : CommentStatus::PENDING,
-                'author_id' => null, // If available, update accordingly
-                'author_type' => null, // If available, update accordingly
+                'author_id' => Member::where('email',$comment->comment_author_email)->first()->id, // If available, update accordingly
+                'author_type' => 'Botble\Member\Models\Member', // If available, update accordingly
                 'reply_to' => $comment->comment_parent ?: null, // Parent comment reference
                 'ip_address' => $comment->comment_author_IP,
                 'user_agent' => null, // WordPress does not store user-agent by default
