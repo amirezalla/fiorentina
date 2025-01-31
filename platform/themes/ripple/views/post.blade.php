@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\WpImportController;
     Theme::set('section-name', $post->name);
     $post->loadMissing('metadata');
 
@@ -7,7 +8,9 @@
     }
     $content = \App\Models\Ad::addAdsToContent($post->content);
 
-    dd($post->comments);
+    if (!$post->comments) {
+        WpImportController::importComment($post->id);
+    }
 @endphp
 
 <article class="post post--single">
