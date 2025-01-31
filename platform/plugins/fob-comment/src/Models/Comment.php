@@ -34,6 +34,8 @@ class Comment extends BaseModel
         'reply_to',
         'ip_address',
         'user_agent',
+        'updated_at',
+        'created_at'
     ];
 
     protected $casts = [
