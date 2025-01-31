@@ -23,7 +23,7 @@ use Botble\Member\Models\Member;
 use Botble\Blog\Models\Post;
 use Botble\Blog\Models\Category;
 use Botble\Slug\Models\Slug;
-use FriendsOfBotble\Comment\Models\Comment;
+
 
 
 
@@ -437,12 +437,12 @@ public static function importComment($postId)
 
         foreach ($comments as $comment) {
             // Check if the comment already exists in your comments table
-            if (Comment::where('id', $comment->comment_ID)->exists()) {
+            if (\FriendsOfBotble\Comment\Models\Comment::where('id', $comment->comment_ID)->exists()) {
                 continue; // Skip if the comment already exists
             }
 
             // Create and save the comment
-            $newComment = new Comment();
+            $newComment = new \FriendsOfBotble\Comment\Models\Comment();
             $newComment->fill([
                 'id' => $comment->comment_ID, // Match WordPress comment_ID
                 'reference_id' => $postId, // Post ID reference
@@ -450,7 +450,7 @@ public static function importComment($postId)
                 'name' => $comment->comment_author,
                 'email' => $comment->comment_author_email,
                 'content' => strip_tags($comment->comment_content), // Sanitize content
-                'status' => $comment->comment_approved === '1' ? CommentStatus::APPROVED : CommentStatus::PENDING,
+                'status' => $comment->comment_approved === '1' ? FriendsOfBotble\Comment\Enums\CommentStatus::APPROVED : FriendsOfBotble\Comment\Enums\CommentStatus::PENDING,
                 'author_id' => null, // If available, update accordingly
                 'author_type' => null, // If available, update accordingly
                 'reply_to' => $comment->comment_parent ?: null, // Parent comment reference
