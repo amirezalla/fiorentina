@@ -23,6 +23,7 @@ use Botble\Member\Models\Member;
 use Botble\Blog\Models\Post;
 use Botble\Blog\Models\Category;
 use Botble\Slug\Models\Slug;
+use FriendsOfBotble\Comment\Models\Comment;
 
 
 
