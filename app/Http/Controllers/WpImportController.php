@@ -467,10 +467,10 @@ public static function importComment($postId)
         ], 200);
 
     } catch (\Exception $e) {
-        return response()->json([
+        dd([
             'message' => 'Error importing comments.',
             'error' => $e->getMessage(),
-        ], 500);
+        ]);
     }
 }
 
