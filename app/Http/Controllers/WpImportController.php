@@ -418,55 +418,63 @@ private function category($primaryCategoryId,$post_id){
     }
 
 
-    public static function importComment($postId){
-        try{
-            // Fetch all comments related to the specific post ID
-            $comments = DB::connection('mysql2')
-                ->table('frntn_comments')
-                ->where('comment_post_ID', $postId)
-                ->get();
+    use FriendsOfBotble\Comment\Models\Comment;
+use FriendsOfBotble\Comment\Enums\CommentStatus;
+use Illuminate\Support\Facades\DB;
 
-            if ($comments->isEmpty()) {
-                return response()->json(['message' => 'No comments found for the post.'], 404);
-            }
+public static function importComment($postId)
+{
+    try {
+        // Fetch all comments related to the specific post ID
+        $comments = DB::connection('mysql2')
+            ->table('frntn_comments')
+            ->where('comment_post_ID', $postId)
+            ->get();
 
-            foreach ($comments as $comment) {
-                // Check if the comment already exists in your comments table
-                $existingComment = Comment::where('id', $comment->comment_ID)->first();
-                if ($existingComment) {
-                    continue; // Skip if the comment already exists
-                }
-
-                // Create and save the comment
-                $newComment = new Comment();
-                $newComment->fill([
-                    'id' => $comment->comment_ID, // Match WordPress comment_ID
-                    'post_id' => $postId,
-                    'author' => $comment->comment_author,
-                    'author_email' => $comment->comment_author_email,
-                    'author_url' => $comment->comment_author_url,
-                    'author_ip' => $comment->comment_author_IP,
-                    'content' => $comment->comment_content,
-                    'status' => $comment->comment_approved === '1' ? 'approved' : 'pending',
-                    'parent_id' => $comment->comment_parent,
-                    'created_at' => $comment->comment_date,
-                    'updated_at' => $comment->comment_date_gmt,
-                ]);
-
-                $newComment->save();
-            }
-
-            return response()->json([
-                'message' => 'Comments imported successfully!',
-            ], 200);
-
-        }catch(\Exception $e){
-            return response()->json([
-                'message' => 'Error importing comments.',
-                'error' => $e->getMessage(),
-            ], 500);
+        if ($comments->isEmpty()) {
+            return response()->json(['message' => 'No comments found for the post.'], 404);
         }
+
+        foreach ($comments as $comment) {
+            // Check if the comment already exists in your comments table
+            if (Comment::where('id', $comment->comment_ID)->exists()) {
+                continue; // Skip if the comment already exists
+            }
+
+            // Create and save the comment
+            $newComment = new Comment();
+            $newComment->fill([
+                'id' => $comment->comment_ID, // Match WordPress comment_ID
+                'reference_id' => $postId, // Post ID reference
+                'reference_type' => 'Botble\Blog\Models\Post', // Assuming the comments belong to blog posts
+                'name' => $comment->comment_author,
+                'email' => $comment->comment_author_email,
+                'content' => strip_tags($comment->comment_content), // Sanitize content
+                'status' => $comment->comment_approved === '1' ? CommentStatus::APPROVED : CommentStatus::PENDING,
+                'author_id' => null, // If available, update accordingly
+                'author_type' => null, // If available, update accordingly
+                'reply_to' => $comment->comment_parent ?: null, // Parent comment reference
+                'ip_address' => $comment->comment_author_IP,
+                'user_agent' => null, // WordPress does not store user-agent by default
+                'created_at' => $comment->comment_date,
+                'updated_at' => $comment->comment_date_gmt,
+            ]);
+
+            $newComment->save();
+        }
+
+        return response()->json([
+            'message' => 'Comments imported successfully!',
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error importing comments.',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
     
 
     
