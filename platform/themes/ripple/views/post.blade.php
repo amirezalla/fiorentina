@@ -7,6 +7,7 @@
     }
     $content = \App\Models\Ad::addAdsToContent($post->content);
 
+    dd($post->comments);
 @endphp
 
 <article class="post post--single">
