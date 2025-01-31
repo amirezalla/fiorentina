@@ -22,6 +22,7 @@ class Comment extends BaseModel
     protected $table = 'fob_comments';
 
     protected $fillable = [
+        'id',
         'name',
         'email',
         'content',
