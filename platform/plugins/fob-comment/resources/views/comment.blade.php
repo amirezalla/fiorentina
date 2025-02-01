@@ -51,5 +51,3 @@
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
-@livewireScripts
-@livewireStyles
