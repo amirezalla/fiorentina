@@ -264,7 +264,7 @@
     // Fetch existing messages when the page loads
     window.onload = function() {
         fetchMessages();
-        // setInterval(fetchMessages, 5000); // Check for new messages every 5 seconds
+        setInterval(fetchMessages, 2500); // Check for new messages every 5 seconds
     };
 
     function fetchMessages() {
@@ -281,34 +281,4 @@
             });
     }
 
-    const webSocketUrl = '{{ $webSocketUrl }}';
-    const filePath = '{{ $filePath }}';
-    // Connect to the WebSocket server
-    const ws = new WebSocket(webSocketUrl);
-
-
-    ws.onopen = function() {
-        console.log('Connected to WebSocket server');
-        // Send the file path to the server
-        ws.send(JSON.stringify({
-            type: 'setFilePath',
-            filePath: filePath
-        }));
-    };
-
-    ws.onmessage = function(event) {
-        const messages = JSON.parse(event.data);
-        document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
-        messages.forEach(function(message) {
-            appendMessage(message, message.member);
-        });
-    };
-
-    ws.onclose = function() {
-        console.log('Disconnected from WebSocket server');
-    };
-
-    ws.onerror = function(error) {
-        console.error('WebSocket error:', error);
-    };
 </script>
