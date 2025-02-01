@@ -1,6 +1,6 @@
 <div class="statistics-container">
 
-
+    @dd($statics)
     @foreach ($statics as $stat)
         @if ($stat['stage_name'] == 'Partita')
             <div class="stat-row mb-3">
