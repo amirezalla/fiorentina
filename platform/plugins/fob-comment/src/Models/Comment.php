@@ -92,7 +92,7 @@ class Comment extends BaseModel
 
             $default = urlencode("https://ui-avatars.com/api/?name=$email");
 
-            return "https://www.gravatar.com/avatar/$hash?d=mp&s=128&d=$default";
+            return $default;
         });
     }
 
