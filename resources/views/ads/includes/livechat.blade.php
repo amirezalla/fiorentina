@@ -209,7 +209,7 @@
 
         // Scroll to the bottom of the chat to show the latest message
         const chatMessages = document.getElementById('chat-messages');
-        chatMessages.scrollTop = 0;
+        // chatMessages.scrollTop = 0;
     }
 
     @if (auth('member')->check())
@@ -280,5 +280,4 @@
                 console.error('Error fetching messages:', error);
             });
     }
-
 </script>
