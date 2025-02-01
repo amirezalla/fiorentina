@@ -26,11 +26,11 @@
             </button>
             <div class="btn-group">
                 <button class="btn btn-sm dropdown-toggle mb-0" type="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    {{ collect(trans('plugins/fob-comment::comment.sort_options'))->firstWhere('key','latest')['title'] }}
+                    aria-haspopup="true" aria-expanded="false">
+                    {{ collect(trans('plugins/fob-comment::comment.sort_options'))->firstWhere('key', 'latest')['title'] }}
                 </button>
                 <div class="dropdown-menu sort-dropdown">
-                    @foreach(trans('plugins/fob-comment::comment.sort_options') as $item)
+                    @foreach (trans('plugins/fob-comment::comment.sort_options') as $item)
                         <a class="dropdown-item" href="#" data-key="{{ $item['key'] }}">{{ $item['title'] }}</a>
                     @endforeach
                 </div>
@@ -48,3 +48,5 @@
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
+@livewireScripts
+@livewireStyles

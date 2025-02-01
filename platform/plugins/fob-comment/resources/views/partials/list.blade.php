@@ -1,13 +1,12 @@
 @php
     $currentIndent ??= 0;
 
-    if (! view()->exists($paginationView = Theme::getThemeNamespace('partials.pagination'))) {
+    if (!view()->exists($paginationView = Theme::getThemeNamespace('partials.pagination'))) {
         $paginationView = 'pagination::bootstrap-5';
     }
 @endphp
 
 <style>
-
     .fob-comment-item {
         margin-bottom: 12px;
     }
@@ -91,8 +90,8 @@
 </style>
 
 <div class="fob-comment-list">
-    @foreach($comments as $comment)
-        @continue(! $comment->is_approved && $comment->ip_address !== request()->ip())
+    @foreach ($comments as $comment)
+        @continue(!$comment->is_approved && $comment->ip_address !== request()->ip())
 
         <div id="comment-{{ $comment->getKey() }}" class="fob-comment-item">
             <div class="fob-comment-item-inner">
@@ -112,7 +111,7 @@
                 <div class="fob-comment-item-content">
                     <div class="fob-comment-item-footer">
                         <div class="fob-comment-item-info">
-                            @if(\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
+                            @if (\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
                                 <span class="fob-comment-item-admin-badge">
                                     {{ trans('plugins/fob-comment::comment.front.admin_badge') }}
                                 </span>
@@ -129,35 +128,33 @@
                     </div>
                     <div class="fob-comment-item-content-inside">
                         <div class="fob-comment-item-body">
-                            @if (! $comment->is_approved)
+                            @if (!$comment->is_approved)
                                 <em class="fob-comment-item-pending">
                                     {{ trans('plugins/fob-comment::comment.front.list.waiting_for_approval_message') }}
                                 </em>
                             @endif
-                            @if($comment->is_admin)
+                            @if ($comment->is_admin)
                                 {!! BaseHelper::clean($comment->formatted_content) !!}
                             @else
                                 <p>{{ $comment->formatted_content }}</p>
                             @endif
                             @if ($comment->is_approved)
-                                <a
-                                    href="{{ route('fob-comment.public.comments.reply', $comment) }}"
-                                    class="fob-comment-item-reply"
-                                    data-comment-id="{{ $comment->getKey() }}"
+                                <a href="{{ route('fob-comment.public.comments.reply', $comment) }}"
+                                    class="fob-comment-item-reply" data-comment-id="{{ $comment->getKey() }}"
                                     data-reply-to="{{ $replyLabel = trans('plugins/fob-comment::comment.front.list.reply_to', ['name' => $comment->name]) }}"
                                     data-cancel-reply="{{ trans('plugins/fob-comment::comment.front.list.cancel_reply') }}"
-                                    aria-label="{{ $replyLabel }}"
-                                ><i class="fa fa-reply" style="margin-right: 5px; font-size: 14px;"></i>
+                                    aria-label="{{ $replyLabel }}"><i class="fa fa-reply"
+                                        style="margin-right: 5px; font-size: 14px;"></i>
                                     {{ trans('plugins/fob-comment::comment.front.list.reply') }}
                                 </a>
                             @endif
                             <button class="fob-comment-item-like-btn js-fob-comment-item-like-dislike-btn"
-                                    data-action="{{ route('fob-comment.public.comments.like',$comment->id) }}">
+                                data-action="{{ route('fob-comment.public.comments.like', $comment->id) }}">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 <span>{{ number_format($comment->likes_count) }}</span>
                             </button>
                             <button class="fob-comment-item-dislike-btn js-fob-comment-item-like-dislike-btn"
-                                    data-action="{{ route('fob-comment.public.comments.dislike',$comment->id) }}">
+                                data-action="{{ route('fob-comment.public.comments.dislike', $comment->id) }}">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                 <span>{{ number_format($comment->dislikes_count) }}</span>
                             </button>
@@ -176,8 +173,26 @@
     @endforeach
 </div>
 
-@if ($comments instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator && $comments->hasPages())
-    <div class="fob-comment-pagination">
-        {{ $comments->appends(request()->except('page'))->links($paginationView) }}
+@if ($comments->hasMorePages())
+    <div wire:loading>Loading more comments...</div>
+    <div wire:loading.remove>
+        <button wire:click="loadMore">Load More</button>
     </div>
 @endif
+<script>
+    document.addEventListener('livewire:load', function() {
+        let observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    @this.call('loadMore');
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 1.0
+        });
+
+        observer.observe(document.getElementById('load-more-trigger'));
+    });
+</script>
