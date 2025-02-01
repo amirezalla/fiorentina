@@ -200,12 +200,11 @@
         newMessage.appendChild(messageContent);
 
         // Append the new message to the bottom of the messages list
-        messagesList.appendChild(newMessage);
+        messagesList.insertBefore(newMessage, messagesList.firstChild);
 
         // Scroll to the bottom of the chat to show the latest message
         const chatMessages = document.getElementById('chat-messages');
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+        chatMessages.scrollTop = 0;    }
 
     @if (auth('member')->check())
         // Send message when button is clicked or enter key is pressed
