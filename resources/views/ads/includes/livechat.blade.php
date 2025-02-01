@@ -281,7 +281,6 @@
             });
     }
 
-    const matchId = '{{ $matchId }}';
     const webSocketUrl = '{{ $webSocketUrl }}';
     const filePath = '{{ $filePath }}';
     // Connect to the WebSocket server
