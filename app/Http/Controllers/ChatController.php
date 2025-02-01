@@ -128,16 +128,18 @@ class ChatController extends BaseController
     $censoredMessage = $this->censorBadWords($messageContent);
 
     // Create the message with the censored content
-    $message = Message::create([
+    $messageData = [
         'user_id' => auth('member')->id(),  // Manually set the user ID
         'message' => $censoredMessage,
         'match_id' => $matchId,
-    ]);
+    ];
+    
+    $message = Message::create($messageData);
 
     // Broadcast the message to others
     // broadcast(new MessageSent($message))->toOthers();
 
-    Queue::push(new StoreMessageJob($message));
+    Queue::push(new StoreMessageJob($messageData));
 
     return response()->json(['message' => 'Message sent successfully', 'censored_message' => $censoredMessage], 200);
 }
