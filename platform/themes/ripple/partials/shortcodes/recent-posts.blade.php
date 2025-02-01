@@ -188,7 +188,7 @@
                             <div class="row align-items-center upcoming-match upcoming-match-sidebar">
                                 <!-- Match Date, Time, and Venue -->
                                 <div class="col-md-12 text-center">
-                                    <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm')," \t\r\n\f\v") }}
+                                    <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm'), " \t\r\n\f\v") }}
                                     </p>
                                 </div>
 
@@ -210,12 +210,11 @@
 
                                 <!-- Ticket Buttons -->
                                 <div class="col-md-12">
-                                    <div class="d-grid">
-                                        <a @if ($match->status == 'live') href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}" @else disabled @endif
-                                            class="btn-sm btn-primary mb-2 fiorentina-btn" style="grid-area: auto;">Vai
-                                            alla
-                                            diretta!</a>
-                                    </div>
+                                    @if ($match->status == 'LIVE')
+                                        <button class="btn btn-primary">VAI ALLA DIRETTA</button>
+                                    @else
+                                        <div id="countdown"></div>
+                                    @endif
                                 </div>
                             </div>
                     </div>
@@ -485,5 +484,40 @@
                 }
             });
         }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if ($match->status != 'LIVE')
+            // Set the date we're counting down to
+            var countDownDate = new Date(
+                "{{ \Carbon\Carbon::parse($match->match_date)->timezone('Europe/Rome')->toIso8601String() }}"
+                ).getTime();
+
+            // Update the count down every 1 second
+            var countdownFunction = setInterval(function() {
+                // Get today's date and time
+                var now = new Date().getTime();
+
+                // Find the distance between now and the count down date
+                var distance = countDownDate - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the result in the element with id="countdown"
+                document.getElementById("countdown").innerHTML = days + "d " + hours + "h " +
+                    minutes + "m " + seconds + "s ";
+
+                // If the count down is over, write some text
+                if (distance < 0) {
+                    clearInterval(countdownFunction);
+                    document.getElementById("countdown").innerHTML = "MATCH STARTED";
+                }
+            }, 1000);
+        @endif
     });
 </script>
