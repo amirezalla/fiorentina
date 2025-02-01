@@ -7,6 +7,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use Botble\Member\Models\Member;
+
 
 class StoreMessageJob implements ShouldQueue
 {
