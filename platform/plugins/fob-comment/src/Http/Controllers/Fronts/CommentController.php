@@ -58,7 +58,7 @@ class CommentController extends BaseController
             $query->orderByDesc('created_at');
 //            $query->orderBy('created_at', CommentHelper::getCommentOrder());
         }
-        $comments = apply_filters('fob_comment_list_query', $query, $request)->paginate(10);
+        $comments = apply_filters('fob_comment_list_query', $query, $request)->get();
         $count = CommentHelper::getCommentsCount($reference);
 
         $view = apply_filters('fob_comment_list_view_path', 'plugins/fob-comment::partials.list');
