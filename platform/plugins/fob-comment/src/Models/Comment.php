@@ -90,7 +90,7 @@ class Comment extends BaseModel
             $email = strtolower(trim($this->email));
             $hash = hash('sha256', $email);
 
-            $default = urlencode("https://ui-avatars.com/api/?name=$email&background=6610f2&color=fff");
+            $default = urlencode("https://ui-avatars.com/api/?name=$email&background=441274&color=fff&size=32&font-size=0.33&?format=svg");
 
             return urldecode($default);
         });
