@@ -523,6 +523,9 @@
                 if (minutes > 0) {
                     countdownString += minutes + " minut" + (minutes != 1 ? "i" : "o") + " ";
                 }
+                if (seconds > 0) {
+                    countdownString += seconds + " second" + (seconds != 1 ? "i" : "o");
+                }
 
                 // Display the result in the element with id="countdown-timer"
                 document.getElementById("countdown-timer").innerHTML = countdownString.trim();
