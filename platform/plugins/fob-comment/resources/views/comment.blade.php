@@ -15,7 +15,7 @@
     };
 </script>
 <div class="fob-comment-list-section" style="display: none">
-    <div class="d-flex justify-content-end border-bottom text-dark mb-3">
+    <div class="d-flex justify-content-between align-items-center border-bottom text-dark mb-3">
         <div class="d-flex align-items-left">
             <h6 class="fob-comment-title fob-comment-list-title mb-2"></h6>
         </div>
