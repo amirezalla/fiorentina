@@ -511,9 +511,9 @@
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
                 // Display the result in the element with id="countdown-timer"
-                document.getElementById("countdown-timer").innerHTML = "tra " + days + " giorno" + (
-                        days != 1 ? "i" : "") + " " + hours + " ora" + (hours != 1 ? "e" : "") + " " +
-                    minutes + " minuto" + (minutes != 1 ? "i" : "");
+                document.getElementById("countdown-timer").innerHTML = "tra " + days + " giorn" + (
+                        days != 1 ? "i" : "o") + " " + hours + " or" + (hours != 1 ? "e" : "a") + " " +
+                    minutes + " minut" + (minutes != 1 ? "i" : "o");
 
                 // If the count down is over, write some text
                 if (distance < 0) {
