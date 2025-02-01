@@ -21,10 +21,10 @@ class CommentController extends BaseController
     public function index(CommentReferenceRequest $request, GetCommentReference $getCommentReference)
     {
         $reference = new BaseModel();
-    
+
         if ($request->input('reference_type')) {
             $reference = $getCommentReference($request->input('reference_type'), $request->input('reference_id'));
-    
+
             $query = Comment::query()
                 ->where('reference_id', $reference->getKey())
                 ->where('reference_type', $reference::class);
@@ -32,7 +32,7 @@ class CommentController extends BaseController
             $query = Comment::query()
                 ->where('reference_url', $request->input('reference_url'));
         }
-    
+
         $query
             ->withCount(['likes', 'dislikes', 'replies'])
             ->where(function (Builder $query) {
@@ -56,19 +56,13 @@ class CommentController extends BaseController
             $query->orderBy('created_at');
         } else {
             $query->orderByDesc('created_at');
+//            $query->orderBy('created_at', CommentHelper::getCommentOrder());
         }
         $comments = apply_filters('fob_comment_list_query', $query, $request)->paginate(10);
         $count = CommentHelper::getCommentsCount($reference);
-    
-        if ($request->ajax()) {
-            return response()->json([
-                'html' => view('plugins/fob-comment::partials.list', compact('comments'))->render(),
-                'next_page_url' => $comments->nextPageUrl(),
-            ]);
-        }
-    
+
         $view = apply_filters('fob_comment_list_view_path', 'plugins/fob-comment::partials.list');
-    
+
         return $this
             ->httpResponse()
             ->setData([

@@ -89,7 +89,7 @@
     }
 </style>
 
-<div class="fob-comment-list comments-container">
+<div class="fob-comment-list">
     @foreach ($comments as $comment)
         @continue(!$comment->is_approved && $comment->ip_address !== request()->ip())
 
@@ -176,33 +176,39 @@
 @if ($comments instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator && $comments->hasPages())
     <div id="load-more-trigger" data-next-page="{{ $comments->nextPageUrl() }}"></div>
 @endif
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let loadMoreTrigger = document.getElementById('load-more-trigger');
         let commentsContainer = document.getElementById('comments-container');
+        let nextPageUrl = "{{ $comments->nextPageUrl() }}";
 
         if (loadMoreTrigger) {
             let observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        let nextPageUrl = loadMoreTrigger.getAttribute('data-next-page');
+                    if (entry.isIntersecting && nextPageUrl) {
+                        fetch(nextPageUrl)
+                            .then(response => response.text())
+                            .then(data => {
+                                let parser = new DOMParser();
+                                let doc = parser.parseFromString(data, 'text/html');
+                                let newComments = doc.querySelector('#comments-container')
+                                    .innerHTML;
+                                let newNextPageUrl = doc.querySelector(
+                                    '#load-more-trigger') ? doc.querySelector(
+                                    '#load-more-trigger').getAttribute(
+                                    'data-next-page') : null;
 
-                        if (nextPageUrl) {
-                            fetch(nextPageUrl)
-                                .then(response => response.json())
-                                .then(data => {
-                                    commentsContainer.insertAdjacentHTML('beforeend', data
-                                        .html);
-                                    loadMoreTrigger.setAttribute('data-next-page', data
-                                        .next_page_url);
+                                commentsContainer.insertAdjacentHTML('beforeend',
+                                    newComments);
+                                nextPageUrl = newNextPageUrl;
 
-                                    if (!data.next_page_url) {
-                                        observer.unobserve(loadMoreTrigger);
-                                    }
-                                })
-                                .catch(error => console.error('Error loading more comments:',
-                                    error));
-                        }
+                                if (!nextPageUrl) {
+                                    observer.unobserve(loadMoreTrigger);
+                                }
+                            })
+                            .catch(error => console.error('Error loading more comments:',
+                                error));
                     }
                 });
             }, {
