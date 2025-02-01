@@ -213,7 +213,8 @@
                                     @if ($match->status == 'LIVE')
                                         <button class="btn btn-primary">VAI ALLA DIRETTA</button>
                                     @else
-                                        <div id="countdown"></div>
+                                        <div id="countdown"><i class="fa fa-clock-o" aria-hidden="true"></i> <span
+                                                id="countdown-timer"></span></div>
                                     @endif
                                 </div>
                             </div>
@@ -486,6 +487,7 @@
         }
     });
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         @if ($match->status != 'LIVE')
@@ -508,14 +510,15 @@
                 var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                // Display the result in the element with id="countdown"
-                document.getElementById("countdown").innerHTML = days + "d " + hours + "h " +
-                    minutes + "m " + seconds + "s ";
+                // Display the result in the element with id="countdown-timer"
+                document.getElementById("countdown-timer").innerHTML = "tra " + days + " giorno" + (
+                        days != 1 ? "i" : "") + " " + hours + " ora" + (hours != 1 ? "e" : "") + " " +
+                    minutes + " minuto" + (minutes != 1 ? "i" : "");
 
                 // If the count down is over, write some text
                 if (distance < 0) {
                     clearInterval(countdownFunction);
-                    document.getElementById("countdown").innerHTML = "MATCH STARTED";
+                    document.getElementById("countdown-timer").innerHTML = "MATCH STARTED";
                 }
             }, 1000);
         @endif
