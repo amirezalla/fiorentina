@@ -112,10 +112,22 @@ public function importPostsWithoutMeta()
                         'updated_at' => $wpPost->post_date_gmt,
                         'slug'=>$wpPost->post_name
                     ];
+
+                    $metaToInsert[] = [
+                        'meta_key' => 'allow_comments',
+                        'meta_value' => '1',
+                        'reference_id' => $wpPost->ID,
+                        'reference_type' => 'Botble\Blog\Models\Post',
+                        'created_at' => $wpPost->post_date_gmt,
+                        'updated_at' => $wpPost->post_date_gmt
+                    ];
                 }
 
                 if (!empty($postsToInsert)) {
                     Post::insert($postsToInsert);
+                }
+                if (!empty($metaToInsert)) {
+                    MetaBox::insert($metaToInsert);
                 }
             });
 
