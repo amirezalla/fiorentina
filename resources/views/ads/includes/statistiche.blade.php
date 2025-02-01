@@ -10,23 +10,28 @@
                 <!-- Stat Bar -->
                 <div class="stat-bar">
                     @php
+                        // Remove % and ensure numeric values
+                        $valueHome = is_numeric(str_replace('%', '', $stat['value_home']))
+                            ? (float) str_replace('%', '', $stat['value_home'])
+                            : 0;
+                        $valueAway = is_numeric(str_replace('%', '', $stat['value_away']))
+                            ? (float) str_replace('%', '', $stat['value_away'])
+                            : 0;
+
                         if ($stat['incident_name'] == 'Possesso Palla') {
                             $maxValue = 100;
                         } else {
-                            $maxValue = $stat['value_home'] + $stat['value_away'];
-                        }
-                        if ($maxValue != 0) {
-                            $homeWidth =
-                                is_numeric($stat['value_home']) && is_numeric($stat['value_away'])
-                                    ? ($stat['value_home'] / $maxValue) * 100
-                                    : 0;
-                            $awayWidth =
-                                is_numeric($stat['value_home']) && is_numeric($stat['value_away'])
-                                    ? ($stat['away'] / $maxValue) * 100
-                                    : 0;
+                            $maxValue = $valueHome + $valueAway;
                         }
 
+                        if ($maxValue != 0) {
+                            $homeWidth = ($valueHome / $maxValue) * 100;
+                            $awayWidth = ($valueAway / $maxValue) * 100;
+                        } else {
+                            $homeWidth = $awayWidth = 0;
+                        }
                     @endphp
+
                     <div class="stat-bar-fill 
                 @if ($isHomeFiorentina) fiorentina-fill
                 @else
