@@ -9,7 +9,7 @@
                 <!-- Stat Bar -->
                 <div class="stat-bar">
                     @php
-                        // Remove % and ensure numeric values
+                        // Ensure numeric values and remove %
                         $valueHome = is_numeric(str_replace('%', '', $stat['value_home']))
                             ? (float) str_replace('%', '', $stat['value_home'])
                             : 0;
@@ -17,12 +17,10 @@
                             ? (float) str_replace('%', '', $stat['value_away'])
                             : 0;
 
-                        if ($stat['incident_name'] == 'Possesso Palla') {
-                            $maxValue = 100;
-                        } else {
-                            $maxValue = $valueHome + $valueAway;
-                        }
+                        // Always calculate max value for consistent proportions
+                        $maxValue = $valueHome + $valueAway;
 
+                        // Calculate widths
                         if ($maxValue != 0) {
                             $homeWidth = ($valueHome / $maxValue) * 100;
                             $awayWidth = ($valueAway / $maxValue) * 100;
@@ -35,10 +33,10 @@
                         $awayClass = !$isHomeFiorentina ? 'fiorentina-fill' : 'away-fill';
                     @endphp
 
-                    <!-- Home Team Bar -->
+                    <!-- Home Team Bar (always left) -->
                     <div class="stat-bar-fill {{ $homeClass }}" style="width: {{ $homeWidth }}%;"></div>
 
-                    <!-- Away Team Bar -->
+                    <!-- Away Team Bar (always right) -->
                     <div class="stat-bar-fill {{ $awayClass }}" style="width: {{ $awayWidth }}%;"></div>
                 </div>
 
