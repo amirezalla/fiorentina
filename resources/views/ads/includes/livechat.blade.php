@@ -120,29 +120,52 @@
 <script>
     const colorCache = {};
 
-function getAvatarColor(firstLetter) {
-    const letter = firstLetter.toUpperCase();
-    if (colorCache[letter]) return colorCache[letter];
+    function getAvatarColor(firstLetter) {
+        const letter = firstLetter.toUpperCase();
+        if (colorCache[letter]) return colorCache[letter];
 
-    let color;
-    switch (letter) {
-        case 'A': color = '#3498db'; break; // Blue
-        case 'B': color = '#2ecc71'; break; // Green
-        case 'C': color = '#e74c3c'; break; // Red
-        case 'D': color = '#f39c12'; break; // Orange
-        case 'E': color = '#8e44ad'; break; // Dark Purple
-        case 'F': color = '#9b59b6'; break; // Purple
-        case 'G': color = '#16a085'; break; // Teal
-        case 'H': color = '#e67e22'; break; // Orange
-        case 'I': color = '#f1c40f'; break; // Yellow
-        case 'J': color = '#e84393'; break; // Pink
-        case 'K': color = '#34495e'; break; // Navy Blue
-        default: color = '#95a5a6'; // Default Gray
+        let color;
+        switch (letter) {
+            case 'A':
+                color = '#3498db';
+                break; // Blue
+            case 'B':
+                color = '#2ecc71';
+                break; // Green
+            case 'C':
+                color = '#e74c3c';
+                break; // Red
+            case 'D':
+                color = '#f39c12';
+                break; // Orange
+            case 'E':
+                color = '#8e44ad';
+                break; // Dark Purple
+            case 'F':
+                color = '#9b59b6';
+                break; // Purple
+            case 'G':
+                color = '#16a085';
+                break; // Teal
+            case 'H':
+                color = '#e67e22';
+                break; // Orange
+            case 'I':
+                color = '#f1c40f';
+                break; // Yellow
+            case 'J':
+                color = '#e84393';
+                break; // Pink
+            case 'K':
+                color = '#34495e';
+                break; // Navy Blue
+            default:
+                color = '#95a5a6'; // Default Gray
+        }
+
+        colorCache[letter] = color;
+        return color;
     }
-
-    colorCache[letter] = color;
-    return color;
-}
 
 
     // Setup CSRF token for axios
@@ -166,6 +189,7 @@ function getAvatarColor(firstLetter) {
     if (!channel) {
         channel = pusher.subscribe(`match.${matchId}`);
         channel.bind('App\\Events\\MessageSent', function(data) {
+            console.log('Received message from Pusher at:', new Date().toISOString());
             appendMessage(data.message, data.member); // Append both message and member data
         });
     }
@@ -220,6 +244,8 @@ function getAvatarColor(firstLetter) {
     @endif
 
     function sendMessage() {
+        console.log('Sending message at:', new Date().toISOString());
+
         const message = messageInput.value.trim();
 
         if (message === '') {
