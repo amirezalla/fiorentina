@@ -204,7 +204,8 @@
 
         // Scroll to the bottom of the chat to show the latest message
         const chatMessages = document.getElementById('chat-messages');
-        chatMessages.scrollTop = 0;    }
+        chatMessages.scrollTop = 0;
+    }
 
     @if (auth('member')->check())
         // Send message when button is clicked or enter key is pressed
@@ -258,7 +259,7 @@
     // Fetch existing messages when the page loads
     window.onload = function() {
         fetchMessages();
-        setInterval(fetchMessages, 5000); // Check for new messages every 5 seconds
+        // setInterval(fetchMessages, 5000); // Check for new messages every 5 seconds
     };
 
     function fetchMessages() {
@@ -274,4 +275,27 @@
                 console.error('Error fetching messages:', error);
             });
     }
+
+    // Connect to the WebSocket server
+    const ws = new WebSocket('ws://localhost:8080');
+
+    ws.onopen = function() {
+        console.log('Connected to WebSocket server');
+    };
+
+    ws.onmessage = function(event) {
+        const messages = JSON.parse(event.data);
+        document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
+        messages.forEach(function(message) {
+            appendMessage(message, message.member);
+        });
+    };
+
+    ws.onclose = function() {
+        console.log('Disconnected from WebSocket server');
+    };
+
+    ws.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
 </script>
