@@ -284,7 +284,7 @@
     const webSocketUrl = '{{ $webSocketUrl }}';
     const filePath = '{{ $filePath }}';
     // Connect to the WebSocket server
-    const ws = new WebSocket('ws://laviola.collaudo.biz:8080');
+    const ws = new WebSocket(webSocketUrl);
 
 
     ws.onopen = function() {
