@@ -16,7 +16,10 @@
 </script>
 <div class="fob-comment-list-section" style="display: none">
     <div class="d-flex justify-content-end border-bottom text-dark mb-3">
-        <h6 class="fob-comment-title fob-comment-list-title mb-2"></h6>
+        <div class="d-flex align-items-left">
+            <h6 class="fob-comment-title fob-comment-list-title mb-2"></h6>
+        </div>
+
         <div class="d-flex align-items-center">
             <button class="btn mb-0 btn-must-reaction">
                 <i class="fa fa-bolt" aria-hidden="true"></i>
