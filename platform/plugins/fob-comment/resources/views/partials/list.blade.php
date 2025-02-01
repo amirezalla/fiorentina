@@ -174,50 +174,7 @@
 </div>
 
 @if ($comments instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator && $comments->hasPages())
-    <div id="load-more-trigger" data-next-page="{{ $comments->nextPageUrl() }}"></div>
+    <div class="fob-comment-pagination">
+        {{ $comments->appends(request()->except('page'))->links($paginationView) }}
+    </div>
 @endif
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        let loadMoreTrigger = document.getElementById('load-more-trigger');
-        let commentsContainer = document.getElementById('comments-container');
-        let nextPageUrl = "{{ $comments->nextPageUrl() }}";
-
-        if (loadMoreTrigger) {
-            let observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && nextPageUrl) {
-                        fetch(nextPageUrl)
-                            .then(response => response.text())
-                            .then(data => {
-                                let parser = new DOMParser();
-                                let doc = parser.parseFromString(data, 'text/html');
-                                let newComments = doc.querySelector('#comments-container')
-                                    .innerHTML;
-                                let newNextPageUrl = doc.querySelector(
-                                    '#load-more-trigger') ? doc.querySelector(
-                                    '#load-more-trigger').getAttribute(
-                                    'data-next-page') : null;
-
-                                commentsContainer.insertAdjacentHTML('beforeend',
-                                    newComments);
-                                nextPageUrl = newNextPageUrl;
-
-                                if (!nextPageUrl) {
-                                    observer.unobserve(loadMoreTrigger);
-                                }
-                            })
-                            .catch(error => console.error('Error loading more comments:',
-                                error));
-                    }
-                });
-            }, {
-                root: null,
-                rootMargin: '0px',
-                threshold: 1.0
-            });
-
-            observer.observe(loadMoreTrigger);
-        }
-    });
-</script>
