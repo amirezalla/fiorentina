@@ -11,6 +11,9 @@ use Botble\Member\Models\Member;
 use Botble\Base\Supports\Breadcrumb;
 use Illuminate\Support\Facades\Http;
 use Botble\Base\Http\Controllers\BaseController;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\StoreMessageJob;
 
 
 
@@ -132,7 +135,9 @@ class ChatController extends BaseController
     ]);
 
     // Broadcast the message to others
-    broadcast(new MessageSent($message))->toOthers();
+    // broadcast(new MessageSent($message))->toOthers();
+
+    Queue::push(new StoreMessageJob($messageData));
 
     return response()->json(['message' => 'Message sent successfully', 'censored_message' => $censoredMessage], 200);
 }

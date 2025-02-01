@@ -113,9 +113,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/7.0.3/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
 <script>
     const colorCache = {};
@@ -167,9 +165,8 @@
         return color;
     }
 
-
     // Setup CSRF token for axios
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = '{{ csrf_token() }}'
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
 
     // Extract match_id from the URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -178,22 +175,6 @@
     if (!matchId) {
         console.error('Match ID is missing in the URL.');
     }
-
-    // Initialize Pusher for real-time updates
-    const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
-        cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-        encrypted: false
-    });
-    // Subscribe to the specific match channel (only once)
-    let channel;
-    if (!channel) {
-        channel = pusher.subscribe(`match.${matchId}`);
-        channel.bind('App\\Events\\MessageSent', function(data) {
-            console.log('Received message from Pusher at:', new Date().toISOString());
-            appendMessage(data.message, data.member); // Append both message and member data
-        });
-    }
-
 
     // Function to append a message to the messages list
     function appendMessage(message, member) {
@@ -210,22 +191,21 @@
         const messageContent = document.createElement('div');
         messageContent.classList.add('message-content');
         messageContent.innerHTML = `
-        <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
-        ${message.message}
-        <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
-    `;
+            <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
+            ${message.message}
+            <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
+        `;
 
         newMessage.appendChild(avatar);
         newMessage.appendChild(messageContent);
 
-        // Prepend the new message to the top of the messages list
-        messagesList.insertBefore(newMessage, messagesList.firstChild);
+        // Append the new message to the bottom of the messages list
+        messagesList.appendChild(newMessage);
 
-        // Scroll to the top of the chat to show the latest message at the top
+        // Scroll to the bottom of the chat to show the latest message
         const chatMessages = document.getElementById('chat-messages');
-        chatMessages.scrollTop = 0;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-
 
     @if (auth('member')->check())
         // Send message when button is clicked or enter key is pressed
@@ -257,6 +237,7 @@
                 message: message
             })
             .then(response => {
+                console.log('Message sent successfully at:', new Date().toISOString());
                 // Show the censored message returned from the server
                 const censoredMessage = response.data.censored_message;
                 console.log('Censored message:', censoredMessage);
@@ -277,9 +258,15 @@
 
     // Fetch existing messages when the page loads
     window.onload = function() {
+        fetchMessages();
+        setInterval(fetchMessages, 5000); // Check for new messages every 5 seconds
+    };
+
+    function fetchMessages() {
         axios.get(`/chat/${matchId}`)
             .then(response => {
                 const messages = response.data.messages;
+                document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
                 messages.forEach(function(message) {
                     appendMessage(message, message.member);
                 });
@@ -287,5 +274,5 @@
             .catch(error => {
                 console.error('Error fetching messages:', error);
             });
-    };
+    }
 </script>
