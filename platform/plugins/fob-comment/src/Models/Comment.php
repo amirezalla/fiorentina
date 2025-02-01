@@ -90,7 +90,7 @@ class Comment extends BaseModel
             $email = strtolower(trim($this->email));
             $hash = hash('sha256', $email);
 
-            $default = urlencode("https://ui-avatars.com/api/?name=/$email");
+            $default = urlencode("https://ui-avatars.com/api/?name=$email");
 
             return "https://www.gravatar.com/avatar/$hash?d=mp&s=128&d=$default";
         });
