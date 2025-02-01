@@ -167,21 +167,33 @@
         return color;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const matchId = {{ $matchId }}; // Assuming you have the matchId available in your Blade template
+
+    // Setup CSRF token for axios
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = '{{ csrf_token() }}'
+
+    // Extract match_id from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const matchId = urlParams.get('match_id'); // Get match_id from the URL
+
+    if (!matchId) {
+        console.error('Match ID is missing in the URL.');
+    }
 
     // Initialize Pusher for real-time updates
     const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
         cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
         encrypted: false
     });
+    // Subscribe to the specific match channel (only once)
+    let channel;
+    if (!channel) {
+        channel = pusher.subscribe(`match.${matchId}`);
+        channel.bind('App\\Events\\MessageSent', function(data) {
+            console.log('Received message from Pusher at:', new Date().toISOString());
+            appendMessage(data.message, data.member); // Append both message and member data
+        });
+    }
 
-    // Subscribe to the specific match channel
-    const channel = pusher.subscribe(`match.${matchId}`);
-    channel.bind('App\\Events\\MessageSent', function(data) {
-        console.log('Received message from Pusher at:', new Date().toISOString());
-        appendMessage(data.message, data.member); // Append both message and member data
-    });
 
     // Function to append a message to the messages list
     function appendMessage(message, member) {
@@ -198,10 +210,10 @@
         const messageContent = document.createElement('div');
         messageContent.classList.add('message-content');
         messageContent.innerHTML = `
-            <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
-            ${message.message}
-            <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
-        `;
+        <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
+        ${message.message}
+        <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
+    `;
 
         newMessage.appendChild(avatar);
         newMessage.appendChild(messageContent);
@@ -214,25 +226,40 @@
         chatMessages.scrollTop = 0;
     }
 
-    // Send message function
-    function sendMessage() {
+
+    @if (auth('member')->check())
+        // Send message when button is clicked or enter key is pressed
+        const sendMessageButton = document.getElementById('send-message-btn');
         const messageInput = document.getElementById('message-input');
+
+        messageInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        sendMessageButton.addEventListener('click', function(event) {
+            sendMessage();
+        });
+    @endif
+
+    function sendMessage() {
+        console.log('Sending message at:', new Date().toISOString());
+
         const message = messageInput.value.trim();
 
         if (message === '') {
             return;
         }
 
-        console.log('Sending message at:', new Date().toISOString());
-
         // Send message to the server
         axios.post(`/chat/${matchId}`, {
                 message: message
             })
             .then(response => {
-                console.log('Message sent successfully at:', new Date().toISOString());
                 // Show the censored message returned from the server
                 const censoredMessage = response.data.censored_message;
+                console.log('Censored message:', censoredMessage);
                 messageInput.value = ''; // Clear input field
             })
             .catch(error => {
@@ -261,19 +288,4 @@
                 console.error('Error fetching messages:', error);
             });
     };
-
-    // Add event listener to the send message button
-    const sendMessageButton = document.getElementById('send-message-btn');
-    sendMessageButton.addEventListener('click', function(event) {
-        sendMessage();
-    });
-
-    // Add event listener for the Enter key
-    const messageInput = document.getElementById('message-input');
-    messageInput.addEventListener('keyup', function(event) {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    });
-});
 </script>
