@@ -173,26 +173,8 @@
     @endforeach
 </div>
 
-@if ($comments->hasMorePages())
-    <div wire:loading>Loading more comments...</div>
-    <div wire:loading.remove>
-        <button wire:click="loadMore">Load More</button>
+@if ($comments instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator && $comments->hasPages())
+    <div class="fob-comment-pagination">
+        {{ $comments->appends(request()->except('page'))->links($paginationView) }}
     </div>
 @endif
-<script>
-    document.addEventListener('livewire:load', function() {
-        let observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    @this.call('loadMore');
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: '0px',
-            threshold: 1.0
-        });
-
-        observer.observe(document.getElementById('load-more-trigger'));
-    });
-</script>
