@@ -174,7 +174,44 @@
 </div>
 
 @if ($comments instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator && $comments->hasPages())
-    <div class="fob-comment-pagination">
-        {{ $comments->appends(request()->except('page'))->links($paginationView) }}
-    </div>
+    <div id="load-more-trigger" data-next-page="{{ $comments->nextPageUrl() }}"></div>
 @endif
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let loadMoreTrigger = document.getElementById('load-more-trigger');
+        let commentsContainer = document.getElementById('comments-container');
+
+        if (loadMoreTrigger) {
+            let observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        let nextPageUrl = loadMoreTrigger.getAttribute('data-next-page');
+
+                        if (nextPageUrl) {
+                            fetch(nextPageUrl)
+                                .then(response => response.json())
+                                .then(data => {
+                                    commentsContainer.insertAdjacentHTML('beforeend', data
+                                        .html);
+                                    loadMoreTrigger.setAttribute('data-next-page', data
+                                        .next_page_url);
+
+                                    if (!data.next_page_url) {
+                                        observer.unobserve(loadMoreTrigger);
+                                    }
+                                })
+                                .catch(error => console.error('Error loading more comments:',
+                                    error));
+                        }
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '0px',
+                threshold: 1.0
+            });
+
+            observer.observe(loadMoreTrigger);
+        }
+    });
+</script>
