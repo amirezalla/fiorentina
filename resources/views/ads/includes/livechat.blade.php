@@ -170,8 +170,6 @@ function getAvatarColor(firstLetter) {
         });
     }
 
-    Pusher.logToConsole = false;
-
 
     // Function to append a message to the messages list
     function appendMessage(message, member) {
