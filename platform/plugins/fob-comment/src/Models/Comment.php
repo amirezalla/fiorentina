@@ -92,7 +92,7 @@ class Comment extends BaseModel
 
             $default = urlencode("https://ui-avatars.com/api/?name=$email");
 
-            return $default;
+            return urldecode($default);
         });
     }
 
