@@ -14,9 +14,9 @@ const s3 = new AWS.S3({
 const bucketName = process.env.WASABI_BUCKET_NAME;
 
 
-const wss = new WebSocket.Server({ server });
+const ws = new WebSocket.Server({ server });
 
-wss.on('connection', ws => {
+ws.on('connection', ws => {
     console.log('Client connected');
 
     let filePath = null;
@@ -58,5 +58,5 @@ wss.on('connection', ws => {
 });
 
 server.listen(8080, () => {
-    console.log('WebSocket server is running on wss://localhost:8080');
+    console.log('WebSocket server is running on ws://localhost:8080');
 });
