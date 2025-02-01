@@ -13,11 +13,6 @@ const s3 = new AWS.S3({
 
 const bucketName = process.env.WASABI_BUCKET_NAME;
 
-// Load SSL/TLS certificates
-const server = https.createServer({
-    cert: fs.readFileSync('/path/to/your/certificate.crt'),
-    key: fs.readFileSync('/path/to/your/private.key'),
-});
 
 const wss = new WebSocket.Server({ server });
 
