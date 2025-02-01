@@ -89,7 +89,7 @@
     }
 </style>
 
-<div class="fob-comment-list">
+<div class="fob-comment-list comments-container">
     @foreach ($comments as $comment)
         @continue(!$comment->is_approved && $comment->ip_address !== request()->ip())
 
