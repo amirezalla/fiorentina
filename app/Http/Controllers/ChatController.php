@@ -137,7 +137,7 @@ class ChatController extends BaseController
     // Broadcast the message to others
     // broadcast(new MessageSent($message))->toOthers();
 
-    Queue::push(new StoreMessageJob($messageData));
+    Queue::push(new StoreMessageJob($message));
 
     return response()->json(['message' => 'Message sent successfully', 'censored_message' => $censoredMessage], 200);
 }
