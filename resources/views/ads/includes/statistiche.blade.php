@@ -29,22 +29,17 @@
                         } else {
                             $homeWidth = $awayWidth = 0;
                         }
+
+                        // Dynamic CSS classes
+                        $homeClass = $isHomeFiorentina ? 'fiorentina-fill' : 'away-fill';
+                        $awayClass = !$isHomeFiorentina ? 'fiorentina-fill' : 'away-fill';
                     @endphp
 
-                    <div class="stat-bar-fill 
-                @if ($isHomeFiorentina) fiorentina-fill
-                @else
-                away-fill @endif
+                    <!-- Home Team Bar -->
+                    <div class="stat-bar-fill {{ $homeClass }}" style="width: {{ $homeWidth }}%;"></div>
 
-                "
-                        style="width: {{ $homeWidth }}%;"></div>
-                    <div class="stat-bar-fill 
-                @if (!$isHomeFiorentina) fiorentina-fill
-                @else
-                away-fill @endif
-                
-                "
-                        style="width: {{ $awayWidth }}%;"></div>
+                    <!-- Away Team Bar -->
+                    <div class="stat-bar-fill {{ $awayClass }}" style="width: {{ $awayWidth }}%;"></div>
                 </div>
 
                 <!-- Stat Label -->
