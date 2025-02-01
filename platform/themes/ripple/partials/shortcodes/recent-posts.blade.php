@@ -209,11 +209,12 @@
                                 </div>
 
                                 <!-- Ticket Buttons -->
-                                <div class="col-md-12">
+                                <div class="col-md-12 text-center">
                                     @if ($match->status == 'LIVE')
                                         <button class="btn btn-primary">VAI ALLA DIRETTA</button>
                                     @else
-                                        <div id="countdown"><i class="fa fa-clock-o" aria-hidden="true"></i> <span
+                                        <div id="countdown" style="background: #441274;padding:10px;border-radius:3px;">
+                                            <i class="fa fa-clock-o" aria-hidden="true"></i> <span
                                                 id="countdown-timer"></span></div>
                                     @endif
                                 </div>
@@ -487,14 +488,13 @@
         }
     });
 </script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         @if ($match->status != 'LIVE')
             // Set the date we're counting down to
             var countDownDate = new Date(
                 "{{ \Carbon\Carbon::parse($match->match_date)->timezone('Europe/Rome')->toIso8601String() }}"
-                ).getTime();
+            ).getTime();
 
             // Update the count down every 1 second
             var countdownFunction = setInterval(function() {
@@ -510,10 +510,20 @@
                 var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+                // Build the countdown string
+                var countdownString = "tra ";
+                if (days > 0) {
+                    countdownString += days + " giorn" + (days != 1 ? "i" : "o") + " ";
+                }
+                if (hours > 0) {
+                    countdownString += hours + " or" + (hours != 1 ? "e" : "a") + " ";
+                }
+                if (minutes > 0) {
+                    countdownString += minutes + " minut" + (minutes != 1 ? "i" : "o") + " ";
+                }
+
                 // Display the result in the element with id="countdown-timer"
-                document.getElementById("countdown-timer").innerHTML = "tra " + days + " giorn" + (
-                        days != 1 ? "i" : "o") + " " + hours + " or" + (hours != 1 ? "e" : "a") + " " +
-                    minutes + " minut" + (minutes != 1 ? "i" : "o");
+                document.getElementById("countdown-timer").innerHTML = countdownString.trim();
 
                 // If the count down is over, write some text
                 if (distance < 0) {
