@@ -15,7 +15,7 @@
     <div class="{{ AdminAppearance::getContainerWidth() }}">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                Your license is invalid, please contact support. If you didn't set up license code, please go to
+             اکانت دی  اکتیو
                 <a
                     href="{{ route('settings.general') }}"
                     class="text-white fw-bold"

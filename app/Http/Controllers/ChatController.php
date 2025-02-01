@@ -34,6 +34,8 @@ class ChatController extends BaseController
 
         return view('diretta.list');
     }
+
+
     
 
 

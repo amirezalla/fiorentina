@@ -1,3 +1,8 @@
+@php
+    $matchId = request()->query('match_id'); // Get match_id from the URL query parameters
+    $filePath = "chat/messages_{$matchId}.json";
+    $webSocketUrl = 'ws://localhost:8080'; // Update this to your WebSocket server URL
+@endphp
 <style>
     .chat-container {
         position: sticky;
@@ -276,11 +281,20 @@
             });
     }
 
+    const matchId = '{{ $matchId }}';
+    const webSocketUrl = '{{ $webSocketUrl }}';
+    const filePath = '{{ $filePath }}';
     // Connect to the WebSocket server
     const ws = new WebSocket('ws://localhost:8080');
 
+
     ws.onopen = function() {
         console.log('Connected to WebSocket server');
+        // Send the file path to the server
+        ws.send(JSON.stringify({
+            type: 'setFilePath',
+            filePath: filePath
+        }));
     };
 
     ws.onmessage = function(event) {

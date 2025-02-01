@@ -34,6 +34,7 @@
         "vue-loader": "^17.3.0"
     },
     "dependencies": {
+        "aws-sdk": "^2.1692.0",
         "axios": "^1.6.8",
         "cropperjs": "^1.6.1",
         "epic-spinners": "^2.0.0",
@@ -44,6 +45,7 @@
         "pusher-js": "^8.4.0-rc2",
         "sanitize-html": "^2.13.0",
         "tiny-emitter": "^2.1.0",
-        "vue": "^3.3.4"
+        "vue": "^3.3.4",
+        "ws": "^8.18.0"
     }
 }
