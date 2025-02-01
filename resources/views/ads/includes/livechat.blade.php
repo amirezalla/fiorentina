@@ -1,7 +1,7 @@
 @php
     $matchId = request()->query('match_id'); // Get match_id from the URL query parameters
     $filePath = "chat/messages_{$matchId}.json";
-    $webSocketUrl = 'ws://localhost:8080'; // Update this to your WebSocket server URL
+    $webSocketUrl = 'wss://localhost:8080'; // Update this to your WebSocket server URL
 @endphp
 <style>
     .chat-container {

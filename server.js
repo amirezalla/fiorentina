@@ -1,7 +1,6 @@
-// filepath: /c:/Users/rog strix/Documents/GitHub/MARIGO-development/fiorentina/server.js
 const AWS = require('aws-sdk');
 const WebSocket = require('ws');
-const path = require('path');
+const https = require('https');
 const fs = require('fs');
 
 // Configure AWS SDK with Wasabi credentials
@@ -13,17 +12,29 @@ const s3 = new AWS.S3({
 });
 
 const bucketName = process.env.WASABI_BUCKET_NAME;
-let filePath = 'chat/messages_bJAT205d.json'; // Default file path
 
-const wss = new WebSocket.Server({ port: 8080 });
+// Load SSL/TLS certificates
+const server = https.createServer({
+    cert: fs.readFileSync('/path/to/your/certificate.crt'),
+    key: fs.readFileSync('/path/to/your/private.key'),
+});
+
+const wss = new WebSocket.Server({ server });
 
 wss.on('connection', ws => {
     console.log('Client connected');
 
+    let filePath = null;
+
     // Function to fetch the file from Wasabi
     const fetchFile = () => {
+        if (!filePath) {
+            console.error('File path is not set.');
+            return;
+        }
+
         const params = {
-            Bucket: 'laviola',
+            Bucket: bucketName,
             Key: filePath,
         };
 
@@ -36,12 +47,12 @@ wss.on('connection', ws => {
         });
     };
 
-    // Fetch the initial file content
-    fetchFile();
-
-    // Watch for file changes
-    fs.watch(filePath, (eventType, filename) => {
-        if (eventType === 'change') {
+    // Handle incoming messages from the client
+    ws.on('message', message => {
+        const data = JSON.parse(message);
+        if (data.type === 'setFilePath') {
+            filePath = data.filePath;
+            console.log('File path set to:', filePath);
             fetchFile();
         }
     });
@@ -51,4 +62,6 @@ wss.on('connection', ws => {
     });
 });
 
-console.log('WebSocket server is running on ws://localhost:8080');
+server.listen(8080, () => {
+    console.log('WebSocket server is running on wss://localhost:8080');
+});
