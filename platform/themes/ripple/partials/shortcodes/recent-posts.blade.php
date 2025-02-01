@@ -213,9 +213,11 @@
                                     @if ($match->status == 'LIVE')
                                         <button class="btn btn-primary">VAI ALLA DIRETTA</button>
                                     @else
-                                        <div id="countdown" style="background: #441274;padding:10px;border-radius:3px;">
+                                        <div id="countdown mt-10"
+                                            style="background: #441274;padding:10px;border-radius:3px;">
                                             <i class="fa fa-clock-o" aria-hidden="true"></i> <span
-                                                id="countdown-timer"></span></div>
+                                                id="countdown-timer"></span>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
