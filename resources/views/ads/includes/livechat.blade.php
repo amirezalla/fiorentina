@@ -121,167 +121,168 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    const colorCache = {};
+    window.onload = function() {
+        // Set up the WebSocket connection
+        const ws = new WebSocket(
+            "wss://weboscket-laviola-341264949013.europe-west1.run.app"); // Replace with your actual WebSocket URL
+        const colorCache = {};
 
-    function getAvatarColor(firstLetter) {
-        const letter = firstLetter.toUpperCase();
-        if (colorCache[letter]) return colorCache[letter];
+        function getAvatarColor(firstLetter) {
+            const letter = firstLetter.toUpperCase();
+            if (colorCache[letter]) return colorCache[letter];
 
-        let color;
-        switch (letter) {
-            case 'A':
-                color = '#3498db';
-                break; // Blue
-            case 'B':
-                color = '#2ecc71';
-                break; // Green
-            case 'C':
-                color = '#e74c3c';
-                break; // Red
-            case 'D':
-                color = '#f39c12';
-                break; // Orange
-            case 'E':
-                color = '#8e44ad';
-                break; // Dark Purple
-            case 'F':
-                color = '#9b59b6';
-                break; // Purple
-            case 'G':
-                color = '#16a085';
-                break; // Teal
-            case 'H':
-                color = '#e67e22';
-                break; // Orange
-            case 'I':
-                color = '#f1c40f';
-                break; // Yellow
-            case 'J':
-                color = '#e84393';
-                break; // Pink
-            case 'K':
-                color = '#34495e';
-                break; // Navy Blue
-            default:
-                color = '#95a5a6'; // Default Gray
-        }
-
-        colorCache[letter] = color;
-        return color;
-    }
-
-    // Setup CSRF token for axios
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
-
-    // Extract match_id from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const matchId = urlParams.get('match_id'); // Get match_id from the URL
-
-    if (!matchId) {
-        console.error('Match ID is missing in the URL.');
-    }
-
-    // Function to append a message to the messages list
-    function appendMessage(message, member) {
-        const messagesList = document.getElementById('messages-list');
-
-        const newMessage = document.createElement('li');
-        newMessage.classList.add('message-bubble');
-
-        const avatar = document.createElement('div');
-        avatar.classList.add('message-avatar');
-        avatar.textContent = member.first_name.charAt(0).toUpperCase() || 'A';
-        avatar.style.backgroundColor = getAvatarColor(member.first_name.charAt(0));
-
-        const messageContent = document.createElement('div');
-        messageContent.classList.add('message-content');
-        messageContent.innerHTML = `
-            <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
-            ${message.message}
-            <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
-        `;
-
-        newMessage.appendChild(avatar);
-        newMessage.appendChild(messageContent);
-
-        // Append the new message to the top of the messages list
-        messagesList.insertBefore(newMessage, messagesList.firstChild);
-    }
-
-    @if (auth('member')->check())
-        // Send message when button is clicked or enter key is pressed
-        const sendMessageButton = document.getElementById('send-message-btn');
-        const messageInput = document.getElementById('message-input');
-
-        messageInput.addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
+            let color;
+            switch (letter) {
+                case 'A':
+                    color = '#3498db';
+                    break; // Blue
+                case 'B':
+                    color = '#2ecc71';
+                    break; // Green
+                case 'C':
+                    color = '#e74c3c';
+                    break; // Red
+                case 'D':
+                    color = '#f39c12';
+                    break; // Orange
+                case 'E':
+                    color = '#8e44ad';
+                    break; // Dark Purple
+                case 'F':
+                    color = '#9b59b6';
+                    break; // Purple
+                case 'G':
+                    color = '#16a085';
+                    break; // Teal
+                case 'H':
+                    color = '#e67e22';
+                    break; // Orange
+                case 'I':
+                    color = '#f1c40f';
+                    break; // Yellow
+                case 'J':
+                    color = '#e84393';
+                    break; // Pink
+                case 'K':
+                    color = '#34495e';
+                    break; // Navy Blue
+                default:
+                    color = '#95a5a6'; // Default Gray
             }
-        });
 
-        sendMessageButton.addEventListener('click', function(event) {
-            sendMessage();
-        });
-    @endif
-
-    function sendMessage() {
-        console.log('Sending message at:', new Date().toISOString());
-
-        const message = messageInput.value.trim();
-
-        if (message === '') {
-            return;
+            colorCache[letter] = color;
+            return color;
         }
 
-        // Send message to the server
-        axios.post(`/chat/${matchId}`, {
-                message: message
-            })
-            .then(response => {
-                console.log('Message sent successfully at:', new Date().toISOString());
-                // Show the censored message returned from the server
-                const censoredMessage = response.data.censored_message;
-                console.log('Censored message:', censoredMessage);
-                messageInput.value = ''; // Clear input field
-            })
-            .catch(error => {
-                if (error.response && error.response.status === 400) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: error.response.data.error, // Show error message
-                    });
-                } else {
-                    console.error('Error sending message:', error);
+        // Setup CSRF token for axios
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
+
+        // Extract match_id from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchId = urlParams.get('match_id'); // Get match_id from the URL
+
+        if (!matchId) {
+            console.error('Match ID is missing in the URL.');
+        }
+
+        // Function to append a message to the messages list
+        function appendMessage(message, member) {
+            const messagesList = document.getElementById('messages-list');
+
+            const newMessage = document.createElement('li');
+            newMessage.classList.add('message-bubble');
+
+            const avatar = document.createElement('div');
+            avatar.classList.add('message-avatar');
+            avatar.textContent = member.first_name.charAt(0).toUpperCase() || 'A';
+            avatar.style.backgroundColor = getAvatarColor(member.first_name.charAt(0));
+
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            messageContent.innerHTML = `
+        <strong style='font-size:small'>${member.first_name} ${member.last_name}</strong><br>
+        ${message.message}
+        <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
+    `;
+
+            newMessage.appendChild(avatar);
+            newMessage.appendChild(messageContent);
+
+            // Append the new message to the top of the messages list
+            messagesList.insertBefore(newMessage, messagesList.firstChild);
+        }
+
+        @if (auth('member')->check())
+            // Send message when button is clicked or enter key is pressed
+            const sendMessageButton = document.getElementById('send-message-btn');
+            const messageInput = document.getElementById('message-input');
+
+            messageInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
                 }
             });
-    }
 
-    // Function to fetch existing messages from the server
-    function fetchMessages() {
-        axios.get(`/chat/${matchId}`)
-            .then(response => {
-                const messages = response.data.messages;
-                document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
-                messages.forEach(function(message) {
-                    appendMessage(message, message.member);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching messages:', error);
+            sendMessageButton.addEventListener('click', function(event) {
+                sendMessage();
             });
-    }
+        @endif
 
-    window.onload = function() {
+        function sendMessage() {
+            console.log('Sending message at:', new Date().toISOString());
+
+            const message = messageInput.value.trim();
+
+            if (message === '') {
+                return;
+            }
+
+            // Send message to the server
+            axios.post(`/chat/${matchId}`, {
+                    message: message
+                })
+                .then(response => {
+                    console.log('Message sent successfully at:', new Date().toISOString());
+                    // Show the censored message returned from the server
+                    const censoredMessage = response.data.censored_message;
+                    console.log('Censored message:', censoredMessage);
+                    messageInput.value = ''; // Clear input field
+                    const subscriptionMessage1 = JSON.stringify({
+                        filePath: `chat/messages_${matchId}.json`
+                    });
+                    ws.send(subscriptionMessage1);
+                })
+                .catch(error => {
+                    if (error.response && error.response.status === 400) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: error.response.data.error, // Show error message
+                        });
+                    } else {
+                        console.error('Error sending message:', error);
+                    }
+                });
+        }
+
+        // Function to fetch existing messages from the server
+        function fetchMessages() {
+            axios.get(`/chat/${matchId}`)
+                .then(response => {
+                    const messages = response.data.messages;
+                    document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
+                    messages.forEach(function(message) {
+                        appendMessage(message, message.member);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching messages:', error);
+                });
+        }
         // Fetch messages on initial load
         fetchMessages();
 
-        // Set up the WebSocket connection
-        const ws = new WebSocket("wss://weboscket-laviola-341264949013.europe-west1.run.app"); // Replace with your actual WebSocket URL
-        const subscriptionMessage1 = JSON.stringify({
-            filePath: `chat/messages_${matchId}.json`
-        });
-        setInterval(ws.send(subscriptionMessage1), 1000);
+
 
         ws.onopen = function() {
             console.log("WebSocket connection established.");
@@ -311,6 +312,4 @@
         // Remove polling, since WebSocket now handles updates
         // setInterval(fetchMessages, 2500);
     };
-
-
 </script>
