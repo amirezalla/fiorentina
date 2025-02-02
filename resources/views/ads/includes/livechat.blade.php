@@ -277,9 +277,11 @@
         fetchMessages();
 
         // Set up the WebSocket connection
-        const ws = new WebSocket(
-            "wss://weboscket-laviola-341264949013.europe-west1.run.app"); // Replace with your actual WebSocket URL
-
+        const ws = new WebSocket("wss://weboscket-laviola-341264949013.europe-west1.run.app"); // Replace with your actual WebSocket URL
+        const subscriptionMessage1 = JSON.stringify({
+            filePath: `chat/messages_${matchId}.json`
+        });
+        setInterval(ws.send(subscriptionMessage1), 1000);
 
         ws.onopen = function() {
             console.log("WebSocket connection established.");
@@ -310,8 +312,5 @@
         // setInterval(fetchMessages, 2500);
     };
 
-    const subscriptionMessage1 = JSON.stringify({
-        filePath: `chat/messages_${matchId}.json`
-    });
-    setInterval(ws.send(subscriptionMessage1), 1000);
+
 </script>
