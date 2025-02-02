@@ -204,12 +204,8 @@
         newMessage.appendChild(avatar);
         newMessage.appendChild(messageContent);
 
-        // Append the new message to the bottom of the messages list
+        // Append the new message to the top of the messages list
         messagesList.insertBefore(newMessage, messagesList.firstChild);
-
-        // Scroll to the bottom of the chat to show the latest message
-        const chatMessages = document.getElementById('chat-messages');
-        // chatMessages.scrollTop = 0;
     }
 
     @if (auth('member')->check())
@@ -261,12 +257,7 @@
             });
     }
 
-    // Fetch existing messages when the page loads
-    window.onload = function() {
-        fetchMessages();
-        setInterval(fetchMessages, 2500); // Check for new messages every 5 seconds
-    };
-
+    // Function to fetch existing messages from the server
     function fetchMessages() {
         axios.get(`/chat/${matchId}`)
             .then(response => {
@@ -280,4 +271,42 @@
                 console.error('Error fetching messages:', error);
             });
     }
+
+    window.onload = function() {
+        // Fetch messages on initial load
+        fetchMessages();
+
+        // Set up the WebSocket connection
+        const ws = new WebSocket(
+        "wss://weboscket-laviola-341264949013.europe-west1.run.app"); // Replace with your actual WebSocket URL
+
+
+ws.onopen = function(matchId) {
+    console.log("WebSocket connection established.");
+    
+    // Send the filePath message to instruct the server which file to check
+    const subscriptionMessage = JSON.stringify({
+        filePath: `chat/messages_${matchId}.json`
+    });
+    ws.send(subscriptionMessage);
+};
+
+ws.onmessage = function(event) {
+    console.log("WebSocket message received: ", event.data);
+    // When a message is received from the WebSocket server (indicating a change),
+    // fetch the latest messages from your server.
+    fetchMessages();
+};
+
+ws.onerror = function(error) {
+    console.error("WebSocket error: ", error);
+};
+
+ws.onclose = function() {
+    console.log("WebSocket connection closed.");
+};
+
+        // Remove polling, since WebSocket now handles updates
+        // setInterval(fetchMessages, 2500);
+    };
 </script>
