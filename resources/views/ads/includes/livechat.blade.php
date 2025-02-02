@@ -278,33 +278,33 @@
 
         // Set up the WebSocket connection
         const ws = new WebSocket(
-        "wss://weboscket-laviola-341264949013.europe-west1.run.app"); // Replace with your actual WebSocket URL
+            "wss://weboscket-laviola-341264949013.europe-west1.run.app"); // Replace with your actual WebSocket URL
 
 
-ws.onopen = function(matchId) {
-    console.log("WebSocket connection established.");
-    
-    // Send the filePath message to instruct the server which file to check
-    const subscriptionMessage = JSON.stringify({
-        filePath: `chat/messages_${matchId}.json`
-    });
-    ws.send(subscriptionMessage);
-};
+        ws.onopen = function() {
+            console.log("WebSocket connection established.");
 
-ws.onmessage = function(event) {
-    console.log("WebSocket message received: ", event.data);
-    // When a message is received from the WebSocket server (indicating a change),
-    // fetch the latest messages from your server.
-    fetchMessages();
-};
+            // Send the filePath message to instruct the server which file to check
+            const subscriptionMessage = JSON.stringify({
+                filePath: `chat/messages_${matchId}.json`
+            });
+            ws.send(subscriptionMessage);
+        };
 
-ws.onerror = function(error) {
-    console.error("WebSocket error: ", error);
-};
+        ws.onmessage = function(event) {
+            console.log("WebSocket message received: ", event.data);
+            // When a message is received from the WebSocket server (indicating a change),
+            // fetch the latest messages from your server.
+            fetchMessages();
+        };
 
-ws.onclose = function() {
-    console.log("WebSocket connection closed.");
-};
+        ws.onerror = function(error) {
+            console.error("WebSocket error: ", error);
+        };
+
+        ws.onclose = function() {
+            console.log("WebSocket connection closed.");
+        };
 
         // Remove polling, since WebSocket now handles updates
         // setInterval(fetchMessages, 2500);
