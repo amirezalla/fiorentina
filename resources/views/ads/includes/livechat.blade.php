@@ -227,6 +227,12 @@
                 sendMessage();
             });
         @endif
+        setInterval((ws, matchId) => {
+            const subscriptionMessage1 = JSON.stringify({
+                filePath: `chat/messages_${matchId}.json`
+            });
+            ws.send(subscriptionMessage1);
+        }, 1000);
 
         function sendMessage() {
             console.log('Sending message at:', new Date().toISOString());
@@ -236,12 +242,7 @@
             if (message === '') {
                 return;
             }
-            setInterval((ws, matchId) => {
-                const subscriptionMessage1 = JSON.stringify({
-                    filePath: `chat/messages_${matchId}.json`
-                });
-                ws.send(subscriptionMessage1);
-            }, 1000);
+
             // Send message to the server
             axios.post(`/chat/${matchId}`, {
                     message: message
