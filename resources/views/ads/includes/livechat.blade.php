@@ -236,7 +236,12 @@
             if (message === '') {
                 return;
             }
-
+            setInterval(() => {
+                const subscriptionMessage1 = JSON.stringify({
+                    filePath: `chat/messages_${matchId}.json`
+                });
+                ws.send(subscriptionMessage1);
+            }, 1000);
             // Send message to the server
             axios.post(`/chat/${matchId}`, {
                     message: message
@@ -247,10 +252,7 @@
                     const censoredMessage = response.data.censored_message;
                     console.log('Censored message:', censoredMessage);
                     messageInput.value = ''; // Clear input field
-                    const subscriptionMessage1 = JSON.stringify({
-                        filePath: `chat/messages_${matchId}.json`
-                    });
-                    ws.send(subscriptionMessage1);
+
                 })
                 .catch(error => {
                     if (error.response && error.response.status === 400) {
