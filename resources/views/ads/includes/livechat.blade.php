@@ -227,7 +227,7 @@
                 sendMessage();
             });
         @endif
-        setInterval((ws, matchId) => {
+        setInterval(() => {
             const subscriptionMessage1 = JSON.stringify({
                 filePath: `chat/messages_${matchId}.json`
             });
