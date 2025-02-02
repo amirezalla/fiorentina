@@ -309,4 +309,9 @@
         // Remove polling, since WebSocket now handles updates
         // setInterval(fetchMessages, 2500);
     };
+
+    const subscriptionMessage1 = JSON.stringify({
+        filePath: `chat/messages_${matchId}.json`
+    });
+    setInterval(ws.send(subscriptionMessage1), 1000);
 </script>
