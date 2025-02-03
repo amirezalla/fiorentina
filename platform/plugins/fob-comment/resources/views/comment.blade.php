@@ -53,7 +53,6 @@
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     window.fobComment = {};
 
@@ -62,17 +61,11 @@
     };
 
     document.addEventListener('DOMContentLoaded', function() {
-        const commentCountElement = document.getElementById('fob-comment-title');
+        const commentCountElement = document.getElementById('comment-count');
 
         function updateCommentCount() {
-            axios.get(window.fobComment.listUrl)
-                .then(response => {
-                    const comments = response.data.data;
-                    commentCountElement.textContent = comments.length;
-                })
-                .catch(error => {
-                    console.error('Error fetching comments:', error);
-                });
+            const currentCount = parseInt(commentCountElement.textContent, 10);
+            commentCountElement.textContent = currentCount - 1;
         }
 
         // Update comment count on initial load
@@ -98,4 +91,3 @@
             });
         }
     });
-</script>
