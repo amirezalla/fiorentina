@@ -60,7 +60,12 @@
                         <a @if ($match->status == 'live') href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}"
                             class="btn-sm btn-primary mb-2 fiorentina-btn" style="grid-area: auto;">Vai alla
                             diretta!</a>
-                            @else @endif
+                            @else 
+                            <div id="countdown mt-10"
+                                            style="background: #441274;padding:10px;border-radius:3px;">
+                                            <i class="fa fa-clock-o" aria-hidden="true"></i> <span
+                                                id="countdown-timer"></span>
+                                        </div> @endif
                             </div>
                     </div>
                 </div>
