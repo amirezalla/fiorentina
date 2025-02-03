@@ -115,7 +115,7 @@ public function importPostsWithoutMeta()
 
                     $metaToInsert[] = [
                         'meta_key' => 'allow_comments',
-                        'meta_value' => '1',
+                        'meta_value' => $wpPost->comment_status === 'open' ? '1' : '0',
                         'reference_id' => $wpPost->ID,
                         'reference_type' => 'Botble\Blog\Models\Post',
                         'created_at' => $wpPost->post_date_gmt,
