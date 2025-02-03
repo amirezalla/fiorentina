@@ -60,7 +60,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', function() {
-        const commentCountElement = document.getElementById('comment-count');
+        const commentCountElement = document.getElementById('fob-comment-title');
 
         function updateCommentCount() {
             axios.get(window.fobComment.listUrl)
