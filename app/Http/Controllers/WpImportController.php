@@ -110,7 +110,7 @@ public function importPostsWithoutMeta()
                         'published_at' => $wpPost->post_date,
                         'created_at' => $wpPost->post_date_gmt,
                         'updated_at' => $wpPost->post_date_gmt,
-                        'slug'=>$wpPost->post_name
+                        'plain_slug' => $wpPost->post_name
                     ];
 
                     $metaToInsert[] = [
