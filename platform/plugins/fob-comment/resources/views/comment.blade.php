@@ -19,7 +19,7 @@
         <div class="d-flex align-items-left">
             <h6 class="fob-comment-title fob-comment-list-title mb-2">
                 {{ trans('plugins/fob-comment::comment.front.list.title') }} (<span
-                    id="comment-count">@dd($model){{ $model->comments->count() }}</span>)
+                    id="comment-count">{{ $model->comments }}</span>)
             </h6>
         </div>
 
