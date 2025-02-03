@@ -18,8 +18,7 @@
     <div class="d-flex justify-content-between align-items-center border-bottom text-dark mb-3">
         <div class="d-flex align-items-left">
             <h6 class="fob-comment-title fob-comment-list-title mb-2">
-                {{ trans('plugins/fob-comment::comment.front.list.title') }} (<span
-                    id="comment-count">{{ $model->comments }}</span>)
+                {{ trans('plugins/fob-comment::comment.front.list.title') }}
             </h6>
         </div>
 
