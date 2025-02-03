@@ -387,12 +387,12 @@ private function category($primaryCategoryId,$post_id){
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
             ])->post($apiUrl, [
-                'model' => 'text-embedding-3-small',
+                'model' => 'o3-mini',
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an SEO assistant.'],
                     ['role' => 'user', 'content' => $prompt],
                 ],
-                'max_tokens' => 100,
+                'max_tokens' => 1024,
             ]);
             $data = $response->json();
             dd($data);
