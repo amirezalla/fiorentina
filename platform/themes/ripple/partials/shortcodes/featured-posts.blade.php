@@ -56,13 +56,13 @@
 
                 <!-- Ticket Buttons -->
                 <div class="col-md-3">
-                    <div class="d-grid">
+                    <div class="d-grid text-center">
                         @if ($match->status == 'live')
                             <a href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}"
                                 class="btn-sm btn-primary mb-2 fiorentina-btn" style="grid-area: auto;">Vai alla
                                 diretta!</a>
                         @else
-                            <div id="countdown text-center" style="background: #441274;padding:10px;border-radius:3px;">
+                            <div id="countdown" style="background: #441274;padding:10px;border-radius:3px;">
                                 <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="countdown-timer"></span>
                             </div>
                         @endif
