@@ -125,9 +125,26 @@ public function importPostsWithoutMeta()
                 }
 
                 if (!empty($postsToInsert)) {
+                    $existingPostIds = Post::whereIn('id', array_column($postsToInsert, 'id'))->pluck('id')->toArray();
+                    $postsToInsert = array_filter($postsToInsert, function ($post) use ($existingPostIds) {
+                        return !in_array($post['id'], $existingPostIds);
+                    });
                     Post::insert($postsToInsert);
                 }
+
                 if (!empty($metaToInsert)) {
+                    $existingMeta = MetaBox::whereIn('reference_id', array_column($metaToInsert, 'reference_id'))
+                        ->whereIn('meta_key', array_column($metaToInsert, 'meta_key'))
+                        ->get(['reference_id', 'meta_key'])
+                        ->toArray();
+                    $metaToInsert = array_filter($metaToInsert, function ($meta) use ($existingMeta) {
+                        foreach ($existingMeta as $existing) {
+                            if ($existing['reference_id'] == $meta['reference_id'] && $existing['meta_key'] == $meta['meta_key']) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
                     MetaBox::insert($metaToInsert);
                 }
             });
