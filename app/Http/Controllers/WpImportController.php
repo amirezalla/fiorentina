@@ -93,7 +93,7 @@ public function importPostsWithoutMeta()
         DB::connection('mysql2')
             ->table('frntn_posts')
             ->where('post_type', 'post')
-            ->where('post_date_gmt', '>', '2025-01-01 00:00:00')
+            ->where('post_date_gmt', '>', '2025-02-02 00:00:00')
             ->orderBy('ID')
             ->chunk(100, function ($wpPosts) {
                 $postsToInsert = [];
@@ -102,7 +102,7 @@ public function importPostsWithoutMeta()
                     $postsToInsert[] = [
                         'id' => $wpPost->ID,
                         'name' => $wpPost->post_title,
-                        'description' => $wpPost->post_excerpt,
+                        'description' => Str::limit(strip_tags($wpPost->post_content), 100, '...'),
                         'content' => $wpPost->post_content,
                         'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
                         'author_id' => 1,
