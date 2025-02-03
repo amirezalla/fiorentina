@@ -388,7 +388,7 @@ private function category($primaryCategoryId,$post_id){
                 'Content-Type' => 'application/json',
                 'anthropic-version' => '2023-06-01',
             ])->get($apiUrl, [
-                'model' => 'claude-3-5-sonnet-20241022',
+                'model' => 'claude-3-5-haiku-20241022',
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an SEO assistant.'],
                     ['role' => 'user', 'content' => $prompt],
