@@ -51,3 +51,49 @@
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
+
+<script>
+    window.fobComment = {};
+
+    window.fobComment = {
+        listUrl: {{ Js::from(route('fob-comment.public.comments.index', isset($model) ? ['reference_type' => $model::class, 'reference_id' => $model->id] : url()->current())) }},
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const commentCountElement = document.getElementById('comment-count');
+
+        function updateCommentCount() {
+            axios.get(window.fobComment.listUrl)
+                .then(response => {
+                    const comments = response.data.data;
+                    commentCountElement.textContent = comments.length;
+                })
+                .catch(error => {
+                    console.error('Error fetching comments:', error);
+                });
+        }
+
+        // Update comment count on initial load
+        updateCommentCount();
+
+        // Listen for form submission to update comment count
+        const commentForm = document.querySelector('.fob-comment-form-section form');
+        if (commentForm) {
+            commentForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(commentForm);
+
+                axios.post(commentForm.action, formData)
+                    .then(response => {
+                        // Update comment count after successful submission
+                        updateCommentCount();
+                        // Optionally, clear the form or show a success message
+                        commentForm.reset();
+                    })
+                    .catch(error => {
+                        console.error('Error submitting comment:', error);
+                    });
+            });
+        }
+    });
+</script>
