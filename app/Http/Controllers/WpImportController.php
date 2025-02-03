@@ -386,6 +386,7 @@ private function category($primaryCategoryId,$post_id){
             $response = Http::withHeaders([
                 'x-api-key' => "$apiKey",
                 'Content-Type' => 'application/json',
+                'anthropic-version' => '2023-06-01',
             ])->get($apiUrl, [
                 'model' => 'claude-3-5-sonnet-20241022',
                 'messages' => [
