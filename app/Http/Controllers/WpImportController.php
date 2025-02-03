@@ -377,7 +377,7 @@ private function category($primaryCategoryId,$post_id){
 
             $apiKey = env('GPT_API'); // Replace with your actual API key
 
-            $apiUrl = 'https://api.anthropic.com/v1/complete';
+            $apiUrl = 'https://api.anthropic.com/v1/models';
     
             $prompt = "Generate SEO metadata for the following post:
             Title: {$post->name}
