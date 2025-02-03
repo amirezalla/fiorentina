@@ -94,7 +94,7 @@ public function importPostsWithoutMeta()
         DB::connection('mysql2')
             ->table('frntn_posts')
             ->where('post_type', 'post')
-            ->where('post_date_gmt', '>', '2025-02-02 00:00:00')
+            ->where('post_date_gmt', '>', '2025-02-01 00:00:00')
             ->orderBy('ID')
             ->chunk(100, function ($wpPosts) {
                 $postsToInsert = [];
