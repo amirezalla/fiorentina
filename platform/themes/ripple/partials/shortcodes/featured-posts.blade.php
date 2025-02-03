@@ -62,8 +62,8 @@
                                 class="btn-sm btn-primary mb-2 fiorentina-btn" style="grid-area: auto;">Vai alla
                                 diretta!</a>
                         @else
-                            <div id="countdown" style="background: #441274;padding:10px;border-radius:3px;">
-                                <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="countdown-timer"></span>
+                            <div id="countdown1" style="background: #441274;padding:10px;border-radius:3px;">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="countdown-timer1"></span>
                             </div>
                         @endif
                     </div>
@@ -190,12 +190,12 @@
 
 
                     // Display the result in the element with id="countdown-timer"
-                    document.getElementById("countdown-timer").innerHTML = countdownString.trim();
+                    document.getElementById("countdown-timer1").innerHTML = countdownString.trim();
 
                     // If the count down is over, write some text
                     if (distance < 0) {
                         clearInterval(countdownFunction);
-                        document.getElementById("countdown-timer").innerHTML = "MATCH STARTED";
+                        document.getElementById("countdown-timer1").innerHTML = "MATCH STARTED";
                     }
                 }, 1000);
             @endif
