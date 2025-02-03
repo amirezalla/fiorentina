@@ -60,50 +60,21 @@
                         <a @if ($match->status == 'live') href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}"
                             class="btn-sm btn-primary mb-2 fiorentina-btn" style="grid-area: auto;">Vai alla
                             diretta!</a>
-                            @else
-                        <div id="countdown mt-10"
-                            style="background: #441274;padding:10px;border-radius:3px;">
-                            <i class="fa fa-clock-o" aria-hidden="true"></i> <span
-                                id="countdown-timer"></span>
-                        </div> @endif
+                            @else @endif
                             </div>
                     </div>
-                </div>
 
-                <div class="container">
-                    <div class="row">
-                        <!-- Main content column (col-9) -->
-                        <div class="col-12 col-lg-9 p-0 m-0">
-                            <div class="post-group post-group--hero h-100">
-                                @foreach ($posts as $post)
-                                    @if ($loop->first)
-                                        <div class="post-group__left full-width">
-                                            <article class="post post__inside post__inside--feature h-100">
-                                                <div class="post__thumbnail h-100">
-                                                    {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'eager']) }}
-                                                    <a class="post__overlay" href="{{ $post->url }}"
-                                                        title="{{ $post->name }}"></a>
-                                                </div>
-                                                <header class="post__header">
-                                                    @if ($post->categories->count())
-                                                        <div class="d-flex">
-                                                            <span
-                                                                class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
-                                                        </div>
-                                                    @endif
-                                                    <h3 class="post__title">
-                                                        <a href="{{ $post->url }}">{{ $post->name }}</a>
-                                                    </h3>
-                                                </header>
-                                            </article>
-                                        </div>
-                                        <div class="post-group__right d-flex flex-column half-width">
-                                        @else
-                                            <div class="post-group__item w-100 flex-grow-1">
-                                                <article
-                                                    class="post post__inside post__inside--feature post__inside--feature-small h-100">
+                    <div class="container">
+                        <div class="row">
+                            <!-- Main content column (col-9) -->
+                            <div class="col-12 col-lg-9 p-0 m-0">
+                                <div class="post-group post-group--hero h-100">
+                                    @foreach ($posts as $post)
+                                        @if ($loop->first)
+                                            <div class="post-group__left full-width">
+                                                <article class="post post__inside post__inside--feature h-100">
                                                     <div class="post__thumbnail h-100">
-                                                        {{ RvMedia::image($post->image, $post->name, 'medium', attributes: ['loading' => 'eager']) }}
+                                                        {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'eager']) }}
                                                         <a class="post__overlay" href="{{ $post->url }}"
                                                             title="{{ $post->name }}"></a>
                                                     </div>
@@ -111,7 +82,7 @@
                                                         @if ($post->categories->count())
                                                             <div class="d-flex">
                                                                 <span
-                                                                    class="fz-14px post-group__left-purple-badge">{{ $post->categories->first()->name }}</span>
+                                                                    class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
                                                             </div>
                                                         @endif
                                                         <h3 class="post__title">
@@ -120,10 +91,33 @@
                                                     </header>
                                                 </article>
                                             </div>
-                                            @if ($loop->last)
-                                        </div>
+                                            <div class="post-group__right d-flex flex-column half-width">
+                                            @else
+                                                <div class="post-group__item w-100 flex-grow-1">
+                                                    <article
+                                                        class="post post__inside post__inside--feature post__inside--feature-small h-100">
+                                                        <div class="post__thumbnail h-100">
+                                                            {{ RvMedia::image($post->image, $post->name, 'medium', attributes: ['loading' => 'eager']) }}
+                                                            <a class="post__overlay" href="{{ $post->url }}"
+                                                                title="{{ $post->name }}"></a>
+                                                        </div>
+                                                        <header class="post__header">
+                                                            @if ($post->categories->count())
+                                                                <div class="d-flex">
+                                                                    <span
+                                                                        class="fz-14px post-group__left-purple-badge">{{ $post->categories->first()->name }}</span>
+                                                                </div>
+                                                            @endif
+                                                            <h3 class="post__title">
+                                                                <a href="{{ $post->url }}">{{ $post->name }}</a>
+                                                            </h3>
+                                                        </header>
+                                                    </article>
+                                                </div>
+                                                @if ($loop->last)
+                                            </div>
+                                        @endif
                                     @endif
-                                @endif
 @endforeach
 </div>
 </div>
