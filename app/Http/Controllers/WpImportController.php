@@ -391,7 +391,8 @@ private function category($primaryCategoryId,$post_id){
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an SEO assistant.'],
                     ['role' => 'user', 'content' => $prompt],
-                ]
+                ],
+                'max_tokens' => 1024,
             ]);
             $data = $response->json();
             dd($data);
