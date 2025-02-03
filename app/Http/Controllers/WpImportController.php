@@ -377,17 +377,17 @@ private function category($primaryCategoryId,$post_id){
 
             $apiKey = env('GPT_API'); // Replace with your actual API key
 
-            $apiUrl = 'https://api.openai.com/v1/chat/completions';
+            $apiUrl = 'https://api.anthropic.com/v1/complete';
     
             $prompt = "Generate SEO metadata for the following post:
             Title: {$post->name}
             Content: {$post->content}
             Provide keywords and a meta description.";
             $response = Http::withHeaders([
-                'Authorization' => "Bearer $apiKey",
+                'x-api-key' => "$apiKey",
                 'Content-Type' => 'application/json',
             ])->post($apiUrl, [
-                'model' => 'gpt-3.5-turbo',
+                'model' => 'claude-3-5-sonnet-20241022',
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an SEO assistant.'],
                     ['role' => 'user', 'content' => $prompt],
