@@ -154,53 +154,6 @@
             @endforeach
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            @if ($match->status != 'LIVE')
-                // Set the date we're counting down to
-                var countDownDate = new Date(
-                    "{{ \Carbon\Carbon::parse($match->match_date)->timezone('Europe/Rome')->toIso8601String() }}"
-                ).getTime();
-
-                // Update the count down every 1 second
-                var countdownFunction = setInterval(function() {
-                    // Get today's date and time
-                    var now = new Date().getTime();
-
-                    // Find the distance between now and the count down date
-                    var distance = countDownDate - now;
-
-                    // Time calculations for days, hours, minutes and seconds
-                    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    // Build the countdown string
-                    var countdownString = "tra ";
-                    if (days > 0) {
-                        countdownString += days + " giorn" + (days != 1 ? "i" : "o") + " ";
-                    }
-                    if (hours > 0) {
-                        countdownString += hours + " or" + (hours != 1 ? "e" : "a") + " ";
-                    }
-                    if (minutes > 0) {
-                        countdownString += minutes + " minut" + (minutes != 1 ? "i" : "o") + " ";
-                    }
-
-
-                    // Display the result in the element with id="countdown-timer"
-                    document.getElementById("countdown-timer1").innerHTML = countdownString.trim();
-
-                    // If the count down is over, write some text
-                    if (distance < 0) {
-                        clearInterval(countdownFunction);
-                        document.getElementById("countdown-timer1").innerHTML = "MATCH STARTED";
-                    }
-                }, 1000);
-            @endif
-        });
-    </script>
 </div>
 </div>
 </div>
