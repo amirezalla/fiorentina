@@ -387,12 +387,11 @@ private function category($primaryCategoryId,$post_id){
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
             ])->post($apiUrl, [
-                'model' => 'o1-mini',
+                'model' => 'gpt-4o',
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an SEO assistant.'],
                     ['role' => 'user', 'content' => $prompt],
-                ],
-                'max_tokens' => 1024,
+                ]
             ]);
             $data = $response->json();
             dd($data);
