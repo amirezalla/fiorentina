@@ -363,7 +363,7 @@ private function category($primaryCategoryId,$post_id){
 }
    
 
-    public function generateSEO($postId=37)
+    public function generateSEO($postId=556093)
     {
         try {
             // Retrieve the post
