@@ -25,6 +25,7 @@ use Botble\Blog\Models\Category;
 use Botble\Slug\Models\Slug;
 use FriendsOfBotble\Comment\Models\Comment;
 use FriendsOfBotble\Comment\Enums\CommentStatus;
+use Botble\Base\Models\MetaBox;
 
 
 
