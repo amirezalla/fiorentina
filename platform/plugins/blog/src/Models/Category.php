@@ -22,6 +22,7 @@ class Category extends BaseModel implements HasTreeCategoryContract
     protected $table = 'categories';
 
     protected $fillable = [
+        'id',
         'name',
         'description',
         'parent_id',

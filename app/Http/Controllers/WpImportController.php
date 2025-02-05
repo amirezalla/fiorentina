@@ -321,13 +321,60 @@ public function deleteTodayImportedPosts()
 
 public function ImportCategories(){
 
-    try{}
+    try{
+
+        $posts = Post::all();
+        $categoryIds = $posts->pluck('category_id')->unique()->toArray();
+        $categories = DB::connection('mysql2')
+            ->table('frntn_terms')
+            ->whereIn('term_id', $categoryIds)
+            ->get();
+
+        foreach ($categories as $category) {
+            $existingCategory = Category::where('name', $category->name)->first();
+            if (!$existingCategory) {
+                $newCategory = new Category();
+                $newCategory->fill([
+                    'id' => $category->term_id,
+                    'name' => $category->name,
+                    'description' => null,
+                    'parent_id' => 0,
+                    'icon' => null,
+                    'is_featured' => 0,
+                    'order' => $category->term_order ?? 0,
+                    'is_default' => 0,
+                    'status' => 'published',
+                    'author_id' => 1,
+                    'author_type' => 'Botble\ACL\Models\User',
+                ]);
+                $newCategory->save();
+
+                $slug = new Slug();
+                $slug->fill([
+                    'key' => 'category/news/' . $category->name,
+                    'reference_id' => $category->term_id,
+                    'reference_type' => 'Botble\Blog\Models\Category',
+                ]);
+                $slug->save();
+            }
+        }
+
+        $posts = Post::whereNotNull('category_id')->where('category_id', '!=', '')->get();
+        foreach ($posts as $post) {
+            DB::table('post_categories')->insert([
+                'post_id' => $post->id,
+                'category_id' => $post->category_id,
+            ]);
+        }
+
+    }
     catch (\Exception $e) {
         return response()->json([
             'message' => 'Error importing categories.',
             'error' => $e->getMessage(),
         ], 500);
     }
+
 
 }
 
