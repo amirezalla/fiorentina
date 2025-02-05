@@ -173,6 +173,8 @@ public function importMetaForPosts()
 
             // Process featured image
             $featuredImageId = $meta['_thumbnail_id'] ?? null;
+            $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? '';
+
 
 
             //Put image process on job and call it 
@@ -219,6 +221,8 @@ public function importMetaForPosts()
             
                 $storedImagePath = $uploadResult['data']->url ?? null;
             }
+
+            
             
             // $post->update and finish job
             
@@ -227,6 +231,7 @@ public function importMetaForPosts()
             $post->update([
                 'image' => $storedImagePath,
                 'format_type' => 'post',
+                'category_id' => $primaryCategoryId
             ]);
         }
 
@@ -282,7 +287,7 @@ public function deleteTodayImportedPosts()
 
         // Fetch post IDs created today
         $postIds = DB::table('posts')
-            ->whereDate('created_at','>', '2025-01-01 00:00:00')
+            ->whereDate('created_at','>', '2025-01-03 00:00:00')
             ->pluck('id');
 
         if ($postIds->isEmpty()) {
