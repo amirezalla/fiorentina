@@ -313,6 +313,18 @@ public function deleteTodayImportedPosts()
     }
 }
 
+public function ImportCategories(){
+
+    try{}
+    catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error importing categories.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+
+}
+
 
 private function category($primaryCategoryId,$post_id){
     try{
@@ -342,7 +354,7 @@ private function category($primaryCategoryId,$post_id){
             ]);
             $category->save();
             $slug->fill([
-                'key'=>$term->name,
+                'key'=>'category/news/'.$term->name,
                 'reference_id'=>$primaryCategoryId,
                 'reference_type'=>'Botble\Blog\Models\Category'
             ]);
