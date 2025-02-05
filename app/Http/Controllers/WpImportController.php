@@ -162,7 +162,7 @@ public function importPostsWithoutMeta()
 public function importMetaForPosts()
 {
     try {
-        $posts = Post::whereNull('image')->get(); // Fetch all posts from the Laravel database
+        $posts = Post::where('category_id','')->get(); // Fetch all posts from the Laravel database
         foreach ($posts as $post) {
             $meta = DB::connection('mysql2')
                 ->table('frntn_postmeta')
@@ -172,55 +172,56 @@ public function importMetaForPosts()
 
 
             // Process featured image
+            // $featuredImageId = $meta['_thumbnail_id'] ?? null;
             $featuredImageId = $meta['_thumbnail_id'] ?? null;
-            $primaryCategoryId = $metaValues['_yoast_wpseo_primary_category'] ?? '';
+            $primaryCategoryId = $meta['_yoast_wpseo_primary_category'] ?? '';
 
 
 
             //Put image process on job and call it 
-            $featuredImageUrl = $featuredImageId
-                ? DB::connection('mysql2')
-                    ->table('frntn_posts')
-                    ->where('ID', $featuredImageId)
-                    ->value('guid')
-                : null;
+            // $featuredImageUrl = $featuredImageId
+            //     ? DB::connection('mysql2')
+            //         ->table('frntn_posts')
+            //         ->where('ID', $featuredImageId)
+            //         ->value('guid')
+            //     : null;
 
-            $storedImagePath = null;
-            if ($featuredImageUrl) {
-                // Generate a temporary file path
-                $tempPath = storage_path('app/temp_images/' . uniqid() . '.jpg');
-                $tempDir = dirname($tempPath);
+            // $storedImagePath = null;
+            // if ($featuredImageUrl) {
+            //     // Generate a temporary file path
+            //     $tempPath = storage_path('app/temp_images/' . uniqid() . '.jpg');
+            //     $tempDir = dirname($tempPath);
             
-                // Ensure the temp directory exists
-                if (!file_exists($tempDir)) {
-                    mkdir($tempDir, 0755, true);
-                }
+            //     // Ensure the temp directory exists
+            //     if (!file_exists($tempDir)) {
+            //         mkdir($tempDir, 0755, true);
+            //     }
             
-                // Download the image
-                try {
-                    file_put_contents($tempPath, file_get_contents($featuredImageUrl));
-                } catch (\Exception $e) {
-                    throw new \Exception('Failed to download image: ' . $e->getMessage());
-                }
+            //     // Download the image
+            //     try {
+            //         file_put_contents($tempPath, file_get_contents($featuredImageUrl));
+            //     } catch (\Exception $e) {
+            //         throw new \Exception('Failed to download image: ' . $e->getMessage());
+            //     }
             
-                // Sanitize filename for upload
-                $pathInfo = pathinfo($featuredImageUrl);
-                $sanitizedFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $pathInfo['filename']);
-                $newFilePath = "{$tempDir}/{$sanitizedFileName}.{$pathInfo['extension']}";
+            //     // Sanitize filename for upload
+            //     $pathInfo = pathinfo($featuredImageUrl);
+            //     $sanitizedFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $pathInfo['filename']);
+            //     $newFilePath = "{$tempDir}/{$sanitizedFileName}.{$pathInfo['extension']}";
             
-                // Rename the file locally
-                rename($tempPath, $newFilePath);
+            //     // Rename the file locally
+            //     rename($tempPath, $newFilePath);
             
-                // Upload the sanitized file
-                $uploadResult = $this->rvMedia->uploadFromPath($newFilePath, 0, 'posts');
-                unlink($newFilePath); // Clean up the temporary file after uploading
+            //     // Upload the sanitized file
+            //     $uploadResult = $this->rvMedia->uploadFromPath($newFilePath, 0, 'posts');
+            //     unlink($newFilePath); // Clean up the temporary file after uploading
             
-                if (!empty($uploadResult['error'])) {
-                    throw new \Exception($uploadResult['message']);
-                }
+            //     if (!empty($uploadResult['error'])) {
+            //         throw new \Exception($uploadResult['message']);
+            //     }
             
-                $storedImagePath = $uploadResult['data']->url ?? null;
-            }
+            //     $storedImagePath = $uploadResult['data']->url ?? null;
+            // }
 
             
             
@@ -229,7 +230,7 @@ public function importMetaForPosts()
             
 
             $post->update([
-                'image' => $storedImagePath,
+                // 'image' => $storedImagePath,
                 'format_type' => 'post',
                 'category_id' => $primaryCategoryId
             ]);
