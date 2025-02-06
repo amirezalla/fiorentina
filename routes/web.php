@@ -159,5 +159,5 @@ Route::get('/delete-today-posts', [WpImportController::class, 'deleteTodayImport
 Route::get('/import-posts', [WpImportController::class, 'importPostsWithoutMeta']);
 Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
-Route::get('/import-categories', [WpImportController::class, 'importSlugsForPosts']);
+Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
