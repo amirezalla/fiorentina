@@ -6,6 +6,18 @@
             <div class="post__thumbnail">
                 {{ RvMedia::image($post->image, $post->name, 'thumbnail') }}
                 <a href="{{ $post->url }}" title="{{ $post->name }}" class="post__overlay"></a>
+                <div class="post__content-wrap">
+                    <header class="post__header">
+                        <h3 class="post__title"><a href="{{ $post->url }}"
+                                title="{{ $post->name }}">{{ $post->name }}</a></h3>
+                        // <div class="post__meta">
+                            // {!! Theme::partial('blog.post-meta', compact('post')) !!}
+                            // </div>
+                    </header>
+                    <div class="post__content">
+                        <p data-number-line="4">{{ $post->description }}</p>
+                    </div>
+                </div>
             </div>
 
         </article>
