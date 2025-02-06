@@ -14,6 +14,20 @@
 
                     <div class="post__content">
                         <p data-number-line="4">{{ $post->description }}</p>
+                        <span class=" text-dark mt-3 d-block">
+                            @php
+                                $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
+                                    'reference_id',
+                                    $post->id,
+                                )->count();
+                            @endphp
+                            Di <span class=" fw-bold author-post" style="color:#8424e3">{{ $post->author->first_name }}
+                                {{ $post->author->last_name }}</span> /
+                            <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#8424e3">
+                                <i class="fa fa-comment" aria-hidden="true"></i>
+                                {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
+                            </a>
+                        </span>
                     </div>
             </div>
         </article>
