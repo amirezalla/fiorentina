@@ -319,7 +319,7 @@ public function deleteTodayImportedPosts()
     }
 }
 
-public function ImportCategories(){
+public function importCategories(){
 
     try{
 
