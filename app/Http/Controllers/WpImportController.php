@@ -359,7 +359,7 @@ public function importCategories(){
             }
         }
 
-        $posts = Post::whereNotNull('category_id')->where('category_id', '!=', '')->get();
+        $posts = Post::where('category_id', '>', 0)->get();
         foreach ($posts as $post) {
             DB::table('post_categories')->insert([
                 'post_id' => $post->id,
