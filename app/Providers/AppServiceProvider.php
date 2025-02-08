@@ -7,6 +7,8 @@ use App\Models\Video;
 use Botble\Blog\Models\Category;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\URL;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        URL::forceScheme('https');
+
         set_time_limit(900); // Sets the maximum execution time to 15 minutes
 
         view()->composer('ads.includes.main-page', function (View $view) {
