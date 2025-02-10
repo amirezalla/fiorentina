@@ -447,7 +447,7 @@ private function category($primaryCategoryId,$post_id){
             $prompt = "Generate SEO metadata for the following post:
             Title: {$post->name}
             Content: {$post->content}
-            Provide keywords and a meta description.";
+            Provide keywords and a meta description in italian.";
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
