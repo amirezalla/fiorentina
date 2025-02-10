@@ -479,7 +479,6 @@ private function category($primaryCategoryId,$post_id){
             if (!empty($metaDescriptionMatches[1])) {
                 $metaDescription = trim($metaDescriptionMatches[1]);
             }
-            dd($metaDescription,$data['choices'][0]['message']['content']);
     
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
