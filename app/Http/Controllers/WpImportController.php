@@ -26,6 +26,7 @@ use Botble\Slug\Models\Slug;
 use FriendsOfBotble\Comment\Models\Comment;
 use FriendsOfBotble\Comment\Enums\CommentStatus;
 use Botble\Base\Models\MetaBox;
+use Botble\Setting\Models\Setting;
 
 
 
@@ -440,14 +441,14 @@ private function category($primaryCategoryId,$post_id){
 
             // Generate SEO content using ChatGPT API
 
-            $apiKey = env('GPT_API'); // Replace with your actual API key
+            $apiKey = Setting::where('key', 'GPT_API')->value('value');
 
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
     
             $prompt = "Generate SEO metadata for the following post:  
             Title: {$post->name}
             Content: {$post->content}
-            Provide keywords and a meta description in italian language.";
+            Provide keywords and a meta description in italian.";
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
