@@ -479,26 +479,27 @@ private function category($primaryCategoryId,$post_id){
             if (!empty($metaDescriptionMatches[1])) {
                 $metaDescription = trim($metaDescriptionMatches[1]);
             }
+            dd($metaDescription,$data['choices'][0]['message']['content']);
     
-            // Save SEO data to the `meta_boxes` table
-            DB::table('meta_boxes')->insert([
-                [
-                    'meta_key' => 'vig_seo_keywords',
-                    'meta_value' => json_encode(['keywords' => $keywords]),
-                    'reference_id' => $postId,
-                    'reference_type' => 'Botble\Blog\Models\Post',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ],
-                [
-                    'meta_key' => 'seo_meta',
-                    'meta_value' => json_encode(['index' => 'index', 'description' => $metaDescription]),
-                    'reference_id' => $postId,
-                    'reference_type' => 'Botble\Blog\Models\Post',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ],
-            ]);
+                // Save SEO data to the `meta_boxes` table
+                DB::table('meta_boxes')->insert([
+                    [
+                        'meta_key' => 'vig_seo_keywords',
+                        'meta_value' => json_encode(['keywords' => $keywords]),
+                        'reference_id' => $postId,
+                        'reference_type' => 'Botble\Blog\Models\Post',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ],
+                    [
+                        'meta_key' => 'seo_meta',
+                        'meta_value' => json_encode(['index' => 'index', 'description' => $metaDescription]),
+                        'reference_id' => $postId,
+                        'reference_type' => 'Botble\Blog\Models\Post',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ],
+                ]);
     
             return response()->json([
                 'message' => 'SEO metadata generated and saved successfully.',
