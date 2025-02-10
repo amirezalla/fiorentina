@@ -448,7 +448,7 @@ private function category($primaryCategoryId,$post_id){
             $prompt = "Generate SEO metadata for the following post:  
             Title: {$post->name}
             Content: {$post->content}
-            Provide keywords and a meta description in italian.";
+            Provide keywords a meta description in italian.";
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
@@ -475,7 +475,7 @@ private function category($primaryCategoryId,$post_id){
             }
     
             $metaDescription = '';
-            preg_match('/Meta Description: (.*)/i', $seoContent, $metaDescriptionMatches);
+            preg_match('/Meta Description (in Italian): (.*)/i', $seoContent, $metaDescriptionMatches);
             if (!empty($metaDescriptionMatches[1])) {
                 $metaDescription = trim($metaDescriptionMatches[1]);
             }
@@ -493,7 +493,7 @@ private function category($primaryCategoryId,$post_id){
                     ],
                     [
                         'meta_key' => 'seo_meta',
-                        'meta_value' => json_encode(['index' => 'index', 'description' => $metaDescription]),
+                        'meta_value' => json_encode(['index' => 'index','seo_title'=>$post->name , 'seo_description' => $metaDescription]),
                         'reference_id' => $postId,
                         'reference_type' => 'Botble\Blog\Models\Post',
                         'created_at' => now(),
