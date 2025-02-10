@@ -444,10 +444,10 @@ private function category($primaryCategoryId,$post_id){
 
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
     
-            $prompt = "Generate SEO metadata for the following post:
+            $prompt = "Generate SEO metadata for the following post:  
             Title: {$post->name}
             Content: {$post->content}
-            Provide keywords and a meta description in italian.";
+            Provide keywords and a meta description in italian language.";
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
