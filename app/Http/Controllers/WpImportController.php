@@ -439,6 +439,20 @@ private function category($primaryCategoryId,$post_id){
                 return response()->json(['message' => 'Post not found.'], 404);
             }
 
+                    // Check if meta boxes already exist for this post
+        $exists = DB::table('meta_boxes')
+        ->where('reference_id', $postId)
+        ->where('reference_type', 'Botble\Blog\Models\Post')
+        ->where(function ($query) {
+            $query->where('meta_key', 'seo_meta')
+                  ->orWhere('meta_key', 'vig_seo_keywords');
+        })
+        ->exists();
+
+        if ($exists) {
+        return response()->json(['message' => 'SEO metadata already exists for this post.'], 200);
+        }
+
             // Generate SEO content using ChatGPT API
 
             $apiKey = Setting::where('key', 'GPT_API')->value('value');
@@ -514,19 +528,7 @@ $prompt = "Generate SEO metadata for the following post:
     $metaDescription = $jsonData['meta_description'] ?? '';
 
     
-        // Check if meta boxes already exist for this post
-        $exists = DB::table('meta_boxes')
-        ->where('reference_id', $postId)
-        ->where('reference_type', 'Botble\Blog\Models\Post')
-        ->where(function ($query) {
-            $query->where('meta_key', 'seo_meta')
-                  ->orWhere('meta_key', 'vig_seo_keywords');
-        })
-        ->exists();
 
-        if ($exists) {
-        return response()->json(['message' => 'SEO metadata already exists for this post.'], 200);
-        }
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
                     [
