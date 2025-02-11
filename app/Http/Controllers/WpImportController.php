@@ -429,7 +429,7 @@ private function category($primaryCategoryId,$post_id){
 }
    
 
-    public function generateSEO($postId=556093)
+    public function generateSEO($postId=556092)
     {
         try {
             // Retrieve the post
@@ -439,7 +439,7 @@ private function category($primaryCategoryId,$post_id){
                 return response()->json(['message' => 'Post not found.'], 404);
             }
 
-                    // Check if meta boxes already exist for this post
+        // Check if meta boxes already exist for this post
         $exists = DB::table('meta_boxes')
         ->where('reference_id', $postId)
         ->where('reference_type', 'Botble\Blog\Models\Post')
