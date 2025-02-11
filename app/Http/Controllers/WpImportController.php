@@ -463,59 +463,66 @@ $prompt = "Generate SEO metadata for the following post:
     }
     ";
     
-$maxRetries = 5;  // Maximum number of retries
-$retryCount = 0;
-$validJson  = false;
-$seoContent = null;
-$jsonData   = null;
+    $maxRetries = 5;  // Maximum number of retries
+    $retryCount = 0;
+    $validJson  = false;
+    $seoContent = null;
+    $jsonData   = null;
 
-do {
-    $response = Http::withHeaders([
-        'Authorization' => "Bearer $apiKey",
-        'Content-Type'  => 'application/json',
-    ])->post($apiUrl, [
-        'model'       => 'gpt-3.5-turbo',
-        'messages'    => [
-            ['role' => 'system', 'content' => 'You are an SEO assistant. Your responses must strictly follow the provided JSON format.'],
-            ['role' => 'user',   'content' => $prompt],
-        ],
-        'max_tokens'  => 1024,
-        'temperature' => 0.0,
-    ]);
+    do {
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer $apiKey",
+            'Content-Type'  => 'application/json',
+        ])->post($apiUrl, [
+            'model'       => 'gpt-3.5-turbo',
+            'messages'    => [
+                ['role' => 'system', 'content' => 'You are an SEO assistant. Your responses must strictly follow the provided JSON format.'],
+                ['role' => 'user',   'content' => $prompt],
+            ],
+            'max_tokens'  => 1024,
+            'temperature' => 0.0,
+        ]);
 
-    $data = $response->json();
+        $data = $response->json();
 
-    // Check if the expected content is returned
-    if (!isset($data['choices'][0]['message']['content'])) {
-        return response()->json(['message' => 'Failed to generate SEO content.'], 500);
+        // Check if the expected content is returned
+        if (!isset($data['choices'][0]['message']['content'])) {
+            return response()->json(['message' => 'Failed to generate SEO content.'], 500);
+        }
+
+        $seoContent = $data['choices'][0]['message']['content'];
+        $jsonData   = json_decode($seoContent, true);
+
+        // If json_decode returns valid data, break out of the loop
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $validJson = true;
+            break;
+        }
+
+        $retryCount++;
+        // Optionally, add a small delay before retrying
+        sleep(1);
+    } while ($retryCount < $maxRetries);
+
+    if (!$validJson) {
+        return response()->json(['message' => 'Invalid JSON returned after multiple attempts.'], 500);
     }
 
-    $seoContent = $data['choices'][0]['message']['content'];
-    $jsonData   = json_decode($seoContent, true);
-
-    // If json_decode returns valid data, break out of the loop
-    if (json_last_error() === JSON_ERROR_NONE) {
-        $validJson = true;
-        break;
-    }
-
-    $retryCount++;
-    // Optionally, add a small delay before retrying
-    sleep(1);
-} while ($retryCount < $maxRetries);
-
-if (!$validJson) {
-    return response()->json(['message' => 'Invalid JSON returned after multiple attempts.'], 500);
-}
-
-// Continue processing with $jsonData
-// For example:
-$keywords       = $jsonData['keywords'] ?? [];
-$metaDescription = $jsonData['meta_description'] ?? '';
+    // Continue processing with $jsonData
+    // For example:
+    $keywords       = $jsonData['keywords'] ?? [];
+    $metaDescription = $jsonData['meta_description'] ?? '';
 
     
-    dd($seoContent, $keywords, $metaDescription);
-    
+        // Check if meta boxes already exist for this post
+        $exists = DB::table('meta_boxes')
+        ->where('reference_id', $postId)
+        ->where('reference_type', 'Botble\Blog\Models\Post')
+        ->exists();
+
+        if ($exists) {
+        return response()->json(['message' => 'SEO metadata already exists for this post.'], 200);
+        }
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
                     [
