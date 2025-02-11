@@ -429,7 +429,7 @@ private function category($primaryCategoryId,$post_id){
 }
    
 
-    public function generateSEO($postId=556092)
+    public function generateSEO($postId=556088)
     {
         try {
             // Retrieve the post
@@ -488,7 +488,7 @@ $prompt = "Generate SEO metadata for the following post:
             'Authorization' => "Bearer $apiKey",
             'Content-Type'  => 'application/json',
         ])->post($apiUrl, [
-            'model'       => 'gpt-3.5-turbo',
+            'model'       => 'o3-mini',
             'messages'    => [
                 ['role' => 'system', 'content' => 'You are an SEO assistant. Your responses must strictly follow the provided JSON format.'],
                 ['role' => 'user',   'content' => $prompt],
