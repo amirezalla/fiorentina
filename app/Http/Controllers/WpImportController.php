@@ -445,40 +445,53 @@ private function category($primaryCategoryId,$post_id){
 
             $apiUrl = 'https://api.openai.com/v1/chat/completions';
     
-            $prompt = "Generate SEO metadata for the following post:  
-            Title: {$post->name}
-            Content: {$post->content}
-            Provide keywords and a meta description in italian.";
-            $response = Http::withHeaders([
-                'Authorization' => "Bearer $apiKey",
-                'Content-Type' => 'application/json',
-            ])->post($apiUrl, [
-                'model' => 'gpt-3.5-turbo',
-                'messages' => [
-                    ['role' => 'system', 'content' => 'You are an SEO assistant.'],
-                    ['role' => 'user', 'content' => $prompt],
-                ],
-                'max_tokens' => 1024,
-            ]);
-            $data = $response->json();
-            if (!isset($data['choices'][0]['message']['content'])) {
-                return response()->json(['message' => 'Failed to generate SEO content.'], 500);
-            }
+// Complete the prompt with clear markers for the expected structure.
+$prompt = "Generate SEO metadata for the following post:
+    Title: {$post->name}
+    Content: {$post->content}
     
-            $seoContent = $data['choices'][0]['message']['content'];
+    Please provide:
+    Keywords: a comma separated list of relevant keywords ◀
+    Meta description (in Italian): a concise meta description in Italian ◀";
     
-            // Parse ChatGPT response for keywords and meta description
-            $keywords = []; // Extract keywords from response (custom parsing logic may be needed)
-            preg_match('/Keywords: (.*)/i', $seoContent, $keywordMatches);
-            if (!empty($keywordMatches[1])) {
-                $keywords = explode(',', $keywordMatches[1]);
-            }
+    // Send the request to OpenAI
+    $response = Http::withHeaders([
+        'Authorization' => "Bearer $apiKey",
+        'Content-Type'  => 'application/json',
+    ])->post($apiUrl, [
+        'model'      => 'gpt-3.5-turbo',
+        'messages'   => [
+            ['role' => 'system', 'content' => 'You are an SEO assistant.'],
+            ['role' => 'user',   'content' => $prompt],
+        ],
+        'max_tokens' => 1024,
+    ]);
     
-            $metaDescription = '';
-            preg_match('/Meta description:\s*(.*?)\s*◀/is', $seoContent, $metaDescriptionMatches);
-            if (!empty($metaDescriptionMatches[1])) {
-                $metaDescription = trim($metaDescriptionMatches[1]);
-            }
+    $data = $response->json();
+    if (!isset($data['choices'][0]['message']['content'])) {
+        return response()->json(['message' => 'Failed to generate SEO content.'], 500);
+    }
+    
+    $seoContent = $data['choices'][0]['message']['content'];
+    
+    // Parse ChatGPT response for keywords and meta description
+    
+    // Adjust regex to capture everything between "Keywords:" and the ending marker "◀"
+    // The /is modifiers make the match case-insensitive and allow '.' to match newlines.
+    $keywords = [];
+    preg_match('/Keywords:\s*(.*?)\s*◀/is', $seoContent, $keywordMatches);
+    if (!empty($keywordMatches[1])) {
+        // Trim each keyword and remove extra spaces
+        $keywords = array_map('trim', explode(',', $keywordMatches[1]));
+    }
+    
+    // Adjust regex to capture the meta description using the marker provided in the prompt
+    $metaDescription = '';
+    preg_match('/Meta description\s*\(in Italian\):\s*(.*?)\s*◀/is', $seoContent, $metaDescriptionMatches);
+    if (!empty($metaDescriptionMatches[1])) {
+        $metaDescription = trim($metaDescriptionMatches[1]);
+    }
+    
     
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
