@@ -450,14 +450,17 @@ $prompt = "Generate SEO metadata for the following post:
     Title: {$post->name}
     Content: {$post->content}
     
-    Please provide:
-    Keywords (separated by ,) and a Meta description relevant to the content.
-    
-    Please output the result exactly in the format below. Do not include any additional text or markdown formatting.
-    
-    Keywords: <comma separated keywords>
-    Meta description (in Italian): <meta description>
-    
+    Please output the result as a JSON object with two keys:
+    - \"keywords\": an array of keywords (strings)
+    - \"meta_description\": a string with the meta description in Italian
+
+    Do not include any additional text.
+
+    Example output:
+    {
+        \"keywords\": [\"Felipe Melo\", \"Fiorentina\", \"Juventus\", \"calcio\", \"Firenze\", \"centrocampista\", \"viola\", \"Inter\", \"Chiellini\", \"pensionamento\", \"carriera\", \"derby\", \"allenatore\"],
+        \"meta_description\": \"Leggi l'intervista di Felipe Melo, ex centrocampista viola, sulla sua carriera nel calcio, dall'amore per Firenze al passaggio alla Juventus e l'esperienza all'Inter. Scopri i retroscena e i progetti futuri dell'ex giocatore.\"
+    }
     ";
     
     // Send the request to OpenAI
@@ -485,18 +488,21 @@ $prompt = "Generate SEO metadata for the following post:
     // Adjust regex to capture everything between "Keywords:" and the ending marker "◀"
     // The /is modifiers make the match case-insensitive and allow '.' to match newlines.
     $keywords = [];
-    preg_match('/Keywords:\s*(.*?)\s*◀/is', $seoContent, $keywordMatches);
+    // This pattern matches "Keywords:" followed by any content until two newlines or end-of-string.
+    preg_match('/Keywords:\s*(.*?)(?=\n\s*\n|$)/is', $seoContent, $keywordMatches);
     if (!empty($keywordMatches[1])) {
-        // Trim each keyword and remove extra spaces
         $keywords = array_map('trim', explode(',', $keywordMatches[1]));
     }
     
+    
     // Adjust regex to capture the meta description using the marker provided in the prompt
     $metaDescription = '';
-    preg_match('/Meta description\s*\(in Italian\):\s*(.*?)\s*◀/is', $seoContent, $metaDescriptionMatches);
+    // This pattern matches "Meta description (in Italian):" followed by any content until a marker (◀ or ▶) or the end.
+    preg_match('/Meta description\s*\(in Italian\):\s*(.*?)(?=\s*(?:◀|▶|$))/is', $seoContent, $metaDescriptionMatches);
     if (!empty($metaDescriptionMatches[1])) {
         $metaDescription = trim($metaDescriptionMatches[1]);
     }
+    
     
     dd($seoContent, $keywords, $metaDescription);
     
