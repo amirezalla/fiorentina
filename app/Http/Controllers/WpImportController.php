@@ -479,12 +479,13 @@ private function category($primaryCategoryId,$post_id){
             if (!empty($metaDescriptionMatches[1])) {
                 $metaDescription = trim($metaDescriptionMatches[1]);
             }
+            dd($seoContent,'Keywords: ',$keywords,'Meta Description: ',$metaDescription);
     
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
                     [
                         'meta_key' => 'vig_seo_keywords',
-                        'meta_value' => json_encode(['keywords' => $keywords]),
+                        'meta_value' => ['keywords' => $keywords],
                         'reference_id' => $postId,
                         'reference_type' => 'Botble\Blog\Models\Post',
                         'created_at' => now(),
@@ -492,7 +493,7 @@ private function category($primaryCategoryId,$post_id){
                     ],
                     [
                         'meta_key' => 'seo_meta',
-                        'meta_value' => json_encode(['index' => 'index','seo_title'=>$post->name , 'seo_description' => $metaDescription]),
+                        'meta_value' => ['index' => 'index','seo_title'=>$post->name , 'seo_description' => $metaDescription],
                         'reference_id' => $postId,
                         'reference_type' => 'Botble\Blog\Models\Post',
                         'created_at' => now(),
