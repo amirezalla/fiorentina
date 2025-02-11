@@ -518,6 +518,10 @@ $prompt = "Generate SEO metadata for the following post:
         $exists = DB::table('meta_boxes')
         ->where('reference_id', $postId)
         ->where('reference_type', 'Botble\Blog\Models\Post')
+        ->where(function ($query) {
+            $query->where('meta_key', 'seo_meta')
+                  ->orWhere('meta_key', 'vig_seo_keywords');
+        })
         ->exists();
 
         if ($exists) {
