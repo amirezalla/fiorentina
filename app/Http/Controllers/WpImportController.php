@@ -492,6 +492,7 @@ $prompt = "Generate SEO metadata for the following post:
         $metaDescription = trim($metaDescriptionMatches[1]);
     }
     
+    dd($seoContent, $keywords, $metaDescription);
     
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
