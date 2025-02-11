@@ -487,22 +487,15 @@ $prompt = "Generate SEO metadata for the following post:
     
     // Adjust regex to capture everything between "Keywords:" and the ending marker "◀"
     // The /is modifiers make the match case-insensitive and allow '.' to match newlines.
-    $keywords = [];
-    // This pattern matches "Keywords:" followed by any content until two newlines or end-of-string.
-    preg_match('/Keywords:\s*(.*?)(?=\n\s*\n|$)/is', $seoContent, $keywordMatches);
-    if (!empty($keywordMatches[1])) {
-        $keywords = array_map('trim', explode(',', $keywordMatches[1]));
+    // Now decode the JSON directly:
+    $jsonData = json_decode($seoContent, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+    return response()->json(['message' => 'Invalid JSON returned.'], 500);
     }
-    
-    
-    // Adjust regex to capture the meta description using the marker provided in the prompt
-    $metaDescription = '';
-    // This pattern matches "Meta description (in Italian):" followed by any content until a marker (◀ or ▶) or the end.
-    preg_match('/Meta description\s*\(in Italian\):\s*(.*?)(?=\s*(?:◀|▶|$))/is', $seoContent, $metaDescriptionMatches);
-    if (!empty($metaDescriptionMatches[1])) {
-        $metaDescription = trim($metaDescriptionMatches[1]);
-    }
-    
+
+    $keywords = $jsonData['keywords'] ?? [];
+    $metaDescription = $jsonData['meta_description'] ?? '';
+
     
     dd($seoContent, $keywords, $metaDescription);
     
