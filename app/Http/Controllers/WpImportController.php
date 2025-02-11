@@ -463,38 +463,55 @@ $prompt = "Generate SEO metadata for the following post:
     }
     ";
     
-    // Send the request to OpenAI
+$maxRetries = 5;  // Maximum number of retries
+$retryCount = 0;
+$validJson  = false;
+$seoContent = null;
+$jsonData   = null;
+
+do {
     $response = Http::withHeaders([
         'Authorization' => "Bearer $apiKey",
         'Content-Type'  => 'application/json',
     ])->post($apiUrl, [
-        'model'      => 'gpt-3.5-turbo',
-        'messages'   => [
-            ['role' => 'system', 'content' => 'You are an SEO assistant in italian language.'],
+        'model'       => 'gpt-3.5-turbo',
+        'messages'    => [
+            ['role' => 'system', 'content' => 'You are an SEO assistant. Your responses must strictly follow the provided JSON format.'],
             ['role' => 'user',   'content' => $prompt],
         ],
-        'max_tokens' => 1024,
+        'max_tokens'  => 1024,
+        'temperature' => 0.0,
     ]);
-    
+
     $data = $response->json();
+
+    // Check if the expected content is returned
     if (!isset($data['choices'][0]['message']['content'])) {
         return response()->json(['message' => 'Failed to generate SEO content.'], 500);
     }
-    
+
     $seoContent = $data['choices'][0]['message']['content'];
-    
-    // Parse ChatGPT response for keywords and meta description
-    
-    // Adjust regex to capture everything between "Keywords:" and the ending marker "◀"
-    // The /is modifiers make the match case-insensitive and allow '.' to match newlines.
-    // Now decode the JSON directly:
-    $jsonData = json_decode($seoContent, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-    return response()->json(['message' => 'Invalid JSON returned.'], 500);
+    $jsonData   = json_decode($seoContent, true);
+
+    // If json_decode returns valid data, break out of the loop
+    if (json_last_error() === JSON_ERROR_NONE) {
+        $validJson = true;
+        break;
     }
 
-    $keywords = $jsonData['keywords'] ?? [];
-    $metaDescription = $jsonData['meta_description'] ?? '';
+    $retryCount++;
+    // Optionally, add a small delay before retrying
+    sleep(1);
+} while ($retryCount < $maxRetries);
+
+if (!$validJson) {
+    return response()->json(['message' => 'Invalid JSON returned after multiple attempts.'], 500);
+}
+
+// Continue processing with $jsonData
+// For example:
+$keywords       = $jsonData['keywords'] ?? [];
+$metaDescription = $jsonData['meta_description'] ?? '';
 
     
     dd($seoContent, $keywords, $metaDescription);
