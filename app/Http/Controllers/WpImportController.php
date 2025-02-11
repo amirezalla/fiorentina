@@ -475,11 +475,10 @@ private function category($primaryCategoryId,$post_id){
             }
     
             $metaDescription = '';
-            preg_match('/Meta Description (in Italian): (.*)/i', $seoContent, $metaDescriptionMatches);
+            preg_match('/Meta description \(in Italian\):\s*(.*?)\s*◀/is', $seoContent, $metaDescriptionMatches);
             if (!empty($metaDescriptionMatches[1])) {
                 $metaDescription = trim($metaDescriptionMatches[1]);
             }
-            dd($seoContent,'Keywords: ',$keywords,'Meta Description: ',$metaDescription);
     
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
