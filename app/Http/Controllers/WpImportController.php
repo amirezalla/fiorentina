@@ -451,8 +451,7 @@ $prompt = "Generate SEO metadata for the following post:
     Content: {$post->content}
     
     Please provide:
-    Keywords: a comma separated list of relevant keywords ◀
-    Meta description (in Italian): a concise meta description in Italian ◀";
+    Keywords and a Meta description relevant to the content.";
     
     // Send the request to OpenAI
     $response = Http::withHeaders([
@@ -461,7 +460,7 @@ $prompt = "Generate SEO metadata for the following post:
     ])->post($apiUrl, [
         'model'      => 'gpt-3.5-turbo',
         'messages'   => [
-            ['role' => 'system', 'content' => 'You are an SEO assistant.'],
+            ['role' => 'system', 'content' => 'You are an SEO assistant in italian language.'],
             ['role' => 'user',   'content' => $prompt],
         ],
         'max_tokens' => 1024,
