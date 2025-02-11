@@ -488,7 +488,7 @@ $prompt = "Generate SEO metadata for the following post:
             'Authorization' => "Bearer $apiKey",
             'Content-Type'  => 'application/json',
         ])->post($apiUrl, [
-            'model'       => 'o3-mini',
+            'model'       => 'o1-mini',
             'messages'    => [
                 ['role' => 'system', 'content' => 'You are an SEO assistant. Your responses must strictly follow the provided JSON format.'],
                 ['role' => 'user',   'content' => $prompt],
