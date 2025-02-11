@@ -451,7 +451,7 @@ $prompt = "Generate SEO metadata for the following post:
     Content: {$post->content}
     
     Please provide:
-    Keywords and a Meta description relevant to the content.";
+    Keywords (separated by ,) and a Meta description relevant to the content.";
     
     // Send the request to OpenAI
     $response = Http::withHeaders([
