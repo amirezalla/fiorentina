@@ -142,6 +142,14 @@ app('events')->listen(RouteMatched::class, function () {
                 return Theme::partial('shortcodes.calendario');
             }
         );
+        Shortcode::register(
+            'calendario primavera ',
+            __('calendario primavera'),
+            __('calendario primavera'),
+            function (ShortcodeCompiler $shortcode) {
+                return Theme::partial('shortcodes.calendariopv');
+            }
+        );
 
         Shortcode::setPreviewImage('ads-diretta', Theme::asset()->url('images/ui-blocks/all-galleries.png'));
 
