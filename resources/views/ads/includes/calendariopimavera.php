@@ -7,7 +7,7 @@
             <div class="page-content">
                 <div class="post-group">
                     <div class="post-group__header">
-                        <h3 class="post-group__title">Calendario Fiorentina</h3>
+                        <h3 class="post-group__title">Calendario Fiorentina U20</h3>
                     </div>
                 </div>
             </div>
@@ -15,7 +15,7 @@
 
 
             @php
-                $updateScheduledMessage = App\Http\Controllers\StandingController::fetchCalendario();
+                $updateScheduledMessage = App\Http\Controllers\StandingController::fetchCalendarioPV();
             @endphp
 
 
@@ -34,13 +34,10 @@
                                             class="sort-arrow"></span></th>
                                     <th data-column="campionato" onclick="sortTable('campionato')">Campionato <span
                                             class="sort-arrow"></span></th>
-                                    <th>
-                                        Diretta
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($matches = App\Models\Calendario::where('match_date', '>', '2024-08-16 23:00:00 ')->orderBy('match_date', 'asc')->get() as $match)
+                                @foreach ($matches = App\Models\CalendarioPV::where('match_date', '>', '2024-08-16 23:00:00 ')->orderBy('match_date', 'asc')->get() as $match)
                                     @php
                                         $homeTeam = json_decode($match->home_team, true);
                                         $awayTeam = json_decode($match->away_team, true);
@@ -94,13 +91,13 @@
                                                 <span>
                                                     @php
                                                         $isHomeFiorentina =
-                                                            $homeTeam['name'] == 'Fiorentina' ||
-                                                            $homeTeam['name'] == 'Fiorentina (Ita)' ||
-                                                            $homeTeam['name'] == 'Fiorentina (Ita) *';
+                                                            $homeTeam['name'] == 'Fiorentina U20' ||
+                                                            $homeTeam['name'] == 'Fiorentina U20 (Ita)' ||
+                                                            $homeTeam['name'] == 'Fiorentina U20 (Ita) *';
                                                         $isAwayFiorentina =
-                                                            $awayTeam['name'] == 'Fiorentina' ||
-                                                            $awayTeam['name'] == 'Fiorentina (Ita)' ||
-                                                            $awayTeam['name'] == 'Fiorentina (Ita) *';
+                                                            $awayTeam['name'] == 'Fiorentina U20' ||
+                                                            $awayTeam['name'] == 'Fiorentina U20 (Ita)' ||
+                                                            $awayTeam['name'] == 'Fiorentina U20 (Ita) *';
                                                     @endphp
 
                                                     @if (($isHomeFiorentina && $score['home'] > $score['away']) || ($isAwayFiorentina && $score['away'] > $score['home']))
@@ -134,15 +131,6 @@
                                         <td class="text-center">
                                             <img src="{{ $match->competition }}" alt="{{ $match->group }}"
                                                 style="width: 30px; height: auto;">
-                                        </td>
-                                        <td>
-                                            @if ($match->status != 'SCHEDULED')
-                                                <a class="btn btn-p"
-                                                    href="/diretta?match_id={{ $match->match_id }}">Diretta</a>
-                                            @else
-                                                <a class="btn btn-p-outline notifica-btn"
-                                                    data-match-id="{{ $match->match_id }}">Notifica</a>
-                                            @endif
                                         </td>
 
                                     </tr>
