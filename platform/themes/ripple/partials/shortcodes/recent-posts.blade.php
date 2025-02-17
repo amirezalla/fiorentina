@@ -81,10 +81,10 @@
 
 
                                                         @if ($post->categories->count())
-                                                            <div class="d-flex mb-1">
+                                                            <span class="d-flex mb-1">
                                                                 <span class="post__last4-badge">
                                                                     {{ $post->categories->first()->name }}</span> /
-                                                            </div>
+                                                            </span>
                                                         @endif
                                                         <span class="post__date">
                                                             {{ $formattedDate }}
