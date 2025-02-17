@@ -81,7 +81,7 @@
 
 
                                                         @if ($post->categories->count())
-                                                            <span class="d-flex mb-1">
+                                                            <span class=" mb-1">
                                                                 <span class="post__last4-badge">
                                                                     {{ $post->categories->first()->name }}</span> /
                                                             </span>
