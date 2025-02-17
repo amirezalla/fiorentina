@@ -58,6 +58,12 @@
                                             <!-- Content (Title and Description) on the right -->
                                             <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px;">
                                                 <header class="post__header">
+                                                    @if ($post->categories->count())
+                                                        <div class="d-flex mb-1">
+                                                            <span class="post__last4-badge">
+                                                                {{ $post->categories->first()->name }}</span>
+                                                        </div>
+                                                    @endif
                                                     <h4 class="post__title" style="margin: 0;">
                                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
                                                             style="text-decoration: none; color: inherit;">
