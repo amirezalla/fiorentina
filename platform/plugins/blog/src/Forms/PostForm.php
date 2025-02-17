@@ -72,6 +72,33 @@ class PostForm extends FormAbstract
                         );
                 }
             })
+
+            // ... (inside the setup() method, before setBreakFieldPoint('status'))
+->add('hero_order', SelectField::class, [
+    'label'         => 'Seleziona ordinamento',
+    'choices'       => [
+        ''  => 'Seleziona ordinamento',
+        '1' => '1',
+        '2' => '2',
+        '3' => '3',
+        '4' => '4',
+        '5' => '5',
+        '6' => '6',
+        '7' => '7',
+    ],
+    'default_value' => null,
+])
+->add('in_aggiornamento', OnOffField::class, [
+    'label'         => 'In Aggiornamento',
+    // The following options simulate a checkbox with Yes/No labels.
+    'yes_label'     => 'Si',
+    'no_label'      => 'No',
+    'default_value' => 0,
+])
+
+
+
+
             ->add(
                 'categories[]',
                 TreeCategoryField::class,

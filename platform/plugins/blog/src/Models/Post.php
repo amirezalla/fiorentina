@@ -40,8 +40,9 @@ class Post extends BaseModel
         'author_type',
         'published_at',
         'category_id', // Add this
-        'plain_slug'
-
+        'plain_slug',
+        'hero_order',
+        'in_aggiornamento'
     ];
 
     protected static function booted(): void
