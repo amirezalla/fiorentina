@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Facades\DB;
+    use Botble\Blog\Models\Post;
+@endphp
 @if ($posts->isNotEmpty())
 
     <section class="section hero-section pt-20 pb-20"
@@ -132,10 +136,31 @@
 <!-- Black box column (col-3) similar to the image -->
 <div class="col-12 col-lg-3 mx-0 px-0">
     @php
-        $lastRecentPosts = Botble\Blog\Models\Post::with('categories:id,name')
-            ->orderBy('created_at', 'desc')
-            ->take(4)
-            ->get();
+
+        $heroOrders = [4, 5, 6, 7];
+
+        // Check if there are any posts with hero_order set to one of the given values.
+        $heroPostsCount = Post::whereIn('hero_order', $heroOrders)->count();
+
+        if ($heroPostsCount > 0) {
+            // Get, for each hero_order value, the latest post (by updated_at)
+            $subquery = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                ->whereIn('hero_order', $heroOrders)
+                ->groupBy('hero_order');
+
+            $lastRecentPosts = Post::with('categories:id,name')
+                ->joinSub($subquery, 'latest', function ($join) {
+                    $join
+                        ->on('posts.hero_order', '=', 'latest.hero_order')
+                        ->on('posts.updated_at', '=', 'latest.max_updated');
+                })
+                ->orderBy('posts.hero_order')
+                ->get();
+        } else {
+            // Fallback: If no posts have hero_order set, skip the most recent 3 posts
+            // and get the next 4 posts ordered by created_at descending.
+            $lastRecentPosts = Post::with('categories:id,name')->orderBy('created_at', 'desc')->skip(3)->take(4)->get();
+        }
     @endphp
     <div class="black-box px-3 py-3">
         <div class="d-flex flex-column justify-content-around h-100">
