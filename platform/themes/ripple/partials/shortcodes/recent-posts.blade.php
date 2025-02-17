@@ -91,8 +91,9 @@
                                                         </span>
                                                         @if ($post->in_aggiornamento)
                                                             <span class="post-group__left-red-badge mb-2 ml-2"><i
-                                                                    class="fa fa-spinner text-white"></i> In
-                                                                Aggiornamento
+                                                                    class="fa fa-spinner text-white"></i> <span
+                                                                    class="text-white">In
+                                                                    Aggiornamento</span>
                                                             </span>
                                                         @endif
 
