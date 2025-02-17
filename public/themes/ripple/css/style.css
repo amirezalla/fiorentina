@@ -5155,6 +5155,12 @@ header>.container {
     color: gold;
 }
 
+.post-group__left-red-badge {
+
+    background-color: #dc3545;
+
+}
+
 @media (max-width:990px) {
 
     .post__inside--feature .post__title:hover a {
