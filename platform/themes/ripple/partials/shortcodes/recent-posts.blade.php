@@ -83,12 +83,12 @@
                                                         @if ($post->categories->count())
                                                             <div class="d-flex mb-1">
                                                                 <span class="post__last4-badge">
-                                                                    {{ $post->categories->first()->name }}</span>
-                                                            </div> /
+                                                                    {{ $post->categories->first()->name }}</span> /
+                                                            </div>
                                                         @endif
-                                                        <div class="post__date">
+                                                        <span class="post__date">
                                                             {{ $formattedDate }}
-                                                        </div>
+                                                        </span>
                                                     </div>
                                                     <h4 class="post__title" style="margin: 0;">
                                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
