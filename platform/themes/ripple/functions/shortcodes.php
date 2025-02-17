@@ -143,7 +143,7 @@ app('events')->listen(RouteMatched::class, function () {
             }
         );
         Shortcode::register(
-            'calendarioprimavera ',
+            'calendarioprimavera',
             __('calendario primavera'),
             __('calendario primavera'),
             function (ShortcodeCompiler $shortcode) {
