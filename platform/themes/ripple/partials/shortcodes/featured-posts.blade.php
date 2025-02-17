@@ -80,7 +80,37 @@
                 <!-- Main content column (col-9) -->
                 <div class="col-12 col-lg-9 p-0 m-0">
                     <div class="post-group post-group--hero h-100">
-                        @foreach ($posts as $post)
+                        @php
+                            $heroOrders = [1, 2, 3];
+
+                            // Check if there are any posts with hero_order in [1, 2, 3]
+                            $heroPostsCount = Post::whereIn('hero_order', $heroOrders)->count();
+
+                            if ($heroPostsCount > 0) {
+                                // Build a subquery that gets the latest updated_at for each hero_order value
+                                $subquery = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                                    ->whereIn('hero_order', $heroOrders)
+                                    ->groupBy('hero_order');
+
+                                // Join the subquery to get only the most recently updated post for each hero_order value
+                                $heroPosts = Post::with('categories:id,name')
+                                    ->joinSub($subquery, 'latest', function ($join) {
+                                        $join
+                                            ->on('posts.hero_order', '=', 'latest.hero_order')
+                                            ->on('posts.updated_at', '=', 'latest.max_updated');
+                                    })
+                                    ->orderBy('posts.hero_order')
+                                    ->get();
+                            } else {
+                                // Fallback: if no posts have hero_order set for 1, 2, or 3,
+                                // get the last 3 posts (ordered by created_at descending)
+                                $heroPosts = Post::with('categories:id,name')
+                                    ->orderBy('created_at', 'desc')
+                                    ->take(3)
+                                    ->get();
+                            }
+                        @endphp
+                        @foreach ($heroPosts as $post)
                             @if ($loop->first)
                                 <div class="post-group__left full-width">
                                     <article class="post post__inside post__inside--feature h-100">
