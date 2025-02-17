@@ -120,8 +120,9 @@
                                                 title="{{ $post->name }}"></a>
                                         </div>
                                         <header class="post__header">
+                                        <div class="d-flex">
                                             @if ($post->categories->count())
-                                                <div class="d-flex">
+                                                
                                                     <span
                                                         class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
                                             @endif
@@ -147,8 +148,9 @@
                                         title="{{ $post->name }}"></a>
                                 </div>
                                 <header class="post__header">
+                                <div class="d-flex">
                                     @if ($post->categories->count())
-                                        <div class="d-flex">
+                                        
                                             <span
                                                 class="fz-14px post-group__left-purple-badge">{{ $post->categories->first()->name }}</span>
                                     @endif
@@ -156,7 +158,7 @@
                                         <span class="post-group__left-red-badge mb-2"><i
                                                 class="fa fa-spinner text-white"></i> In Aggiornamento </span>
                                     @endif
-                        </div>
+                            </div>
                     <h3 class="post__title">
                         <a href="{{ $post->url }}">{{ $post->name }}</a>
                     </h3>
