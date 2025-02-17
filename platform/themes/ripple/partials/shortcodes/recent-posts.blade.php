@@ -1,5 +1,6 @@
 @php
     use App\Models\Poll;
+    use Carbon\Carbon;
 
     $poll = Poll::with('options')->where('active', true)->latest()->first();
     // Check if the poll exists and has options
@@ -59,8 +60,6 @@
                                             <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px;">
                                                 <header class="post__header">
                                                     @php
-                                                        // Make sure Carbon is imported (if not already globally available)
-                                                        use Carbon\Carbon;
 
                                                         $date = $post->created_at;
 
