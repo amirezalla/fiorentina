@@ -120,55 +120,56 @@
                                                 title="{{ $post->name }}"></a>
                                         </div>
                                         <header class="post__header">
-                                        <div class="d-flex">
-                                            @if ($post->categories->count())
-                                                
+                                            <div class="d-flex">
+                                                @if ($post->categories->count())
                                                     <span
                                                         class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
-                                            @endif
-                                            @if ($post->in_aggiornamento)
-                                                <span class="post-group__left-red-badge mb-2"><i
-                                                        class="fa fa-spinner text-white"></i> In Aggiornamento </span>
-                                            @endif
-                                </div>
+                                                @endif
+                                                @if ($post->in_aggiornamento)
+                                                    <span class="post-group__left-red-badge mb-2 ml-2"><i
+                                                            class="fa fa-spinner text-white"></i> In Aggiornamento
+                                                    </span>
+                                                @endif
+                                            </div>
 
-                                <h3 class="post__title">
-                                    <a href="{{ $post->url }}">{{ $post->name }}</a>
-                                </h3>
-                                </header>
-                                </article>
-                    </div>
-                    <div class="post-group__right d-flex flex-column half-width">
-                    @else
-                        <div class="post-group__item w-100 flex-grow-1">
-                            <article class="post post__inside post__inside--feature post__inside--feature-small h-100">
-                                <div class="post__thumbnail h-100">
-                                    {{ RvMedia::image($post->image, $post->name, 'medium', attributes: ['loading' => 'eager']) }}
-                                    <a class="post__overlay" href="{{ $post->url }}"
-                                        title="{{ $post->name }}"></a>
+                                            <h3 class="post__title">
+                                                <a href="{{ $post->url }}">{{ $post->name }}</a>
+                                            </h3>
+                                        </header>
+                                    </article>
                                 </div>
-                                <header class="post__header">
-                                <div class="d-flex">
-                                    @if ($post->categories->count())
-                                        
-                                            <span
-                                                class="fz-14px post-group__left-purple-badge">{{ $post->categories->first()->name }}</span>
-                                    @endif
-                                    @if ($post->in_aggiornamento)
-                                        <span class="post-group__left-red-badge mb-2"><i
-                                                class="fa fa-spinner text-white"></i> In Aggiornamento </span>
-                                    @endif
-                            </div>
-                    <h3 class="post__title">
-                        <a href="{{ $post->url }}">{{ $post->name }}</a>
-                    </h3>
-                    </header>
-                    </article>
-                </div>
-                @if ($loop->last)
-            </div>
-@endif
-@endif
+                                <div class="post-group__right d-flex flex-column half-width">
+                                @else
+                                    <div class="post-group__item w-100 flex-grow-1">
+                                        <article
+                                            class="post post__inside post__inside--feature post__inside--feature-small h-100">
+                                            <div class="post__thumbnail h-100">
+                                                {{ RvMedia::image($post->image, $post->name, 'medium', attributes: ['loading' => 'eager']) }}
+                                                <a class="post__overlay" href="{{ $post->url }}"
+                                                    title="{{ $post->name }}"></a>
+                                            </div>
+                                            <header class="post__header">
+                                                <div class="d-flex">
+                                                    @if ($post->categories->count())
+                                                        <span
+                                                            class="fz-14px post-group__left-purple-badge">{{ $post->categories->first()->name }}</span>
+                                                    @endif
+                                                    @if ($post->in_aggiornamento)
+                                                        <span class="post-group__left-red-badge mb-2 ml-2"><i
+                                                                class="fa fa-spinner text-white"></i> In Aggiornamento
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <h3 class="post__title">
+                                                    <a href="{{ $post->url }}">{{ $post->name }}</a>
+                                                </h3>
+                                            </header>
+                                        </article>
+                                    </div>
+                                    @if ($loop->last)
+                                </div>
+                            @endif
+                        @endif
 @endforeach
 </div>
 </div>
