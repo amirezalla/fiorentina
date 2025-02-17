@@ -58,12 +58,39 @@
                                             <!-- Content (Title and Description) on the right -->
                                             <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px;">
                                                 <header class="post__header">
-                                                    @if ($post->categories->count())
-                                                        <div class="d-flex mb-1">
-                                                            <span class="post__last4-badge">
-                                                                {{ $post->categories->first()->name }}</span>
+                                                    @php
+                                                        // Make sure Carbon is imported (if not already globally available)
+                                                        use Carbon\Carbon;
+
+                                                        $date = $post->created_at;
+
+                                                        if ($date->isToday()) {
+                                                            // If the post was created today, show only hour and minute
+                                                            $formattedDate = $date->format('H:i');
+                                                        } elseif ($date->isYesterday()) {
+                                                            // If it was yesterday, show "Ieri alle" followed by hour and minute
+                                                            $formattedDate = 'Ieri alle ' . $date->format('H:i');
+                                                        } else {
+                                                            // Otherwise, show the day, abbreviated month (in Italian), and hour:minute
+                                                            // Set locale to Italian for month names (ensure you have installed the appropriate locale)
+                                                            $formattedDate = $date
+                                                                ->locale('it')
+                                                                ->translatedFormat('d M H:i');
+                                                        }
+                                                    @endphp
+                                                    <div class="text-dark">
+
+
+                                                        @if ($post->categories->count())
+                                                            <div class="d-flex mb-1">
+                                                                <span class="post__last4-badge">
+                                                                    {{ $post->categories->first()->name }}</span>
+                                                            </div> /
+                                                        @endif
+                                                        <div class="post__date">
+                                                            {{ $formattedDate }}
                                                         </div>
-                                                    @endif
+                                                    </div>
                                                     <h4 class="post__title" style="margin: 0;">
                                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
                                                             style="text-decoration: none; color: inherit;">
