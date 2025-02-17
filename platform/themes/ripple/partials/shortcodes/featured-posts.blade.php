@@ -126,6 +126,13 @@
                                                         class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
                                                 </div>
                                             @endif
+                                            @if ($post->in_aggiornamento)
+                                                <div class="d-flex">
+                                                    <span class="post-group__left-purple-badge mb-2"><i
+                                                            class="fa-solid fa-signal-stream"></i> in
+                                                        aggiornamento</span>
+                                                </div>
+                                            @endif
                                             <h3 class="post__title">
                                                 <a href="{{ $post->url }}">{{ $post->name }}</a>
                                             </h3>
@@ -147,6 +154,13 @@
                                                     <div class="d-flex">
                                                         <span
                                                             class="fz-14px post-group__left-purple-badge">{{ $post->categories->first()->name }}</span>
+                                                    </div>
+                                                @endif
+                                                @if ($post->in_aggiornamento)
+                                                    <div class="d-flex">
+                                                        <span class="post-group__left-purple-badge mb-2"><i
+                                                                class="fa-solid fa-signal-stream"></i> in
+                                                            aggiornamento</span>
                                                     </div>
                                                 @endif
                                                 <h3 class="post__title">
