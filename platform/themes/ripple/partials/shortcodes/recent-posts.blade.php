@@ -89,6 +89,13 @@
                                                         <span class="post__date">
                                                             {{ $formattedDate }}
                                                         </span>
+                                                        @if ($post->in_aggiornamento)
+                                                            <span class="post-group__left-red-badge mb-2 ml-2"><i
+                                                                    class="fa fa-spinner text-white"></i> In
+                                                                Aggiornamento
+                                                            </span>
+                                                        @endif
+
                                                     </div>
                                                     <h4 class="post__title" style="margin: 0;">
                                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
