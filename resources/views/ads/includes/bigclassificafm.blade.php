@@ -3,5 +3,5 @@
 </div>
 
 <iframe class="mb-5" src="https://www.tuttocampo.it/WidgetV2/Classifica/c21f546a-9c38-4df3-be82-671071398de4"
-    width="100%" height="100%" lazyload="on" frameborder="0" scrolling="no">
+    width="100%" height="1000" lazyload="on" frameborder="0" scrolling="no">
 </iframe>
