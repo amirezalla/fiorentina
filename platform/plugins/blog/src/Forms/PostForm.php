@@ -96,7 +96,10 @@ class PostForm extends FormAbstract
     'default_value' => 0,
 ])
 
-
+->add('generate_seo', 'html', [
+    'label' => '',
+    'value' => '<button id="generate_seo" type="button" class="btn btn-primary">Generate SEO</button>',
+])
 
 
             ->add(
