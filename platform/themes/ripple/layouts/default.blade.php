@@ -24,7 +24,7 @@
                 @endif
             @elseif (Request::path() == 'diretta')
                 @include('ads.includes.livechat')
-
+            @endif
 
         </div>
 </section>
