@@ -7,7 +7,7 @@
                 $menu['id'] == 'cms-plugins-custom-field' ||
                 $menu['id'] == 'cms-plugins-block' ||
                 $menu['id'] == 'cms-plugins-gallery' ||
-                $menu['id'] == 'cms-core-appearance')
+
         @else
             @include('core/base::layouts.partials.navbar-nav-item', [
                 'menu' => $menu,
