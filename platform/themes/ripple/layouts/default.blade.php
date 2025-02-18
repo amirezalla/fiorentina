@@ -18,10 +18,10 @@
                 {{-- Check if the page is not /diretta --}}
                 <div class="col-lg-4">
                     {!! Theme::partial('sidebar') !!}
+                    @if (Request::path() == 'calendario-primavera')
+                        @include('ads.includes.primaverastanding')
+                    @endif
                 </div>
-                @if (Request::path() == 'calendario-primavera')
-                    @include('ads.includes.primaverastanding')
-                @endif
             @elseif (Request::path() == 'diretta')
                 @include('ads.includes.livechat')
             @endif
