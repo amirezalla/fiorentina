@@ -5,28 +5,40 @@
 @endphp
 
 @php
-    // Create an HTTP client instance.
-    $client = new Client([
+    use GuzzleHttp\Client;
+    use Symfony\Component\DomCrawler\Crawler;
+
+    // Create a new Guzzle client
+    $client = new Client();
+
+    // The URL you want to render
+    $targetUrl = 'https://www.diretta.it/calcio/italia/primavera-1/classifiche/#/6NcAZJet/table/overall';
+
+    // Rendertron endpoint: append the target URL (properly URL encoded)
+    $renderUrl = 'https://render-tron.appspot.com/render/' . urlencode($targetUrl);
+
+    // Make the GET request to Rendertron
+    $response = $client->get($renderUrl, [
         'headers' => [
+            // Optional: set a User-Agent header if needed
             'User-Agent' =>
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
-            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language' => 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' .
+                'AppleWebKit/537.36 (KHTML, like Gecko) ' .
+                'Chrome/112.0.0.0 Safari/537.36',
         ],
     ]);
-    // Fetch the remote page.
-    $response = $client->get('https://www.tuttocampo.it/Italia/Primavera/GironeA/Classifica');
+
+    // Get the fully rendered HTML
     $html = $response->getBody()->getContents();
 
-    // Use DomCrawler to parse the HTML.
+    // Use DomCrawler to extract the element with class .tournament-table-standings
     $crawler = new Crawler($html);
 
-    // Try to extract the element with the class .table_ranking.
     try {
-        $tableRankingHtml = $crawler->filter('.table_ranking')->html();
+        $tableRankingHtml = $crawler->filter('.tournament-table-standings')->html();
     } catch (\Exception $e) {
         $tableRankingHtml = '<p>Ranking table not found.</p>';
     }
 @endphp
 
-{!! $tableRankingHtml !!}
+@dd($tableRankingHtml)
