@@ -9,6 +9,7 @@ use App\Models\StandingPV;
 use App\Models\Matches;
 use App\Models\Calendario;
 use App\Models\CalendarioPV;
+use App\Models\CalendarioFM;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 // sportmonks B0lZqWEdqBzEPrLW5gDcm87Svgb5bnEEa807fd7kOiONHbcbetXywqPQafqC
@@ -147,6 +148,140 @@ class StandingController extends Controller
 
     }
 
+    public static function FetchCalendarioFM(){
+        // Fetch the latest update based on match status
+        $latestUpdate = CalendarioPV::where('status', 'TIMED')->latest('updated_at')->first();
+
+        // Check if the last update was more than 10 hours ago
+        if (!$latestUpdate || $latestUpdate->updated_at <= Carbon::now()->subHours(10)) {
+        // if (1) {
+
+        // Make the API request with necessary headers
+        $response = Http::withHeaders([
+            "x-rapidapi-host" => 'flashlive-sports.p.rapidapi.com',
+            "x-rapidapi-key" => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb'
+        ])->get('https://flashlive-sports.p.rapidapi.com/v1/teams/fixtures?locale=it_IT&sport_id=1&team_id=Q9VVMjSi');
+
+        // Extract the data from the response
+        $data = $response->json()['DATA'];
+
+        foreach($data as $tournament){
+            foreach ($tournament['EVENTS'] as $match) {
+                // Parse the match date from the timestamp
+                $matchDate = Carbon::createFromTimestamp($match['START_TIME'])->format('Y-m-d H:i:s');
+
+                // Prepare the home and away team information
+                $homeTeam = [
+                    'id' => $match['HOME_PARTICIPANT_IDS'][0] ?? null,
+                    'name' => $match['HOME_NAME'],
+                    'shortname' => $match['SHORTNAME_HOME'],
+                    'slug' => $match['HOME_SLUG'],
+                    'logo' => $match['HOME_IMAGES'][0] ?? null,
+                ];
+
+                $awayTeam = [
+                    'id' => $match['AWAY_PARTICIPANT_IDS'][0] ?? null,
+                    'name' => $match['AWAY_NAME'],
+                    'shortname' => $match['SHORTNAME_AWAY'],
+                    'slug' => $match['AWAY_SLUG'],
+                    'logo' => $match['AWAY_IMAGES'][0] ?? null,
+                ];
+
+                // Update or create match entry in the 'calendario' table
+                CalendarioFM::updateOrCreate(
+                    ['match_id' => $match['EVENT_ID']],  // Use the unique match/event ID
+                    [
+                        'venue' => null,  // Venue data doesn't seem to be present in your response
+                        'matchday' => $match['ROUND'] ?? 'Unknown',
+                        'competition' => $tournament['TOURNAMENT_IMAGE'],  // Use the tournament image as competition reference
+                        'group' => $tournament['NAME_PART_2'],  // Example: Serie A
+                        'match_date' => $matchDate,  // Formatted match date
+                        'status' => $match['STAGE_TYPE'],
+                        'home_team' => json_encode($homeTeam),
+                        'away_team' => json_encode($awayTeam),
+                        'score' => json_encode([
+                            'home' => $match['HOME_SCORE_CURRENT'] ?? 0,
+                            'away' => $match['AWAY_SCORE_CURRENT'] ?? 0,
+                        ]),
+                        'goals' => null,  // The API response does not provide detailed goals
+                        'penalties' => null,  // The API response does not provide penalties
+                        'bookings' => null,  // The API response does not provide bookings
+                        'substitutions' => null,  // The API response does not provide substitutions
+                        'odds' => null,  // Odds can be filled if available
+                        'referees' => null,  // Referee information is missing in this response
+                    ]
+                );
+            }
+        }
+
+
+
+        // Make the API request with necessary headers
+        $response = Http::withHeaders([
+            "x-rapidapi-host" => 'flashlive-sports.p.rapidapi.com',
+            "x-rapidapi-key" => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb'
+        ])->get('https://flashlive-sports.p.rapidapi.com/v1/teams/results?sport_id=1&locale=it_IT&team_id=Q9VVMjSi');
+
+// Extract the data from the response
+$data = $response->json()['DATA'];
+
+foreach($data as $tournament){
+    foreach ($tournament['EVENTS'] as $match) {
+        // Parse the match date from the timestamp
+        $matchDate = Carbon::createFromTimestamp($match['START_TIME'])->format('Y-m-d H:i:s');
+
+        // Prepare the home and away team information
+        $homeTeam = [
+            'id' => $match['HOME_PARTICIPANT_IDS'][0] ?? null,
+            'name' => $match['HOME_NAME'],
+            'shortname' => $match['SHORTNAME_HOME'],
+            'slug' => $match['HOME_SLUG'],
+            'logo' => $match['HOME_IMAGES'][0] ?? null,
+        ];
+
+        $awayTeam = [
+            'id' => $match['AWAY_PARTICIPANT_IDS'][0] ?? null,
+            'name' => $match['AWAY_NAME'],
+            'shortname' => $match['SHORTNAME_AWAY'],
+            'slug' => $match['AWAY_SLUG'],
+            'logo' => $match['AWAY_IMAGES'][0] ?? null,
+        ];
+
+        // Update or create match entry in the 'calendario' table
+        CalendarioFM::updateOrCreate(
+            ['match_id' => $match['EVENT_ID']],  // Use the unique match/event ID
+            [
+                'venue' => null,  // Venue data doesn't seem to be present in your response
+                'matchday' => $match['ROUND'] ?? 'Unknown',
+                'competition' => $tournament['TOURNAMENT_IMAGE'],  // Use the tournament image as competition reference
+                'group' => $tournament['NAME_PART_2'],  // Example: Serie A
+                'match_date' => $matchDate,  // Formatted match date
+                'status' => $match['STAGE_TYPE'],
+                'home_team' => json_encode($homeTeam),
+                'away_team' => json_encode($awayTeam),
+                'score' => json_encode([
+                    'home' => $match['HOME_SCORE_CURRENT'] ?? 0,
+                    'away' => $match['AWAY_SCORE_CURRENT'] ?? 0,
+                ]),
+                'goals' => null,  // The API response does not provide detailed goals
+                'penalties' => null,  // The API response does not provide penalties
+                'bookings' => null,  // The API response does not provide bookings
+                'substitutions' => null,  // The API response does not provide substitutions
+                'odds' => null,  // Odds can be filled if available
+                'referees' => null,  // Referee information is missing in this response
+            ]
+        );
+    }
+}
+
+        // Loop through the response data to get fixtures and match information
+
+
+        // Return a success message
+        return "Fixtures updated.";
+    }
+    }
+
     public static function FetchCalendarioPV(){
         // Fetch the latest update based on match status
         $latestUpdate = CalendarioPV::where('status', 'TIMED')->latest('updated_at')->first();
@@ -154,7 +289,6 @@ class StandingController extends Controller
         // Check if the last update was more than 10 hours ago
         if (!$latestUpdate || $latestUpdate->updated_at <= Carbon::now()->subHours(10)) {
         // if (1) {
-        Standing::truncate();
 
         // Make the API request with necessary headers
         $response = Http::withHeaders([
