@@ -21,6 +21,9 @@
                 </div>
             @elseif (Request::path() == 'diretta')
                 @include('ads.includes.livechat')
+
+            @elseif (Request::path() == 'calendario-primavera')
+                @include('ads.includes.primaverastanding')
             @endif
         </div>
 </section>
