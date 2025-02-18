@@ -19,12 +19,13 @@
                 <div class="col-lg-4">
                     {!! Theme::partial('sidebar') !!}
                 </div>
+                @if (Request::path() == 'calendario-primavera')
+                    @include('ads.includes.primaverastanding')
+                @endif
             @elseif (Request::path() == 'diretta')
                 @include('ads.includes.livechat')
 
-            @elseif (Request::path() == 'calendario-primavera')
-                @include('ads.includes.primaverastanding')
-            @endif
+
         </div>
 </section>
 {!! Theme::partial('footer') !!}
