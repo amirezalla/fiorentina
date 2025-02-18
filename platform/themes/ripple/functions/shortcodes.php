@@ -135,6 +135,22 @@ app('events')->listen(RouteMatched::class, function () {
             }
         );
         Shortcode::register(
+            'bigclassificafm',
+            __('big classifica FM'),
+            __('big classifica FM'),
+            function (ShortcodeCompiler $shortcode) {
+                return Theme::partial('shortcodes.bigclassificafm');
+            }
+        );
+        Shortcode::register(
+            'bigclassificapv',
+            __('big classifica PV'),
+            __('big classifica PV'),
+            function (ShortcodeCompiler $shortcode) {
+                return Theme::partial('shortcodes.bigclassificapv');
+            }
+        );
+        Shortcode::register(
             'calendario',
             __('calendario'),
             __('calendario'),
