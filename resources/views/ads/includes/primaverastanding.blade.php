@@ -23,4 +23,4 @@
     }
 @endphp
 
-{{ $tableRankingHtml }}
+{!! $tableRankingHtml !!}
