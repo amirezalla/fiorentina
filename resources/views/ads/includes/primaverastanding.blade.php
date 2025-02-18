@@ -5,33 +5,35 @@
 @endphp
 
 @php
+    use GuzzleHttp\Client;
+    use Symfony\Component\DomCrawler\Crawler;
 
     // Create a new Guzzle client
     $client = new Client();
 
-    // The URL you want to render
-    $targetUrl = 'https://www.diretta.it/calcio/italia/primavera-1/classifiche/#/6NcAZJet/table/overall';
+    // Set the RapidAPI endpoint and payload
+    $rapidApiUrl = 'https://scrapeninja.p.rapidapi.com/scrape-js';
+    $payload = [
+        'url' => 'https://www.diretta.it/calcio/italia/primavera-1/classifiche/#/6NcAZJet/table/overall',
+        'geo' => 'us',
+        'retryNum' => 1,
+    ];
 
-    // Rendertron endpoint: append the target URL (properly URL encoded)
-    $renderUrl = 'https://render-tron.appspot.com/render/' . urlencode($targetUrl);
-
-    // Make the GET request to Rendertron
-    $response = $client->get($renderUrl, [
+    // Send a POST request to ScrapeNinja with the necessary headers
+    $response = $client->request('POST', $rapidApiUrl, [
         'headers' => [
-            // Optional: set a User-Agent header if needed
-            'User-Agent' =>
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' .
-                'AppleWebKit/537.36 (KHTML, like Gecko) ' .
-                'Chrome/112.0.0.0 Safari/537.36',
+            'Content-Type' => 'application/json',
+            'x-rapidapi-host' => 'scrapeninja.p.rapidapi.com',
+            'x-rapidapi-key' => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb',
         ],
+        'json' => $payload,
     ]);
 
-    // Get the fully rendered HTML
+    // Get the rendered HTML response
     $html = $response->getBody()->getContents();
 
-    // Use DomCrawler to extract the element with class .tournament-table-standings
+    // Parse the HTML using DomCrawler
     $crawler = new Crawler($html);
-
     try {
         $tableRankingHtml = $crawler->filter('.tournament-table-standings')->html();
     } catch (\Exception $e) {
@@ -39,4 +41,4 @@
     }
 @endphp
 
-@dd($tableRankingHtml)
+{!! $tableRankingHtml !!}
