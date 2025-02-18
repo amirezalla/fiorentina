@@ -5,8 +5,6 @@
 @endphp
 
 @php
-    use GuzzleHttp\Client;
-    use Symfony\Component\DomCrawler\Crawler;
 
     // Create a new Guzzle client
     $client = new Client();
