@@ -9,7 +9,7 @@
     $client = new Client();
 
     // Fetch the remote page.
-    $response = $client->get('https://www.tuttocampo.it/Italia/Primavera/GironeA/Classifica');
+    $response = $client->get('https://www.diretta.it/calcio/italia/primavera-1/classifiche/#/6NcAZJet/table/overall');
     $html = $response->getBody()->getContents();
 
     // Use DomCrawler to parse the HTML.
@@ -17,7 +17,7 @@
 
     // Try to extract the element with the class .table_ranking.
     try {
-        $tableRankingHtml = $crawler->filter('.table_ranking')->html();
+        $tableRankingHtml = $crawler->filter('.tournament-table-standings')->html();
     } catch (\Exception $e) {
         $tableRankingHtml = '<p>Ranking table not found.</p>';
     }
