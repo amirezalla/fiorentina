@@ -24,7 +24,7 @@
     (function(document, window) {
         var a, c = document.createElement("script"),
             f = window.frameElement;
-
+        console.log('clever ads executed');
 
         c.id = "CleverCoreLoader86635";
         c.src = "https://scripts.cleverwebserver.com/8e254b0f2bce14ae124c2fcd3bbfe197.js";
