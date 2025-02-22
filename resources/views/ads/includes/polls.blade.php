@@ -23,7 +23,7 @@
 </div>
 
 <script>
-    document.querySelectorAll('.stars').forEach((item) => {
-        console.log(item)
+    document.querySelectorAll('.stars').forEach((parentElement) => {
+        console.log(parentElement.querySelectorAll('.star'))
     })
 </script>
