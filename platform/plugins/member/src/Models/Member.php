@@ -2,6 +2,7 @@
 
 namespace Botble\Member\Models;
 
+use App\Models\Poll;
 use Botble\Base\Casts\SafeContent;
 use Botble\Base\Models\BaseModel;
 use Botble\Base\Supports\Avatar;
@@ -17,6 +18,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
@@ -87,6 +89,11 @@ class Member extends BaseModel implements
         $this->notify(new ConfirmEmailNotification());
     }
 
+    public function polls(): HasMany
+    {
+        return $this->hasMany(Poll::class);
+    }
+
     public function avatar(): BelongsTo
     {
         return $this->belongsTo(MediaFile::class)->withDefault();
@@ -99,17 +106,17 @@ class Member extends BaseModel implements
 
     protected function firstName(): Attribute
     {
-        return Attribute::get(fn ($value) => ucfirst((string) $value));
+        return Attribute::get(fn($value) => ucfirst((string)$value));
     }
 
     protected function lastName(): Attribute
     {
-        return Attribute::get(fn ($value) => ucfirst((string) $value));
+        return Attribute::get(fn($value) => ucfirst((string)$value));
     }
 
     protected function name(): Attribute
     {
-        return Attribute::get(fn () => trim($this->first_name . ' ' . $this->last_name));
+        return Attribute::get(fn() => trim($this->first_name . ' ' . $this->last_name));
     }
 
     protected function avatarUrl(): Attribute
