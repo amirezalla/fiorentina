@@ -6,7 +6,7 @@
             @foreach ($lineup[$category] as $player)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="playerpoll-card d-flex align-items-center p-3 border rounded">
-                        <div class="flex-none mr-3">
+                        <div class="d-flex flex-column mr-3">
                             <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
                                  class="playerpoll-image">
                             @php $rateInfo = $player->getRateInfo() @endphp
@@ -15,7 +15,7 @@
                                 <span class="d-block text-dark mb-1 count-txt-{{ $player->id }}">{{ $rateInfo['count']." Polls" }}</span>
                             </div>
                         </div>
-                        <div class="player-info">
+                        <div class="player-info flex-grow-1">
                             <p class="mb-1">{{ $player->player_full_name }}</p>
                             <div class="stars" @if($memberPolls->has($player->id)) data-default="{{ $memberPolls[$player->id] }}" @endif data-player-id="{{ $player->id }}"
                                  data-vote-url="{{ route('polls.store',$player->id) }}">
