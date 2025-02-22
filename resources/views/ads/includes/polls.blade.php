@@ -1,5 +1,5 @@
 <div class="container">
-    @php $memberPolls = optional(auth('member')->user())->polls  @endphp
+    @php $memberPolls = collect(optional(auth('member')->user())->polls)  @endphp
     @php dd($memberPolls) @endphp
     @foreach (['Fiorentina Initial Lineup', 'Fiorentina Subs'] as $category)
         <h3>{{ $category }}</h3>
