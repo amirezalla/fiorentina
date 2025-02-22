@@ -42,7 +42,8 @@
                 axios.post(parentElement.getAttribute('data-vote-url'), {
                     rate,
                 }).then((response) => {
-                    console.log(response)
+                    parentElement.setAttribute('data-default',response.data.value)
+                    fillStars(parentElement,response.data.value)
                 }).catch((error) => {
                     console.log(error)
                 });
