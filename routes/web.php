@@ -40,8 +40,8 @@ Route::get('send-mail',function(){
 });
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
-    \Illuminate\Support\Facades\Schema::dropIfExists('likes');
-    \Illuminate\Support\Facades\Schema::dropIfExists('dislikes');
+    \Illuminate\Support\Facades\Schema::dropIfExists('polls');
+    \Illuminate\Support\Facades\Schema::dropIfExists('poll_options');
     \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
     \Illuminate\Support\Facades\Schema::create('likes', function (Blueprint $table) {
         $table->foreignId('comment_id')
@@ -130,14 +130,15 @@ Route::get('/admin/votes/{vote}/edit', [VoteController::class, 'edit'])->name('v
 Route::put('/admin/votes/{vote}', [VoteController::class, 'update'])->name('votes.update');
 Route::delete('/admin/votes/{vote}', [VoteController::class, 'destroy'])->name('votes.destroy');
 
-Route::get('/polls/create', [PollController::class, 'create'])->name('polls.create');
+Route::get('/polls/{matchLineup}', [PollController::class, 'store'])->name('polls.store');
+/*Route::get('/polls/create', [PollController::class, 'create'])->name('polls.create');
 Route::post('/polls', [PollController::class, 'store'])->name('polls.store');
 Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
 Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->name('polls.vote');
 Route::get('/polls/{id}/toggle', [PollController::class, 'toggleActive'])->name('polls.toggle');
 Route::get('/polls/{id}/export', [PollController::class, 'exportResults'])->name('polls.export');
 Route::get('/polls/{id}/edit', [PollController::class, 'edit'])->name('polls.edit'); // Assumes an edit method
-Route::delete('/polls/{id}', [PollController::class, 'destroy'])->name('polls.destroy');
+Route::delete('/polls/{id}', [PollController::class, 'destroy'])->name('polls.destroy');*/
 
 
 Route::get('/chat/{match}', [ChatController::class, 'fetchMessages']);

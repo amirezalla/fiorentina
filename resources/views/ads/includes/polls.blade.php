@@ -3,14 +3,14 @@
         <h3>{{ $category }}</h3>
         <div class="row">
             @foreach ($lineup[$category] as $player)
-                @dd($lineup,$lineup[$category],$player,$match)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="playerpoll-card d-flex align-items-center p-3 border rounded">
                         <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
                              class="playerpoll-image mr-3">
                         <div class="player-info">
                             <p class="mb-1">{{ $player->player_full_name }}</p>
-                            <div class="stars" data-player-id="{{ $player->id }}">
+                            <div class="stars" data-player-id="{{ $player->id }}"
+                                 data-vote-url="{{ route('polls.store',$player->id) }}">
                                 @for ($i = 1; $i <= 10; $i++)
                                     <span class="star" data-value="{{ $i }}">☆</span>
                                 @endfor
@@ -37,10 +37,16 @@
                 fillStars(parentElement, count);
             });
 
-            starElement.addEventListener("click",(event)=>{
+            starElement.addEventListener("click", (event) => {
                 const rate = parseInt(event.target.getAttribute('data-value'));
-                console.log(rate)
-            })
+                axios.post(parentElement.getAttribute('data-vote-url'), {
+                    rate,
+                }).then((response) => {
+                    console.log(response)
+                }).catch((error) => {
+                    console.log(error)
+                });
+            });
 
         });
     });
