@@ -33,10 +33,12 @@
 
 
 <script>
-    Swal.fire({
-        title: "Good job!",
-        text: "You clicked the button!",
-        icon: "success"
+    document.addEventListener("DOMContentLoaded",()=>{
+        Swal.fire({
+            title: "Good job!",
+            text: "You clicked the button!",
+            icon: "success"
+        });
     });
     document.querySelectorAll('.stars').forEach((parentElement) => {
         parentElement.querySelectorAll('.star').forEach((starElement) => {
