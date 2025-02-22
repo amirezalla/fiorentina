@@ -30,8 +30,9 @@ use App\Http\Controllers\WpImportController;
 
 Route::get('send-mail',function(){
     try {
-        \Illuminate\Support\Facades\Mail::send('emails.test', [], function ($message) {
-            $message->to('alikeshtkar262@gmail.com')->subject("This is test e-mail");
+        Mail::raw('This is a test email', function ($message) {
+            $message->to('jidid96962@lxheir.com')
+                ->subject('Test Email from Laravel on Plesk');
         });
     }catch (\Exception $e){
 
