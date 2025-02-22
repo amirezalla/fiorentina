@@ -8,6 +8,8 @@ use Botble\Blog\Models\Category;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\DB;
+
 
 
 class AppServiceProvider extends ServiceProvider
@@ -140,6 +142,17 @@ class AppServiceProvider extends ServiceProvider
             $last_post = $category?->posts()->latest()->limit(1)->first();
             $view->with('last_post',$last_post);
         });
+
+
+        // Retrieve the SendGrid API key from the database
+        $sendgridApiKey = DB::table('settings')->where('key', 'sendgridapikey')->value('value');
+
+        // Override the mail configuration for SMTP
+        config([
+            'mail.mailers.smtp.username' => 'apikey',  // must be literally "apikey"
+            'mail.mailers.smtp.password' => $sendgridApiKey,
+        ]);
+        env('MAIL_PASSWORD', $sendgridApiKey);
 
 
     }
