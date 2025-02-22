@@ -31,6 +31,7 @@
             });
 
             starElement.addEventListener("mouseleave", (event) => {
+                console.log(event)
             });
 
         });
@@ -39,7 +40,7 @@
     function fillStars(parentElement, count) {
         const elements = parentElement.querySelectorAll('.star');
         for (let i = 1; i <= count; i++) {
-            elements[i].addClass('selected');
+            console.log(elements[i]);
         }
     }
 </script>
