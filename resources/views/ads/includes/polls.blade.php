@@ -3,7 +3,7 @@
         <h3>{{ $category }}</h3>
         <div class="row">
             @foreach ($lineup[$category] as $player)
-                @dd($lineup,$lineup[$category],$player,$player->match)
+                @dd($lineup,$lineup[$category],$player,$match)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="playerpoll-card d-flex align-items-center p-3 border rounded">
                         <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
