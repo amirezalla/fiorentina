@@ -50,7 +50,7 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
             ->on('members')
             ->cascadeOnUpdate()
             ->cascadeOnDelete();
-        $table->foreignId('match_lineup_id')
+        $table->foreignId('match_lineups_id')
             ->references('id')
             ->on('match_lineups')
             ->cascadeOnUpdate()
