@@ -1,9 +1,10 @@
 <div class="container">
     @php $memberPolls = collect(optional(auth('member')->user())->polls)  @endphp
-    @php dd($memberPolls) @endphp
+{{--    @php dd($memberPolls) @endphp--}}
     @foreach (['Fiorentina Initial Lineup', 'Fiorentina Subs'] as $category)
         <h3>{{ $category }}</h3>
         <div class="row">
+            @dd(collect($lineup[$category]))
             @foreach ($lineup[$category] as $player)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="playerpoll-card d-flex align-items-center p-3 border rounded">
