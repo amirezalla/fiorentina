@@ -23,5 +23,5 @@
 </div>
 
 <script>
-    console.log("pull page console")
+    console.log($('.playerpoll-card .stars .star'))
 </script>
