@@ -3,6 +3,7 @@
     use Illuminate\Support\Facades\DB;
     use App\Models\Poll;
 
+    $poll=null;
     /*$poll = Poll::with('options')->where('active', true)->latest()->first();
     // Check if the poll exists and has options
 

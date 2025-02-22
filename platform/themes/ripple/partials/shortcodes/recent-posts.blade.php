@@ -2,6 +2,7 @@
     use App\Models\Poll;
     use Carbon\Carbon;
 
+    $poll=null;
     /*$poll = Poll::with('options')->where('active', true)->latest()->first();
     // Check if the poll exists and has options
 
