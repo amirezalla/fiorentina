@@ -30,12 +30,22 @@
         </div>
     @endforeach
 </div>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded",()=>{
-        console.log(typeof Swal)
-        Swal.fire("SweetAlert2 is working!");
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this imaginary file!",
+            icon: "warning",
+
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        })
 
     });
     document.querySelectorAll('.stars').forEach((parentElement) => {
