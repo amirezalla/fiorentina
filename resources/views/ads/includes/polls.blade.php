@@ -32,9 +32,8 @@
             });
 
             starElement.addEventListener("mouseleave", () => {
-                console.log(starElement)
-                /*const count = parseInt(starElement.target.getAttribute('data-default'));
-                fillStars(parentElement, count);*/
+                const count = parseInt(parentElement.target.getAttribute('data-default'));
+                fillStars(parentElement, count);
             });
 
         });
