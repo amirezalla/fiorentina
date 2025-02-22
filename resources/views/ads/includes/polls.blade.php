@@ -27,7 +27,7 @@
         parentElement.querySelectorAll('.star').forEach((starElement) => {
 
             starElement.addEventListener("mouseenter", (event) => {
-                console.log(event.getAttrib('data-value'))
+                console.log(event.getAttribute('data-value'))
             });
 
             starElement.addEventListener("mouseleave", (event) => {
