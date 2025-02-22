@@ -23,14 +23,15 @@ class MatchLineups extends Model
         $result = Poll::query()
             ->select([
                 DB::raw('AVG(value) as average_rating'),
+                DB::raw('COUNT(*) as polls_count'),
             ])
             ->whereHas('matchLineup', function ($q) {
                 $q->where('player_full_name', $this->player_full_name);
             })
-            ->get();
-        dd($result);
+            ->first();
         return [
-            'average' => $result,
+            'average' => round($result->average_rating, 2),
+            'count' => $result->polls_count,
         ];
     }
 
