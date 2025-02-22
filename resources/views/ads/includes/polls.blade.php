@@ -35,7 +35,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded",()=>{
-        console.log(typeof Swal); // Should print 'function' or 'object'
+        Swal.fire("SweetAlert2 is working!");
 
     });
     document.querySelectorAll('.stars').forEach((parentElement) => {
