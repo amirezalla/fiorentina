@@ -23,7 +23,7 @@ class MatchLineups extends Model
             ->whereHas('matchLineup', function ($q) {
                 $q->where('player_full_name', $this->player_full_name);
             })
-            ->avg('polls.value'), 2);
+            ->avg('value'), 2);
     }
 
     public function getMaxRate(): int
