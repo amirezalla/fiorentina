@@ -34,6 +34,7 @@
       <sourceFolder url="file://$MODULE_DIR$/platform/packages/theme/src" isTestSource="false" packagePrefix="Botble\Theme\" />
       <sourceFolder url="file://$MODULE_DIR$/platform/packages/widget/src" isTestSource="false" packagePrefix="Botble\Widget\" />
       <sourceFolder url="file://$MODULE_DIR$/platform/plugins/vig-seo/src" isTestSource="false" packagePrefix="VigStudio\VigSEO\" />
+      <sourceFolder url="file://$MODULE_DIR$/wp-content/plugins/wordpress-password-hash/src" isTestSource="false" packagePrefix="Ayesh\WP_PasswordHash\" />
       <excludeFolder url="file://$MODULE_DIR$/platform/plugins/vig-seo/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/platform/plugins/vig-seo/vendor/symfony/dom-crawler" />
       <excludeFolder url="file://$MODULE_DIR$/platform/plugins/vig-seo/vendor/symfony/polyfill-ctype" />
