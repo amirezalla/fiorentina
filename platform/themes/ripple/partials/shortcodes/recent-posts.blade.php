@@ -2,7 +2,7 @@
     use App\Models\Poll;
     use Carbon\Carbon;
 
-    $poll = Poll::with('options')->where('active', true)->latest()->first();
+    /*$poll = Poll::with('options')->where('active', true)->latest()->first();
     // Check if the poll exists and has options
 
     if ($poll) {
@@ -11,7 +11,7 @@
         foreach ($poll->options as $option) {
             $option->percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100) : 0;
         }
-    }
+    }*/
 
 @endphp
 
