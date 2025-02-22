@@ -27,8 +27,8 @@
         parentElement.querySelectorAll('.star').forEach((starElement) => {
 
             starElement.addEventListener("mouseenter", (event) => {
-                const count = parseInt(event.target.getAttribute('data-value5')) ?? 0;
-                console.log(count)
+                const count = parseInt(event.target.getAttribute('data-value5'));
+                console.log(count ? "ok" : "nok")
                 // fillStars(parentElement, count);
             });
 
