@@ -29,9 +29,14 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WpImportController;
 
 Route::get('send-mail',function(){
-    \Illuminate\Support\Facades\Mail::send('emails.test', [], function ($message) {
-        $message->to('alikeshtkar262@gmail.com')->subject("This is test e-mail");
-    });
+    try {
+        \Illuminate\Support\Facades\Mail::send('emails.test', [], function ($message) {
+            $message->to('alikeshtkar262@gmail.com')->subject("This is test e-mail");
+        });
+    }catch (\Exception $e){
+
+        dd($e);
+    }
 });
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
