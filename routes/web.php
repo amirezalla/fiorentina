@@ -43,18 +43,19 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Schema::dropIfExists('polls');
     \Illuminate\Support\Facades\Schema::dropIfExists('poll_options');
     \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-    \Illuminate\Support\Facades\Schema::create('likes', function (Blueprint $table) {
-        $table->foreignId('comment_id')
-            ->references('id')
-            ->on('fob_comments')
-            ->cascadeOnUpdate()
-            ->cascadeOnDelete();
+    \Illuminate\Support\Facades\Schema::create('polls', function (Blueprint $table) {
+        $table->id();
         $table->foreignId('member_id')
             ->references('id')
             ->on('members')
             ->cascadeOnUpdate()
             ->cascadeOnDelete();
-        $table->primary(['comment_id','member_id']);
+        $table->foreignId('match_lineup_id')
+            ->references('id')
+            ->on('match_lineups')
+            ->cascadeOnUpdate()
+            ->cascadeOnDelete();
+        $table->unsignedInteger('value');
         $table->timestamps();
     });
     \Illuminate\Support\Facades\Schema::create('dislikes', function (Blueprint $table) {
