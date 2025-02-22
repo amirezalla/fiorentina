@@ -5193,3 +5193,7 @@ header>.container {
     }
 
 }
+
+.player-info{
+    flex: 1;
+}
