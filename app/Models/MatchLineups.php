@@ -14,6 +14,16 @@ class MatchLineups extends Model
         'player_country', 'player_rating', 'short_name', 'player_image'
     ];
 
+    public function getAverageRate()
+    {
+        dd(Poll::query()->sum('value'));
+    }
+
+    public function getMaxRate(): int
+    {
+        return 10;
+    }
+
     public function match()
     {
         return $this->belongsTo(Matches::class);
