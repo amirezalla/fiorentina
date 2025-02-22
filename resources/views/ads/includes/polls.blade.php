@@ -36,6 +36,10 @@
                 fillStars(parentElement, count);
             });
 
+            starElement.addEventListener("click",(event)=>{
+                console.log(event.target,event)
+            })
+
         });
     });
 
