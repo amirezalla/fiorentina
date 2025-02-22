@@ -3,7 +3,7 @@
     @foreach (['Fiorentina Initial Lineup', 'Fiorentina Subs'] as $category)
         <h3>{{ $category }}</h3>
         <div class="row">
-            @php $memberPolls = auth('member')->user()->polls()->pluck('value','match_lineups_id')  @endphp
+            @php $memberPolls = collect(optional(auth('member')->user())->polls()->whereIn('match_lineups_id',collect($lineup[$category])->pluck('id')->toArray())->pluck('value','match_lineups_id'))  @endphp
             @dd($memberPolls)
             @foreach ($lineup[$category] as $player)
                 <div class="col-md-6 col-lg-4 mb-4">
