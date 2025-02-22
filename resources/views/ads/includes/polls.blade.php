@@ -38,12 +38,6 @@
             starElement.addEventListener("mouseenter", (event) => {
                 const count = parseInt(event.target.getAttribute('data-value'));
                 fillStars(parentElement, count);
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Something went wrong!",
-                    footer: '<a href="#">Why do I have this issue?</a>'
-                });
             });
 
             starElement.addEventListener("mouseleave", () => {
@@ -61,7 +55,12 @@
                     document.querySelector(`.avg-txt-${playerId}`).innerText = `${response.data.rate_info.average} of ${response.data.rate_info.max}`
                     document.querySelector(`.count-txt-${playerId}`).innerText = `${response.data.rate_info.count} Polls`
                     fillStars(parentElement,response.data.value);
-                    console.log(response)
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something went wrong!",
+                        footer: '<a href="#">Why do I have this issue?</a>'
+                    });
                 }).catch((error) => {
                     console.log(error)
                 });
