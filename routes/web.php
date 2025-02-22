@@ -130,7 +130,7 @@ Route::get('/admin/votes/{vote}/edit', [VoteController::class, 'edit'])->name('v
 Route::put('/admin/votes/{vote}', [VoteController::class, 'update'])->name('votes.update');
 Route::delete('/admin/votes/{vote}', [VoteController::class, 'destroy'])->name('votes.destroy');
 
-Route::get('/polls/{matchLineup}', [PollController::class, 'store'])->name('polls.store');
+Route::post('/polls/{matchLineup}', [PollController::class, 'store'])->name('polls.store');
 /*Route::get('/polls/create', [PollController::class, 'create'])->name('polls.create');
 Route::post('/polls', [PollController::class, 'store'])->name('polls.store');
 Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
