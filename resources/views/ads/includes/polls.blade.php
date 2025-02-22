@@ -23,5 +23,5 @@
 </div>
 
 <script>
-    console.log($('.playerpoll-card .stars .star'))
+    console.log(document.querySelectorAll('.playerpoll-card .stars .star'))
 </script>
