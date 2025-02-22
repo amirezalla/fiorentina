@@ -1,5 +1,4 @@
 <div class="container">
-{{--    @php dd($memberPolls) @endphp--}}
     @foreach (['Fiorentina Initial Lineup', 'Fiorentina Subs'] as $category)
         <h3>{{ $category }}</h3>
         <div class="row">
