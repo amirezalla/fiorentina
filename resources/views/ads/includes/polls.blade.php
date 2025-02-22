@@ -27,13 +27,10 @@
         parentElement.querySelectorAll('.star').forEach((starElement) => {
 
             starElement.addEventListener("mouseenter", (event) => {
-                console.log("mouse entered")
-                console.log(event)
+                console.log(event.getAttrib('data-value'))
             });
 
             starElement.addEventListener("mouseleave", (event) => {
-                console.log("mouse leaved")
-                console.log(event)
             });
 
         });
