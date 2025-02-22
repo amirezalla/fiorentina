@@ -16,7 +16,7 @@
                             <div class="stars" @if($memberPolls->has($player->id)) data-default="{{ $memberPolls[$player->id] }}" @endif data-player-id="{{ $player->id }}"
                                  data-vote-url="{{ route('polls.store',$player->id) }}">
                                 @for ($i = 1; $i <= 10; $i++)
-                                    <span class="star @if($memberPolls->has($player->id) && $memberPolls->get($player->id) > $i) selected @endif" data-value="{{ $i }}">☆</span>
+                                    <span class="star @if($memberPolls->has($player->id) && $memberPolls->get($player->id) >= $i) selected @endif" data-value="{{ $i }}">☆</span>
                                 @endfor
                             </div>
                         </div>
