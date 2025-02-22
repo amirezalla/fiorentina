@@ -24,6 +24,18 @@
 
 <script>
     document.querySelectorAll('.stars').forEach((parentElement) => {
-        console.log(parentElement.querySelectorAll('.star'))
+        parentElement.querySelectorAll('.star').forEach((starElement) => {
+
+            starElement.addEventListener("mouseenter", (event) => {
+                console.log("mouse entered")
+                console.log(event)
+            });
+
+            starElement.addEventListener("mouseleave", (event) => {
+                console.log("mouse leaved")
+                console.log(event)
+            });
+
+        });
     })
 </script>
