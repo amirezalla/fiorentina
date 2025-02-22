@@ -6,7 +6,7 @@
             @foreach ($lineup[$category] as $player)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="playerpoll-card d-flex align-items-center p-3 border rounded">
-                        <div class="flex flex-column mr-3">
+                        <div class="flex-none mr-3">
                             <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
                                  class="playerpoll-image">
                             @php $rateInfo = $player->getRateInfo() @endphp
