@@ -33,6 +33,13 @@
 </div>
 
 {!! Theme::footer() !!}
+<script>
+    document.addEventListener("DOMContentLoaded",()=>{
+        console.log(typeof Swal)
+        Swal.fire("SweetAlert2 is working!");
+
+    });
+</script>
 
 
 <div class="container">
