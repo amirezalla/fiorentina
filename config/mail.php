@@ -1,5 +1,6 @@
 <?php
-
+use Illuminate\Support\Facades\DB;
+$sendgridApiKey = DB::table('settings')->where('key', 'sendgridapikey')->value('value');
 return [
 
     /*
@@ -41,7 +42,7 @@ return [
             'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'password' => $sendgridApiKey,
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
