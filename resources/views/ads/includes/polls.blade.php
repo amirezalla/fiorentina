@@ -30,15 +30,26 @@
         </div>
     @endforeach
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded",()=>{
         Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Something went wrong!",
-            footer: '<a href="#">Why do I have this issue?</a>'
+            title: "Enter your name",
+            input: "text",
+            inputAttributes: {
+                autocomplete: "off"
+            },
+            showCancelButton: true,
+            didOpen: () => {
+                const inputField = Swal.getPopup().querySelector("input");
+                if (inputField) {
+                    inputField.oninput = function () {
+                        console.log("User is typing:", this.value);
+                    };
+                }
+            }
         });
     });
     document.querySelectorAll('.stars').forEach((parentElement) => {
