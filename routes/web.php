@@ -58,20 +58,6 @@ Route::get('/migrate', function (\Illuminate\Http\Request $request) {
         $table->unsignedInteger('value');
         $table->timestamps();
     });
-    \Illuminate\Support\Facades\Schema::create('dislikes', function (Blueprint $table) {
-        $table->foreignId('comment_id')
-            ->references('id')
-            ->on('fob_comments')
-            ->cascadeOnUpdate()
-            ->cascadeOnDelete();
-        $table->foreignId('member_id')
-            ->references('id')
-            ->on('members')
-            ->cascadeOnUpdate()
-            ->cascadeOnDelete();
-        $table->primary(['comment_id','member_id']);
-        $table->timestamps();
-    });
     dd("pl");
     $importPwDatabase = new \App\Classes\ImportPwDatabase();
 //    $importPwDatabase->importUsers();
