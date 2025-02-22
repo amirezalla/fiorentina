@@ -35,12 +35,8 @@
 
 <script>
     document.addEventListener("DOMContentLoaded",()=>{
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Something went wrong!",
-            footer: '<a href="#">Why do I have this issue?</a>'
-        });
+        console.log(typeof Swal); // Should print 'function' or 'object'
+
     });
     document.querySelectorAll('.stars').forEach((parentElement) => {
         parentElement.querySelectorAll('.star').forEach((starElement) => {
