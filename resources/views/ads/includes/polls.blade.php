@@ -31,10 +31,10 @@
     @endforeach
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded",()=>{
+        console.log(typeof Swal)
         Swal.fire("SweetAlert2 is working!");
 
     });
