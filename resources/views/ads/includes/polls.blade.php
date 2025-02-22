@@ -6,7 +6,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="playerpoll-card d-flex align-items-center p-3 border rounded">
                         <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
-                            class="playerpoll-image mr-3">
+                             class="playerpoll-image mr-3">
                         <div class="player-info">
                             <p class="mb-1">{{ $player->player_full_name }}</p>
                             <div class="stars" data-player-id="{{ $player->id }}">
@@ -23,38 +23,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.stars').forEach(function(starsContainer) {
-            let selectedValue = 0;
-
-            starsContainer.querySelectorAll('.star').forEach(function(star) {
-                star.addEventListener('mouseover', function() {
-                    resetStars(starsContainer);
-                    highlightStars(starsContainer, parseInt(this.dataset.value));
-                });
-
-                star.addEventListener('mouseout', function() {
-                    resetStars(starsContainer);
-                    if (selectedValue > 0) highlightStars(starsContainer,
-                    selectedValue);
-                });
-
-                star.addEventListener('click', function() {
-                    selectedValue = parseInt(this.dataset.value);
-                    let playerId = starsContainer.dataset.playerId;
-
-                });
-            });
-        });
-
-        function resetStars(container) {
-            container.querySelectorAll('.star').forEach(star => star.classList.remove('selected'));
-        }
-
-        function highlightStars(container, value) {
-            container.querySelectorAll('.star').forEach((star, index) => {
-                if (index < value) star.classList.add('selected');
-            });
-        }
-    });
+    document.querySelectorAll('.stars').forEach((item) => {
+        console.log(item)
+    })
 </script>
