@@ -16,7 +16,7 @@ class MatchLineups extends Model
 
     public function getAverageRate()
     {
-        dd(Poll::query()->sum('value'));
+        dd(Poll::query()->avg('value'));
     }
 
     public function getMaxRate(): int
