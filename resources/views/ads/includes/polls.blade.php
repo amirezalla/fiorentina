@@ -9,7 +9,7 @@
                         <div class="flex flex-column mr-3">
                             <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
                                  class="playerpoll-image">
-                            <span class="text-dark">{{ $player->getAverageRate() }}</span>
+                            <span class="text-dark">{{ $player->getRateInfo() }}</span>
                         </div>
                         <div class="player-info">
                             <p class="mb-1">{{ $player->player_full_name }}</p>
