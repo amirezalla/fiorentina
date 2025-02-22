@@ -15,7 +15,7 @@
                                 <span class="d-block text-dark mb-1 count-txt-{{ $player->id }}">{{ $rateInfo['count']." Polls" }}</span>
                             </div>
                         </div>
-                        <div class="player-info flex-shrink-1">
+                        <div class="player-info flex-shrink-1 flex-grow-1">
                             <p class="mb-1">{{ $player->player_full_name }}</p>
                             <div class="stars" @if($memberPolls->has($player->id)) data-default="{{ $memberPolls[$player->id] }}" @endif data-player-id="{{ $player->id }}"
                                  data-vote-url="{{ route('polls.store',$player->id) }}">
