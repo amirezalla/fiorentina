@@ -30,7 +30,7 @@
         </div>
     @endforeach
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.querySelectorAll('.stars').forEach((parentElement) => {
         parentElement.querySelectorAll('.star').forEach((starElement) => {
