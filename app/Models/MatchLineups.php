@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MatchLineups extends Model
@@ -14,9 +17,13 @@ class MatchLineups extends Model
         'player_country', 'player_rating', 'short_name', 'player_image'
     ];
 
-    public function getAverageRate()
+    public function getAverageRate(): float
     {
-        dd(Poll::query()->avg('value'));
+        return round(Poll::query()
+            ->whereHas('matchLineup', function ($q) {
+                $q->where('player_full_name', $this->player_full_name);
+            })
+            ->avg('value'), 2);
     }
 
     public function getMaxRate(): int
