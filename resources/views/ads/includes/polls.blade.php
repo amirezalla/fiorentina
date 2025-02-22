@@ -23,5 +23,38 @@
 </div>
 
 <script>
-    console.log(document.querySelectorAll('.playerpoll-card .stars .star'))
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.stars').forEach(function(starsContainer) {
+            let selectedValue = 0;
+
+            starsContainer.querySelectorAll('.star').forEach(function(star) {
+                star.addEventListener('mouseover', function() {
+                    resetStars(starsContainer);
+                    highlightStars(starsContainer, parseInt(this.dataset.value));
+                });
+
+                star.addEventListener('mouseout', function() {
+                    resetStars(starsContainer);
+                    if (selectedValue > 0) highlightStars(starsContainer,
+                    selectedValue);
+                });
+
+                star.addEventListener('click', function() {
+                    selectedValue = parseInt(this.dataset.value);
+                    let playerId = starsContainer.dataset.playerId;
+
+                });
+            });
+        });
+
+        function resetStars(container) {
+            container.querySelectorAll('.star').forEach(star => star.classList.remove('selected'));
+        }
+
+        function highlightStars(container, value) {
+            container.querySelectorAll('.star').forEach((star, index) => {
+                if (index < value) star.classList.add('selected');
+            });
+        }
+    });
 </script>
