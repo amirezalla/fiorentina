@@ -42,7 +42,8 @@ class PollController extends BaseController
         ]);
         return Response::json([
             'success' => true,
-            'value' => $request->rate
+            'value' => $request->rate,
+            'rate_info'=>$matchLineup->getRateInfo(),
         ]);
     }
 

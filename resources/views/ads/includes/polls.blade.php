@@ -10,9 +10,9 @@
                             <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
                                  class="playerpoll-image">
                             @php $rateInfo = $player->getRateInfo() @endphp
-                            <div class="flex flex-column align-items-center">
-                                <span class="text-dark mb-1">{{ $rateInfo['average']." of ".$rateInfo['max'] }}</span>
-                                <span class="text-dark mb-1">{{ number_format($rateInfo['count'])." Polls" }}</span>
+                            <div class="flex flex-column align-items-center text-small">
+                                <span class="text-dark mb-1 avg-txt-{{ $player->id }}">{{ $rateInfo['average']." of ".$rateInfo['max'] }}</span>
+                                <span class="text-dark mb-1 count-txt-{{ $player->id }}">{{ $rateInfo['count']." Polls" }}</span>
                             </div>
                         </div>
                         <div class="player-info">
@@ -50,8 +50,10 @@
                 axios.post(parentElement.getAttribute('data-vote-url'), {
                     rate,
                 }).then((response) => {
-                    parentElement.setAttribute('data-default',response.data.value)
-                    fillStars(parentElement,response.data.value)
+                    const playerId = parentElement.getAttribute('data-player-id');
+                    parentElement.setAttribute('data-default',response.data.value);
+                    fillStars(parentElement,response.data.value);
+                    console.log(response)
                 }).catch((error) => {
                     console.log(error)
                 });
