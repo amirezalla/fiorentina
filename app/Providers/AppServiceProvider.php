@@ -152,8 +152,7 @@ class AppServiceProvider extends ServiceProvider
             'mail.mailers.smtp.username' => 'apikey',  // must be literally "apikey"
             'mail.mailers.smtp.password' => $sendgridApiKey,
         ]);
-
-        dd(env('MAIL_PASSWORD'));
+        env('MAIL_PASSWORD', $sendgridApiKey);
 
 
     }
