@@ -27,13 +27,13 @@
         parentElement.querySelectorAll('.star').forEach((starElement) => {
 
             starElement.addEventListener("mouseenter", (event) => {
-                const count = parseInt(event.target.getAttribute('data-value5'));
-                console.log(count ? "ok" : "nok")
-                // fillStars(parentElement, count);
+                const count = parseInt(event.target.getAttribute('data-value'));
+                fillStars(parentElement, count);
             });
 
             starElement.addEventListener("mouseleave", (event) => {
-                console.log(event)
+                const count = parseInt(starElement.target.getAttribute('data-default'));
+                fillStars(parentElement, count);
             });
 
         });
