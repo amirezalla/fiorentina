@@ -39,8 +39,11 @@
 
     function fillStars(parentElement, count) {
         const elements = parentElement.querySelectorAll('.star');
+        for (let el of elements){
+            el.classList.remove("selected");
+        }
         for (let i = 1; i <= count; i++) {
-            console.log(elements[i]);
+            elements[i].classList.add("selected");
         }
     }
 </script>
