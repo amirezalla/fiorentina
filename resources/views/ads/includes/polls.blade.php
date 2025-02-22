@@ -36,20 +36,10 @@
 <script>
     document.addEventListener("DOMContentLoaded",()=>{
         Swal.fire({
-            title: "Enter your name",
-            input: "text",
-            inputAttributes: {
-                autocomplete: "off"
-            },
-            showCancelButton: true,
-            didOpen: () => {
-                const inputField = Swal.getPopup().querySelector("input");
-                if (inputField) {
-                    inputField.oninput = function () {
-                        console.log("User is typing:", this.value);
-                    };
-                }
-            }
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            footer: '<a href="#">Why do I have this issue?</a>'
         });
     });
     document.querySelectorAll('.stars').forEach((parentElement) => {
