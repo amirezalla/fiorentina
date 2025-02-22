@@ -27,7 +27,7 @@
         parentElement.querySelectorAll('.star').forEach((starElement) => {
 
             starElement.addEventListener("mouseenter", (event) => {
-                fillStars(parentElement,parseInt(event.target.getAttribute('data-value')));
+                fillStars(parentElement, parseInt(event.target.getAttribute('data-value')));
             });
 
             starElement.addEventListener("mouseleave", (event) => {
@@ -39,7 +39,7 @@
     function fillStars(parentElement, count) {
         const elements = parentElement.querySelectorAll('.star');
         for (let i = 1; i <= count; i++) {
-            console.log(i)
+            elements[i].addClass('selected');
         }
     }
 </script>
