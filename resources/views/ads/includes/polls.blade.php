@@ -4,7 +4,6 @@
         <h3>{{ $category }}</h3>
         <div class="row">
             @php $memberPolls = auth('member')->check() ? auth('member')->user()->polls()->whereIn('match_lineups_id',collect($lineup[$category])->pluck('id')->toArray())->pluck('value','match_lineups_id') : collect()  @endphp
-            @dd($memberPolls)
             @foreach ($lineup[$category] as $player)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="playerpoll-card d-flex align-items-center p-3 border rounded">
@@ -12,10 +11,10 @@
                              class="playerpoll-image mr-3">
                         <div class="player-info">
                             <p class="mb-1">{{ $player->player_full_name }}</p>
-                            <div class="stars" data-player-id="{{ $player->id }}"
+                            <div class="stars" @if($memberPolls->has($player->id)) data-default="{{ $memberPolls[$player->id] }}" @endif data-player-id="{{ $player->id }}"
                                  data-vote-url="{{ route('polls.store',$player->id) }}">
                                 @for ($i = 1; $i <= 10; $i++)
-                                    <span class="star" data-value="{{ $i }}">☆</span>
+                                    <span class="star @if($memberPolls->has($player->id) && $memberPolls->get($player->id) <= $i) selected @endif" data-value="{{ $i }}">☆</span>
                                 @endfor
                             </div>
                         </div>
