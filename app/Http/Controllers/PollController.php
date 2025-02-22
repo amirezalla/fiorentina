@@ -15,7 +15,7 @@ class PollController extends BaseController
 
     public function store(Request $request,$matchLineup)
     {
-        dd($matchLineup,$request->user('customer'));
+        dd($matchLineup,$request->user('member'));
     }
 
 }
