@@ -38,6 +38,12 @@
             starElement.addEventListener("mouseenter", (event) => {
                 const count = parseInt(event.target.getAttribute('data-value'));
                 fillStars(parentElement, count);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong!",
+                    footer: '<a href="#">Why do I have this issue?</a>'
+                });
             });
 
             starElement.addEventListener("mouseleave", () => {
