@@ -11,8 +11,8 @@
                                  class="playerpoll-image">
                             @php $rateInfo = $player->getRateInfo() @endphp
                             <div class="d-block text-small">
-                                <span class="text-dark mb-1 avg-txt-{{ $player->id }}">{{ $rateInfo['average']." of ".$rateInfo['max'] }}</span>
-                                <span class="text-dark mb-1 count-txt-{{ $player->id }}">{{ $rateInfo['count']." Polls" }}</span>
+                                <span class="d-block text-dark mb-1 avg-txt-{{ $player->id }}">{{ $rateInfo['average']." of ".$rateInfo['max'] }}</span>
+                                <span class="d-block text-dark mb-1 count-txt-{{ $player->id }}">{{ $rateInfo['count']." Polls" }}</span>
                             </div>
                         </div>
                         <div class="player-info">
