@@ -42,7 +42,7 @@
         for (let el of elements){
             el.classList.remove("selected");
         }
-        for (let i = 1; i <= count; i++) {
+        for (let i = 0; i < count; i++) {
             elements[i].classList.add("selected");
         }
     }
