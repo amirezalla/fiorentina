@@ -24,6 +24,6 @@ class Poll extends Model
 
     public function matchLineup(): BelongsTo
     {
-        return $this->belongsTo(MatchLineups::class);
+        return $this->belongsTo(MatchLineups::class,'match_lineups_id');
     }
 }
