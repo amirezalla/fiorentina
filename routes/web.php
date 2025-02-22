@@ -28,7 +28,11 @@ use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WpImportController;
 
-
+Route::get('send-mail',function(){
+    \Illuminate\Support\Facades\Mail::send('emails.test', [], function ($message) {
+        $message->to('alikeshtkar262@gmail.com')->subject("This is test e-mail");
+    });
+});
 Route::get('/migrate', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
     \Illuminate\Support\Facades\Schema::dropIfExists('likes');
