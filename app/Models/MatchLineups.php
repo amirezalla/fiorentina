@@ -32,6 +32,7 @@ class MatchLineups extends Model
         return [
             'average' => round($result->average_rating, 2),
             'count' => $result->polls_count,
+            'max' => $this->getMaxRate(),
         ];
     }
 
