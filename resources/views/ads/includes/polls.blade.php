@@ -10,7 +10,7 @@
                             <img src="{{ $player->player_image }}" alt="{{ $player->player_full_name }}"
                                  class="playerpoll-image">
                             @php $rateInfo = $player->getRateInfo() @endphp
-                            <div class="flex flex-column align-items-center text-small">
+                            <div class="d-block text-small">
                                 <span class="text-dark mb-1 avg-txt-{{ $player->id }}">{{ $rateInfo['average']." of ".$rateInfo['max'] }}</span>
                                 <span class="text-dark mb-1 count-txt-{{ $player->id }}">{{ $rateInfo['count']." Polls" }}</span>
                             </div>
@@ -52,6 +52,8 @@
                 }).then((response) => {
                     const playerId = parentElement.getAttribute('data-player-id');
                     parentElement.setAttribute('data-default',response.data.value);
+                    document.querySelector(`.avg-txt-${playerId}`).innerText = `${response.data.rate_info.average} of ${response.data.rate_info.max}`
+                    document.querySelector(`.count-txt-${playerId}`).innerText = `${response.data.rate_info.count} Polls`
                     fillStars(parentElement,response.data.value);
                     console.log(response)
                 }).catch((error) => {
