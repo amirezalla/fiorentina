@@ -33,6 +33,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    document.addEventListener("DOMContentLoaded",()=>{
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            footer: '<a href="#">Why do I have this issue?</a>'
+        });
+    });
     document.querySelectorAll('.stars').forEach((parentElement) => {
         parentElement.querySelectorAll('.star').forEach((starElement) => {
 
@@ -56,12 +64,7 @@
                     document.querySelector(`.avg-txt-${playerId}`).innerText = `${response.data.rate_info.average} of ${response.data.rate_info.max}`
                     document.querySelector(`.count-txt-${playerId}`).innerText = `${response.data.rate_info.count} Polls`
                     fillStars(parentElement,response.data.value);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Something went wrong!",
-                        footer: '<a href="#">Why do I have this issue?</a>'
-                    });
+
                 }).catch((error) => {
                     console.log(error)
                 });
