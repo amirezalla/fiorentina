@@ -30,24 +30,10 @@
         </div>
     @endforeach
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
 <script>
-    document.addEventListener("DOMContentLoaded",()=>{
-        new swal({
-            title: "Are you sure?",
-            text: "You will not be able to recover this imaginary file!",
-            icon: "warning",
 
-            buttons: [
-                'No, cancel it!',
-                'Yes, I am sure!'
-            ],
-            dangerMode: true,
-        })
-
-    });
     document.querySelectorAll('.stars').forEach((parentElement) => {
         parentElement.querySelectorAll('.star').forEach((starElement) => {
 

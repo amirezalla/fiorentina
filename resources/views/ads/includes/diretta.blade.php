@@ -29,9 +29,9 @@
             })
             ->orderByRaw(
                 "
-        CAST(SUBSTRING_INDEX(comment_time, \"'\", 1) AS UNSIGNED) + 
-        IF(LOCATE('+', comment_time) > 0, 
-            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(comment_time, \"'\", 1), '+', -1) AS UNSIGNED), 
+        CAST(SUBSTRING_INDEX(comment_time, \"'\", 1) AS UNSIGNED) +
+        IF(LOCATE('+', comment_time) > 0,
+            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(comment_time, \"'\", 1), '+', -1) AS UNSIGNED),
             0
         )
     ",
@@ -213,3 +213,10 @@
 {{-- Diretta History blade --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded",()=>{
+        console.log(typeof Swal)
+        Swal.fire("SweetAlert2 is working!");
+
+    });
+</script>
