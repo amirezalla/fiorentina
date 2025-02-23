@@ -48,7 +48,10 @@ class ResetPasswordNotification extends Notification
             return (new MailMessage())
                 ->mailer('sendgrid') // Force using your custom SendGrid transport
                 ->subject($subject)
-                ->line($content);
+                ->view('emails.template', [
+                    'subject' => $subject,
+                    'content' => $content,
+                ]);
         } catch (\Exception $e) {
             \Log::error('Reset password email error: ' . $e->getMessage());
             dd('Error sending reset email: ' . $e->getMessage());
