@@ -30,7 +30,7 @@ class NotificaController extends Controller
         $subject = "Notifica partita: {$home_team->name} vs {$away_team->name}";
 
         // Format the match date/time (assuming $calendario->match_time holds the datetime)
-        $matchTime = date('d/m/Y H:i', strtotime($calendario->match_time));
+        $matchTime = date('d/m/Y H:i', strtotime($calendario->match_date));
 
         // Assuming matchday is stored in $calendario->matchday; adjust as needed
         $matchday = $calendario->matchday;
