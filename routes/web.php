@@ -164,7 +164,7 @@ Route::get('/send-sample-email', function () {
 //    $recipient = 'allahverdiamirreza@gmail.com';
     $recipient = 'alikeshtkar262@gmail.com';
     try {
-        Mail::mailer('sendgrid')->raw('This is a sample email sent from our Laravel application.', function ($message) use ($recipient) {
+        Mail::raw('This is a sample email sent from our Laravel application.', function ($message) use ($recipient) {
             $message->to($recipient)
                     ->subject('Sample Email');
         });
