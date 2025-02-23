@@ -162,7 +162,7 @@ Route::get('/import-categories', [WpImportController::class, 'importCategories']
 
 Route::get('/send-sample-email', function () {
     // Define the recipient email address
-    $recipient = 'a.allahverdi@icoa.it';
+    $recipient = 'allahverdiamirreza@gmail.com';
 
     // Send a simple plain text email
     Mail::raw('This is a sample email sent from our Laravel application.', function ($message) use ($recipient) {
