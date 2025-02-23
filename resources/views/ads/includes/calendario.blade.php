@@ -160,65 +160,63 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+
+
+
+
+
                 document.querySelectorAll('.notifica-btn').forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        const matchId = this.getAttribute('data-match-id');
+    button.addEventListener('click', function() {
+        const matchId = this.getAttribute('data-match-id');
 
-                        Swal.fire({
-                            title: 'Inserisci la tua email',
-                            input: 'text', // Use text instead of email
-                            inputPlaceholder: 'Inserisci il tuo indirizzo email',
-                            showCancelButton: true,
-                            confirmButtonText: 'Invia',
-                            cancelButtonText: 'Annulla'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const email = result.value;
-                                // Validate email after submission
-                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                                if (!email) {
-                                    Swal.fire('Errore!', 'Devi inserire una email valida!',
-                                        'error');
-                                    return;
-                                }
-                                if (!emailPattern.test(email)) {
-                                    Swal.fire('Errore!', 'Inserisci un indirizzo email valido!',
-                                        'error');
-                                    return;
-                                }
-
-                                // Proceed with AJAX call
-                                fetch('/notifica/store', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        },
-                                        body: JSON.stringify({
-                                            email: email,
-                                            match_id: matchId
-                                        })
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            Swal.fire('Successo!',
-                                                'La tua notifica è stata impostata.',
-                                                'success');
-                                        } else {
-                                            Swal.fire('Errore!',
-                                                'Qualcosa è andato storto.', 'error');
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        Swal.fire('Errore!',
-                                            'Errore di connessione, riprova più tardi.',
-                                            'error');
-                                    });
-                            }
-                        });
-                    });
+        bootbox.prompt({
+            title: "Inserisci il tuo indirizzo email",
+            callback: function(result) {
+                if (result === null) {
+                    // User cancelled the prompt
+                    return;
+                }
+                
+                const email = result.trim();
+                if (email === "") {
+                    bootbox.alert("Devi inserire una email valida!");
+                    return;
+                }
+                
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    bootbox.alert("Inserisci un indirizzo email valido!");
+                    return;
+                }
+                
+                // If valid, send the data via AJAX
+                fetch('/notifica/store', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        match_id: matchId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        bootbox.alert("La tua notifica è stata impostata.");
+                    } else {
+                        bootbox.alert("Qualcosa è andato storto.");
+                    }
+                })
+                .catch((error) => {
+                    bootbox.alert("Errore di connessione, riprova più tardi.");
                 });
+            }
+        });
+    });
+});
+
 
 
             });
