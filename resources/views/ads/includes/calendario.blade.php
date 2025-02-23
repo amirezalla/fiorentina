@@ -164,18 +164,25 @@
                     button.addEventListener('click', function() {
                         const matchId = this.getAttribute('data-match-id');
 
-                        // Trigger the SweetAlert modal
+                        // Trigger the SweetAlert modal using "text" as the input type
                         Swal.fire({
                             title: 'Inserisci la tua email',
-                            input: 'email',
+                            input: 'text', // use text instead of email
                             inputPlaceholder: 'Inserisci il tuo indirizzo email',
                             showCancelButton: true,
                             confirmButtonText: 'Invia',
                             cancelButtonText: 'Annulla',
-                            inputValidator: (value) => {
+                            preConfirm: (value) => {
+                                // Simple email validation regex
+                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                                 if (!value) {
-                                    return 'Devi inserire una email valida!';
+                                    Swal.showValidationMessage(
+                                        'Devi inserire una email valida!');
+                                } else if (!emailPattern.test(value)) {
+                                    Swal.showValidationMessage(
+                                        'Inserisci un indirizzo email valido!');
                                 }
+                                return value;
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -213,6 +220,7 @@
                         });
                     });
                 });
+
             });
 
 
