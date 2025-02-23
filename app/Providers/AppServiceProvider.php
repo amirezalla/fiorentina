@@ -10,6 +10,8 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Mail\MailManager;
+use App\Mail\Transport\SendGridTransport;
 
 
 
