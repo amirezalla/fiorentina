@@ -17,6 +17,7 @@ use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 
 use App\Http\Controllers\AdController;
@@ -159,3 +160,15 @@ Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
+Route::get('/send-sample-email', function () {
+    // Define the recipient email address
+    $recipient = 'a.allahverdi@icoa.it';
+
+    // Send a simple plain text email
+    Mail::raw('This is a sample email sent from our Laravel application.', function ($message) use ($recipient) {
+        $message->to($recipient)
+                ->subject('Sample Email');
+    });
+
+    return 'Sample email sent!';
+});
