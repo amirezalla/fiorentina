@@ -2,91 +2,69 @@
 
 namespace App\Mail\Transport;
 
-use Illuminate\Mail\Transport\Transport;
-use Illuminate\Support\Facades\Http;
-use Swift_Mime_SimpleMessage;
+use Symfony\Component\Mailer\Transport\AbstractTransport;
+use Symfony\Component\Mailer\SentMessage;
+use Symfony\Component\Mime\Email;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Mailer\Exception\TransportException;
 
-class SendGridTransport extends Transport
+class SendGridTransport extends AbstractTransport
 {
-    protected $apiKey;
+    private string $apiKey;
+    private HttpClientInterface $client;
 
-    public function __construct($apiKey)
+    public function __construct(string $apiKey, HttpClientInterface $client, ?\Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher = null)
     {
         $this->apiKey = $apiKey;
-        dd($apiKey);
+        $this->client = $client;
+        parent::__construct($client, $dispatcher);
     }
 
-    /**
-     * Send the given message.
-     *
-     * @param  \Swift_Mime_SimpleMessage  $message
-     * @param  string[]  &$failedRecipients
-     * @return void
-     */
-    public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
+    protected function doSend(SentMessage $message): void
     {
-        try{
-        dd('sendgrid');
-        $this->beforeSendPerformed($message);
+        /** @var Email $email */
+        $email = $message->getOriginalMessage();
 
-        // Build payload from the Swift message
+        // Prepare the payload for SendGrid
         $payload = [
-            "personalizations" => [
+            'personalizations' => [
                 [
-                    "to" => $this->getRecipients($message),
-                    "subject" => $message->getSubject(),
+                    'to' => array_map(function ($address) {
+                        return ['email' => $address->getAddress()];
+                    }, $email->getTo()),
+                    'subject' => $email->getSubject(),
                 ]
             ],
-            "from" => [
-                "email" => $this->getSender($message),
+            'from' => [
+                'email' => $email->getFrom()[0]->getAddress()
             ],
-            "content" => [
+            'content' => [
                 [
-                    "type"  => "text/plain",
-                    "value" => $message->getBody(),
+                    'type'  => 'text/plain',
+                    'value' => $email->getTextBody() ?? '',
                 ]
             ]
         ];
 
+        try {
+            $response = $this->client->request('POST', 'https://api.sendgrid.com/v3/mail/send', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type'  => 'application/json',
+                ],
+                'json' => $payload,
+            ]);
 
-            // Send the email using SendGrid API
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type'  => 'application/json',
-            ])->post('https://api.sendgrid.com/v3/mail/send', $payload);
-
-            // Optionally, you could inspect $response to log errors or failures
-
-            return $response;
-        }catch(\Exception $e){
-            dd($e);
-        }
-        
-    }
-
-    /**
-     * Get the recipients from the message.
-     */
-    protected function getRecipients(Swift_Mime_SimpleMessage $message)
-    {
-        $recipients = [];
-        foreach ((array) $message->getTo() as $email => $name) {
-            $recipients[] = ['email' => $email, 'name' => $name];
-        }
-        return $recipients;
-    }
-
-    /**
-     * Get the sender from the message.
-     */
-    protected function getSender(Swift_Mime_SimpleMessage $message)
-    {
-        $from = $message->getFrom();
-        if ($from) {
-            foreach ($from as $email => $name) {
-                return $email; // use the first sender email
+            if ($response->getStatusCode() >= 400) {
+                throw new TransportException('Unable to send email via SendGrid.');
             }
+        } catch (\Exception $e) {
+            throw new TransportException('Error sending email: ' . $e->getMessage(), 0, $e);
         }
-        return config('mail.from.address');
+    }
+
+    public function __toString(): string
+    {
+        return 'sendgrid';
     }
 }

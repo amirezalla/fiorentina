@@ -155,9 +155,11 @@ class AppServiceProvider extends ServiceProvider
     Config::set('mail.mailers.smtp.password', $sendgridApiKey);
 
     $manager->extend('sendgrid', function () {
-        // You can retrieve your SendGrid API key from config or your database
-        $apiKey = config('mail.mailers.smtp.password'); // or use DB lookup here
-        return new SendGridTransport($apiKey);
+        // Retrieve your API key from config or DB
+        $apiKey = config('mail.mailers.smtp.password'); // Make sure this is set
+        // Create an HTTP client instance (or inject one via the service container)
+        $client = HttpClient::create();
+        return new SendGridTransport($apiKey, $client);
     });
 
     }
