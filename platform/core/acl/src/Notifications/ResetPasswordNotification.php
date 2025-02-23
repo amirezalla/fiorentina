@@ -24,7 +24,8 @@ class ResetPasswordNotification extends Notification
 
     public function toMail($notifiable)
     {
-        EmailHandler::setModule('acl')
+        try{
+            EmailHandler::setModule('acl')
             ->setVariableValue('reset_link', route('access.password.reset', ['token' => $this->token]));
     
         $template = 'password-reminder';
@@ -34,5 +35,9 @@ class ResetPasswordNotification extends Notification
             ->mailer('sendgrid') // force using SendGrid mailer for this notification
             ->view(['html' => new HtmlString($content)])
             ->subject(EmailHandler::getTemplateSubject($template));
+        }catch (\Exception $e){
+            dd($e);
+        }
+        
     }
 }
