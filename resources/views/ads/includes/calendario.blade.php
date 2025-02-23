@@ -153,78 +153,95 @@
                 </div>
             </div>
 
+            <!-- Email Modal -->
+            <div id="email-modal" style="display: none;">
+                <div class="modal-body">
+                    <label for="email-input">Inserisci il tuo indirizzo email:</label>
+                    <input type="text" id="email-input" class="form-control"
+                        placeholder="Inserisci il tuo indirizzo email">
+                </div>
+                <div class="modal-footer" style="text-align: right; margin-top: 15px;">
+                    <button id="email-modal-confirm" class="btn btn-primary">Invia</button>
+                    <button id="email-modal-cancel" class="btn btn-secondary">Annulla</button>
+                </div>
+            </div>
+
         </section>
-
-        <script src="
-                https://cdn.jsdelivr.net/npm/bootbox@6.0.0/dist/bootbox.min.js
-                "></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/izimodal@1.6.1/js/iziModal.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izimodal@1.6.1/css/iziModal.min.css">
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            $(document).ready(function() {
+                // Initialize the modal with iziModal options
+                $("#email-modal").iziModal({
+                    title: 'Inserisci la tua email',
+                    headerColor: '#88A0B9',
+                    width: 500,
+                    overlayColor: 'rgba(0, 0, 0, 0.4)',
+                    zindex: 999,
+                    fullscreen: false,
+                    transitionIn: 'fadeInDown',
+                    transitionOut: 'fadeOutUp'
+                });
 
+                // Attach event handler to all elements with the "notifica-btn" class
+                $(".notifica-btn").on('click', function() {
+                    // Get the match ID from the data attribute
+                    const matchId = $(this).data('match-id');
 
+                    // Open the modal
+                    $("#email-modal").iziModal('open');
 
+                    // Remove any previous click events from the confirm button to avoid duplicate bindings
+                    $("#email-modal-confirm").off('click').on('click', function() {
+                        // Get the email from the input field
+                        const email = $("#email-input").val().trim();
+                        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+                        // Validate email after submission
+                        if (!email) {
+                            alert("Devi inserire una email valida!");
+                            return;
+                        }
+                        if (!emailPattern.test(email)) {
+                            alert("Inserisci un indirizzo email valido!");
+                            return;
+                        }
 
-                document.querySelectorAll('.notifica-btn').forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        const matchId = this.getAttribute('data-match-id');
-
-                        bootbox.prompt({
-                            title: "Inserisci il tuo indirizzo email",
-                            callback: function(result) {
-                                if (result === null) {
-                                    // User cancelled the prompt
-                                    return;
+                        // Send the AJAX request if validation passes
+                        $.ajax({
+                            url: '/notifica/store',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                email: email,
+                                match_id: matchId
+                            }),
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            success: function(data) {
+                                if (data.success) {
+                                    alert("La tua notifica è stata impostata.");
+                                } else {
+                                    alert("Qualcosa è andato storto.");
                                 }
-
-                                const email = result.trim();
-                                if (email === "") {
-                                    bootbox.alert("Devi inserire una email valida!");
-                                    return;
-                                }
-
-                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                                if (!emailPattern.test(email)) {
-                                    bootbox.alert("Inserisci un indirizzo email valido!");
-                                    return;
-                                }
-
-                                // If valid, send the data via AJAX
-                                fetch('/notifica/store', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        },
-                                        body: JSON.stringify({
-                                            email: email,
-                                            match_id: matchId
-                                        })
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            bootbox.alert(
-                                                "La tua notifica è stata impostata."
-                                                );
-                                        } else {
-                                            bootbox.alert("Qualcosa è andato storto.");
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        bootbox.alert(
-                                            "Errore di connessione, riprova più tardi."
-                                            );
-                                    });
+                            },
+                            error: function() {
+                                alert("Errore di connessione, riprova più tardi.");
+                            },
+                            complete: function() {
+                                $("#email-modal").iziModal('close');
                             }
                         });
                     });
+
+                    // Attach handler to the cancel button
+                    $("#email-modal-cancel").off('click').on('click', function() {
+                        $("#email-modal").iziModal('close');
+                    });
                 });
-
-
-
             });
+
 
 
 
