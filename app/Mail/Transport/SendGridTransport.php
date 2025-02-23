@@ -45,15 +45,20 @@ class SendGridTransport extends Transport
             ]
         ];
 
-        // Send the email using SendGrid API
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
-            'Content-Type'  => 'application/json',
-        ])->post('https://api.sendgrid.com/v3/mail/send', $payload);
+        try{
+            // Send the email using SendGrid API
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type'  => 'application/json',
+            ])->post('https://api.sendgrid.com/v3/mail/send', $payload);
 
-        // Optionally, you could inspect $response to log errors or failures
+            // Optionally, you could inspect $response to log errors or failures
 
-        return $response;
+            return $response;
+        }catch(\Exception $e){
+            dd($e);
+        }
+        
     }
 
     /**
