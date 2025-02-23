@@ -164,36 +164,35 @@
                     button.addEventListener('click', function() {
                         const matchId = this.getAttribute('data-match-id');
 
-                        // Trigger the SweetAlert modal using "text" as the input type
                         Swal.fire({
                             title: 'Inserisci la tua email',
-                            input: 'text', // use text instead of email
+                            input: 'text',
                             inputPlaceholder: 'Inserisci il tuo indirizzo email',
                             showCancelButton: true,
                             confirmButtonText: 'Invia',
-                            cancelButtonText: 'Annulla',
-                            preConfirm: (value) => {
-                                // Simple email validation regex
-                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                                if (!value) {
-                                    Swal.showValidationMessage(
-                                        'Devi inserire una email valida!');
-                                } else if (!emailPattern.test(value)) {
-                                    Swal.showValidationMessage(
-                                        'Inserisci un indirizzo email valido!');
-                                }
-                                return value;
-                            }
+                            cancelButtonText: 'Annulla'
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 const email = result.value;
+                                // Validate email after the user submits
+                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                if (!email) {
+                                    Swal.fire('Errore!', 'Devi inserire una email valida!',
+                                        'error');
+                                    return;
+                                }
+                                if (!emailPattern.test(email)) {
+                                    Swal.fire('Errore!', 'Inserisci un indirizzo email valido!',
+                                        'error');
+                                    return;
+                                }
 
-                                // Send the data via AJAX
+                                // Email is valid; send the data via AJAX
                                 fetch('/notifica/store', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for Laravel
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
                                         },
                                         body: JSON.stringify({
                                             email: email,
@@ -220,6 +219,7 @@
                         });
                     });
                 });
+
 
             });
 
