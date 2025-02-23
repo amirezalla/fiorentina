@@ -24,6 +24,7 @@ class SendGridTransport extends Transport
      */
     public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
+        try{
         $this->beforeSendPerformed($message);
 
         // Build payload from the Swift message
@@ -45,7 +46,7 @@ class SendGridTransport extends Transport
             ]
         ];
 
-        try{
+
             // Send the email using SendGrid API
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
