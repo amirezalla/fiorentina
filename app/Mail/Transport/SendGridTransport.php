@@ -25,7 +25,7 @@ class SendGridTransport extends Transport
     public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         try{
-            dd('sendgrid');
+        dd('sendgrid');
         $this->beforeSendPerformed($message);
 
         // Build payload from the Swift message
