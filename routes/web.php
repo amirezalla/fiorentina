@@ -163,7 +163,7 @@ Route::get('/import-categories', [WpImportController::class, 'importCategories']
 Route::get('/send-sample-email', function () {
 //    $recipient = 'allahverdiamirreza@gmail.com';
     $recipient = 'alikeshtkar262@gmail.com';
-
+    dd(config('mail.default'));
     try {
         Mail::raw('This is a sample email sent from our Laravel application.', function ($message) use ($recipient) {
             $message->to($recipient)
