@@ -32,14 +32,20 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $emailHandler = EmailHandler::setModule(MEMBER_MODULE_SCREEN_NAME)
-            ->setType('plugins')
-            ->setTemplate('password-reminder')
-            ->setVariableValue('reset_link', route('public.member.password.reset', ['token' => $this->token, 'email' => request()->input('email')]));
-
-        return (new MailMessage())
-        ->mailer('sendgrid') // force using SendGrid mailer for this notification
-            ->view(['html' => new HtmlString($emailHandler->getContent())])
-            ->subject($emailHandler->getSubject());
+        try {
+            // Create a simple reset link
+            $resetLink = route('access.password.reset', ['token' => $this->token]);
+            $text = "You requested a password reset. Click here to reset your password: " . $resetLink;
+    
+            // Build a simple raw email message using the SendGrid mailer
+            return (new MailMessage())
+                ->mailer('sendgrid') // Force using your custom SendGrid transport
+                ->subject('Reset Your Password')
+                ->line($text);
+        } catch (\Exception $e) {
+            \Log::error('Reset password email error: ' . $e->getMessage());
+            dd('Error sending reset email: ' . $e->getMessage());
+        }
     }
+    
 }

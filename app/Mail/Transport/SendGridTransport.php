@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Mail\Transport;
-namespace App\Mail\Transport;
 
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mailer\SentMessage;
