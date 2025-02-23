@@ -155,8 +155,9 @@
 
         </section>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+        <script src="
+                https://cdn.jsdelivr.net/npm/bootbox@6.0.0/dist/bootbox.min.js
+                "></script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -166,56 +167,60 @@
 
 
                 document.querySelectorAll('.notifica-btn').forEach(function(button) {
-    button.addEventListener('click', function() {
-        const matchId = this.getAttribute('data-match-id');
+                    button.addEventListener('click', function() {
+                        const matchId = this.getAttribute('data-match-id');
 
-        bootbox.prompt({
-            title: "Inserisci il tuo indirizzo email",
-            callback: function(result) {
-                if (result === null) {
-                    // User cancelled the prompt
-                    return;
-                }
-                
-                const email = result.trim();
-                if (email === "") {
-                    bootbox.alert("Devi inserire una email valida!");
-                    return;
-                }
-                
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(email)) {
-                    bootbox.alert("Inserisci un indirizzo email valido!");
-                    return;
-                }
-                
-                // If valid, send the data via AJAX
-                fetch('/notifica/store', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        match_id: matchId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        bootbox.alert("La tua notifica è stata impostata.");
-                    } else {
-                        bootbox.alert("Qualcosa è andato storto.");
-                    }
-                })
-                .catch((error) => {
-                    bootbox.alert("Errore di connessione, riprova più tardi.");
+                        bootbox.prompt({
+                            title: "Inserisci il tuo indirizzo email",
+                            callback: function(result) {
+                                if (result === null) {
+                                    // User cancelled the prompt
+                                    return;
+                                }
+
+                                const email = result.trim();
+                                if (email === "") {
+                                    bootbox.alert("Devi inserire una email valida!");
+                                    return;
+                                }
+
+                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                if (!emailPattern.test(email)) {
+                                    bootbox.alert("Inserisci un indirizzo email valido!");
+                                    return;
+                                }
+
+                                // If valid, send the data via AJAX
+                                fetch('/notifica/store', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        },
+                                        body: JSON.stringify({
+                                            email: email,
+                                            match_id: matchId
+                                        })
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            bootbox.alert(
+                                                "La tua notifica è stata impostata."
+                                                );
+                                        } else {
+                                            bootbox.alert("Qualcosa è andato storto.");
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        bootbox.alert(
+                                            "Errore di connessione, riprova più tardi."
+                                            );
+                                    });
+                            }
+                        });
+                    });
                 });
-            }
-        });
-    });
-});
 
 
 
