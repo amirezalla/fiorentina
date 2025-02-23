@@ -155,6 +155,7 @@ class AppServiceProvider extends ServiceProvider
     // Override the mail configuration for SMTP
     Config::set('mail.mailers.smtp.username', 'apikey');  // must be literally "apikey"
     Config::set('mail.mailers.smtp.password', $sendgridApiKey);
+    putenv("MAIL_PASSWORD=".$sendgridApiKey);
 
     $manager->extend('sendgrid', function () {
         // Retrieve your API key from config or DB
