@@ -173,9 +173,13 @@
                             confirmButtonText: 'Invia',
                             cancelButtonText: 'Annulla',
                             inputValidator: (value) => {
+                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                                 if (!value) {
                                     return 'Devi inserire una email valida!';
+                                } else if (!emailPattern.test(value)) {
+                                    return 'Inserisci un indirizzo email valido!';
                                 }
+                                return null;
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
