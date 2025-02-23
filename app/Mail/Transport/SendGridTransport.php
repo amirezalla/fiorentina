@@ -13,6 +13,7 @@ class SendGridTransport extends Transport
     public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
+        dd($apiKey);
     }
 
     /**
