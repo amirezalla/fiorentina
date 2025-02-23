@@ -17,7 +17,7 @@ class NotificaController extends Controller
         ]);
 
         // Fetch the match from the Calendario model using the match_id
-        $calendario = Calendario::find($request->match_id);
+        $calendario = Calendario::where('match_id',$request->match_id);
         if (!$calendario) {
             return response()->json(['success' => false, 'error' => 'Match non trovato.'], 404);
         }
