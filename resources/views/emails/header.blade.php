@@ -1,4 +1,4 @@
 <!-- Customize your header here -->
-<div style="background: #f7f7f7; padding: 20px; text-align: center;">
-    <h1>Laviola</h1>
+<div style="background: #441274; padding: 20px; text-align: center;">
+    <img src="https://plesklaviola.collaudo.biz/storage/laviolait-logo-payoff-bianco-01.png" alt="Laviola" width="170px">
 </div>
