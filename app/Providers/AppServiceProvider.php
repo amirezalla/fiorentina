@@ -152,8 +152,6 @@ class AppServiceProvider extends ServiceProvider
     Config::set('mail.mailers.smtp.username', 'apikey');  // must be literally "apikey"
     Config::set('mail.mailers.smtp.password', $sendgridApiKey);
 
-    // Debug: check that configuration has been updated
-    dd(Config::get('mail.mailers.smtp.password'));
 
     }
 }
