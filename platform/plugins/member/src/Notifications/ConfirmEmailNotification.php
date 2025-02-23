@@ -32,13 +32,25 @@ class ConfirmEmailNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $emailHandler = EmailHandler::setModule(MEMBER_MODULE_SCREEN_NAME)
-            ->setType('plugins')
-            ->setTemplate('confirm-email')
-            ->setVariableValue('verify_link', URL::signedRoute('public.member.confirm', ['user' => $notifiable->id]));
-
-        return (new MailMessage())
-            ->view(['html' => new HtmlString($emailHandler->getContent())])
-            ->subject($emailHandler->getSubject());
+        try {
+            // Generate the confirmation link
+            $verifyLink = URL::signedRoute('public.member.confirm', ['user' => $notifiable->id]);
+            
+            // Define a simple subject and message body
+            $subject = "Confirm Your Email Address at Laviola";
+            $content = "Hello,\n\nPlease confirm your email address by clicking the link below:\n" 
+                       . $verifyLink 
+                       . "\n\nRegards,\nLaviola";
+            
+            // Build and return the mail message, forcing the SendGrid mailer
+            return (new MailMessage())
+                ->mailer('sendgrid') // Force using your custom SendGrid transport
+                ->subject($subject)
+                ->line($content);
+        } catch (\Exception $e) {
+            \Log::error('Confirm email error: ' . $e->getMessage());
+            dd('Error sending confirm email: ' . $e->getMessage());
+        }
     }
+    
 }
