@@ -163,7 +163,9 @@ class AppServiceProvider extends ServiceProvider
         $client = HttpClient::create();
         return new SendGridTransport($apiKey, $client);
     });
-    $manager->setDefaultDriver('sendgrid');
+    $this->app->booted(function () {
+        config()->set('mail.default', "sendgrid");
+    });
 
     }
 }
