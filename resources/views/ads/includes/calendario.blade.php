@@ -167,9 +167,20 @@
             </div>
 
         </section>
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/izimodal@1.6.1/js/iziModal.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izimodal@1.6.1/css/iziModal.min.css">
+        <!-- iziModal CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/css/iziModal.min.css"
+            integrity="sha512-jDUBPuB/Et/XJdVoB6qN+g4OzoIhQmi+CT5Fz6NCzOaz8/qDg3JtbdmU2d5qDFcOhU6Cq3IhRyf6T5o+MTc6iQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!-- jQuery (required by iziModal) -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-K+CT2xk9UUtjnn/Ia4DFP3YgrOBXbRWxvjrEPd93Hlg=" crossorigin="anonymous"></script>
+
+        <!-- iziModal JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"
+            integrity="sha512-QsFlbMsSnrWzTMgYjF34Nt9SEq62ptApFTvOvd57e7l0KXhc7rh5k2A+0x7FAyKZQ1eF1lI9Jih3k0HOMqvV1w=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
         <script>
             $(document).ready(function() {
                 // Initialize the modal with iziModal options
