@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 
 
@@ -146,7 +147,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Retrieve the SendGrid API key from the database
         $sendgridApiKey = DB::table('settings')->where('key', 'sendgridapikey')->value('value');
-        
+
     // Override the mail configuration for SMTP
     Config::set('mail.mailers.smtp.username', 'apikey');  // must be literally "apikey"
     Config::set('mail.mailers.smtp.password', $sendgridApiKey);
