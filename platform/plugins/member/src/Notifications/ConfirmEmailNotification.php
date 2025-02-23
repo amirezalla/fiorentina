@@ -37,10 +37,11 @@ class ConfirmEmailNotification extends Notification implements ShouldQueue
             $verifyLink = URL::signedRoute('public.member.confirm', ['user' => $notifiable->id]);
             
             // Define a simple subject and message body
-            $subject = "Confirm Your Email Address at Laviola";
-            $content = "Hello,\n\nPlease confirm your email address by clicking the link below:\n" 
+            $subject = "Conferma il tuo indirizzo email su Laviola";
+            $content = "Salve,\n\nPer favore, conferma il tuo indirizzo email cliccando sul link sottostante:\n" 
                        . $verifyLink 
-                       . "\n\nRegards,\nLaviola";
+                       . "\n\nCordiali saluti,\nLaviola";
+            
             
             // Build and return the mail message, forcing the SendGrid mailer
             return (new MailMessage())

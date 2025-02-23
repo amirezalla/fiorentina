@@ -37,12 +37,13 @@ class ResetPasswordNotification extends Notification
             $resetLink = route('access.password.reset', ['token' => $this->token]);
             
             // Define a simple subject and message body
-            $subject = "Reset Your Password at Laviola";
-            $content = "Hello,\n\nWe received a request to reset your password. " .
-                       "Please click the link below to reset your password:\n\n" .
+            $subject = "Reimposta la tua password su Laviola";
+            $content = "Salve,\n\nAbbiamo ricevuto una richiesta per reimpostare la tua password. " .
+                       "Clicca sul link sottostante per reimpostare la tua password:\n\n" .
                        $resetLink . "\n\n" .
-                       "If you did not request a password reset, please ignore this email.\n\n" .
-                       "Regards,\nLaviola";
+                       "Se non hai richiesto la reimpostazione della password, ignora questa email.\n\n" .
+                       "Cordiali saluti,\nLaviola";
+            
             
             // Build and return the mail message, forcing the SendGrid mailer
             return (new MailMessage())
