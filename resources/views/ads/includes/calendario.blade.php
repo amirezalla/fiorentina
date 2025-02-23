@@ -153,106 +153,109 @@
                 </div>
             </div>
 
-            <!-- Email Modal -->
-            <div id="email-modal" style="display: none;">
-                <div class="modal-body">
-                    <label for="email-input">Inserisci il tuo indirizzo email:</label>
-                    <input type="text" id="email-input" class="form-control"
-                        placeholder="Inserisci il tuo indirizzo email">
-                </div>
-                <div class="modal-footer" style="text-align: right; margin-top: 15px;">
-                    <button id="email-modal-confirm" class="btn btn-primary">Invia</button>
-                    <button id="email-modal-cancel" class="btn btn-secondary">Annulla</button>
+            <!-- Bootstrap Modal for Email Input -->
+            <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="emailModalLabel">Inserisci la tua email</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="email" id="modalEmailInput" class="form-control"
+                                placeholder="Inserisci il tuo indirizzo email">
+                            <div id="emailError" class="text-danger mt-2" style="display: none;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="modalCancel" class="btn btn-secondary"
+                                data-dismiss="modal">Annulla</button>
+                            <button type="button" id="modalConfirm" class="btn btn-primary">Invia</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+
         </section>
-        <!-- iziModal CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/css/iziModal.min.css"
-            integrity="sha512-jDUBPuB/Et/XJdVoB6qN+g4OzoIhQmi+CT5Fz6NCzOaz8/qDg3JtbdmU2d5qDFcOhU6Cq3IhRyf6T5o+MTc6iQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-        <!-- jQuery (required by iziModal) -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-K+CT2xk9UUtjnn/Ia4DFP3YgrOBXbRWxvjrEPd93Hlg=" crossorigin="anonymous"></script>
+        <!-- jQuery (required by Bootstrap) -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
-        <!-- iziModal JS -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"
-            integrity="sha512-QsFlbMsSnrWzTMgYjF34Nt9SEq62ptApFTvOvd57e7l0KXhc7rh5k2A+0x7FAyKZQ1eF1lI9Jih3k0HOMqvV1w=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <!-- Bootstrap JS -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
 
         <script>
             $(document).ready(function() {
-                // Initialize the modal with iziModal options
-                $("#email-modal").iziModal({
-                    title: 'Inserisci la tua email',
-                    headerColor: '#88A0B9',
-                    width: 500,
-                    overlayColor: 'rgba(0, 0, 0, 0.4)',
-                    zindex: 999,
-                    fullscreen: false,
-                    transitionIn: 'fadeInDown',
-                    transitionOut: 'fadeOutUp'
+                // When a .notifica-btn is clicked, open the modal
+                $('.notifica-btn').on('click', function() {
+                    var matchId = $(this).data('match-id');
+                    // Store matchId in the modal's data
+                    $('#emailModal').data('match-id', matchId);
+                    // Clear previous input and error message
+                    $('#modalEmailInput').val('');
+                    $('#emailError').hide();
+                    // Show the modal
+                    $('#emailModal').modal('show');
                 });
 
-                // Attach event handler to all elements with the "notifica-btn" class
-                $(".notifica-btn").on('click', function() {
-                    // Get the match ID from the data attribute
-                    const matchId = $(this).data('match-id');
+                // When the confirm button is clicked
+                $('#modalConfirm').on('click', function() {
+                    var email = $('#modalEmailInput').val().trim();
+                    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                    // Open the modal
-                    $("#email-modal").iziModal('open');
+                    // Validate the email
+                    if (!email || !emailPattern.test(email)) {
+                        $('#emailError').text('Inserisci un indirizzo email valido!').show();
+                        return;
+                    } else {
+                        $('#emailError').hide();
+                    }
 
-                    // Remove any previous click events from the confirm button to avoid duplicate bindings
-                    $("#email-modal-confirm").off('click').on('click', function() {
-                        // Get the email from the input field
-                        const email = $("#email-input").val().trim();
-                        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    // Retrieve matchId stored earlier
+                    var matchId = $('#emailModal').data('match-id');
 
-                        // Validate email after submission
-                        if (!email) {
-                            alert("Devi inserire una email valida!");
-                            return;
-                        }
-                        if (!emailPattern.test(email)) {
-                            alert("Inserisci un indirizzo email valido!");
-                            return;
-                        }
-
-                        // Send the AJAX request if validation passes
-                        $.ajax({
-                            url: '/notifica/store',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify({
-                                email: email,
-                                match_id: matchId
-                            }),
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            success: function(data) {
-                                if (data.success) {
-                                    alert("La tua notifica è stata impostata.");
-                                } else {
-                                    alert("Qualcosa è andato storto.");
-                                }
-                            },
-                            error: function() {
-                                alert("Errore di connessione, riprova più tardi.");
-                            },
-                            complete: function() {
-                                $("#email-modal").iziModal('close');
+                    // Send the data via AJAX
+                    $.ajax({
+                        url: '/notifica/store',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        data: JSON.stringify({
+                            email: email,
+                            match_id: matchId
+                        }),
+                        success: function(data) {
+                            if (data.success) {
+                                alert('La tua notifica è stata impostata.');
+                            } else {
+                                alert('Qualcosa è andato storto.');
                             }
-                        });
+                        },
+                        error: function() {
+                            alert('Errore di connessione, riprova più tardi.');
+                        },
+                        complete: function() {
+                            $('#emailModal').modal('hide');
+                        }
                     });
+                });
 
-                    // Attach handler to the cancel button
-                    $("#email-modal-cancel").off('click').on('click', function() {
-                        $("#email-modal").iziModal('close');
-                    });
+                // When the cancel button is clicked, hide the modal and clear input
+                $('#modalCancel').on('click', function() {
+                    $('#emailModal').modal('hide');
+                    $('#modalEmailInput').val('');
+                    $('#emailError').hide();
                 });
             });
+
 
 
 
