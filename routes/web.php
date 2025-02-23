@@ -161,14 +161,18 @@ Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
 Route::get('/send-sample-email', function () {
-    // Define the recipient email address
     $recipient = 'allahverdiamirreza@gmail.com';
 
-    // Send a simple plain text email
-    Mail::raw('This is a sample email sent from our Laravel application.', function ($message) use ($recipient) {
-        $message->to($recipient)
-                ->subject('Sample Email');
-    });
+    try {
+        Mail::raw('This is a sample email sent from our Laravel application.', function ($message) use ($recipient) {
+            $message->to($recipient)
+                    ->subject('Sample Email');
+        });
+    } catch (\Exception $e) {
+        // Log the error and dump the exception message
+        Log::error('Mail error: ' . $e->getMessage());
+        dd('Error sending email: ' . $e->getMessage());
+    }
 
     return 'Sample email sent!';
 });
