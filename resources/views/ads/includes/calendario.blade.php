@@ -166,7 +166,7 @@
 
                         Swal.fire({
                             title: 'Inserisci la tua email',
-                            input: 'text',
+                            input: 'text', // Use text instead of email
                             inputPlaceholder: 'Inserisci il tuo indirizzo email',
                             showCancelButton: true,
                             confirmButtonText: 'Invia',
@@ -174,7 +174,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 const email = result.value;
-                                // Validate email after the user submits
+                                // Validate email after submission
                                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                                 if (!email) {
                                     Swal.fire('Errore!', 'Devi inserire una email valida!',
@@ -187,7 +187,7 @@
                                     return;
                                 }
 
-                                // Email is valid; send the data via AJAX
+                                // Proceed with AJAX call
                                 fetch('/notifica/store', {
                                         method: 'POST',
                                         headers: {
