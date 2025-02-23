@@ -146,14 +146,13 @@ class AppServiceProvider extends ServiceProvider
 
         // Retrieve the SendGrid API key from the database
         $sendgridApiKey = DB::table('settings')->where('key', 'sendgridapikey')->value('value');
+        
+    // Override the mail configuration for SMTP
+    Config::set('mail.mailers.smtp.username', 'apikey');  // must be literally "apikey"
+    Config::set('mail.mailers.smtp.password', $sendgridApiKey);
 
-        // Override the mail configuration for SMTP
-        config([
-            'mail.mailers.smtp.username' => 'apikey',  // must be literally "apikey"
-            'mail.mailers.smtp.password' => $sendgridApiKey,
-        ]);
-        env('MAIL_PASSWORD', $sendgridApiKey);
-
+    // Debug: check that configuration has been updated
+    dd(Config::get('mail.mailers.smtp.password'));
 
     }
 }
