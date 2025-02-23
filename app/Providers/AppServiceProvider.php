@@ -159,7 +159,7 @@ class AppServiceProvider extends ServiceProvider
         $apiKey = config('mail.mailers.smtp.password'); // or use DB lookup here
         return new SendGridTransport($apiKey);
     });
-    dd($manager->sendgrid);
+    dd($manager['sendgrid']);
 
     }
 }
