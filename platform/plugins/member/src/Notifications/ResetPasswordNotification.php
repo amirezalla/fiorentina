@@ -38,6 +38,7 @@ class ResetPasswordNotification extends Notification
             ->setVariableValue('reset_link', route('public.member.password.reset', ['token' => $this->token, 'email' => request()->input('email')]));
 
         return (new MailMessage())
+        ->mailer('sendgrid') // force using SendGrid mailer for this notification
             ->view(['html' => new HtmlString($emailHandler->getContent())])
             ->subject($emailHandler->getSubject());
     }

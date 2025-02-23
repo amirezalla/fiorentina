@@ -10,6 +10,7 @@ use Illuminate\Support\HtmlString;
 class ResetPasswordNotification extends Notification
 {
     public string $token;
+    public $mailer='sendgrid';
 
     public function __construct(string $token)
     {
@@ -30,6 +31,7 @@ class ResetPasswordNotification extends Notification
         $content = EmailHandler::prepareData(EmailHandler::getTemplateContent($template, 'core'));
 
         return (new MailMessage())
+        ->mailer('sendgrid') // force using SendGrid mailer for this notification
             ->view(['html' => new HtmlString($content)])
             ->subject(EmailHandler::getTemplateSubject($template));
     }
