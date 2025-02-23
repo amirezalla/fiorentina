@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        config()->set('mail.default', "sendgrid");
+
     }
 
     /**
@@ -163,6 +163,7 @@ class AppServiceProvider extends ServiceProvider
         $client = HttpClient::create();
         return new SendGridTransport($apiKey, $client);
     });
+    $manager->setDefaultDriver('sendgrid');
 
     }
 }
