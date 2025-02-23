@@ -167,6 +167,7 @@
             </div>
 
         </section>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/izimodal@1.6.1/js/iziModal.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izimodal@1.6.1/css/iziModal.min.css">
         <script>
