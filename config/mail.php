@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),
+    'default' => env('MAIL_MAILER', 'sendgrid'),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,10 +38,7 @@ return [
             'transport' => 'sendgrid',
             // You can add any additional config if needed
        ],
-   
-       // Optionally, you can change the default mailer to "sendgrid"
-       'default' => env('MAIL_MAILER', 'sendgrid'),
-       
+
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),
