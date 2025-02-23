@@ -1,23 +1,26 @@
 <?php
 
 namespace App\Mail\Transport;
+namespace App\Mail\Transport;
 
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Mailer\Exception\TransportException;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SendGridTransport extends AbstractTransport
 {
     private string $apiKey;
     private HttpClientInterface $client;
 
-    public function __construct(string $apiKey, HttpClientInterface $client, ?\Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher = null)
+    public function __construct(string $apiKey, HttpClientInterface $client, ?EventDispatcherInterface $dispatcher = null)
     {
         $this->apiKey = $apiKey;
         $this->client = $client;
-        parent::__construct($client, $dispatcher);
+        // Pass only the dispatcher to the parent
+        parent::__construct($dispatcher);
     }
 
     protected function doSend(SentMessage $message): void
@@ -25,7 +28,6 @@ class SendGridTransport extends AbstractTransport
         /** @var Email $email */
         $email = $message->getOriginalMessage();
 
-        // Prepare the payload for SendGrid
         $payload = [
             'personalizations' => [
                 [
