@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Mail\MailManager;
 use App\Mail\Transport\SendGridTransport;
+use Symfony\Component\Mailer\Transport\AbstractTransport;
+use Symfony\Component\HttpClient\HttpClient;
 
 
 
