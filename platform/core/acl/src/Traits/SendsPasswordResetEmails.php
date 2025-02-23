@@ -19,13 +19,11 @@ trait SendsPasswordResetEmails
     {
         $this->validateEmail($request);
     
-        try {
+
             $response = $this->broker()->sendResetLink(
                 $this->credentials($request)
             );
-        } catch (\Exception $e) {
-            dd('Error sending email: ' . $e->getMessage());
-        }
+        
     
         if ($response !== Password::RESET_LINK_SENT) {
             dd('Error sending reset link:', $response);
