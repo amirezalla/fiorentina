@@ -153,108 +153,22 @@
                 </div>
             </div>
 
-            <!-- Bootstrap Modal for Email Input -->
-            <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="emailModalLabel">Inserisci la tua email</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="email" id="modalEmailInput" class="form-control"
-                                placeholder="Inserisci il tuo indirizzo email">
-                            <div id="emailError" class="text-danger mt-2" style="display: none;"></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="modalCancel" class="btn btn-secondary"
-                                data-dismiss="modal">Annulla</button>
-                            <button type="button" id="modalConfirm" class="btn btn-primary">Invia</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
         </section>
 
-
-        <!-- jQuery (required by Bootstrap) -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
         <script>
-            $(document).ready(function() {
-                // When a .notifica-btn is clicked, open the modal
-                $('.notifica-btn').on('click', function() {
-                    var matchId = $(this).data('match-id');
-                    // Store matchId in the modal's data
-                    $('#emailModal').data('match-id', matchId);
-                    // Clear previous input and error message
-                    $('#modalEmailInput').val('');
-                    $('#emailError').hide();
-                    // Show the modal
-                    $('#emailModal').modal('show');
-                });
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.notifica-btn').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const matchId = this.getAttribute('data-match-id');
 
-                // When the confirm button is clicked
-                $('#modalConfirm').on('click', function() {
-                    var email = $('#modalEmailInput').val().trim();
-                    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        Swal.fire("SweetAlert2 is working!");
 
-                    // Validate the email
-                    if (!email || !emailPattern.test(email)) {
-                        $('#emailError').text('Inserisci un indirizzo email valido!').show();
-                        return;
-                    } else {
-                        $('#emailError').hide();
-                    }
-
-                    // Retrieve matchId stored earlier
-                    var matchId = $('#emailModal').data('match-id');
-
-                    // Send the data via AJAX
-                    $.ajax({
-                        url: '/notifica/store',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        data: JSON.stringify({
-                            email: email,
-                            match_id: matchId
-                        }),
-                        success: function(data) {
-                            if (data.success) {
-                                alert('La tua notifica è stata impostata.');
-                            } else {
-                                alert('Qualcosa è andato storto.');
-                            }
-                        },
-                        error: function() {
-                            alert('Errore di connessione, riprova più tardi.');
-                        },
-                        complete: function() {
-                            $('#emailModal').modal('hide');
-                        }
                     });
                 });
-
-                // When the cancel button is clicked, hide the modal and clear input
-                $('#modalCancel').on('click', function() {
-                    $('#emailModal').modal('hide');
-                    $('#modalEmailInput').val('');
-                    $('#emailError').hide();
-                });
             });
-
-
 
 
 
