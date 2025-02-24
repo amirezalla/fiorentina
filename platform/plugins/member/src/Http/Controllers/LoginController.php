@@ -65,70 +65,59 @@ class LoginController extends BaseController
     }
 
     protected function attemptLogin(Request $request)
-{
-    // Use the 'login' input instead of 'email'
-    $login = $request->login;
-    
-    // Retrieve the member using either email or username
-    $member1 = \Botble\Member\Models\Member::where('email', $login)
-                ->orWhere('username', $login)
-                ->first();
+    {
 
-    // If no member is found, immediately fail the login attempt
-    if (!$member1) {
+        // Create the hasher and WordPress password checker instances
+        $member1 = \Botble\Member\Models\Member::where('email', $request->email)->first();
+
+        $wp_hasher = new PasswordHash(8, false);
+        $wpPassword = new WpPassword($wp_hasher);
+
+        if (strlen($member1->password) === 34 && substr($member1->password, 0, 3) === '$P$') {
+            if($wpPassword->check($request->password, $member1->password)){
+                $member = $this->guard()->getLastAttempted();
+
+                if (setting(
+                    'verify_account_email',
+                    config('plugins.member.general.verify_email')
+                ) && empty($member1->confirmed_at)) {
+                    throw ValidationException::withMessages([
+                        'confirmation' => [
+                            trans('plugins/member::member.not_confirmed', [
+                                'resend_link' => route('public.member.resend_confirmation', ['email' => $member1->email]),
+                            ]),
+                        ],
+                    ]);
+                }
+    
+                $this->guard()->login($member1, $request->filled('remember'));
+                return true;            
+            }
+            
+        }else{
+            if ($this->guard()->validate($this->credentials($request)) ) {
+                $member = $this->guard()->getLastAttempted();
+    
+                if (setting(
+                    'verify_account_email',
+                    config('plugins.member.general.verify_email')
+                ) && empty($member->confirmed_at)) {
+                    throw ValidationException::withMessages([
+                        'confirmation' => [
+                            trans('plugins/member::member.not_confirmed', [
+                                'resend_link' => route('public.member.resend_confirmation', ['email' => $member->email]),
+                            ]),
+                        ],
+                    ]);
+                }
+    
+                return $this->baseAttemptLogin($request);
+            }
+        }
+        
+
         return false;
     }
-
-    // Create the WordPress password hasher and checker
-    $wp_hasher = new PasswordHash(8, false);
-    $wpPassword = new WpPassword($wp_hasher);
-
-    // Check if the stored password is a WordPress-style hash
-    if (strlen($member1->password) === 34 && substr($member1->password, 0, 3) === '$P$') {
-        if ($wpPassword->check($request->password, $member1->password)) {
-            if (
-                setting('verify_account_email', config('plugins.member.general.verify_email'))
-                && empty($member1->confirmed_at)
-            ) {
-                throw ValidationException::withMessages([
-                    'confirmation' => [
-                        trans('plugins/member::member.not_confirmed', [
-                            'resend_link' => route('public.member.resend_confirmation', ['email' => $member1->email]),
-                        ]),
-                    ],
-                ]);
-            }
-
-            $this->guard()->login($member1, $request->filled('remember'));
-            return true;
-        }
-    } else {
-        // Build credentials for non-WordPress hashed passwords.
-        // Ensure that your credentials method (or override it) accepts the login field.
-        // Here, we're assuming it will check either the email or username as needed.
-        if ($this->guard()->validate($this->credentials($request))) {
-            $member = $this->guard()->getLastAttempted();
-
-            if (
-                setting('verify_account_email', config('plugins.member.general.verify_email'))
-                && empty($member->confirmed_at)
-            ) {
-                throw ValidationException::withMessages([
-                    'confirmation' => [
-                        trans('plugins/member::member.not_confirmed', [
-                            'resend_link' => route('public.member.resend_confirmation', ['email' => $member->email]),
-                        ]),
-                    ],
-                ]);
-            }
-
-            return $this->baseAttemptLogin($request);
-        }
-    }
-
-    return false;
-}
-
 
     protected function guard()
     {
