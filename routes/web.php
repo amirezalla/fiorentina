@@ -161,6 +161,19 @@ Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
+Route::get('/checkDbConnection', function () {
+
+    
+
+    $users = DB::connection('mysql2')
+    ->table('frntn_users')
+    ->get()
+    ->limit(10);
+    dd($users);
+
+});
+
+
 Route::get('/send-sample-email', function () {
    $recipient = 'allahverdiamirreza@gmail.com';
     // $recipient = 'alikeshtkar262@gmail.com';
