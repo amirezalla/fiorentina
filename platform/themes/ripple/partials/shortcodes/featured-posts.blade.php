@@ -141,10 +141,10 @@
                                                 @endphp
                                                 @if ($post->categories->count())
                                                     <span
-                                                        class="fw-bold text-white">{{ $post->categories->first()->name }}</span>
+                                                        class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
                                                 @endif
-                                                Di <span class=" fw-bold author-post"
-                                                    style="color:#ffffff">{{ $post->author->first_name }}
+                                                <span class=" fw-bold author-post" style="color:#ffffff">Di
+                                                    {{ $post->author->first_name }}
                                                     {{ $post->author->last_name }}</span> /
                                                 <a class="fw-bold" href="{{ $post->url }}#comments"
                                                     style="color:#ffffff">
