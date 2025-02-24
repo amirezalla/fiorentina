@@ -352,7 +352,7 @@ public function importCategories(){
 
                 $slug = new Slug();
                 $slug->fill([
-                    'key' => 'category/news/' . $category->name,
+                    'key' => Str::slug($category->name), // converts "Blog dei Tifosi" to "blog-dei-tifosi"
                     'reference_id' => $category->term_id,
                     'reference_type' => 'Botble\Blog\Models\Category',
                 ]);
