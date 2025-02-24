@@ -122,7 +122,7 @@ Route::delete('/admin/votes/{vote}', [VoteController::class, 'destroy'])->name('
 Route::post('/polls/{matchLineup}', [PollController::class, 'store'])->name('polls.store');
 
 Route::get('/polls/create', [PollController::class, 'create'])->name('polls.create');
-Route::post('/polls', [PollController::class, 'store'])->name('polls.storepoll');
+Route::post('/polls', [PollController::class, 'storepoll'])->name('polls.storepoll');
 Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
 Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->name('polls.vote');
 Route::get('/polls/{id}/toggle', [PollController::class, 'toggleActive'])->name('polls.toggle');
