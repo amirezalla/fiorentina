@@ -29,58 +29,6 @@ use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WpImportController;
 
-Route::get('send-mail',function(){
-    try {
-        Mail::raw('This is a test email', function ($message) {
-            $message->to('alikeshtkar262@gmail.com')
-                ->subject('Test Email from Laravel on Plesk');
-        });
-    }catch (\Exception $e){
-
-        dd($e);
-    }
-});
-Route::get('/migrate', function (\Illuminate\Http\Request $request) {
-    \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
-    \Illuminate\Support\Facades\Schema::dropIfExists('polls');
-    \Illuminate\Support\Facades\Schema::dropIfExists('poll_options');
-    \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-    \Illuminate\Support\Facades\Schema::create('polls', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('member_id')
-            ->references('id')
-            ->on('members')
-            ->cascadeOnUpdate()
-            ->cascadeOnDelete();
-        $table->foreignId('match_lineups_id')
-            ->references('id')
-            ->on('match_lineups')
-            ->cascadeOnUpdate()
-            ->cascadeOnDelete();
-        $table->unsignedInteger('value');
-        $table->timestamps();
-    });
-    dd("pl");
-    $importPwDatabase = new \App\Classes\ImportPwDatabase();
-//    $importPwDatabase->importUsers();
-    $importPwDatabase->importPosts();
-    dd("ok");
-    $tables = collect(DB::connection('mysql2')->select('SHOW TABLES'))->map(fn($i) => $i->Tables_in_fiorentina)->toArray();
-    $result = [];
-    foreach ($tables as $table) {
-        $result[$table] = DB::connection('mysql2')->table($table)->limit(5)->get()->toArray();
-    }
-
-    dd($result);
-    $max = ceil(DB::connection('mysql2')->table('frntn_posts')->count() / 500);
-    $number = $request->filled('number') ? $request->number : 1;
-    $items = DB::connection('mysql2')
-        ->table('frntn_posts')
-        ->limit(100)
-        ->where('post_name', 'ferrari-ho-sentito-il-presidente-siamo-tutti-uniti-col-mister-usciremo-dal-momento-difficile')
-        ->get();
-    dd($items, $tables);
-});
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
 Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
@@ -161,17 +109,7 @@ Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
-Route::get('/checkDbConnection', function () {
 
-    
-
-    $users = DB::connection('mysql2')
-    ->table('frntn_users')
-    ->limit(10)
-    ->get();
-    dd($users);
-
-});
 
 
 Route::get('/send-sample-email', function () {
