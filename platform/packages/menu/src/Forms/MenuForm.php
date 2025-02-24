@@ -37,6 +37,10 @@ class MenuForm extends FormAbstract
                     },
                 ],
             ])
+            ->add('submit', 'submit', [
+                'label' => trans('core/base::forms.save'),
+                'attr'  => ['class' => 'btn btn-primary'],
+            ])
             ->setBreakFieldPoint('status');
     }
 }
