@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h1>Create a New Poll</h1>
-        <form method="POST" action="{{ route('polls.store') }}">
+        <form method="POST" action="{{ route('polls.storepoll') }}">
             @csrf
             <div class="form-group">
                 <label for="question">Question</label>
