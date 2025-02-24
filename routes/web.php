@@ -167,8 +167,8 @@ Route::get('/checkDbConnection', function () {
 
     $users = DB::connection('mysql2')
     ->table('frntn_users')
-    ->get()
-    ->limit(10);
+    ->limit(10)
+    ->get();
     dd($users);
 
 });
