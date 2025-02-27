@@ -37,7 +37,7 @@ class OptimizeGifs extends Command
                     $optimizedContent = file_get_contents($optimizedTempPath);
 
                     // Define a new filename (for example, appending '.optimized.gif')
-                    $newFileName = '/ads-images'.pathinfo($file, PATHINFO_FILENAME) . '-optimized.gif';
+                    $newFileName = '/ads-images//'.pathinfo($file, PATHINFO_FILENAME) . '-optimized.gif';
 
                     // Upload the optimized file back to Wasabi
                     Storage::disk('wasabi')->put($newFileName, $optimizedContent);
