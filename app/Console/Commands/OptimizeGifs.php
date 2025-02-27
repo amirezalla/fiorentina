@@ -31,6 +31,7 @@ class OptimizeGifs extends Command
     protected function optimizeGifWithImagick($filePath)
     {
         try {
+            dd($filePath);
             // Read the GIF
             $imagick = new \Imagick();
             $imagick->readImage($filePath);
@@ -52,7 +53,7 @@ class OptimizeGifs extends Command
             // Save the optimized GIF (append .optimized.gif to the filename)
             $newPath = $filePath . '.optimized.gif';
             $optimized->writeImages($newPath, true);
-            dd($newPath);
+
 
             return true;
         } catch (\Exception $e) {
