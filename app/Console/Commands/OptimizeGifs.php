@@ -13,7 +13,6 @@ class OptimizeGifs extends Command
     public function handle()
     {
         $files = Storage::files('/ads-images'); // Adjust this path as needed
-        dd($files);
         foreach ($files as $file) {
             if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'gif') {
                 $fullPath = Storage::path($file);
