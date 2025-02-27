@@ -18,7 +18,11 @@ use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
-use Laravel\Prompts\Output\ConsoleOutput;
+
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Illuminate\Console\OutputStyle;
+use App\Console\Commands\OptimizeGifs;
 
 
 use App\Http\Controllers\AdController;
@@ -110,14 +114,17 @@ Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
+
+
 Route::get('/optimize-gifs', function () {
-    $command = new \App\Console\Commands\OptimizeGifs;
-    // Set an output so that $this->info() doesn't error.
-    $command->setOutput(new ConsoleOutput);
+    $command = new OptimizeGifs;
+    $input = new ArgvInput();
+    $output = new ConsoleOutput();
+    $outputStyle = new OutputStyle($input, $output);
+    $command->setOutput($outputStyle);
     $command->handle();
     return 'Command executed.';
 });
-
 
 Route::get('/send-sample-email', function () {
    $recipient = 'allahverdiamirreza@gmail.com';
