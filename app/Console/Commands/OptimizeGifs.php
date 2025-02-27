@@ -50,7 +50,6 @@ class OptimizeGifs extends Command
 
         $response = curl_exec($ch);
         if (curl_errno($ch)) {
-            $this->error('Curl error: ' . curl_error($ch));
             curl_close($ch);
             return false;
         }
