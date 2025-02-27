@@ -53,6 +53,7 @@ class OptimizeGifs extends Command
             // Save the optimized GIF (append .optimized.gif to the filename)
             $newPath = $filePath . '.optimized.gif';
             $optimized->writeImages($newPath, true);
+            dd($newPath);
 
             return true;
         } catch (\Exception $e) {
