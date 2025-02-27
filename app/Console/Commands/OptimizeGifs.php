@@ -65,13 +65,10 @@ class OptimizeGifs extends Command
             if ($optimizedImage !== false) {
                 $newPath = $filePath . '.optimized.gif';
                 file_put_contents($newPath, $optimizedImage);
-                $this->info("Optimized GIF saved as: {$newPath}");
                 return true;
             } else {
-                $this->error("Failed to download the optimized GIF.");
             }
         } else {
-            $this->error("Could not extract the optimized image URL from response.");
         }
 
         return false;
