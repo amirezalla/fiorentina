@@ -13,8 +13,8 @@ class OptimizeGifs extends Command
     public function handle()
     {
         // Get files from the "wasabi" disk (adjust the path if needed)
-        $files = Storage::disk('wasabi')->files();
-
+        $files = Storage::disk('wasabi')->files('ads-images');
+        dd($files);
         foreach ($files as $file) {
             if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'gif') {
                 $this->info("Processing: {$file}");
@@ -36,8 +36,13 @@ class OptimizeGifs extends Command
                     // Read the optimized file content
                     $optimizedContent = file_get_contents($optimizedTempPath);
 
-                    // Define a new filename (for example, appending '.optimized.gif')
-                    $newFileName = 'ads-images/' . pathinfo($file, PATHINFO_FILENAME) . '-optimized.gif';
+                    // Remove any existing '-optimized' from the base name then append it
+                    $base = pathinfo($file, PATHINFO_FILENAME);
+                    if (substr($base, -9) === '-optimized') {
+                        $base = substr($base, 0, -9);
+                    }
+                    $newFileName = 'ads-images/' . $base . '-optimized.gif';
+
                     // Upload the optimized file back to Wasabi
                     Storage::disk('wasabi')->put($newFileName, $optimizedContent);
                     $this->info("Optimized file saved as: {$newFileName}");
