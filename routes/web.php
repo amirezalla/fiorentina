@@ -18,7 +18,7 @@ use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
-use Laravel\Prompts\Output\ConsoleOutput
+use Laravel\Prompts\Output\ConsoleOutput;
 
 
 use App\Http\Controllers\AdController;
