@@ -14,7 +14,6 @@ class OptimizeGifs extends Command
     {
         // Get files from the "wasabi" disk (adjust the path if needed)
         $files = Storage::disk('wasabi')->files('ads-images');
-        dd($files);
         foreach ($files as $file) {
             if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'gif') {
                 $this->info("Processing: {$file}");
