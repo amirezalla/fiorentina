@@ -4,6 +4,7 @@
 
             <div class="col-12 mx-auto">
                 <a href="" class="d-block">
+                    @dd($ad->getImageUrl())
                     <img src="{{ $ad->getImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
                         @if (!$ad->width) style="width: 100%; height: auto;">
                     @else
