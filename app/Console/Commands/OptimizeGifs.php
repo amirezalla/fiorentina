@@ -22,7 +22,7 @@ class OptimizeGifs extends Command
                 if ($this->optimizeGifWithEzgif($fullPath)) {
                     dd("Successfully optimized: {$fullPath}");
                 } else {
-                    dd("Failed to optimize: {$fullPath}");
+                    dd("Failed to optimize: {$file}");
                 }
             }
         }
