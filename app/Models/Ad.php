@@ -157,6 +157,7 @@ class Ad extends BaseModel
     public function getOptimizedImageUrlAttribute()
 {
     $url = $this->getImageUrl();
+    dd($url);
     if (Str::endsWith($url, '.gif')) {
         return Str::replaceLast('.gif', '-optimized.gif', $url);
     }
