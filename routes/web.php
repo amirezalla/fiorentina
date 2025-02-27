@@ -110,8 +110,10 @@ Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
 Route::get('/optimize-gifs', function () {
-    $command = new \App\Console\Commands\OptimizeGifs;
+    // Set an output so that $this->info() doesn't error.
+    $command->setOutput(new ConsoleOutput);
     $command->handle();
+    return 'Command executed.';
     return 'All GIF images have been optimized!';
 });
 
