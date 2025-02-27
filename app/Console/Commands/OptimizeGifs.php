@@ -71,7 +71,7 @@ class OptimizeGifs extends Command
             // Process each frame: adjust compression quality and strip metadata
             foreach ($imagick as $frame) {
                 // Reduce the color count to, say, 64 colors (adjust as needed)
-            $frame->quantizeImage(64, \Imagick::COLORSPACE_RGB, 0, false, false);
+            $frame->quantizeImage(16, \Imagick::COLORSPACE_RGB, 0, false, false);
             // Ensure metadata is stripped
             $frame->stripImage();
             // Optionally, set the GIF compression method to LZW
