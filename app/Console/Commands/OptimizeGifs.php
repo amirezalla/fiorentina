@@ -18,16 +18,16 @@ class OptimizeGifs extends Command
         foreach ($files as $file) {
             if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'gif') {
                 $fullPath = Storage::path($file);
-                $this->info("Optimizing: {$fullPath}");
+                // $this->info("Optimizing: {$fullPath}");
                 if ($this->optimizeGifWithEzgif($fullPath)) {
-                    $this->info("Successfully optimized: {$fullPath}");
+                    dd("Successfully optimized: {$fullPath}");
                 } else {
-                    $this->error("Failed to optimize: {$fullPath}");
+                    dd("Failed to optimize: {$fullPath}");
                 }
             }
         }
 
-        $this->info('All GIF images have been processed!');
+
     }
 
     protected function optimizeGifWithEzgif($filePath)
