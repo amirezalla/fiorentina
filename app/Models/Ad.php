@@ -159,11 +159,20 @@ class Ad extends BaseModel
     public function getOptimizedImageUrlAttribute()
 {
     $url = $this->getImageUrl();
-    dd($url);
-    if (Str::endsWith($url, '.gif')) {
-        return Str::replaceLast('.gif', '-optimized.gif', $url);
-    }
-    return $url;
+
+    $path = parse_url($url, PHP_URL_PATH); // "/ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
+
+    // Remove the leading slash to get the storage key
+    $fileKey = ltrim($path, '/'); // "ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
+    
+    // To remove the ".gif" extension while keeping the folder, use:
+    $dir = pathinfo($fileKey, PATHINFO_DIRNAME);      // "ads-images"
+    $filenameWithoutExt = pathinfo($fileKey, PATHINFO_FILENAME); // "TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979"
+    $fileKeyWithoutExtension = $dir . '/' . $filenameWithoutExt;
+    $op= $fileKeyWithoutExtension . '-optimized.gif';
+
+    return Storage::temporaryUrl($op, now()->addMinutes(15));
+
 }
 
     /**
