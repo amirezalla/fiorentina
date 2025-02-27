@@ -6,6 +6,8 @@ use Botble\Base\Models\BaseModel;
 use Botble\Theme\Facades\Theme;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class Ad extends BaseModel
 {
