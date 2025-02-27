@@ -4,7 +4,7 @@
 
             <div class="col-12 mx-auto">
                 <a href="" class="d-block">
-                    <img src="{{ $ad->getImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
+                    <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}" class="img-fluid"
                         style="width: 100%; height: auto;">
                 </a>
             </div>
