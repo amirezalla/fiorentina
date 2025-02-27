@@ -109,7 +109,11 @@ Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
-
+Route::get('/optimize-gifs', function () {
+    $command = new \App\Console\Commands\OptimizeGifs;
+    $command->handle();
+    return 'All GIF images have been optimized!';
+});
 
 
 Route::get('/send-sample-email', function () {
