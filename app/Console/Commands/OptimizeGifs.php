@@ -37,12 +37,13 @@ class OptimizeGifs extends Command
                     $optimizedContent = file_get_contents($optimizedTempPath);
 
                     // Define a new filename (for example, appending '.optimized.gif')
-                    $newFileName = $file . '.optimized.gif';
+                    $newFileName = $file . '-optimized.gif';
 
                     // Upload the optimized file back to Wasabi
                     Storage::disk('wasabi')->put($newFileName, $optimizedContent);
                     $this->info("Optimized file saved as: {$newFileName}");
-
+                    $fileContent = dd(Storage::disk('wasabi')->get($newFileName));
+                    
                     // Clean up temporary files
                     unlink($tempOriginal);
                     unlink($optimizedTempPath);
