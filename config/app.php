@@ -163,13 +163,14 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\CustomUrlGeneratorServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         MikeMcLin\WpPassword\WpPasswordProvider::class,
+        App\Providers\CustomUrlGeneratorServiceProvider::class,
+
     ])->toArray(),
 
     /*
