@@ -16,18 +16,13 @@ class CustomUrlGeneratorServiceProvider extends ServiceProvider
         $this->app->extend('url', function (UrlGenerator $url, $app) {
             $routes = $app['router']->getRoutes();
             $customUrl = new CustomUrlGenerator($routes, $app->make('request'));
-
+            
             // Copy the root controller namespace.
             $customUrl->setRootControllerNamespace($url->getRootControllerNamespace());
             
-            // Set the forced root URL based on the current request.
-            $customUrl->forceRootUrl($url->formatRoot($url->getRequest()));
-
-            // If a forced root URL is explicitly set, use it.
-            if ($url->getRootUrl()) {
-                $customUrl->forceRootUrl($url->getRootUrl());
-            }
-
+            // Set the forced root URL using the request's root.
+            $customUrl->forceRootUrl($app['request']->root());
+            
             return $customUrl;
         });
     }

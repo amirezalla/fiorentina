@@ -15,18 +15,18 @@ class CustomUrlGenerator extends BaseUrlGenerator
      */
     public function asset($path, $secure = null)
     {
-        // Check if the path starts with the Wasabi/S3 URL
+        // Check if the path starts with the Wasabi/S3 domain.
         if (strpos($path, 'https://laviola.s3.eu-south-1.wasabisys.com/') === 0) {
-            // Parse the URL to extract the path portion (ignoring query parameters)
+            // Parse the URL to extract the path portion (ignoring query parameters).
             $parsed = parse_url($path);
             if (isset($parsed['path'])) {
                 $cleanPath = ltrim($parsed['path'], '/');
-                // Return the locally routed asset URL
+                // Return the locally routed asset URL.
                 return url('/asset/' . $cleanPath);
             }
         }
 
-        // Otherwise, use the default behavior
+        // Otherwise, use the default behavior.
         return parent::asset($path, $secure);
     }
 }
