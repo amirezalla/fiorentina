@@ -2,11 +2,11 @@
     $isMobile = false;
 
     // Check for headers commonly associated with mobile devices
-    if ($request->hasHeader('x-wap-profile') || $request->hasHeader('profile')) {
+    if (request()->hasHeader('x-wap-profile') || request()->hasHeader('profile')) {
         $isMobile = true;
     } else {
         // Check if the Accept header indicates mobile/WAP content
-        $accept = $request->header('Accept');
+        $accept = request()->header('Accept');
         if ($accept && stripos($accept, 'wap') !== false) {
             $isMobile = true;
         }
