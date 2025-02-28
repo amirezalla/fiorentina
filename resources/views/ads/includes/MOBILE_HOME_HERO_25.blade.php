@@ -1,8 +1,18 @@
 @php
-    $userAgent = request()->header('User-Agent');
-@endphp
+    $isMobile = false;
 
-@if (stripos($userAgent, 'mobile') === true)
+    // Check for headers commonly associated with mobile devices
+    if ($request->hasHeader('x-wap-profile') || $request->hasHeader('profile')) {
+        $isMobile = true;
+    } else {
+        // Check if the Accept header indicates mobile/WAP content
+        $accept = $request->header('Accept');
+        if ($accept && stripos($accept, 'wap') !== false) {
+            $isMobile = true;
+        }
+} @endphp
+
+@if ($isMobile)
     @if (isset($ad) && $ad)
         @if ($ad->type == 1)
             <div class="row justify-content-center mx-0">
