@@ -1,18 +1,25 @@
-@if (isset($ad) && $ad)
-    @if ($ad->type == 1)
-        <div class="row justify-content-center mx-0">
+@php
+    $userAgent = request()->header('User-Agent');
+@endphp
 
-            <div class="col-12 mx-auto">
-                <a href="" class="d-block">
-                    <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}" class="img-fluid"
-                        @if (!$ad->width) style="width: 100%; height: auto;">
-                    @else
-                        style="width: {{ $ad->width }}px; height: {{ $ad->height }}px;"> @endif
-                        </a>
+@if (stripos($userAgent, 'mobile') === true)
+    @if (isset($ad) && $ad)
+        @if ($ad->type == 1)
+            <div class="row justify-content-center mx-0">
+
+                <div class="col-12 mx-auto">
+                    <a href="" class="d-block">
+                        <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}" class="img-fluid"
+                            @if (!$ad->width) style="width: 100%; height: auto;">
+                @else
+                    style="width: {{ $ad->width }}px; height: {{ $ad->height }}px;"> @endif
+                            </a>
+                </div>
+
             </div>
-
-        </div>
-    @else
-        {!! $ad->amp !!}
+        @else
+            {!! $ad->amp !!}
+        @endif
     @endif
+
 @endif
