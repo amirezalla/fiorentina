@@ -14,7 +14,7 @@ class AssetController extends Controller
         $cacheKey = 'asset:' . $path;
         
         // Attempt to retrieve the asset content from Redis cache for 12 hours
-        $assetContent = Cache::store('redis')->remember($cacheKey, now()->addHours(12), function () use ($path) {
+        $assetContent = Cache::remember($cacheKey, now()->addHours(12), function () use ($path) {
             // Generate a temporary URL valid for 15 minutes
             $temporaryUrl = Storage::disk('wasabi')->temporaryUrl($path, now()->addMinutes(15));
             
