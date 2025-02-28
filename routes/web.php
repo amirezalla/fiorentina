@@ -33,6 +33,8 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WpImportController;
+use App\Http\Controllers\AssetController;
+
 
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 
@@ -125,6 +127,9 @@ Route::get('/optimize-gifs', function () {
     $command->handle();
     return 'Command executed.';
 });
+
+Route::get('/asset/{path}', [AssetController::class, 'getAsset'])->where('path', '.*');
+
 
 Route::get('/send-sample-email', function () {
    $recipient = 'allahverdiamirreza@gmail.com';
