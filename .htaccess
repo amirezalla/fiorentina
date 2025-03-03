@@ -1,7 +1,8 @@
 RewriteEngine On
 
-# Force HTTPS Redirect
+# Check if HTTPS is OFF, then force HTTPS (Only if not already HTTPS)
 RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Redirect Trailing Slashes If Not A Folder
