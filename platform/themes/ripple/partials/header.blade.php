@@ -19,6 +19,8 @@
             }
         </style>
     </noscript>
+    <script data-ad-client="ca-pub-6741446998584415" async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
     @php(Theme::set('headerMeta', Theme::partial('header-meta')))
