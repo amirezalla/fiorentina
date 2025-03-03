@@ -1,10 +1,16 @@
-RewriteEngine on
+RewriteEngine On
 
-# Redirect Trailing Slashes If Not A Folder...
+# Force HTTPS Redirect
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirect Trailing Slashes If Not A Folder
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} (.+)/$
 RewriteRule ^ %1 [L,R=301]
 
-RewriteCond %{REQUEST_URI} !^public
-
+# Redirect Requests to Laravel Public Directory
+RewriteCond %{REQUEST_URI} !^public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ public/$1 [L]
