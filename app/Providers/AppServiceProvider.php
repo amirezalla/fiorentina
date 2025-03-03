@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(MailManager $manager): void
     {
-        URL::forceScheme('https');
+        // URL::forceScheme('https');
 
         set_time_limit(900); // Sets the maximum execution time to 15 minutes
 
