@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'url' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://laviola.collaudo.biz' : 'http://laviola.collaudo.biz',
+    'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
