@@ -169,7 +169,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         MikeMcLin\WpPassword\WpPasswordProvider::class,
-        App\Providers\CustomUrlGeneratorServiceProvider::class,
+
 
     ])->toArray(),
 
