@@ -4770,6 +4770,14 @@ header>.container {
         color: none !important;
     }
 
+    .post__title_in {
+        font-size: 28px !important;
+    }
+
+    .post--single .post__meta span {
+        font-size: 14px !important;
+    }
+
     .row {
         margin-right: none !important;
     }
