@@ -4762,6 +4762,14 @@ header>.container {
         padding-bottom: 0px !important;
     }
 
+    .post__vertical--single {
+        margin-left: 10px !important;
+    }
+
+    #page-home {
+        margin-left: 20px !important;
+    }
+
     .sub-menu--slideLeft {
         padding-left: 25px !important;
     }
