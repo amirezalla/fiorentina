@@ -4780,6 +4780,7 @@ header>.container {
 
     .post--single .post__meta .col-lg-5 {
         justify-content: left !important;
+        padding-top: 10px !important;
     }
 
     .img-in-post img {
