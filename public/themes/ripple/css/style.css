@@ -4771,7 +4771,7 @@ header>.container {
     }
 
     .row {
-        margin-right: none;
+        margin-right: none !important;
     }
 
     .sub-menu--slideLeft {
