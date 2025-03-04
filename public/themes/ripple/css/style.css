@@ -4756,6 +4756,11 @@ header>.container {
         align-items: flex-start;
     }
 
+    .post__content-wrap {
+        padding-left: 0px !important;
+        padding-top: 20px !important;
+    }
+
     #countdown-timer,
     .countdown-timer1 {
         color: white !important;
