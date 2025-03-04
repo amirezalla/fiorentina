@@ -4756,9 +4756,13 @@ header>.container {
         align-items: flex-start;
     }
 
+    .post__inside--feature h3 a {
+        font-size: 0.7em;
+    }
+
     .post__thumbnail {
         width: 100% !important;
-        margin-bottom: -45px;
+        margin-bottom: 50px;
     }
 
     .post__content-wrap {
