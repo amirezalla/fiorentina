@@ -4778,6 +4778,10 @@ header>.container {
         font-size: 14px !important;
     }
 
+    .dmnone {
+        display: none !important;
+    }
+
     .post--single .post__meta .col-lg-5 {
         justify-content: left !important;
         padding-top: 10px !important;
