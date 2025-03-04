@@ -2,12 +2,12 @@
     <div class="row mx-0">
         @foreach ($ads as $ad)
             @if ($ad->type == 1)
-                <div class="row justify-content-center mx-0">
+                <div class="row justify-content-center mx-0 d-md-none">
 
                     <div class="col-12 mx-auto">
                         <a href="" class="d-block">
-                            <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}" class="img-fluid"
-                                style="width: 100%; height: auto;">
+                            <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}"
+                                class="img-fluid" style="width: 100%; height: auto;">
                         </a>
                     </div>
 
