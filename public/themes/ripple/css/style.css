@@ -4756,6 +4756,10 @@ header>.container {
         align-items: flex-start;
     }
 
+    #countdown-timer {
+        color: white !important;
+    }
+
     .post__inside--feature h3 a {
         font-size: 0.7em !important;
     }
