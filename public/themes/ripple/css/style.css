@@ -4762,6 +4762,10 @@ header>.container {
         padding-bottom: 0px !important;
     }
 
+    .sub-menu--slideLeft {
+        padding-left: 25px !important;
+    }
+
     #countdown-timer,
     .countdown-timer1 {
         color: white !important;
