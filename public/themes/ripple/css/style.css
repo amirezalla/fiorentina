@@ -4770,7 +4770,7 @@ header>.container {
         color: none !important;
     }
 
-    .post__title_in {
+    .post--single .post__title_in {
         font-size: 28px !important;
     }
 
