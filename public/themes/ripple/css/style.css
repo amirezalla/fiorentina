@@ -4757,7 +4757,7 @@ header>.container {
     }
 
     .post__inside--feature h3 a {
-        font-size: 0.7em;
+        font-size: 0.7em !important;
     }
 
     .post__inside--feature span {
