@@ -4766,6 +4766,10 @@ header>.container {
         margin-left: 10px !important;
     }
 
+    .ck-content {
+        color: none !important;
+    }
+
     #page-home {
         margin-left: 20px !important;
     }
