@@ -4771,7 +4771,7 @@ header>.container {
 
     .post__thumbnail {
         width: 100% !important;
-        margin-bottom: 50px;
+        margin-bottom: 0px;
     }
 
     .post__content-wrap {
