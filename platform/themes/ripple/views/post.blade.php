@@ -45,41 +45,7 @@
         <div class="fb-like" data-href="{{ request()->url() }}" data-layout="standard" data-action="like"
             data-show-faces="false" data-share="true"></div>
     </div>
-    @php $relatedPosts = get_related_posts($post->id, 2); @endphp
 
-    @if ($relatedPosts->isNotEmpty())
-        <footer class="post__footer">
-            <div class="row">
-                @foreach ($relatedPosts as $relatedItem)
-                    <div class="col-md-6 col-sm-6 col-12">
-                        <div
-                            class="post__relate-group @if ($loop->last) post__relate-group--right text-end @else text-start @endif">
-                            <h4 class="relate__title">
-                                @if ($loop->first)
-                                    {{ __('Previous Post') }}
-                                @else
-                                    {{ __('Next Post') }}
-                                @endif
-                            </h4>
-                            <article class="post post--related">
-                                <div class="post__thumbnail"><a href="{{ $relatedItem->url }}"
-                                        title="{{ $relatedItem->name }}" class="post__overlay"></a>
-                                    {{ RvMedia::image($relatedItem->image, $relatedItem->name, 'thumb') }}
-                                </div>
-                                <header class="post__header">
-                                    <p><a href="{{ $relatedItem->url }}" class="post__title">
-                                            {{ $relatedItem->name }}</a></p>
-                                    <div class="post__meta"><span
-                                            class="post__created-at">{{ Theme::formatDate($post->created_at) }}</span>
-                                    </div>
-                                </header>
-                            </article>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </footer>
-    @endif
     <br>
     {!! apply_filters(BASE_FILTER_PUBLIC_COMMENT_AREA, null, $post) !!}
 </article>
