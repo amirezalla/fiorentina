@@ -4776,6 +4776,7 @@ header>.container {
 
     .post--single .post__meta span {
         font-size: 14px !important;
+        display: inline-block;
     }
 
 
