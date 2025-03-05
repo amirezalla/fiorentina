@@ -4782,6 +4782,10 @@ header>.container {
         display: none !important;
     }
 
+    .post__widget .post__thumbnail {
+        width: 100px !important;
+    }
+
     .post--single .post__meta .col-lg-5 {
         justify-content: left !important;
         padding-top: 10px !important;
