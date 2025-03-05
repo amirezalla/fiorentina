@@ -4364,7 +4364,7 @@ header>.container {
     background-color: #8424e3;
     color: white;
     font-size: 16px;
-    padding: 10px 25px;
+    padding: 5px 12px;
 }
 
 .author-name {
@@ -4778,7 +4778,7 @@ header>.container {
         font-size: 14px !important;
     }
 
-    
+
     .dmnone {
         display: none !important;
     }
