@@ -4783,6 +4783,23 @@ header>.container {
         display: none !important;
     }
 
+    .black-box {
+        background-color: #f5f5f5 !important;
+        padding: 20px !important;
+    }
+    .post__last4{
+        border-bottom: 2px solid #000000 !important;
+    }
+
+    .black-box .post__last4 .post__last4-text {
+        color: #000000 !important;
+    }
+
+    .post__last4-badge {
+        color: #1d2025 !important;
+    }
+
+
     .post__widget .post__thumbnail {
         width: 60px !important;
     }
@@ -4810,7 +4827,7 @@ header>.container {
     }
 
     #countdown-timer,
-    .countdown-timer1 {
+    #countdown-timer1 {
         color: white !important;
     }
 
