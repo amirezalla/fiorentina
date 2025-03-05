@@ -4794,7 +4794,7 @@ header>.container {
         border-bottom: 2px solid #c5c5c5 !important;
     }
 
-    .post__last4:last-of-type {
+    .black-box div:last-of-type {
         border-bottom: none !important;
     }
 
