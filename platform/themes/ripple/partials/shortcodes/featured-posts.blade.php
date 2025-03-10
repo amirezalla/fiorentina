@@ -3,6 +3,39 @@
     use Botble\Blog\Models\Post;
     use Carbon\Carbon;
 @endphp
+<style>
+
+.black-box {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    margin-bottom: 1rem; /* optional */
+}
+
+.black-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    /* Use the CSS variable as background */
+    background: var(--post-bg) center/cover no-repeat;
+    filter: blur(8px); /* adjust blur as needed */
+}
+
+.black-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.6); /* black overlay */
+}
+
+
+
+
+
+
+</style>
 @if ($posts->isNotEmpty())
 
     <section class="section hero-section pt-20 pb-20"
