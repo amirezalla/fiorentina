@@ -121,7 +121,10 @@
                                         </div>
                                         <header class="post__header">
                                             <div class="d-flex">
-
+                                                @if ($post->categories->count())
+                                                    <span
+                                                        class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
+                                                @endif
                                                 @if ($post->in_aggiornamento)
                                                     <span class="post-group__left-red-badge mb-2 ml-2"><i
                                                             class="fa fa-spinner text-white"></i> In Aggiornamento
@@ -139,11 +142,7 @@
                                                         $post->id,
                                                     )->count();
                                                 @endphp
-                                                @if ($post->categories->count())
-                                                    <span
-                                                        class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
-                                                @endif
-                                                <span class=" fw-bold author-post" style="color:#ffffff">Di
+                                                <span class=" fw-bold author-post" style="color:#ffffff">
                                                     {{ $post->author->first_name }}
                                                     {{ $post->author->last_name }}</span> /
                                                 <a class="fw-bold" href="{{ $post->url }}#comments"
@@ -151,6 +150,9 @@
                                                     <i class="fa fa-comment" aria-hidden="true"></i>
                                                     {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                 </a>
+                                                <span class="created_at " style="color: gray;">
+                                                    {!! BaseHelper::renderIcon('ti ti-clock') !!} {{ $formattedDate }}
+                                                </span>
                                             </span>
                                         </header>
                                     </article>
@@ -180,6 +182,25 @@
                                                 <h3 class="post__title">
                                                     <a href="{{ $post->url }}">{{ $post->name }}</a>
                                                 </h3>
+                                                <span class=" text-dark mt-3 d-block">
+                                                    @php
+                                                        $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
+                                                            'reference_id',
+                                                            $post->id,
+                                                        )->count();
+                                                    @endphp
+                                                    <span class=" fw-bold author-post" style="color:#ffffff">
+                                                        {{ $post->author->first_name }}
+                                                        {{ $post->author->last_name }}</span> /
+                                                    <a class="fw-bold" href="{{ $post->url }}#comments"
+                                                        style="color:#ffffff">
+                                                        <i class="fa fa-comment" aria-hidden="true"></i>
+                                                        {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
+                                                    </a>
+                                                    <span class="created_at " style="color: gray;">
+                                                        {!! BaseHelper::renderIcon('ti ti-clock') !!} {{ $formattedDate }}
+                                                    </span>
+                                                </span>
                                             </header>
                                         </article>
                                     </div>
@@ -232,6 +253,24 @@
                             </div>
                         @endif
                         <a class="post__last4-text" href="{{ $post->url }}">{{ $post->name }}</a>
+                        <span class=" text-dark mt-3 d-block">
+                            @php
+                                $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
+                                    'reference_id',
+                                    $post->id,
+                                )->count();
+                            @endphp
+                            <span class=" fw-bold author-post" style="color:#ffffff">
+                                {{ $post->author->first_name }}
+                                {{ $post->author->last_name }}</span> /
+                            <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
+                                <i class="fa fa-comment" aria-hidden="true"></i>
+                                {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
+                            </a>
+                            <span class="created_at " style="color: gray;">
+                                {!! BaseHelper::renderIcon('ti ti-clock') !!} {{ $formattedDate }}
+                            </span>
+                        </span>
                     </header>
                 </article>
             @endforeach
