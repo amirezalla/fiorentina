@@ -251,37 +251,49 @@
     <div class="black-box px-3 py-3">
         <div class="d-flex flex-column justify-content-around h-100">
             @foreach ($lastRecentPosts as $post)
-                <article class="w-100 @unless ($loop->last) mb-3 @endunless">
-                    <header class="post__last4">
-                        @if ($post->categories->count())
-                            <div class="d-flex mb-1">
-                                <span class="post__last4-badge post-group__left-purple-badge" style="border-radius: 0;">
-                                    {{ $post->categories->first()->name }}</span>
-                            </div>
-                        @endif
-                        <a class="post__last4-text" href="{{ $post->url }}">{{ $post->name }}</a>
-                        <span class=" text-dark mt-2 d-block" style="font-size: x-small">
-                            @php
-                                $date = Carbon::parse($post->published_at);
-                                $formattedDate = $date->format('j F - H:i');
-                                $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
-                                    'reference_id',
-                                    $post->id,
-                                )->count();
-                            @endphp
-                            <span class=" fw-bold author-post" style="color:#ffffff">
-                                {{ $post->author->first_name }}
-                                {{ $post->author->last_name }}</span> /
-                            <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
-                                <i class="fa fa-comment" aria-hidden="true"></i>
-                                {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
+                @php
+                    // Provide a fallback if $post->image is null/empty
+                    $imageUrl = RvMedia::image($post->image ?: 'path/to/default.jpg', $post->name, 'featured');
+                    $date = Carbon::parse($post->published_at);
+                    $formattedDate = $date->format('j F - H:i');
+                    $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
+                        'reference_id',
+                        $post->id,
+                    )->count();
+                @endphp
+
+                <div class="black-box" style="--post-bg: url('{{ $imageUrl }}')">
+                    <article class="w-100 @unless ($loop->last) mb-3 @endunless">
+                        <header class="post__last4">
+                            @if ($post->categories->count())
+                                <div class="d-flex mb-1">
+                                    <span class="post__last4-badge post-group__left-purple-badge"
+                                        style="border-radius: 0;">
+                                        {{ $post->categories->first()->name }}
+                                    </span>
+                                </div>
+                            @endif
+
+                            <a class="post__last4-text" href="{{ $post->url }}">
+                                {{ $post->name }}
                             </a>
-                            <span class="created_at " style="color: rgb(255, 255, 255); display:inline-block">
-                                / {{ $formattedDate }}
+
+                            <span class="text-dark mt-2 d-block" style="font-size: x-small">
+                                <span class="fw-bold author-post" style="color:#ffffff">
+                                    {{ $post->author->first_name }} {{ $post->author->last_name }}
+                                </span>
+                                /
+                                <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
+                                    <i class="fa fa-comment" aria-hidden="true"></i>
+                                    {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
+                                </a>
+                                <span class="created_at" style="color:#ffffff; display:inline-block">
+                                    / {{ $formattedDate }}
+                                </span>
                             </span>
-                        </span>
-                    </header>
-                </article>
+                        </header>
+                    </article>
+                </div>
             @endforeach
         </div>
     </div>
