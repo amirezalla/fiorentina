@@ -4757,8 +4757,12 @@ header>.container {
         color: #000 !important;
     }
 
-    .black-box .post__last4-badge{
+    .black-box .post__last4-badge {
         color: white !important;
+    }
+
+    .sub-menu--slideLeft {
+        display: none !important;
     }
 
 
