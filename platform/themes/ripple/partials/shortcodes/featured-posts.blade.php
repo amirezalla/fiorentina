@@ -255,7 +255,7 @@
                     <header class="post__last4">
                         @if ($post->categories->count())
                             <div class="d-flex mb-1">
-                                <span class="post__last4-badge">
+                                <span class="post__last4-badge post-group__left-purple-badge" style="border-radius: 0;">
                                     {{ $post->categories->first()->name }}</span>
                             </div>
                         @endif
