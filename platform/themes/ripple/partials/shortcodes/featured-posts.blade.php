@@ -262,7 +262,7 @@
                     )->count();
                 @endphp
 
-                <div class="black-box" style="--post-bg: url('{{ $imageUrl }}')">
+                <div class="black-box" style='--post-bg: url("{{ $imageUrl }}")'>
                     <article class="w-100 @unless ($loop->last) mb-3 @endunless">
                         <header class="post__last4">
                             @if ($post->categories->count())
