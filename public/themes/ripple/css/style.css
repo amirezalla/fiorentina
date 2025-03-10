@@ -4751,6 +4751,17 @@ header>.container {
 }
 
 @media (max-width: 538px) {
+
+    .black-box span a,
+    .black-box span {
+        color: #000 !important;
+    }
+
+    .black-box .post__last4-badge{
+        color: white !important;
+    }
+
+
     .post__vertical {
         flex-direction: column;
         align-items: flex-start;
