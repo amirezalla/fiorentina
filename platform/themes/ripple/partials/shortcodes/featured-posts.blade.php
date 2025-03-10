@@ -137,10 +137,10 @@
                                                 <a href="{{ $post->url }}">{{ $post->name }}</a>
 
                                             </h3>
-                                            <span class=" text-dark mt-3 d-block">
+                                            <span class=" text-dark mt-2 d-block">
                                                 @php
                                                     $date = Carbon::parse($post->published_at);
-                                                    $formattedDate = $date->format('j F Y - H:i');
+                                                    $formattedDate = $date->format('j F - H:i');
                                                     $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                         'reference_id',
                                                         $post->id,
@@ -154,7 +154,7 @@
                                                     <i class="fa fa-comment" aria-hidden="true"></i>
                                                     {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                 </a>
-                                                <span class="created_at " style="color: gray;">
+                                                <span class="created_at " style="color: rgb(255, 255, 255);"> /
                                                     {{ $formattedDate }}
                                                 </span>
                                             </span>
@@ -186,10 +186,10 @@
                                                 <h3 class="post__title">
                                                     <a href="{{ $post->url }}">{{ $post->name }}</a>
                                                 </h3>
-                                                <span class=" text-dark mt-3 d-block">
+                                                <span class=" text-dark mt-2 d-block" style="font-size: small;">
                                                     @php
                                                         $date = Carbon::parse($post->published_at);
-                                                        $formattedDate = $date->format('j F Y - H:i');
+                                                        $formattedDate = $date->format('j F - H:i');
                                                         $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                             'reference_id',
                                                             $post->id,
@@ -259,10 +259,10 @@
                             </div>
                         @endif
                         <a class="post__last4-text" href="{{ $post->url }}">{{ $post->name }}</a>
-                        <span class=" text-dark mt-3 d-block">
+                        <span class=" text-dark mt-2 d-block" style="font-size: x-small">
                             @php
                                 $date = Carbon::parse($post->published_at);
-                                $formattedDate = $date->format('j F Y - H:i');
+                                $formattedDate = $date->format('j F - H:i');
                                 $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                     'reference_id',
                                     $post->id,
@@ -275,7 +275,7 @@
                                 <i class="fa fa-comment" aria-hidden="true"></i>
                                 {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                             </a>
-                            <span class="created_at " style="color: gray;">
+                            <span class="created_at " style="color: rgb(255, 255, 255);">
                                 {{ $formattedDate }}
                             </span>
                         </span>
