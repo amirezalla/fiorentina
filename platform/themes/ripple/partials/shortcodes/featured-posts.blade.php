@@ -275,7 +275,7 @@
                                 <i class="fa fa-comment" aria-hidden="true"></i>
                                 {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                             </a>
-                            <span class="created_at " style="color: rgb(255, 255, 255);">
+                            <span class="created_at " style="color: rgb(255, 255, 255); display:inline-block">
                                 {{ $formattedDate }}
                             </span>
                         </span>
