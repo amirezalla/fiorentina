@@ -4345,6 +4345,10 @@ header>.container {
 
 }
 
+.page-content .post__vertical--single .post__title a:hover {
+    color: var(--color-1st) !important;
+}
+
 #load-more {
     margin-top: 45px !important;
 }
