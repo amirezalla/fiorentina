@@ -4453,6 +4453,12 @@ li.menu-item a span {
     color: #441274 !important;
 }
 
+.hero-section .post__title {
+    letter-spacing: 0 !important;
+    text-transform: nonne !important;
+    font: 2.4rem;
+}
+
 .social--simple li a i,
 .social--simple li a svg {
     width: 30px;
