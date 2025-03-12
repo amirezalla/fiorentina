@@ -4453,13 +4453,13 @@ li.menu-item a span {
     color: #441274 !important;
 }
 
-.hero-section .post__title {
+.hero-section .post__title a {
     letter-spacing: 0 !important;
     text-transform: nonne !important;
     font: 2.4rem;
 }
 
-.hero-section .post__title:hover {
+.hero-section .post__title a:hover {
     color: white !important;
 }
 
