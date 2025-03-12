@@ -4465,6 +4465,10 @@ li.menu-item a span {
     color: #441274 !important;
 }
 
+.sub-menu .menu-item a:hover span {
+    color: white !important;
+}
+
 .post-group__left .post__title a {
     letter-spacing: 0 !important;
     text-transform: none !important;
