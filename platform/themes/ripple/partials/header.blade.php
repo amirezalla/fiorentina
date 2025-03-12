@@ -61,174 +61,93 @@
         </div>
     </header>
 
-    {{--    <header class="header" id="header"> --}}
-    {{--        <div class="header-wrap d-none d-sm-block h-34px"> --}}
 
-    {{--            <nav class="nav-top"> --}}
-    {{--                <div class="container"> --}}
-    {{--                    <div class="row"> --}}
-
-    {{--                        @if ($socialLinks = Theme::getSocialLinks()) --}}
-
-
-    {{--                            <div class="col-sm-4 d-flex align-items-center h-34px"> --}}
-    {{--                                <ul class="social social--simple"> --}}
-    {{--                                    @foreach ($socialLinks as $socialLink) --}}
-    {{--                                        @continue(!($icon = $socialLink->getIconHtml())) --}}
-
-    {{--                                        <li> --}}
-    {{--                                            <a {{ $socialLink->getAttributes() }}> --}}
-    {{--                                                {{ $icon }} --}}
-    {{--                                            </a> --}}
-    {{--                                        </li> --}}
-
-    {{--                                    @endforeach --}}
-    {{--                                </ul> --}}
-    {{--                            </div> --}}
-    {{--                        @endif --}}
-
-    {{--                    </div> --}}
-    {{--                </div> --}}
-    {{--            </nav> --}}
-    {{--        </div> --}}
-    {{--    </header> --}}
-    <header data-sticky="false" data-sticky-checkpoint="200" data-responsive="991"
-        class="page-header page-header--light py-0">
-        <div class="container d-flex">
-
-            <div class="page-header__right flex-grow-1">
-                <div class="navigation-toggle " style="display: none"><span></span></div>
-                <div style="margin-top:17px;">
-
-                    <ul class="d-flex align-items-center" style="list-style: none; margin: 0; padding: 0;">
-                        @if (is_plugin_active('member'))
-                            @if (auth('member')->check())
-                                <li class=" d-lg-none d-md-block d-sm-block" style="margin-left: 20px;">
-                                    <a href="{{ route('public.member.dashboard') }}" rel="nofollow"
-                                        style="display: flex; align-items: center;">
-                                        <img src="{{ auth('member')->user()->avatar_thumb_url }}" class="img-circle"
-                                            width="20" alt="{{ auth('member')->user()->name }}" loading="lazy">
-                                        &nbsp;<span>{{ auth('member')->user()->name }}</span>
+    <header class="page-header page-header--light py-0" data-sticky="false" data-sticky-checkpoint="200"
+        data-responsive="991">
+        <div class="container">
+            <div class="row">
+                <!-- Mobile Header -->
+                <div class="col-12 d-lg-none">
+                    <div class="mobile-header d-flex justify-content-between align-items-center py-2">
+                        <!-- Optional logo -->
+                        <div class="mobile-logo">
+                            <a href="{{ url('/') }}">Logo</a>
+                        </div>
+                        <div class="mobile-member">
+                            @if (is_plugin_active('member'))
+                                @if (auth('member')->check())
+                                    <a href="{{ route('public.member.dashboard') }}" class="d-flex align-items-center">
+                                        <img src="{{ auth('member')->user()->avatar_thumb_url }}"
+                                            alt="{{ auth('member')->user()->name }}" width="20" class="img-circle"
+                                            loading="lazy">
+                                        <span class="ml-2">{{ auth('member')->user()->name }}</span>
                                     </a>
-                                </li>
-                                <li class=" d-lg-none d-md-block d-sm-block" style="margin-left: 20px;">
                                     <a href="#"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                        rel="nofollow" style="display: flex; align-items: center;">
+                                        class="d-flex align-items-center ml-3">
                                         {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('Logout') }}
                                     </a>
-                                </li>
-                            @else
-                                <li class=" d-lg-none d-md-block d-sm-block" style="margin-left: 20px;">
-                                    <a href="{{ route('public.member.login') }}" rel="nofollow"
-                                        style="display: flex; align-items: center;">
-                                        {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('Login') }}
+                                @else
+                                    <a href="{{ route('public.member.login') }}" class="d-flex align-items-center">
+                                        {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('ACCEDI') }}
                                     </a>
-                                </li>
+                                @endif
                             @endif
-                        @endif
-                    </ul>
-
-
-                </div>
-                <div class="float-start w-100"
-                    style="display: flex; align-items: center; justify-content: space-between;">
-                    {{--                    <nav class="navigation navigation--light navigation--fadeRight" style="display: flex; align-items: center; flex-grow: 1; "> --}}
-                    <nav class="d-flex navigation navigation--light navigation--fadeRight">
-
-
+                        </div>
+                        <!-- Mobile Menu Toggle -->
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mobileMenu"
+                            aria-controls="mobileMenu" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                    <!-- Mobile Navigation Menu -->
+                    <div class="collapse navbar-collapse" id="mobileMenu">
                         {!! Menu::renderMenuLocation('main-menu', [
                             'options' => ['class' => 'menu sub-menu--slideLeft'],
                             'view' => 'main-menu',
                         ]) !!}
-
-                        <ul class="d-flex align-items-center" style="list-style: none; margin: 0; padding: 0;">
-                            @if (is_plugin_active('member'))
-                                @if (auth('member')->check())
-                                    <li class=" d-lg-block d-none" style="margin-left: 20px;">
-                                        <a href="{{ route('public.member.dashboard') }}" rel="nofollow"
-                                            style="display: flex; align-items: center;">
-                                            <img src="{{ auth('member')->user()->avatar_thumb_url }}"
-                                                class="img-circle" width="20"
-                                                alt="{{ auth('member')->user()->name }}" loading="lazy">
-                                            &nbsp;<span>{{ auth('member')->user()->name }}</span>
-                                        </a>
-                                    </li>
-                                    <li class=" d-lg-block d-none" style="margin-left: 20px;">
-                                        <a href="#"
-                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                            rel="nofollow" style="display: flex; align-items: center;">
-                                            {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('Logout') }}
-                                        </a>
-                                    </li>
-                                @else
-                                    <li class=" d-lg-block d-none" style="margin-left: 20px;">
-                                        <a href="{{ route('public.member.login') }}" rel="nofollow"
-                                            style="display: flex; align-items: center;">
-                                            {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('Login') }}
-                                        </a>
-                                    </li>
-                                @endif
-                            @endif
-                        </ul>
-                    </nav>
-
-                    @if (auth('member')->check())
-                        <form id="logout-form" action="{{ route('public.member.logout') }}" method="POST"
-                            style="display: none;">
-                            @csrf
-                        </form>
-                    @endif
+                    </div>
                 </div>
 
-                {{--                <div class="float-start w-100"> --}}
-
-                {{--                    <nav class="navigation navigation--light navigation--fade navigation--fadeLeft"> --}}
-                {{--                        {!! Menu::renderMenuLocation('main-menu', [ --}}
-                {{--                            'options' => ['class' => 'menu sub-menu--slideLeft'], --}}
-                {{--                            'view' => 'main-menu', --}}
-                {{--                        ]) !!} --}}
-
-
-
-
-
-
-
-                {{--                        <li class="language-wrapper d-block d-sm-none"> --}}
-                {{--                            {!! apply_filters('language_switcher') !!} --}}
-                {{--                        </li> --}}
-                {{--                        @if (is_plugin_active('member')) --}}
-                {{--                            <ul class="d-flex"> --}}
-                {{--                                @if (auth('member')->check()) --}}
-                {{--                                    <li><a href="{{ route('public.member.dashboard') }}" rel="nofollow"><img --}}
-                {{--                                                src="{{ auth('member')->user()->avatar_thumb_url }}" --}}
-                {{--                                                class="img-circle" width="20" --}}
-                {{--                                                alt="{{ auth('member')->user()->name }}" loading="lazy"> --}}
-                {{--                                            &nbsp;<span>{{ auth('member')->user()->name }}</span></a></li> --}}
-                {{--                                    <li><a href="#" --}}
-                {{--                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();" --}}
-                {{--                                           rel="nofollow">{!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('Logout') }}</a></li> --}}
-                {{--                                @else --}}
-                {{--                                    <li><a href="{{ route('public.member.login') }}" --}}
-                {{--                                           rel="nofollow">{!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('Login') }}</a></li> --}}
-                {{--                                @endif --}}
-                {{--                            </ul> --}}
-                {{--                            @if (auth('member')->check()) --}}
-                {{--                                <form id="logout-form" action="{{ route('public.member.logout') }}" method="POST" --}}
-                {{--                                      style="display: none;"> --}}
-                {{--                                    @csrf --}}
-                {{--                                </form> --}}
-                {{--                            @endif --}}
-                {{--                        @endif --}}
-
-                {{--                    </nav> --}}
-
-                {{--                </div> --}}
-                <div class="clearfix"></div>
+                <!-- Desktop Header -->
+                <div class="col-12 d-none d-lg-flex justify-content-between align-items-center py-2">
+                    <nav class="desktop-navigation">
+                        {!! Menu::renderMenuLocation('main-menu', [
+                            'options' => ['class' => 'menu sub-menu--slideLeft'],
+                            'view' => 'main-menu',
+                        ]) !!}
+                    </nav>
+                    <div class="desktop-member d-flex align-items-center">
+                        @if (is_plugin_active('member'))
+                            @if (auth('member')->check())
+                                <a href="{{ route('public.member.dashboard') }}" class="d-flex align-items-center">
+                                    <img src="{{ auth('member')->user()->avatar_thumb_url }}"
+                                        alt="{{ auth('member')->user()->name }}" width="20" class="img-circle"
+                                        loading="lazy">
+                                    <span class="ml-2">{{ auth('member')->user()->name }}</span>
+                                </a>
+                                <a href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                    class="d-flex align-items-center ml-3">
+                                    {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('Logout') }}
+                                </a>
+                            @else
+                                <a href="{{ route('public.member.login') }}" class="d-flex align-items-center">
+                                    {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('ACCEDI') }}
+                                </a>
+                            @endif
+                        @endif
+                    </div>
+                </div>
             </div>
-            <div class="clearfix"></div>
         </div>
+
+        @if (auth('member')->check())
+            <form id="logout-form" action="{{ route('public.member.logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+        @endif
+
         @if (is_plugin_active('blog'))
             <div class="super-search hide" data-search-url="{{ route('public.ajax.search') }}">
                 <form class="quick-search" action="{{ route('public.search') }}">

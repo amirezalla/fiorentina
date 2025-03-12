@@ -4441,7 +4441,16 @@ header>.container {
 }
 
 .page-logo img {
-    max-height: 65px !important;
+    max-height: 95px !important;
+}
+
+li.menu-item a span {
+    font-size: large !important;
+    color: white !important;
+}
+
+.sub-menu .menu-item a span {
+    color: #441274 !important;
 }
 
 
