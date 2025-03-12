@@ -4465,6 +4465,10 @@ li.menu-item a span {
     height: 35px;
 }
 
+header>.container, .headup {
+    border: none !important;
+}
+
 .vote-btn {
     border: 0.5px solid #441274;
     color: #441274;
