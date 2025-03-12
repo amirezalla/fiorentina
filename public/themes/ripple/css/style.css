@@ -4347,10 +4347,12 @@ header>.container {
 
 .page-content .post__vertical--single .post__title a {
     transition: all 0.3s ease;
+}
+
+.page-content.bg-white .post__vertical--single .post__title a {
     font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-
 }
 
 .page-content .post__vertical--single .post__title a:hover {
