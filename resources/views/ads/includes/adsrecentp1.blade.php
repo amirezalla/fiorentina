@@ -11,6 +11,6 @@
 
         </div>
     @else
-        {!! $ad->amp !!}SIZE_300X250_TOP
+        {!! $ad->amp !!}
     @endif
 @endif
