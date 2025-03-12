@@ -4455,8 +4455,8 @@ li.menu-item a span {
 
 .hero-section .post__title a {
     letter-spacing: 0 !important;
-    text-transform: nonne !important;
-    font: 2.4rem;
+    text-transform: none !important;
+    font-size: 2.4rem !important;
 }
 
 .hero-section .post__title a:hover {
