@@ -18,13 +18,13 @@
 
         @endphp
         <div class="container mb-3">
-            <div class="row justify-content-center">
-                <div class="d-none d-md-block col-6 mx-auto">
+            <div class="row justify-content-center" style="padding: 0">
+                <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
                     <div class="col-12">
                         @include('ads.includes.SIZE_468X60_TOP_SX')
                     </div>
                 </div>
-                <div class="d-none d-md-block col-6 mx-auto">
+                <div class="d-none d-md-block col-6 mx-auto" style="padding: 0">
                     <div class="col-12">
                         @include('ads.includes.SIZE_468X60_TOP_DX')
                     </div>
