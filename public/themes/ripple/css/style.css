@@ -4453,6 +4453,17 @@ li.menu-item a span {
     color: #441274 !important;
 }
 
+.social--simple li a i,
+.social--simple li a svg {
+    width: 30px;
+    height: 30px;
+}
+
+.social--simple li a {
+    background: none !important;
+    width: 35px;
+    height: 35px;
+}
 
 .vote-btn {
     border: 0.5px solid #441274;
