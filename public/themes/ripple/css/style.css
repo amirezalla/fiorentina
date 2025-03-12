@@ -4441,7 +4441,7 @@ header>.container {
 }
 
 .page-logo img {
-    max-height: 95px !important;
+    max-height: 75px !important;
 }
 
 li.menu-item a span {
@@ -4465,7 +4465,8 @@ li.menu-item a span {
     height: 35px;
 }
 
-header>.container, .headup {
+header>.container,
+.headup {
     border: none !important;
 }
 
