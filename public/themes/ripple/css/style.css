@@ -974,9 +974,7 @@ p:empty {
     text-transform: uppercase
 }
 
-.post__inside--feature .post__title:hover a {
-    color: var(--color-1st)
-}
+
 
 .post__meta span svg {
     width: 16px
