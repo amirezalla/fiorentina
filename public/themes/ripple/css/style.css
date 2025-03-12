@@ -4453,7 +4453,7 @@ li.menu-item a span {
     color: #441274 !important;
 }
 
-.hero-section .post__title a {
+.post-group__left .post__title a {
     letter-spacing: 0 !important;
     text-transform: none !important;
     font-size: 2.4rem !important;
