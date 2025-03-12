@@ -4459,6 +4459,10 @@ li.menu-item a span {
     font: 2.4rem;
 }
 
+.hero-section .post__title:hover {
+    color: white !important;
+}
+
 .social--simple li a i,
 .social--simple li a svg {
     width: 30px;
