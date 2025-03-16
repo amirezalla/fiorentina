@@ -20,7 +20,7 @@
         <div class="container mb-3">
             <div class="row justify-content-center" style="padding: 0">
                 <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
-                    <div class="col-12" >
+                    <div class="col-12">
                         @include('ads.includes.SIZE_468X60_TOP_SX')
                     </div>
                 </div>
@@ -35,46 +35,7 @@
             </div>
         </div>
 
-        <div class="container mb-3 " style="padding: 0">
-            <div class="row align-items-center upcoming-match">
-                <!-- Match Date, Time, and Venue -->
-                <div class="col-md-3">
-                    <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm'), " \t\r\n\f\v") }}
-                    </p>
-                </div>
 
-                <!-- Team Logos and Names -->
-                <div class="col-md-6 text-center">
-                    <div class="row">
-                        <div class="col-6">
-                            <img src="{{ $home_team['logo'] }}" alt="{{ $home_team['name'] }} Crest"
-                                style="height: 30px; margin-bottom: 10px;">
-                            <h5>{{ $home_team['name'] }}</h5>
-                        </div>
-                        <div class="col-6">
-                            <img src="{{ $away_team['logo'] }}" alt="{{ $away_team['name'] }} Crest"
-                                style="height: 30px; margin-bottom: 10px;">
-                            <h5>{{ $away_team['name'] }}</h5>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ticket Buttons -->
-                <div class="col-md-3">
-                    <div class="d-grid text-center">
-                        @if ($match->status == 'live')
-                            <a href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}"
-                                class="btn-sm btn-primary mb-2 fiorentina-btn" style="grid-area: auto;">Vai alla
-                                diretta!</a>
-                        @else
-                            <div id="countdown1" style="background: #441274;padding:10px;border-radius:3px;">
-                                <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="countdown-timer1"></span>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="container">
             <div class="row">
