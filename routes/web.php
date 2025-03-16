@@ -129,6 +129,7 @@ Route::get('/optimize-gifs', function () {
 });
 
 Route::get('/asset/{path}', [AssetController::class, 'getAsset'])->where('path', '.*');
+// Route::get('/ad-click/{id}', [AdController::class, 'trackClick'])->name('ad.click');
 
 
 Route::get('/send-sample-email', function () {
@@ -146,4 +147,31 @@ Route::get('/send-sample-email', function () {
     }
 
     return 'Sample email sent!';
+});
+Route::get('/test-db2-connection', function () {
+    // Hard-coded connection info (not from .env)
+    $dbHost     = '35.187.41.56';
+    $dbPort     = 3306;
+    $dbDatabase = 'fiorentina';
+    $dbUsername = 'amir';
+    $dbPassword = 'Amir208079@';
+
+    try {
+        // Create a new PDO instance
+        $dsn = "mysql:host={$dbHost};port={$dbPort};dbname={$dbDatabase}";
+        $pdo = new \PDO($dsn, $dbUsername, $dbPassword);
+
+        // Set PDO error mode to exception for better error handling
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        // Optional: Run a simple test query
+        $stmt = $pdo->query('SELECT 1');
+        $result = $stmt->fetch();
+
+        return "DB connection successful. Test query result: " . var_export($result, true);
+
+    } catch (\PDOException $e) {
+        // Catch any connection errors
+        return "DB connection failed: " . $e->getMessage();
+    }
 });
