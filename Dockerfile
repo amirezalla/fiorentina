@@ -1,6 +1,6 @@
 FROM php:8.3-apache
 
-# Install system dependencies
+# ----------- Priority 1: Install System Dependencies and PHP Extensions -----------
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -17,47 +17,47 @@ RUN apt-get update && apt-get install -y \
     cron \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Enable Apache modules
+# Enable Apache modules (rewrite and SSL)
 RUN a2enmod rewrite ssl
 
-# # Install Composer
+# ----------- Priority 2: Install Composer (from official composer image) -----------
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# ----------- Priority 3: Set the Working Directory -----------
 WORKDIR /var/www/html
 
-# Copy the application files to the container
-COPY . /var/www/html
+# ----------- Priority 4: Copy Composer Files First for Caching -----------
+# This allows Docker to cache dependency layers if composer.json/lock (and vendor) haven't changed.
+COPY composer.json composer.lock ./
+# Since you already have vendor/ in your repo, copy it here.
+COPY vendor/ vendor/
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+# (Optional) Run composer install if you want to enforce autoload optimization.
+# If vendor/ is already up-to-date, this step should be fast.
+RUN composer install --no-dev --optimize-autoloader || true
 
-# Change ownership of our application
-RUN chown -R www-data:www-data /var/www/html
+# ----------- Priority 5: Copy the Remaining Application Files -----------
+# Copy all files (including node_modules if needed)
+COPY . .
 
-# Ensure that the bootstrap/cache directory exists and is writable
-RUN mkdir -p bootstrap/cache && \
+# ----------- Priority 6: Set Permissions -----------
+RUN chown -R www-data:www-data /var/www/html && \
+    mkdir -p bootstrap/cache && \
     chown -R www-data:www-data bootstrap/cache && \
     chmod -R 775 bootstrap/cache
 
-# Clear config and cache
-# RUN php artisan config:clear && \
-#     php artisan cache:clear
-
-# Configure SSL
+# ----------- Priority 7: Configure Apache -----------
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
-# Expose port
+# ----------- Priority 8: Expose Port 8080 -----------
 EXPOSE 8080
 
-# Copy the entrypoint script
+# ----------- Priority 9: Add Entrypoint Script -----------
 COPY entrypoint.sh /usr/local/bin/
-
-# Make the entrypoint script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Set the entrypoint script to be executed
+# ----------- Priority 10: Set Entrypoint -----------
 ENTRYPOINT ["entrypoint.sh"]
