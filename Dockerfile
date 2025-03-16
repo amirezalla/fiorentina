@@ -1,29 +1,5 @@
-FROM php:8.3-apache
+FROM europe-west1-docker.pkg.dev/laviola-450518/laviola-base/php-8.3-apache-deps:latest
 
-# -----------------------------
-# Priority 1: System Dependencies & PHP Extensions
-# These layers rarely change so they will be cached
-# -----------------------------
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    libzip-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libwebp-dev \
-    libxpm-dev \
-    cron \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
-
-RUN a2enmod rewrite ssl
 
 
 # -----------------------------
