@@ -1,6 +1,9 @@
 FROM php:8.3-apache
 
-# Install system dependencies
+# -----------------------------
+# Priority 1: System Dependencies & PHP Extensions
+# These layers rarely change so they will be cached
+# -----------------------------
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -17,47 +20,48 @@ RUN apt-get update && apt-get install -y \
     cron \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Enable Apache modules
 RUN a2enmod rewrite ssl
 
-# # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# -----------------------------
+# Priority 3: Set Working Directory
+# -----------------------------
 WORKDIR /var/www/html
 
-# Copy the application files to the container
-COPY . /var/www/html
+# -----------------------------
+# Priority 4: Copy Dependency Files for Caching
+# Copy composer files first so that if only app code changes later,
+# this layer is cached.
+# -----------------------------
+COPY composer.json composer.lock ./
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
 
-# Change ownership of our application
-RUN chown -R www-data:www-data /var/www/html
 
-# Ensure that the bootstrap/cache directory exists and is writable
-RUN mkdir -p bootstrap/cache && \
+# -----------------------------
+# Priority 5: Copy the Remaining Application Code
+# -----------------------------
+COPY . .
+
+# -----------------------------
+# Priority 6: Set File Permissions & Cache Directory
+# -----------------------------
+RUN chown -R www-data:www-data /var/www/html && \
+    mkdir -p bootstrap/cache && \
     chown -R www-data:www-data bootstrap/cache && \
     chmod -R 775 bootstrap/cache
 
-# Clear config and cache
-# RUN php artisan config:clear && \
-#     php artisan cache:clear
-
-# Configure SSL
+# -----------------------------
+# Priority 7: Apache Configuration & Expose Port
+# -----------------------------
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
-
-# Expose port
 EXPOSE 8080
 
-# Copy the entrypoint script
+# -----------------------------
+# Priority 8: Copy and Set Entrypoint
+# -----------------------------
 COPY entrypoint.sh /usr/local/bin/
-
-# Make the entrypoint script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Set the entrypoint script to be executed
 ENTRYPOINT ["entrypoint.sh"]

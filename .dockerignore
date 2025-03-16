@@ -1,4 +1,6 @@
 .git
-.github
-.idea
+.gitignore
+README.md
+node_modules
 tests
+docker-compose.yml
