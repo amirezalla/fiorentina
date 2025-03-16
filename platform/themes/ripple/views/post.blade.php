@@ -7,8 +7,9 @@
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
     $content = \App\Models\Ad::addAdsToContent($post->content);
-    dd($post);
-    if (!$post->comments) {
+    $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
+    dd($comments);
+    if (!$comments) {
         WpImportController::importComment($post->id);
     }
 @endphp
