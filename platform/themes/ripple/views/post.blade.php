@@ -8,7 +8,6 @@
     }
     $content = \App\Models\Ad::addAdsToContent($post->content);
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
-    dd($comments);
     if (!$comments) {
         WpImportController::importComment($post->id);
     }
