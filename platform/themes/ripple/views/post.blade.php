@@ -7,7 +7,7 @@
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
     $content = \App\Models\Ad::addAdsToContent($post->content);
-    dd($post->comments);
+    dd($post);
     if (!$post->comments) {
         WpImportController::importComment($post->id);
     }
