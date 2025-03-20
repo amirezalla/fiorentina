@@ -5,7 +5,7 @@
 @endphp
 @if ($posts->isNotEmpty())
 
-    <section class="section hero-section pt-20 pb-20"
+    <section class="section hero-section pb-20"
         @if ($shortcode->background_color) style="background-color: #441274 !important;" @endif>
 
         @php
@@ -20,7 +20,7 @@
         <div class="container mb-3">
             <div class="row justify-content-center" style="padding: 0">
                 <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
-                    <div class="col-12" >
+                    <div class="col-12">
                         @include('ads.includes.SIZE_468X60_TOP_SX')
                     </div>
                 </div>
@@ -134,7 +134,8 @@
                                             </div>
 
                                             <h3 class="post__title">
-                                                <a id="post-title-first" href="{{ $post->url }}">{{ $post->name }}</a>
+                                                <a id="post-title-first"
+                                                    href="{{ $post->url }}">{{ $post->name }}</a>
 
                                             </h3>
                                             <span class=" text-dark mt-2 d-block">

@@ -1,10 +1,14 @@
+:root {
+    --primary-font: 'Roboto Condensed', sans-serif;
+}
+
 body {
-    font-family: var(--primary-font)
+    font-family: var(--primary-font) !important
 }
 
 *,
 body {
-    font-family: var(--primary-font)
+    font-family: var(--primary-font) !important
 }
 
 a,
@@ -4933,6 +4937,27 @@ header>.container,
     .post-group__left .post__title a {
         font-size: large !important;
     }
+
+    header>.container {
+        padding: 10px !important;
+    }
+
+    .navigation-toggle {
+        margin-top: 0 !important;
+    }
+
+    .accedi-header {
+        font-size: 18px !important;
+    }
+
+    .page-header__right ul li a svg {
+        width: 20px;
+    }
+
+    .page-header__right ul li a {
+        width: 20px;
+    }
+
 }
 
 /* Ensure the table is scrollable on small screens */
@@ -5359,6 +5384,21 @@ header>.container,
 
 }
 
+header>.container {
+    padding: 0 !important;
+}
+
 .player-info {
     flex: 1;
+}
+
+.navigation .menu-item>a {
+    padding: 10px 15px;
+    padding-top: 15px !important;
+}
+
+.accedi-header {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
 }

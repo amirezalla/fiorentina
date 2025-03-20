@@ -4,6 +4,8 @@
 <head>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=1"
         name="viewport" />
@@ -120,8 +122,7 @@
                                 </li>
                             @else
                                 <li class=" d-lg-none d-md-block d-sm-block" style="margin-left: 20px;">
-                                    <a href="{{ route('public.member.login') }}" rel="nofollow"
-                                        style="display: flex; align-items: center;font-size: 22px;">
+                                    <a href="{{ route('public.member.login') }}" rel="nofollow" class="accedi-header">
                                         {!! BaseHelper::renderIcon('ti ti-login-2') !!} {{ __('ACCEDI') }}
                                     </a>
                                 </li>
