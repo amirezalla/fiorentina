@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ad;
+use App\Models\AdStatistic;
+
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -19,7 +21,9 @@ use Intervention\Image\ImageManager;
 
 class AdController extends BaseController
 {
-
+    public function __construct(protected RvMedia $rvMedia)
+    {
+    }
     protected function breadcrumb(): Breadcrumb
     {
         return parent::breadcrumb()
@@ -82,14 +86,16 @@ class AdController extends BaseController
         // Handle file upload
         if ($advertisement->type == 1) {
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            
+                // Upload the sanitized file
                 $filename = Str::random(32) . time() . "." . $request->file('image')->getClientOriginalExtension();
                 $imageResized = ImageManager::gd()->read($request->image);
                 if ($request->width && $request->height) {
                     $imageResized = $imageResized->resize($request->width, $request->height);
                 }
                 $imageResized = $imageResized->encode();
-                $path = "ads-images/" . $filename;
-                Storage::disk('public')->put($path, $imageResized);
+                $uploadResult = $this->rvMedia->uploadFromPath($filename, 0, 'ads-images/');
+                dd($uploadResult);
                 $advertisement->image = $path;
             }
         } else {
@@ -171,4 +177,16 @@ class AdController extends BaseController
         $ad->delete();
         return redirect()->route('ads.index')->with('success', 'Ad deleted successfully.');
     }
+
+
+
+public function trackClick($id)
+{
+    $ad = Ad::findOrFail($id);
+    AdStatistic::trackClick($id);
+
+    return redirect()->to($ad->url);
+}
+
+
 }
