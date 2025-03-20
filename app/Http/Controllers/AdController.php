@@ -96,8 +96,18 @@ class AdController extends BaseController
                     $imageResized = $imageResized->resize($request->width, $request->height);
                 }
                 $imageResized = $imageResized->encode();
-                $uploadResult = $this->rvMedia->uploadFromPath($filename, 0, 'ads-images/');
+
+                // Save the image to a temporary path
+                $tempPath = sys_get_temp_dir() . '/' . $filename;
+                file_put_contents($tempPath, $imageResized);
+
+                // Now upload the file using its temporary path
+                $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'ads-images/');
                 dd($uploadResult);
+
+                // Clean up the temporary file if necessary
+                unlink($tempPath);
+
                 $advertisement->image = $path;
             }
         } else {
