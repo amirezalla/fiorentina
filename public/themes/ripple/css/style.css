@@ -4930,7 +4930,7 @@ header>.container,
         /* Adjust title font size for smaller screens */
     }
 
-    #post-title-first {
+    .post-group__left .post__title a {
         font-size: large !important;
     }
 }
