@@ -4812,6 +4812,7 @@ header>.container,
         color: white !important;
     }
 
+
     .sub-menu--slideLeft {
         display: none !important;
     }
@@ -4927,6 +4928,10 @@ header>.container,
     .post__title {
         font-size: 1.1rem;
         /* Adjust title font size for smaller screens */
+    }
+
+    #post-title-first {
+        font-size: large !important;
     }
 }
 

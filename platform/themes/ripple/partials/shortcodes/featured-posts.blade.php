@@ -134,7 +134,7 @@
                                             </div>
 
                                             <h3 class="post__title">
-                                                <a href="{{ $post->url }}">{{ $post->name }}</a>
+                                                <a id="post-title-first" href="{{ $post->url }}">{{ $post->name }}</a>
 
                                             </h3>
                                             <span class=" text-dark mt-2 d-block">
