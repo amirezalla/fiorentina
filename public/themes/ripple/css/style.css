@@ -3,12 +3,12 @@
 }
 
 body {
-    font-family: var(--primary-font) !important
+    font-family: var(--primary-font)
 }
 
 *,
 body {
-    font-family: var(--primary-font) !important
+    font-family: var(--primary-font)
 }
 
 a,
