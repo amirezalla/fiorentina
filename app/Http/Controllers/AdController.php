@@ -103,12 +103,11 @@ class AdController extends BaseController
 
                 // Now upload the file using its temporary path
                 $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'ads-images/');
-                dd($uploadResult['data']->url);
 
                 // Clean up the temporary file if necessary
                 unlink($tempPath);
 
-                $advertisement->image = $path;
+                $advertisement->image = $uploadResult['data']->url;
             }
         } else {
             $advertisement->image = $request->image;
