@@ -52,7 +52,7 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="most-commented-tab" data-toggle="tab" href="#most-commented" role="tab"
                     aria-controls="most-commented" aria-selected="false">
-                    <span style="color: #8424e3; margin-right: 4px;">⚡</span>
+                    <span style="color: #8424e3; margin-right: 4px;"><i class="fas fa-bolt"></i></span>
                     I PIÙ COMMENTATI
                 </a>
             </li>
