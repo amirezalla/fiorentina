@@ -235,7 +235,7 @@ class Ad extends BaseModel
                         $item[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_2)])->render();
                     } else if ($key == 2 && $ads->has(self::GROUP_DBLOG_P3)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
-                        $item[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_3)])->render();
+                        $item[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_4)])->render();
                     } else if ($key == 3 && $ads->has(self::GROUP_DBLOG_P4)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P4)])->render();
                         $item[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_4)])->render();
