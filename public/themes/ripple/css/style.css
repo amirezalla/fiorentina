@@ -4982,6 +4982,14 @@ header>.container,
         height: 120px !important;
     }
 
+    .post__vertical--single .author-post {
+        font-size: revert;
+    }
+
+    .black-box div article:last-child {
+        border: none;
+    }
+
 
 
 }
