@@ -5612,3 +5612,11 @@ header>.container {
 #postTabs .nav-link:hover {
     color: #1d2025;
 }
+
+.btn-comment-submit {
+    background-color: #441274;
+    padding: 10px 17px;
+    color: white;
+    border: none;
+
+}

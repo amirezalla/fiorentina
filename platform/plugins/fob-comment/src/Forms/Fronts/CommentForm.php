@@ -115,7 +115,7 @@ class CommentForm extends FormFront
     ->add('button', 'submit', [
         'label' => trans('plugins/fob-comment::comment.front.form.submit'),
         'attr' => [
-            'class' => 'btn btn-primary',
+            'class' => 'btn-comment-submit col-12',
         ],
         'colspan' => 2,
     ]);
