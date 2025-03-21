@@ -3,7 +3,7 @@
     use Illuminate\Support\Facades\DB;
     use App\Models\Poll;
 
-    $poll=null;
+    $poll = null;
     /*$poll = Poll::with('options')->where('active', true)->latest()->first();
     // Check if the poll exists and has options
 
@@ -58,19 +58,40 @@
                     <ul>
                         @foreach ($recentPosts as $post)
                             <li>
-                                <article class="post post__widget clearfix">
-                                    <div class="post__thumbnail">
-
+                                <article class="post post__widget d-flex align-items-start"
+                                    style="margin-bottom: 10px;">
+                                    {{-- Thumbnail on the left, fixed width --}}
+                                    <div class="post__thumbnail"
+                                        style="width: 80px; flex-shrink: 0; margin-right: 10px;">
                                         {{ RvMedia::image($post->image, $post->name, 'thumb') }}
                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
                                             class="post__overlay"></a>
                                     </div>
-                                    <header class="post__header">
-                                        <h4 class="post__title text-truncate-2"><a href="{{ $post->url }}"
-                                                title="{{ $post->name }}" data-number-line="2">{{ $post->name }}</a>
+
+                                    {{-- Text content on the right --}}
+                                    <header class="post__header" style="flex: 1;">
+                                        {{-- Optional: Category label in uppercase, if you want it above the title --}}
+                                        @if ($post->categories->count())
+                                            <span
+                                                style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
+                                                {{ strtoupper($post->categories->first()->name) }}
+                                            </span>
+                                        @endif
+
+                                        {{-- Post Title --}}
+                                        <h4 class="post__title" style="margin: 0;">
+                                            <a href="{{ $post->url }}" title="{{ $post->name }}"
+                                                style="text-decoration: none; color: inherit;">
+                                                {{ $post->name }}
+                                            </a>
                                         </h4>
-                                        <div class="post__meta"><span
-                                                class="post__created-at">{{ Theme::formatDate($post->created_at) }}</span>
+
+                                        {{-- Date --}}
+                                        <div class="post__meta"
+                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
+                                            <span class="post__created-at">
+                                                {{ Theme::formatDate($post->created_at) }}
+                                            </span>
                                         </div>
                                     </header>
                                 </article>
@@ -84,18 +105,40 @@
                     <ul>
                         @foreach ($mostCommentedPosts as $post)
                             <li>
-                                <article class="post post__widget clearfix">
-                                    <div class="post__thumbnail">
+                                <article class="post post__widget d-flex align-items-start"
+                                    style="margin-bottom: 10px;">
+                                    {{-- Thumbnail on the left, fixed width --}}
+                                    <div class="post__thumbnail"
+                                        style="width: 80px; flex-shrink: 0; margin-right: 10px;">
                                         {{ RvMedia::image($post->image, $post->name, 'thumb') }}
                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
                                             class="post__overlay"></a>
                                     </div>
-                                    <header class="post__header">
-                                        <h4 class="post__title text-truncate-2"><a href="{{ $post->url }}"
-                                                title="{{ $post->name }}"
-                                                data-number-line="2">{{ $post->name }}</a></h4>
-                                        <div class="post__meta"><span
-                                                class="post__created-at">{{ Theme::formatDate($post->created_at) }}</span>
+
+                                    {{-- Text content on the right --}}
+                                    <header class="post__header" style="flex: 1;">
+                                        {{-- Optional: Category label in uppercase, if you want it above the title --}}
+                                        @if ($post->categories->count())
+                                            <span
+                                                style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
+                                                {{ strtoupper($post->categories->first()->name) }}
+                                            </span>
+                                        @endif
+
+                                        {{-- Post Title --}}
+                                        <h4 class="post__title" style="margin: 0;">
+                                            <a href="{{ $post->url }}" title="{{ $post->name }}"
+                                                style="text-decoration: none; color: inherit;">
+                                                {{ $post->name }}
+                                            </a>
+                                        </h4>
+
+                                        {{-- Date --}}
+                                        <div class="post__meta"
+                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
+                                            <span class="post__created-at">
+                                                {{ Theme::formatDate($post->created_at) }}
+                                            </span>
                                         </div>
                                     </header>
                                 </article>

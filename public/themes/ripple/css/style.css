@@ -5565,3 +5565,32 @@ header>.container {
 .tenth-place {
     display: none;
 }
+
+/* Example: Minimal styling for a small thumbnail on the left and text on the right */
+.post.post__widget.d-flex.align-items-start {
+    margin-bottom: 10px;
+}
+
+.post.post__widget.d-flex.align-items-start .post__thumbnail {
+    width: 80px;
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+
+.post.post__widget.d-flex.align-items-start .post__header {
+    flex: 1;
+}
+
+.post.post__widget.d-flex.align-items-start .post__header .post__category {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 2px;
+}
+
+.post.post__widget.d-flex.align-items-start .post__header .post__meta {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 2px;
+}
