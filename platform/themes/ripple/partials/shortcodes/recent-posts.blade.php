@@ -165,10 +165,6 @@
                                             <div class="d-none d-md-block">
                                                 @include('ads.includes.adsrecentp2')
                                             </div>
-
-                                            <div class="d-block d-md-none col-12 mb-4 text-center">
-                                                @include('ads.includes.MOBILE_POSIZIONE_4')
-                                            </div>
                                         @endif
                                         @if ($index == 10)
                                             <div class="tenth-place">
