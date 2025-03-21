@@ -53,3 +53,41 @@
 </div>
 
 <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Find the textarea by its ID
+        var textarea = document.querySelector("#editor");
+        if (!textarea) {
+            console.error("Textarea with id 'editor' not found.");
+            return;
+        }
+
+        // Hide the original textarea
+        textarea.style.display = "none";
+
+        // Create a container div for CKEditor
+        var editorContainer = document.createElement("div");
+        editorContainer.id = "editor-container";
+
+        // Insert the container right after the textarea
+        textarea.parentNode.insertBefore(editorContainer, textarea.nextSibling);
+
+        // Initialize CKEditor on the container
+        ClassicEditor
+            .create(editorContainer, {
+                placeholder: '' // No placeholder text
+            })
+            .then(editor => {
+                // When the form is submitted, copy the editor data back to the textarea
+                var form = textarea.closest("form");
+                if (form) {
+                    form.addEventListener("submit", function() {
+                        textarea.value = editor.getData();
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error initializing CKEditor:", error);
+            });
+    });
+</script>
