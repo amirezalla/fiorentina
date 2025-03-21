@@ -5606,3 +5606,6 @@ header>.container {
 .widget {
     box-shadow: none !important;
 }
+#postTabs .nav-link:focus, .nav-link:hover{
+    color: #1d2025;
+}
