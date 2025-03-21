@@ -51,6 +51,7 @@
                                     @foreach ($posts as $index => $post)
                                         <article class="post post__vertical post__vertical--single post-item"
                                             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
+
                                             <!-- Image on the left -->
                                             <div class="post__thumbnail" style="flex: 1.5; width: 48%;">
                                                 {{ RvMedia::image($post->image, $post->name, 'large') }}
@@ -58,75 +59,81 @@
                                                     title="{{ $post->name }}"></a>
                                             </div>
 
-                                            <!-- Content (Title and Description) on the right -->
+                                            <!-- Content on the right -->
                                             <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px;">
                                                 <header class="post__header">
+
+                                                    {{-- 1. CATEGORY LABEL (e.g. "RASSEGNA STAMPA" or "NOTIZIE") --}}
                                                     @php
-
-                                                        $date = $post->created_at;
-
-                                                        if ($date->isToday()) {
-                                                            // If the post was created today, show only hour and minute
-                                                            $formattedDate = $date->format('H:i');
-                                                        } elseif ($date->isYesterday()) {
-                                                            // If it was yesterday, show "Ieri alle" followed by hour and minute
-                                                            $formattedDate = 'Ieri alle ' . $date->format('H:i');
-                                                        } else {
-                                                            // Otherwise, show the day, abbreviated month (in Italian), and hour:minute
-                                                            // Set locale to Italian for month names (ensure you have installed the appropriate locale)
-                                                            $formattedDate = $date
-                                                                ->locale('it')
-                                                                ->translatedFormat('d M H:i');
-                                                        }
+                                                        $categoryName = $post->categories->count()
+                                                            ? strtoupper($post->categories->first()->name)
+                                                            : 'NEWS';
                                                     @endphp
-                                                    <div class="text-dark mb-2">
+                                                    <span
+                                                        style="display: block; font-size: 0.8rem; text-transform: uppercase; color: #999; margin-bottom: 4px;">
+                                                        {{ $categoryName }}
+                                                    </span>
 
-
-                                                        @if ($post->categories->count())
-                                                            <span class=" mb-1">
-                                                                <span class="post__last4-badge">
-                                                                    {{ $post->categories->first()->name }}</span> /
-                                                            </span>
-                                                        @endif
-                                                        <span class="post__date">
-                                                            {{ $formattedDate }}
-                                                        </span>
-                                                        @if ($post->in_aggiornamento)
-                                                            <span class="post-group__left-red-badge mb-2 ml-2"><i
-                                                                    class="fa fa-spinner text-white"></i> <span
-                                                                    class="text-white">In
-                                                                    Aggiornamento</span>
-                                                            </span>
-                                                        @endif
-
-                                                    </div>
+                                                    {{-- 2. POST TITLE --}}
                                                     <h4 class="post__title" style="margin: 0;">
                                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
                                                             style="text-decoration: none; color: inherit;">
                                                             {{ $post->name }}
                                                         </a>
                                                     </h4>
+
+                                                    {{-- 3. DATE + "IN AGGIORNAMENTO" BADGE --}}
+                                                    @php
+                                                        $date = $post->created_at;
+                                                        if ($date->isToday()) {
+                                                            $formattedDate = $date->format('H:i');
+                                                        } elseif ($date->isYesterday()) {
+                                                            $formattedDate = 'Ieri alle ' . $date->format('H:i');
+                                                        } else {
+                                                            $formattedDate = $date
+                                                                ->locale('it')
+                                                                ->translatedFormat('d M H:i');
+                                                        }
+                                                    @endphp
+
+                                                    <div class="text-dark" style="margin-top: 4px;">
+                                                        <span class="post__date">{{ $formattedDate }}</span>
+                                                        @if ($post->in_aggiornamento)
+                                                            <span class="post-group__left-red-badge mb-2 ml-2">
+                                                                <i class="fa fa-spinner text-white"></i>
+                                                                <span class="text-white">In Aggiornamento</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                 </header>
+
+                                                {{-- 4. EXCERPT / DESCRIPTION --}}
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
-                                                    <span class=" text-dark mt-3 d-block">
+
+                                                    {{-- 5. AUTHOR + COMMENTS --}}
+                                                    <span class="text-dark mt-3 d-block">
                                                         @php
+                                                            // Count comments
                                                             $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                                 'reference_id',
                                                                 $post->id,
                                                             )->count();
                                                         @endphp
-                                                        Di <span class=" fw-bold author-post"
-                                                            style="color:#8424e3">{{ $post->author->first_name }}
-                                                            {{ $post->author->last_name }}</span> /
+                                                        Di
+                                                        <span class="fw-bold author-post" style="color: #8424e3;">
+                                                            {{ $post->author->first_name }}
+                                                            {{ $post->author->last_name }}
+                                                        </span>
+                                                        /
                                                         <a class="fw-bold" href="{{ $post->url }}#comments"
-                                                            style="color:#8424e3">
+                                                            style="color: #8424e3;">
                                                             <i class="fa fa-comment" aria-hidden="true"></i>
                                                             {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                         </a>
                                                     </span>
                                                 </div>
-
+                                            </div>
                                         </article>
 
                                         <!-- Optional ads -->
