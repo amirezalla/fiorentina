@@ -49,77 +49,74 @@
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
+                                        @php
+                                            // 1. Format date first
+                                            $date = $post->created_at;
+                                            if ($date->isToday()) {
+                                                $formattedDate = $date->format('H:i');
+                                            } elseif ($date->isYesterday()) {
+                                                $formattedDate = 'Ieri alle ' . $date->format('H:i');
+                                            } else {
+                                                $formattedDate = $date->locale('it')->translatedFormat('d M H:i');
+                                            }
+
+                                            // 2. Category name in uppercase
+                                            $categoryName = $post->categories->count()
+                                                ? strtoupper($post->categories->first()->name)
+                                                : 'NOTIZIE';
+                                        @endphp
+
                                         <article class="post post__vertical post__vertical--single post-item"
                                             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
 
-                                            <!-- Image on the left -->
-                                            <div class="post__thumbnail" style="flex: 1.5; width: 48%;">
+                                            <!-- Image on the left, smaller width -->
+                                            <div class="post__thumbnail" style="flex: 0 0 120px; margin-right: 20px;">
                                                 {{ RvMedia::image($post->image, $post->name, 'large') }}
                                                 <a class="post__overlay" href="{{ $post->url }}"
                                                     title="{{ $post->name }}"></a>
                                             </div>
 
                                             <!-- Content on the right -->
-                                            <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px;">
+                                            <div class="post__content-wrap" style="flex: 1;">
                                                 <header class="post__header">
 
-                                                    {{-- 1. CATEGORY LABEL (e.g. "RASSEGNA STAMPA" or "NOTIZIE") --}}
-                                                    @php
-                                                        $categoryName = $post->categories->count()
-                                                            ? strtoupper($post->categories->first()->name)
-                                                            : 'NEWS';
-                                                    @endphp
+                                                    {{-- CATEGORY LABEL (small, uppercase, gray) --}}
                                                     <span
                                                         style="display: block; font-size: 0.8rem; text-transform: uppercase; color: #999; margin-bottom: 4px;">
                                                         {{ $categoryName }}
                                                     </span>
 
-                                                    {{-- 2. POST TITLE --}}
-                                                    <h4 class="post__title" style="margin: 0;">
+                                                    {{-- DATE + "IN AGGIORNAMENTO" BADGE (same line or next line) --}}
+                                                    <span class="post__date">{{ $formattedDate }}</span>
+                                                    @if ($post->in_aggiornamento)
+                                                        <span class="post-group__left-red-badge mb-2 ml-2">
+                                                            <i class="fa fa-spinner text-white"></i>
+                                                            <span class="text-white">In Aggiornamento</span>
+                                                        </span>
+                                                    @endif
+
+                                                    {{-- POST TITLE --}}
+                                                    <h4 class="post__title" style="margin: 8px 0 0;">
                                                         <a href="{{ $post->url }}" title="{{ $post->name }}"
                                                             style="text-decoration: none; color: inherit;">
                                                             {{ $post->name }}
                                                         </a>
                                                     </h4>
-
-                                                    {{-- 3. DATE + "IN AGGIORNAMENTO" BADGE --}}
-                                                    @php
-                                                        $date = $post->created_at;
-                                                        if ($date->isToday()) {
-                                                            $formattedDate = $date->format('H:i');
-                                                        } elseif ($date->isYesterday()) {
-                                                            $formattedDate = 'Ieri alle ' . $date->format('H:i');
-                                                        } else {
-                                                            $formattedDate = $date
-                                                                ->locale('it')
-                                                                ->translatedFormat('d M H:i');
-                                                        }
-                                                    @endphp
-
-                                                    <div class="text-dark" style="margin-top: 4px;">
-                                                        <span class="post__date">{{ $formattedDate }}</span>
-                                                        @if ($post->in_aggiornamento)
-                                                            <span class="post-group__left-red-badge mb-2 ml-2">
-                                                                <i class="fa fa-spinner text-white"></i>
-                                                                <span class="text-white">In Aggiornamento</span>
-                                                            </span>
-                                                        @endif
-                                                    </div>
                                                 </header>
 
-                                                {{-- 4. EXCERPT / DESCRIPTION --}}
+                                                {{-- EXCERPT / DESCRIPTION --}}
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
 
-                                                    {{-- 5. AUTHOR + COMMENTS --}}
+                                                    {{-- AUTHOR + COMMENTS --}}
+                                                    @php
+                                                        // Count comments
+                                                        $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
+                                                            'reference_id',
+                                                            $post->id,
+                                                        )->count();
+                                                    @endphp
                                                     <span class="text-dark mt-3 d-block">
-                                                        @php
-                                                            // Count comments
-                                                            $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
-                                                                'reference_id',
-                                                                $post->id,
-                                                            )->count();
-                                                        @endphp
                                                         Di
                                                         <span class="fw-bold author-post" style="color: #8424e3;">
                                                             {{ $post->author->first_name }}
@@ -135,6 +132,7 @@
                                                 </div>
                                             </div>
                                         </article>
+
 
                                         <!-- Optional ads -->
                                         @if ($index == 0)
