@@ -51,3 +51,28 @@
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/trumbowyg@2/dist/trumbowyg.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2/dist/ui/trumbowyg.min.css">
+<script>
+    $(document).ready(function() {
+        $('.fob-comment-form-section textarea').trumbowyg({
+            btns: [
+                ['viewHTML'],
+                ['undo', 'redo'],
+                ['formatting'],
+                ['strong', 'em', 'del'],
+                ['superscript', 'subscript'],
+                ['link'],
+                ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+                ['unorderedList', 'orderedList'],
+                ['horizontalRule'],
+                ['removeformat'],
+                ['fullscreen']
+            ],
+            autogrow: true,
+            resetCss: true,
+            removeformatPasted: true,
+            minimalLinks
+        });
+    });

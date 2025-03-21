@@ -3,8 +3,7 @@
 namespace FriendsOfBotble\Comment\Forms\Fronts;
 
 use Botble\Base\Forms\FieldOptions\EmailFieldOption;
-use Botble\Base\Forms\Fields\EditorField;
-use Botble\Base\Forms\FieldOptions\EditorFieldOption;
+use Botble\Base\Forms\Fields\CkEditorField;
 use Botble\Base\Forms\FieldOptions\OnOffFieldOption;
 use Botble\Base\Forms\FieldOptions\TextareaFieldOption;
 use Botble\Base\Forms\FieldOptions\TextFieldOption;
@@ -46,13 +45,14 @@ class CommentForm extends FormFront
     )
     ->add(
         'content',
-        EditorField::class,
-        EditorFieldOption::make()
+        TextareaField::class,
+        TextareaFieldOption::make()
             ->label(trans('plugins/fob-comment::comment.common.comment'))
             ->required()
             ->colspan(2)
             ->attributes([
-                'placeholder' => '', // Make placeholder empty (no placeholder)
+                'class' => 'comment-editor', // Add a custom class
+                'placeholder' => '',         // Remove the placeholder
             ])
             ->toArray()
     )
