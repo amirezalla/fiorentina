@@ -4809,11 +4809,11 @@ header>.container,
 
     .black-box span a,
     .black-box span {
-        color: #000 !important;
+        color: #ffffff !important;
     }
 
     .black-box .post__last4-badge {
-        color: white !important;
+        color: rgb(95, 95, 95) !important;
     }
 
 
@@ -4856,14 +4856,14 @@ header>.container,
     }
 
     .black-box {
-        background-color: #f5f5f5 !important;
+        background-color: #000000 !important;
         padding: 20px !important;
     }
 
     .post__last4 {
         padding-top: 10px;
         padding-bottom: 20px;
-        border-bottom: 2px solid #c5c5c5 !important;
+        border-bottom: 2px solid #979797 !important;
     }
 
     .black-box div:last-of-type {
@@ -4872,11 +4872,11 @@ header>.container,
 
 
     .black-box .post__last4 .post__last4-text {
-        color: #000000 !important;
+        color: #ffffff !important;
     }
 
     .post__last4-badge {
-        color: #1d2025 !important;
+        color: #ffffff !important;
     }
 
 
