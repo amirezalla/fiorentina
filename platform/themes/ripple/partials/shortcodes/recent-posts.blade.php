@@ -336,7 +336,8 @@
                                 <tr style="border-bottom:1px solid blueviolet">
                                     <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;" @endif
                                         style="border-right: 1px solid blueviolet;">
-                                        <span class="{{ $labelClass }}">{{ $rank }}</span>
+                                        <span
+                                            class="{{ $labelClass }}"@if ($standing->short_name == 'Fiorentina') style='color:white !important' @endif>{{ $rank }}</span>
                                         <img src="{{ $standing->crest_url }}" width="15">
                                         {{ $standing->short_name }}
                                     </td>
