@@ -98,6 +98,9 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('ads.includes.MOBILE_HOME_HERO_25', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_HOME_HERO_25)->inRandomOrderByWeight()->first());
         });
+        view()->composer('ads.includes.MOBILE_DOPO_FOTO_26', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_DOPO_FOTO_26)->inRandomOrderByWeight()->first());
+        });
         view()->composer('ads.includes.MOBILE_POSIZIONE_1', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_1)->inRandomOrderByWeight()->first());
         });

@@ -49,6 +49,10 @@
             {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:775px;height:475px;']) }}
         </div>
     </div>
+
     @include('ads.includes.dblog-title')
+    <div class="d-block d-md-none col-12 text-center">
+        @include('ads.includes.MOBILE_DOPO_FOTO_26')
+    </div>
 
 </div>
