@@ -5561,3 +5561,7 @@ header>.container {
     line-height: 1.2;
     /* Helps the text and border align more tightly */
 }
+
+.tenth-place {
+    display: none;
+}
