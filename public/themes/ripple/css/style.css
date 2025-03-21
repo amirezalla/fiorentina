@@ -4822,10 +4822,7 @@ header>.container,
     }
 
 
-    .post__vertical {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+
 
     .post__content-wrap {
         padding-left: 0px !important;
@@ -4950,6 +4947,17 @@ header>.container,
     .page-header__right ul li a svg {
         width: 20px;
     }
+
+    .post__vertical {
+        flex-direction: row;
+        font-size: smaller !important;
+    }
+
+    .post__vertical .post-content p {
+        display: none;
+    }
+
+
 
 
 }
