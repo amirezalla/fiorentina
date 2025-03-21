@@ -4969,6 +4969,10 @@ header>.container,
         font-size: smaller;
     }
 
+    .post__vertical .post__content-wrap {
+        padding-left: 10px !important;
+    }
+
 
 
 
