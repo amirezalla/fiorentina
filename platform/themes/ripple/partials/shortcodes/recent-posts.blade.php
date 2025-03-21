@@ -81,13 +81,17 @@
                                                     @endphp
                                                     <div class="text-dark mb-1">
 
+                                                        @php
+                                                            $categoryName = $post->categories->count()
+                                                                ? strtoupper($post->categories->first()->name)
+                                                                : 'Notizie';
+                                                        @endphp
 
-                                                        @if ($post->categories->count())
-                                                            <span class=" mb-1">
-                                                                <span class="post__last4-badge">
-                                                                    {{ $post->categories->first()->name }}</span> /
-                                                            </span>
-                                                        @endif
+                                                        <span class=" mb-1">
+                                                            <span class="post__last4-badge">
+                                                                {{ $categoryName }}</span> /
+                                                        </span>
+
                                                         <span class="post__date">
                                                             {{ $formattedDate }}
                                                         </span>
