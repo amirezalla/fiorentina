@@ -152,7 +152,7 @@ class Ad extends BaseModel
     public function getImageUrl()
     {
         if ($this->type == 1) {
-            AdStatistic::trackImpression($this->id);
+            // AdStatistic::trackImpression($this->id);
 
             return Storage::temporaryUrl($this->image, now()->addMinutes(15));
         }
