@@ -54,7 +54,6 @@ class Ad extends BaseModel
     // const GRUPPO_POPUP_DESKTOP = 30;
     const GRUPPO_POPUP_MOBILE = 31;
     // const IN_ARTICLE_DESKTOP_2024 = 32;
-    const MOBILE_DOPO_FOTO = 33;
     const MOBILE_HOME_TOP_24 = 34;
     const MOBILE_POSIZIONE_1 = 35;
     const MOBILE_POSIZIONE_2 = 36;
@@ -93,7 +92,6 @@ class Ad extends BaseModel
         self::SIZE_468X60_TOP_DX => "468X60 DESTRA",
         self::SIZE_468X60_TOP_SX => "468X60 SINISTRA",
         self::GRUPPO_POPUP_MOBILE => "GRUPPO_POPUP_MOBILE",
-        self::MOBILE_DOPO_FOTO => "MOBILE_DOPO_FOTO",
         self::MOBILE_HOME_TOP_24 => "MOBILE_HOME_TOP_24",
         self::MOBILE_POSIZIONE_1 => "MOBILE_POSIZIONE_1",
         self::MOBILE_POSIZIONE_2 => "MOBILE_POSIZIONE_2",
