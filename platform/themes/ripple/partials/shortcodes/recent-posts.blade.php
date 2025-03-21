@@ -35,7 +35,7 @@
             ])>
                 <div class="page-content">
                     <div class="heading-container">
-                        <h2 class="heading-partial-underline">ULTIME NOTIZIE</h2>
+                        <h4 class="heading-partial-underline">ULTIME NOTIZIE</h4>
                     </div>
                     <div class="post-group post-group--single">
                         <div class="post-group__header">
