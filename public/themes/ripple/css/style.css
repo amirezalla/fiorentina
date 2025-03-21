@@ -5486,7 +5486,7 @@ header>.container {
 }
 
 /* Make submenu items white */
-.mobile-menu .menu li ul li a {
+.mobile-menu .menu li ul li a span {
     color: #fff !important;
 }
 

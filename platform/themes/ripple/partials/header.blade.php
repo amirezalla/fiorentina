@@ -194,34 +194,41 @@
                 });
             }
 
-            // 2. Add submenu opener (+/-) to menu items with children in mobile menu
+            // 2. For each parent item with a submenu, add the “+” opener if not present
+            //    and allow clicking either the parent link or the plus sign to toggle.
             var submenuItems = document.querySelectorAll('#mobile-menu .menu li.menu-item-has-children');
+
             submenuItems.forEach(function(item) {
-                // If we haven't already created a .submenu-opener for this item
-                if (!item.querySelector('.submenu-opener')) {
-                    var opener = document.createElement('span');
+                var opener = item.querySelector('.submenu-opener');
+                var anchor = item.querySelector('a');
+
+                // Create the .submenu-opener if it doesn’t exist
+                if (!opener) {
+                    opener = document.createElement('span');
                     opener.classList.add('submenu-opener');
                     opener.innerHTML = '+';
-                    opener.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        item.classList.toggle('open');
-                        opener.innerHTML = item.classList.contains('open') ? '-' : '+';
-                    });
-                    var anchor = item.querySelector('a');
                     if (anchor) {
                         anchor.parentNode.insertBefore(opener, anchor.nextSibling);
                     } else {
                         item.appendChild(opener);
                     }
                 }
-            });
 
-            // 3. Disable anchor links for parent items so clicking them does nothing
-            var parentLinks = document.querySelectorAll('#mobile-menu .menu li.menu-item-has-children > a');
-            parentLinks.forEach(function(anchor) {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                });
+                // Toggle function for submenu
+                function toggleSubmenu(e) {
+                    e.preventDefault(); // Don’t navigate
+                    e.stopPropagation(); // Don’t bubble up
+                    item.classList.toggle('open');
+                    opener.innerHTML = item.classList.contains('open') ? '-' : '+';
+                }
+
+                // Let the entire parent link open/close the submenu
+                if (anchor) {
+                    anchor.addEventListener('click', toggleSubmenu);
+                }
+
+                // Plus sign also opens/closes the submenu
+                opener.addEventListener('click', toggleSubmenu);
             });
         });
     </script>
