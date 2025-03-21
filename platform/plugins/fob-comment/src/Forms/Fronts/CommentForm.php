@@ -49,7 +49,6 @@ class CommentForm extends FormFront
         [
             'label'    => trans('plugins/fob-comment::comment.common.comment'),
             'required' => true,
-            'id'=>'editor',
             'attr'     => [
                 'placeholder' => '', // remove placeholder text
                 'rows'        => 4,

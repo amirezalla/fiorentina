@@ -56,7 +56,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Find the textarea by its ID
-        var textarea = document.querySelector("#editor");
+        var textarea = document.querySelector("#content");
         if (!textarea) {
             console.error("Textarea with id 'editor' not found.");
             return;
