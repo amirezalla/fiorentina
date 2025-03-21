@@ -167,7 +167,7 @@
                                             </div>
                                         @endif
                                         @if ($index == 10)
-                                            <div class="d-none d-md-block tenth-place">
+                                            <div class="tenth-place">
                                                 @include('ads.includes.adsrecentp1')
 
                                             </div>
