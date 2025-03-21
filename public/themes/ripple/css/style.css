@@ -2109,9 +2109,6 @@ p:empty {
     border-bottom: 0;
     margin: 0;
     padding: 15px 0;
-    position: sticky;
-    position: -webkit-sticky;
-    z-index: 1000;
     top: 0;
     /* Set the top edge of the element to stick to the top of the viewport */
     transition: all .4s ease-out
