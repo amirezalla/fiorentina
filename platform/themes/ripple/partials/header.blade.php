@@ -159,8 +159,17 @@
     <!-- Mobile Fullscreen Menu -->
     <div id="mobile-menu" class="mobile-menu">
         <div class="mobile-menu-header">
+            <!-- Logo on the left -->
+            <div class="mobile-menu-logo">
+                <a href="{{ BaseHelper::getHomepageUrl() }}" class="page-logo">
+                    {{ Theme::getLogoImage() }}
+                </a>
+            </div>
+
+            <!-- Close button on the right -->
             <span id="close-menu" class="close-menu">&times;</span>
         </div>
+
         <nav class="mobile-menu-content">
             {!! Menu::renderMenuLocation('main-menu', [
                 'options' => ['class' => 'menu mobile-menu-list'],
@@ -170,18 +179,25 @@
     </div>
 
     <script>
-        // Toggle mobile menu open/close
-        document.getElementById('nav-toggle').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.add('open');
-        });
-        document.getElementById('close-menu').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.remove('open');
-        });
-
-        // Add submenu opener to menu items with children in mobile menu
         document.addEventListener("DOMContentLoaded", function() {
+            // 1. Toggle mobile menu open/close
+            var navToggle = document.getElementById('nav-toggle');
+            var closeMenu = document.getElementById('close-menu');
+            var mobileMenu = document.getElementById('mobile-menu');
+
+            if (navToggle && closeMenu && mobileMenu) {
+                navToggle.addEventListener('click', function() {
+                    mobileMenu.classList.add('open');
+                });
+                closeMenu.addEventListener('click', function() {
+                    mobileMenu.classList.remove('open');
+                });
+            }
+
+            // 2. Add submenu opener (+/-) to menu items with children in mobile menu
             var submenuItems = document.querySelectorAll('#mobile-menu .menu li.menu-item-has-children');
             submenuItems.forEach(function(item) {
+                // If we haven't already created a .submenu-opener for this item
                 if (!item.querySelector('.submenu-opener')) {
                     var opener = document.createElement('span');
                     opener.classList.add('submenu-opener');
@@ -198,6 +214,14 @@
                         item.appendChild(opener);
                     }
                 }
+            });
+
+            // 3. Disable anchor links for parent items so clicking them does nothing
+            var parentLinks = document.querySelectorAll('#mobile-menu .menu li.menu-item-has-children > a');
+            parentLinks.forEach(function(anchor) {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                });
             });
         });
     </script>

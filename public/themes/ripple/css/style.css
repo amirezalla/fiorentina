@@ -5484,3 +5484,21 @@ header>.container {
         display: none;
     }
 }
+
+/* Make submenu items white */
+.mobile-menu .menu li ul li a {
+    color: #fff !important;
+}
+
+/* Mobile menu header: logo on the left, close button on the right */
+.mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+/* Optional: constrain logo height if needed */
+.mobile-menu-logo img {
+    max-height: 40px;
+}
