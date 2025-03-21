@@ -13,7 +13,6 @@
             $option->percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100) : 0;
         }
     }*/
-    dd($posts);
 @endphp
 
 <div></div>
