@@ -46,16 +46,17 @@ class CommentForm extends FormFront
     ->add(
         'content',
         TextareaField::class,
-        TextareaFieldOption::make()
-            ->label(trans('plugins/fob-comment::comment.common.comment'))
-            ->required()
-            ->colspan(2)
-            ->attributes([
-                'class' => 'comment-editor', // Add a custom class
-                'placeholder' => '',         // Remove the placeholder
-            ])
-            ->toArray()
+        [
+            'label' => trans('plugins/fob-comment::comment.common.comment'),
+            'required' => true,
+            // Hide it visually; Quill will replace it
+            'attr' => [
+                'id' => 'comment-content',
+                'style' => 'display: none;',
+            ],
+        ]
     )
+    
     ->when(
         !auth('member')->check(),
         function (FormAbstract $form) use ($preparedData) {

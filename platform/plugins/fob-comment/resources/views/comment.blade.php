@@ -48,34 +48,43 @@
         {{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
+    <div id="quill-editor"></div>
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/trumbowyg@2/dist/trumbowyg.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2/dist/ui/trumbowyg.min.css">
+
+<!-- Quill CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+
+<!-- Quill JS (no jQuery required) -->
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+
 <script>
-    $(document).ready(function() {
-        $('.fob-comment-form-section textarea').trumbowyg({
-            btns: [
-                ['viewHTML'],
-                ['undo', 'redo'],
-                ['formatting'],
-                ['strong', 'em', 'del'],
-                ['superscript', 'subscript'],
-                ['link'],
-                ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
-                ['unorderedList', 'orderedList'],
-                ['horizontalRule'],
-                ['removeformat'],
-                ['fullscreen']
-            ],
-            autogrow: true,
-            resetCss: true,
-            removeformatPasted: true,
-            minimalLinks
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Initialize Quill
+        var quill = new Quill('#quill-editor', {
+            theme: 'snow',
+            placeholder: '', // No placeholder
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{
+                        'list': 'ordered'
+                    }, {
+                        'list': 'bullet'
+                    }],
+                    ['link']
+                ]
+            }
         });
+
+        // 2. On form submit, copy Quill's HTML to the hidden textarea
+        var form = document.querySelector('form.fob-comment-form'); // Adjust selector if needed
+        if (form) {
+            form.addEventListener('submit', function() {
+                var hiddenTextarea = document.getElementById('comment-content');
+                hiddenTextarea.value = quill.root.innerHTML; // Quill's content as HTML
+            });
+        }
     });
 </script>
