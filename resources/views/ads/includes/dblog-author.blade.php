@@ -1,5 +1,5 @@
 @if (isset($ads) && $ads)
-    <div class="row mx-0 dmnone">
+    <div class="row mx-0 dmnone mb-4">
         @foreach ($ads as $ad)
             @if ($ad->type == 1)
                 <div class="row justify-content-center mx-0">
