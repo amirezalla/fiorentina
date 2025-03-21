@@ -229,7 +229,7 @@ class Ad extends BaseModel
                 $content = $chunk->map(function ($item, $key) use ($ads) {
                     if ($key == 0 && $ads->has(self::GROUP_DBLOG_P1)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P1)])->render();
-                        $item[] = view('ads.includes.MOBILE_POSIZIONE_', ['ad' => $ads->get(self::MOBILE_POSIZIONE_1)])->render();
+                        $item[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_1)])->render();
                     } else if ($key == 1 && $ads->has(self::GROUP_DBLOG_P2)) {
                         $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
                         $item[] = view('ads.includes.MOBILE_POSIZIONE_2', ['ad' => $ads->get(self::MOBILE_POSIZIONE_2)])->render();
