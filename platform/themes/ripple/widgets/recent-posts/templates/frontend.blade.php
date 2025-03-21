@@ -45,11 +45,16 @@
         <ul class="nav nav-tabs" id="postTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts" role="tab"
-                    aria-controls="recent-posts" aria-selected="true">I PIÙ RECENTI</a>
+                    aria-controls="recent-posts" aria-selected="true">
+                    I PIÙ RECENTI
+                </a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="most-commented-tab" data-toggle="tab" href="#most-commented" role="tab"
-                    aria-controls="most-commented" aria-selected="false">I PIÙ COMMENTATI</a>
+                    aria-controls="most-commented" aria-selected="false">
+                    <span style="color: #8424e3; margin-right: 4px;">⚡</span>
+                    I PIÙ COMMENTATI
+                </a>
             </li>
         </ul>
         <div class="tab-content" id="postTabsContent">

@@ -5566,31 +5566,39 @@ header>.container {
     display: none;
 }
 
-/* Example: Minimal styling for a small thumbnail on the left and text on the right */
-.post.post__widget.d-flex.align-items-start {
-    margin-bottom: 10px;
+/* 1. Remove border/shadow/padding from the widget container */
+.widget.widget__recent-post.no-border-tabs {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
-.post.post__widget.d-flex.align-items-start .post__thumbnail {
-    width: 80px;
-    flex-shrink: 0;
+/* 2. Remove the default Bootstrap tab borders & padding */
+.widget.widget__recent-post.no-border-tabs .nav-tabs {
+    border-bottom: none !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+
+/* 3. Remove tab link borders & optional highlight */
+.widget.widget__recent-post.no-border-tabs .nav-tabs .nav-link {
+    border: none !important;
     margin-right: 10px;
+    /* space between tabs (optional) */
 }
 
-.post.post__widget.d-flex.align-items-start .post__header {
-    flex: 1;
+/* 4. Active tab: remove bottom border (or style as needed) */
+.widget.widget__recent-post.no-border-tabs .nav-tabs .nav-link.active {
+    border: none !important;
+    /* If you want an underline for the active tab, uncomment:
+       border-bottom: 2px solid #000;
+    */
 }
 
-.post.post__widget.d-flex.align-items-start .post__header .post__category {
-    display: block;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: #999;
-    margin-bottom: 2px;
-}
-
-.post.post__widget.d-flex.align-items-start .post__header .post__meta {
-    font-size: 0.75rem;
-    color: #999;
-    margin-top: 2px;
+/* 5. Remove border/padding around tab content */
+.widget.widget__recent-post.no-border-tabs .tab-content {
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
 }
