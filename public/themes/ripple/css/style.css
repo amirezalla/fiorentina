@@ -5521,6 +5521,6 @@ header>.container {
     /* Negative bottom margin ensures the purple border merges with the gray line */
     margin-bottom: -2px;
     border-bottom: 2px solid #441274;
-    line-height: 1;
+    line-height: 1.2;
     /* Helps the text and border align more tightly */
 }
