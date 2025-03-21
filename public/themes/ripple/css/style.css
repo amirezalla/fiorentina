@@ -4983,7 +4983,7 @@ header>.container,
     }
 
     .post__vertical--single .author-post {
-        font-size: revert;
+        font-size: revert !important;
     }
 
     .black-box div article:last-child {
