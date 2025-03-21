@@ -5431,6 +5431,7 @@ header>.container {
 
 .mobile-menu-content {
     padding: 2rem;
+    padding-top: 1rem;
 }
 
 /* Style for the menu list in mobile menu */
