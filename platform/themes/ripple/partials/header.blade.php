@@ -66,9 +66,7 @@
         <div class="container d-flex">
             <div class="page-header__right flex-grow-1">
                 <!-- Mobile Navigation Toggle Button -->
-                <div id="nav-toggle" class="navigation-toggle">
-                    <span class="hamburger-icon">☰</span>
-                </div>
+                <div id="nav-toggle" class="navigation-toggle"><span></span></div>
                 <div>
                     <ul class="d-flex align-items-center" style="list-style: none; margin: 0; padding: 0;">
                         @if (is_plugin_active('member'))
@@ -178,5 +176,28 @@
         });
         document.getElementById('close-menu').addEventListener('click', function() {
             document.getElementById('mobile-menu').classList.remove('open');
+        });
+
+        // Add submenu opener to menu items with children in mobile menu
+        document.addEventListener("DOMContentLoaded", function() {
+            var submenuItems = document.querySelectorAll('#mobile-menu .menu li.menu-item-has-children');
+            submenuItems.forEach(function(item) {
+                if (!item.querySelector('.submenu-opener')) {
+                    var opener = document.createElement('span');
+                    opener.classList.add('submenu-opener');
+                    opener.innerHTML = '+';
+                    opener.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        item.classList.toggle('open');
+                        opener.innerHTML = item.classList.contains('open') ? '-' : '+';
+                    });
+                    var anchor = item.querySelector('a');
+                    if (anchor) {
+                        anchor.parentNode.insertBefore(opener, anchor.nextSibling);
+                    } else {
+                        item.appendChild(opener);
+                    }
+                }
+            });
         });
     </script>
