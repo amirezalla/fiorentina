@@ -4953,8 +4953,20 @@ header>.container,
         font-size: smaller !important;
     }
 
-    .post__vertical .post-content p {
+    .post__vertical .post__content p {
         display: none;
+    }
+
+    .post__vertical .post__content span {
+        font-size: smaller;
+    }
+
+    .post__vertical .post__title {
+        font-size: smaller;
+    }
+
+    .post__vertical .post__header div {
+        font-size: smaller;
     }
 
 
