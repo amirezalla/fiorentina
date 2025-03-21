@@ -11,6 +11,8 @@
 
         </div>
     @else
-        {!! $ad->amp !!}
+        <div class="row justify-content-center mx-0">
+            {!! $ad->amp !!}
+        </div>
     @endif
 @endif
