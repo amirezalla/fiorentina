@@ -5503,3 +5503,24 @@ header>.container {
 .mobile-menu-logo img {
     max-height: 40px;
 }
+
+.heading-container {
+    /* Full-width container with a gray bottom border */
+    width: 100%;
+    border-bottom: 2px solid #ccc;
+    /* Gray line */
+    margin-bottom: 1rem;
+    /* Spacing below, optional */
+}
+
+/* Heading with purple underline that overrides the gray */
+.heading-partial-underline {
+    display: inline-block;
+    /* Only as wide as the text */
+    border-bottom: 2px solid #441274;
+    /* Purple line directly under the text */
+    margin: 0;
+    /* Reset default margins if needed */
+    padding: 0 0 4px;
+    /* Space between text and underline */
+}

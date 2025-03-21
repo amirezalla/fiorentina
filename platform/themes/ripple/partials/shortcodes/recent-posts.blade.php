@@ -2,7 +2,7 @@
     use App\Models\Poll;
     use Carbon\Carbon;
 
-    $poll=null;
+    $poll = null;
     /*$poll = Poll::with('options')->where('active', true)->latest()->first();
     // Check if the poll exists and has options
 
@@ -13,7 +13,6 @@
             $option->percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100) : 0;
         }
     }*/
-
 @endphp
 
 <div></div>
@@ -35,7 +34,9 @@
                 'col-12' => !$topSidebarContent,
             ])>
                 <div class="page-content">
-                    <h3 class="post-group__title">ULTIME NOTIZIE</h3>
+                    <div class="heading-container">
+                        <h2 class="heading-partial-underline">ULTIME NOTIZIE</h2>
+                    </div>
                     <div class="post-group post-group--single">
                         <div class="post-group__header">
                             <div class="row"></div>
