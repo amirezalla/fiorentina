@@ -45,17 +45,18 @@ class CommentForm extends FormFront
     )
     ->add(
         'content',
-        TextareaField::class,
+        \Botble\Base\Forms\Fields\CkEditorField::class,
         [
-            'label' => trans('plugins/fob-comment::comment.common.comment'),
+            'label'    => trans('plugins/fob-comment::comment.common.comment'),
             'required' => true,
-            // Hide it visually; Quill will replace it
-            'attr' => [
-                'id' => 'comment-content',
-                'style' => 'display: none;',
+            'attr'     => [
+                'placeholder' => '', // remove placeholder text
+                'rows'        => 4,
             ],
+            'colspan'  => 2,
         ]
     )
+    
     
     ->when(
         !auth('member')->check(),

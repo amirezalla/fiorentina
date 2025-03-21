@@ -48,43 +48,7 @@
         {{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
-    <div id="quill-editor"></div>
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
 </div>
 
-<!-- Quill CSS -->
-<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
-
-<!-- Quill JS (no jQuery required) -->
-<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // 1. Initialize Quill
-        var quill = new Quill('#quill-editor', {
-            theme: 'snow',
-            placeholder: '', // No placeholder
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{
-                        'list': 'ordered'
-                    }, {
-                        'list': 'bullet'
-                    }],
-                    ['link']
-                ]
-            }
-        });
-
-        // 2. On form submit, copy Quill's HTML to the hidden textarea
-        var form = document.querySelector('form.fob-comment-form'); // Adjust selector if needed
-        if (form) {
-            form.addEventListener('submit', function() {
-                var hiddenTextarea = document.getElementById('comment-content');
-                hiddenTextarea.value = quill.root.innerHTML; // Quill's content as HTML
-            });
-        }
-    });
-</script>
