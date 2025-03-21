@@ -66,7 +66,7 @@
         <div class="container d-flex">
             <div class="page-header__right flex-grow-1">
                 <!-- Mobile Navigation Toggle Button -->
-                <div id="nav-toggle" class="navigation-toggle"><i class="hamburger-icon">☰</i></div>
+                <div id="nav-toggle" class="navigation-toggle"><span></span></div>
                 <div>
                     <ul class="d-flex align-items-center" style="list-style: none; margin: 0; padding: 0;">
                         @if (is_plugin_active('member'))
