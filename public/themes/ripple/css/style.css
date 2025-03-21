@@ -5607,7 +5607,8 @@ header>.container {
     box-shadow: none !important;
 }
 
-#postTabs .nav-link .nav-link:focus,
-.nav-link:hover {
+#postTabs .nav-link,
+#postTabs .nav-link:focus,
+#postTabs .nav-link:hover {
     color: #1d2025;
 }
