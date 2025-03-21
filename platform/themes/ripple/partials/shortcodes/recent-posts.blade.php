@@ -79,7 +79,7 @@
                                                                 ->translatedFormat('d M H:i');
                                                         }
                                                     @endphp
-                                                    <div class="text-dark mb-2">
+                                                    <div class="text-dark mb-1">
 
 
                                                         @if ($post->categories->count())
