@@ -84,6 +84,9 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('ads.includes.SIZE_300X250_C1', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_300X250_C1)->inRandomOrderByWeight()->first());
         });
+        view()->composer('ads.includes.SIZE_300X250_B1', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_300X250_C1)->inRandomOrderByWeight()->first());
+        });
 
         view()->composer('ads.includes.SIZE_230X90_DX', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::SIZE_230X90_DX)->inRandomOrderByWeight()->first());
