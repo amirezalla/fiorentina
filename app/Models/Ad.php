@@ -62,6 +62,7 @@ class Ad extends BaseModel
     const MOBILE_POSIZIONE_4 = 38;
     const MOBILE_POSIZIONE_5 = 39;
     const MOBILE_HOME_HERO_25 = 40;
+    const MOBILE_DOPO_FOTO_26 = 41;
     const SKIN_MOBILE = 43;
 
 
@@ -101,6 +102,7 @@ class Ad extends BaseModel
         self::MOBILE_POSIZIONE_5 => "MOBILE_POSIZIONE_5",
         self::SKIN_MOBILE => "SKIN_MOBILE",
         self::MOBILE_HOME_HERO_25 => "MOBILE_HOME_HERO_25",
+        self::MOBILE_DOPO_FOTO_26 => "MOBILE_DOPO_FOTO_26",
         /*self::SIZE_728X90_B1 => "SIZE_468X60_TOP_SX",
         self::SIZE_728X90_C1 => "SIZE_468X60_TOP_SX",
         self::SIZE_728X90_C2 => "SIZE_468X60_TOP_SX",
@@ -150,6 +152,8 @@ class Ad extends BaseModel
     public function getImageUrl()
     {
         if ($this->type == 1) {
+            AdStatistic::trackImpression($this->id);
+
             return Storage::temporaryUrl($this->image, now()->addMinutes(15));
         }
         return $this->image;
