@@ -5505,22 +5505,22 @@ header>.container {
 }
 
 .heading-container {
-    /* Full-width container with a gray bottom border */
-    width: 100%;
+    /* Full-width gray border at the bottom */
     border-bottom: 2px solid #ccc;
-    /* Gray line */
     margin-bottom: 1rem;
-    /* Spacing below, optional */
+    /* Optional spacing below */
+    position: relative;
+    /* No extra padding so the heading sits close to the border */
+    padding: 0;
 }
 
-/* Heading with purple underline that overrides the gray */
+/* Heading with purple underline that overrides the gray line */
 .heading-partial-underline {
     display: inline-block;
-    /* Only as wide as the text */
-    border-bottom: 2px solid #441274;
-    /* Purple line directly under the text */
     margin: 0;
-    /* Reset default margins if needed */
-    padding: 0 0 4px;
-    /* Space between text and underline */
+    /* Negative bottom margin ensures the purple border merges with the gray line */
+    margin-bottom: -2px;
+    border-bottom: 2px solid #441274;
+    line-height: 1;
+    /* Helps the text and border align more tightly */
 }
