@@ -495,42 +495,56 @@
 @include('ads.includes.adsense', ['adClient' => 'ca-pub-6741446998584415'])
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const loadMoreButton = document.getElementById('load-more');
-        let visiblePosts = parseInt('{{ setting('min_main_posts_limit') }}');
-        const mainPostsLimit = parseInt('{{ setting('main_posts_limit', 20) }}');
-        const minMainPostsLimit = parseInt('{{ setting('min_main_posts_limit') }}');
+    < script >
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreButton = document.getElementById('load-more');
+            let visiblePosts = parseInt('{{ setting('min_main_posts_limit') }}');
+            const mainPostsLimit = parseInt('{{ setting('main_posts_limit', 20) }}');
+            const minMainPostsLimit = parseInt('{{ setting('min_main_posts_limit') }}');
 
-        if (loadMoreButton) {
-            loadMoreButton.addEventListener('click', function() {
-                const allPosts = document.querySelectorAll('.post-item');
+            if (loadMoreButton) {
+                loadMoreButton.addEventListener('click', function() {
+                    const allPosts = document.querySelectorAll('.post-item');
+                    const tenthPlace = document.querySelector('.tenth-place');
 
-                if (loadMoreButton.innerText === 'ALTRE NOTIZIE') {
-                    // Expand posts up to mainPostsLimit
-                    visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
+                    if (loadMoreButton.innerText === 'ALTRE NOTIZIE') {
+                        // Expand posts up to mainPostsLimit
+                        visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
 
-                    allPosts.forEach((post, index) => {
-                        if (index < visiblePosts) {
-                            post.style.display = 'flex';
+                        allPosts.forEach((post, index) => {
+                            if (index < visiblePosts) {
+                                post.style.display = 'flex';
+                            }
+                        });
+
+                        // Set .tenth-place display to block
+                        if (tenthPlace) {
+                            tenthPlace.style.display = 'block';
                         }
-                    });
 
-                    if (visiblePosts >= allPosts.length) {
-                        loadMoreButton.innerText = 'MOSTRA MENO';
+                        if (visiblePosts >= allPosts.length) {
+                            loadMoreButton.innerText = 'MOSTRA MENO';
+                        }
+                    } else {
+                        // Collapse posts back to minMainPostsLimit
+                        visiblePosts = minMainPostsLimit;
+
+                        allPosts.forEach((post, index) => {
+                            post.style.display = index < visiblePosts ? 'flex' : 'none';
+                        });
+
+                        // Set .tenth-place display to none
+                        if (tenthPlace) {
+                            tenthPlace.style.display = 'none';
+                        }
+
+                        loadMoreButton.innerText = 'ALTRE NOTIZIE';
                     }
-                } else {
-                    // Collapse posts back to minMainPostsLimit
-                    visiblePosts = minMainPostsLimit;
+                });
+            }
+        });
+</script>
 
-                    allPosts.forEach((post, index) => {
-                        post.style.display = index < visiblePosts ? 'flex' : 'none';
-                    });
-
-                    loadMoreButton.innerText = 'ALTRE NOTIZIE';
-                }
-            });
-        }
-    });
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
