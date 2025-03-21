@@ -277,8 +277,9 @@
                     </div>
                     <div class="page-content">
                         <div class="post-group">
-                            <div class="post-group__header">
-                                <h3 class="post-group__title">CLASSIFICA SERIE A</h3>
+                            <div class="post-group__header" style="margin-bottom: 0 !important">
+                                <h3 class="post-group__title" style="margin-bottom: 0 !important">CLASSIFICA SERIE A
+                                </h3>
                             </div>
                         </div>
                     </div>
