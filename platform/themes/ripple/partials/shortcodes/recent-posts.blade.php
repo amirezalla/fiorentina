@@ -84,7 +84,7 @@
                                                         @php
                                                             $categoryName = $post->categories->count()
                                                                 ? strtoupper($post->categories->first()->name)
-                                                                : 'Notizie';
+                                                                : 'NOTIZIE';
                                                         @endphp
 
                                                         <span class=" mb-1">
