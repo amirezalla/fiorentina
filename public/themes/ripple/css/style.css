@@ -5602,3 +5602,7 @@ header>.container {
     padding: 0 !important;
     box-shadow: none !important;
 }
+
+.widget {
+    box-shadow: none !important;
+}
