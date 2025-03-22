@@ -66,7 +66,7 @@ class LoginController extends BaseController
 
     protected function attemptLogin(Request $request)
 {
-    $login = $request->login;
+    $login = $request->email;
 
     // Retrieve the member using either email or username
     $member1 = \Botble\Member\Models\Member::where('email', $login)
