@@ -39,8 +39,8 @@ class LoginForm extends AuthForm
             )
             ->add(
                 'email',
-                EmailField::class,
-                EmailFieldOption::make()
+                TextField::class,
+                TextFieldOption::make()
                     ->label(__('Email or username'))
                     ->placeholder(__('Indirizzo email o Nome utente'))
                     ->icon('ti ti-mail')
