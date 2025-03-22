@@ -66,6 +66,7 @@ class LoginController extends BaseController
 
     protected function attemptLogin(Request $request)
 {
+    dd('here');
     $login = $request->login;
 
     // Retrieve the member using either email or username
