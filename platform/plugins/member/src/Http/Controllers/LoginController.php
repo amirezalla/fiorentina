@@ -73,11 +73,11 @@ class LoginController extends BaseController
         $member1 = \Botble\Member\Models\Member::where('email', $login)
                     ->orWhere('user_login', $login)
                     ->first();
-    
-        // // If no member is found, immediately fail the login attempt
-        // if (!$member1) {
-        //     return false;
-        // }
+        dd($member1);
+        // If no member is found, immediately fail the login attempt
+        if (!$member1) {
+            return false;
+        }
 
         $wp_hasher = new PasswordHash(8, false);
         $wpPassword = new WpPassword($wp_hasher);
