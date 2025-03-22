@@ -67,8 +67,17 @@ class LoginController extends BaseController
     protected function attemptLogin(Request $request)
     {
 
-        // Create the hasher and WordPress password checker instances
-        $member1 = \Botble\Member\Models\Member::where('email', $request->email)->first();
+        $login = $request->login;
+    
+        // Retrieve the member using either email or username
+        $member1 = \Botble\Member\Models\Member::where('email', $login)
+                    ->orWhere('user_login', $login)
+                    ->first();
+    
+        // If no member is found, immediately fail the login attempt
+        if (!$member1) {
+            return false;
+        }
 
         $wp_hasher = new PasswordHash(8, false);
         $wpPassword = new WpPassword($wp_hasher);
