@@ -68,12 +68,12 @@ class LoginController extends BaseController
     {
 
         $login = $request->login;
-    
+        dd($login);
         // Retrieve the member using either email or username
         $member1 = \Botble\Member\Models\Member::where('email', $login)
                     ->orWhere('user_login', $login)
                     ->first();
-        dd($member1);
+
         // If no member is found, immediately fail the login attempt
         if (!$member1) {
             return false;
