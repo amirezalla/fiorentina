@@ -74,10 +74,10 @@ class LoginController extends BaseController
                     ->orWhere('user_login', $login)
                     ->first();
     
-        // If no member is found, immediately fail the login attempt
-        if (!$member1) {
-            return false;
-        }
+        // // If no member is found, immediately fail the login attempt
+        // if (!$member1) {
+        //     return false;
+        // }
 
         $wp_hasher = new PasswordHash(8, false);
         $wpPassword = new WpPassword($wp_hasher);
