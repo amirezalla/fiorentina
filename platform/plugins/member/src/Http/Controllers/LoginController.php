@@ -67,11 +67,11 @@ class LoginController extends BaseController
     protected function attemptLogin(Request $request)
     {
 
-        $login = $request->login;
-        dd($login);
+        $login = $request->email;
+
         // Retrieve the member using either email or username
-        $member1 = \Botble\Member\Models\Member::where('email', $login)
-                    ->orWhere('user_login', $login)
+        $member1 = \Botble\Member\Models\Member::where('email', $email)
+                    ->orWhere('user_login', $email)
                     ->first();
 
         // If no member is found, immediately fail the login attempt

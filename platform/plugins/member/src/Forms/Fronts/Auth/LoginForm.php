@@ -37,9 +37,9 @@ class LoginForm extends AuthForm
                 fn (AuthForm $form, string $background) => $form->banner($background)
             )
             ->add(
-                'login',
-                EmailField::class,
-                EmailFieldOption::make()
+                'email',
+                TextField::class,
+                TextFieldOption::make()
                     ->label(__('Email or username'))
                     ->placeholder(__('Indirizzo email o Nome utente'))
                     ->icon('ti ti-mail')
