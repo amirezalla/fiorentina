@@ -38,56 +38,58 @@ class WpImportController extends BaseController
     {
     }
     public function users()
-{
-    try {
-        // Fetch the user_login as 'Amirezalla' from the frntn_users table
-        $users = DB::connection('mysql2')
-            ->table('frntn_users')
-            ->get();
-
-        if (!$users) {
-            return response()->json(['message' => 'Users not found in frntn_users table.'], 404);
-        }
-
-        foreach ($users as $user) {
-            // Check if a user with the same email already exists in the `members` table
-            $existingMember = Member::where('email', $user->user_email)->first();
-            if ($existingMember) {
-                continue; // Skip this user if email already exists
+    {
+        try {
+            // Fetch all users from the frntn_users table on the mysql2 connection
+            $users = DB::connection('mysql2')
+                ->table('frntn_users')
+                ->get();
+    
+            if (!$users) {
+                return response()->json(['message' => 'Users not found in frntn_users table.'], 404);
             }
-
-            // Determine the confirmation timestamp
-            $confirmed_at = !$user->user_activation_key ? null : '2024-09-24 13:42:15';
-
-            // Import the user data into the Member model
-            $member = new Member();
-            $member->setRawAttributes([
-                'id' => $user->ID,
-                'first_name' => $user->user_nicename, // Assuming `user_nicename` is the first name
-                'last_name' => '',                   // No last name field in the source table
-                'email' => $user->user_email,
-                'password' => $user->user_pass,      // Use raw WordPress-hashed password
-                'avatar_id' => null,                 // Set null or default value
-                'confirmed_at' => $confirmed_at,
-                'dob' => null,                       // Set null or default value
-                'phone' => null,                     // Set null or default value
-                'description' => null,               // Set null or default value
-                'gender' => null,                    // Set null or default value
-            ]);
-
-            $member->save();
+    
+            foreach ($users as $user) {
+                // Check if a user with the same email already exists in the `members` table
+                $existingMember = Member::where('email', $user->user_email)->first();
+                if ($existingMember) {
+                    continue; // Skip this user if email already exists
+                }
+    
+                // Determine the confirmation timestamp
+                $confirmed_at = !$user->user_activation_key ? null : '2024-09-24 13:42:15';
+    
+                // Import the user data into the Member model, including user_login
+                $member = new Member();
+                $member->setRawAttributes([
+                    'id'           => $user->ID,
+                    'user_login'   => $user->user_login,       // Importing the user_login
+                    'first_name'   => $user->user_nicename,      // Assuming user_nicename is the first name
+                    'last_name'    => '',                      // No last name field in the source table
+                    'email'        => $user->user_email,
+                    'password'     => $user->user_pass,          // Use raw WordPress-hashed password
+                    'avatar_id'    => null,                    // Set null or default value
+                    'confirmed_at' => $confirmed_at,
+                    'dob'          => null,                    // Set null or default value
+                    'phone'        => null,                    // Set null or default value
+                    'description'  => null,                    // Set null or default value
+                    'gender'       => null,                    // Set null or default value
+                ]);
+    
+                $member->save();
+            }
+    
+            return response()->json([
+                'message' => 'Users imported successfully!',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error importing users.',
+                'error'   => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Users imported successfully!',
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error importing users.',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
+    
 
 public function importPostsWithoutMeta()
 {
