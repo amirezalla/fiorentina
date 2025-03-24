@@ -2,6 +2,28 @@
 @if (Theme::get('section-name'))
     {!! Theme::partial('breadcrumbs') !!}
 @endif
+
+
+@if (isset($isArticle) && $isArticle)
+    <div class="container mb-3">
+        <div class="row justify-content-center" style="padding: 0">
+            <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
+                <div class="col-12">
+                    @include('ads.includes.SIZE_468X60_TOP_SX')
+                </div>
+            </div>
+            <div class="d-none d-md-block col-6 mx-auto" style="padding: 0">
+                <div class="col-12">
+                    @include('ads.includes.SIZE_468X60_TOP_DX')
+                </div>
+            </div>
+            <div class="d-block d-md-none col-12 text-center">
+                @include('ads.includes.MOBILE_HOME_TOP_24')
+            </div>
+        </div>
+    </div>
+@endif
+
 <section class="section pt-50 pb-100">
     @if (Theme::get('has-ads-background'))
         {!! BaseHelper::clean(Theme::get('has-ads-background')) !!}
@@ -9,6 +31,7 @@
 
     <div class="container bg-white" style="margin-top: -66px;">
         <div class="row">
+
             <div class="col-lg-8">
                 <div class="page-content">
                     {!! Theme::content() !!}

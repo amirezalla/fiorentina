@@ -11,6 +11,9 @@
     if (!$comments) {
         WpImportController::importComment($post->id);
     }
+
+    $isArticle = true;
+
 @endphp
 <div class="d-block d-md-none col-12 text-center">
     @include('ads.includes.MOBILE_HOME_TOP_24')
