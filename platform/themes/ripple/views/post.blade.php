@@ -11,6 +11,9 @@
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
 
 @endphp
+<script>
+    console.log({{ $comments }});
+</script>
 <div class="container mb-3">
     <div class="row justify-content-center" style="padding: 0">
         <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
