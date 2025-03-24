@@ -4,7 +4,7 @@
 @endif
 
 
-@if (View::hasSection('isArticle'))
+@if (Theme::get('isArticle'))
     <div class="container mb-3">
         <div class="row justify-content-center" style="padding: 0">
             <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
