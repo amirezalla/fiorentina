@@ -4138,8 +4138,7 @@ body {
     position: relative;
     background-color: white;
     padding: 25px 14px;
-    width: calc(99%);
-    margin-left: 6px;
+
 }
 
 /* .upcoming-match::before {
