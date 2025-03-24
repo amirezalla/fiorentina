@@ -509,7 +509,7 @@
         if (loadMoreButton) {
             loadMoreButton.addEventListener('click', function() {
                 const allPosts = document.querySelectorAll('.post-item');
-                const tenthPlace = document.querySelector('.tenth-place');
+                //const tenthPlace = document.querySelector('.tenth-place');
 
                 if (loadMoreButton.innerText === 'ALTRE NOTIZIE') {
                     // Expand posts up to mainPostsLimit
@@ -522,9 +522,9 @@
                     });
 
                     // Set .tenth-place display to block
-                    if (tenthPlace) {
-                        tenthPlace.style.display = 'block';
-                    }
+                    //if (tenthPlace) {
+                    //    tenthPlace.style.display = 'block';
+                    //}
 
                     if (visiblePosts >= allPosts.length) {
                         loadMoreButton.innerText = 'MOSTRA MENO';
@@ -538,9 +538,9 @@
                     });
 
                     // Set .tenth-place display to none
-                    if (tenthPlace) {
-                        tenthPlace.style.display = 'none';
-                    }
+                    //if (tenthPlace) {
+                    //    tenthPlace.style.display = 'none';
+                    //}
 
                     loadMoreButton.innerText = 'ALTRE NOTIZIE';
                 }
