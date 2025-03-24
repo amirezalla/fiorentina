@@ -149,15 +149,14 @@ Route::get('/send-sample-email', function () {
     return 'Sample email sent!';
 });
 Route::get('/test-db2-connection', function () {
-    // Hard-coded connection info (not from .env)
-    $dbHost     = '35.187.41.56';
-    $dbPort     = 3306;
-    $dbDatabase = 'fiorentina';
-    $dbUsername = 'amir';
-    $dbPassword = 'Amir208079@';
+    $dbHost     = env('DB_HOST2', '127.0.0.1');
+    $dbPort     = env('DB_PORT2', 3306);
+    $dbDatabase = env('DB_DATABASE2', 'forge');
+    $dbUsername = env('DB_USERNAME2', 'forge');
+    $dbPassword = env('DB_PASSWORD2', '');
 
     try {
-        // Create a new PDO instance
+        // Create a new PDO instance using environment variables
         $dsn = "mysql:host={$dbHost};port={$dbPort};dbname={$dbDatabase}";
         $pdo = new \PDO($dsn, $dbUsername, $dbPassword);
 
