@@ -23,3 +23,10 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-x
 
 # Enable Apache modules
 RUN a2enmod rewrite ssl
+
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+RUN composer install --no-dev --optimize-autoloader
