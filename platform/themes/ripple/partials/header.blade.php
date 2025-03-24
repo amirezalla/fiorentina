@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html {!! Theme::htmlAttributes() !!} style="margin-right: -10px !important;">
+<html {!! Theme::htmlAttributes() !!}>
 
 <head>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
