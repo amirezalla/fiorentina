@@ -18,9 +18,6 @@
     Theme::set('isArticle', true);
 @endphp
 
-<div class="d-block d-md-none col-12 text-center">
-    @include('ads.includes.MOBILE_HOME_TOP_24')
-</div>
 <article class="post post--single">
     <header class="post__header" style="padding-top: 20px">
         @if ($post->first_category?->name)
