@@ -7,29 +7,13 @@
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
     $content = \App\Models\Ad::addAdsToContent($post->content);
-    WpImportController::importComment($post->id);
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
-
+    if (!$comments) {
+        WpImportController::importComment($post->id);
+    }
 @endphp
-<script>
-    console.log({{ $comments }});
-</script>
-<div class="container mb-3">
-    <div class="row justify-content-center" style="padding: 0">
-        <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
-            <div class="col-12">
-                @include('ads.includes.SIZE_468X60_TOP_SX')
-            </div>
-        </div>
-        <div class="d-none d-md-block col-6 mx-auto" style="padding: 0">
-            <div class="col-12">
-                @include('ads.includes.SIZE_468X60_TOP_DX')
-            </div>
-        </div>
-        <div class="d-block d-md-none col-12 text-center">
-            @include('ads.includes.MOBILE_HOME_TOP_24')
-        </div>
-    </div>
+<div class="d-block d-md-none col-12 text-center">
+    @include('ads.includes.MOBILE_HOME_TOP_24')
 </div>
 <article class="post post--single">
     <header class="post__header" style="padding-top: 20px">
