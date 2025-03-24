@@ -1,6 +1,6 @@
 @php
-    Theme::asset()->add('fob-comment-css', asset('vendor/core/plugins/fob-comment/css/comment.css'));
-    Theme::asset()->container('footer')->add('fob-comment-js', asset('vendor/core/plugins/fob-comment/js/comment.js'));
+    Theme::asset()->add('fob-comment-css', asset('/comment.css'));
+    Theme::asset()->container('footer')->add('fob-comment-js', asset('/comment.js'));
 
     Theme::registerToastNotification();
 

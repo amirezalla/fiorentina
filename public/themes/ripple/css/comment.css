@@ -1,0 +1,142 @@
+.fob-comment-title {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 1.5rem
+}
+
+.fob-comment-item-inner {
+    display: flex;
+    margin-bottom: 2.5rem
+}
+
+.fob-comment-item-avatar {
+    margin-inline-end: 20px
+}
+
+.fob-comment-item-avatar img {
+    border-radius: 50%;
+    width: 60px
+}
+
+.fob-comment-item-content {
+    width: 100%
+}
+
+.fob-comment-item-pending {
+    color: #5e5e5e;
+    display: block;
+    margin-bottom: .75em
+}
+
+.fob-comment-item-body p {
+    font-size: 16px;
+    margin-bottom: .75rem
+}
+
+.fob-comment-item-footer {
+    align-items: center;
+    display: flex;
+    justify-content: space-between
+}
+
+.fob-comment-item-author {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 0
+}
+
+.fob-comment-item-info {
+    align-items: center;
+    display: flex;
+    gap: .75rem
+}
+
+.fob-comment-item-admin-badge {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    color: #fff;
+    font-size: 12px;
+    padding: .2rem .5rem
+}
+
+.fob-comment-item-date {
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 0
+}
+
+.fob-comment-item-reply {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    color: #333;
+    padding: 5px 10px;
+    font-size: 12px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center
+}
+
+.fob-comment-item .fob-comment-list {
+    margin-inline-start: 2.5rem
+}
+
+.fob-comment-form-section {
+    margin: 3rem 0
+}
+
+.fob-comment-form-note {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 1.5rem
+}
+
+.fob-comment-form label.required:after {
+    color: red;
+    content: " *"
+}
+
+.cancel-comment-reply-link {
+    font-size: 14px;
+    margin-inline-start: 1rem;
+    text-decoration: underline
+}
+
+.cancel-comment-reply-link:hover {
+    text-decoration: none
+}
+
+.fob-comment-item-dislike-btn,
+.fob-comment-item-like-btn {
+    font-size: 12px;
+    text-decoration: none;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    gap: 4px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    color: #888;
+    padding: 5px 10px;
+    position: absolute;
+    bottom: 0;
+    -webkit-transform: translateY(50%);
+    -ms-transform: translateY(50%);
+    transform: translateY(50%)
+}
+
+.fob-comment-item .fob-comment-item-content .fob-comment-item-content-inside .fob-comment-item-body .fob-comment-item-reply {
+    left: 172px !important
+}
+
+.fob-comment-item-like-btn {
+    left: 42px
+}
+
+.fob-comment-item-dislike-btn {
+    left: 100px
+}
