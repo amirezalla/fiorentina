@@ -4138,6 +4138,8 @@ body {
     position: relative;
     background-color: white;
     padding: 25px 14px;
+    margin-left: 0px;
+    width: 100%;
 
 }
 
