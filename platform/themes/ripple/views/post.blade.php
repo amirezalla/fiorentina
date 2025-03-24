@@ -7,10 +7,9 @@
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
     $content = \App\Models\Ad::addAdsToContent($post->content);
+    WpImportController::importComment($post->id);
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
-    if (!$comments) {
-        WpImportController::importComment($post->id);
-    }
+
 @endphp
 <div class="d-block d-md-none col-12 text-center">
     @include('ads.includes.MOBILE_HOME_TOP_24')
