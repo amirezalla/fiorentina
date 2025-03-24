@@ -12,9 +12,9 @@
         WpImportController::importComment($post->id);
     }
 
-    $isArticle = true;
-
 @endphp
+@section('isArticle', true)
+
 <div class="d-block d-md-none col-12 text-center">
     @include('ads.includes.MOBILE_HOME_TOP_24')
 </div>
