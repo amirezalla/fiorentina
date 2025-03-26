@@ -125,7 +125,7 @@ class PostTable extends TableAbstract
                     ->choices(fn () => Category::query()->pluck('name', 'id')->all()),
                             // New Author filter
         SelectBulkChange::make()
-        ->name('author_name')
+        ->name('author_id')
         ->title(trans('plugins/blog::posts.author'))
         ->searchable()
         ->choices(fn () => User::query()->pluck('first_name', 'id')->all()),
