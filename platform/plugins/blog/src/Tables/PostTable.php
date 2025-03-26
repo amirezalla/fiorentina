@@ -46,23 +46,6 @@ class PostTable extends TableAbstract
                 EditAction::make()->route('posts.edit'),
                 DeleteAction::make()->route('posts.destroy'),
             ])
-            ->filters([
-                [
-                    'key'      => 'category',
-                    'type'     => 'select',
-                    'title'    => 'Categoria',
-                    'choices'  => Category::pluck('name', 'id')->all(),
-                    'validate' => 'numeric',
-                ],
-                [
-                    'key'      => 'author_id',
-                    'type'     => 'select',
-                    'title'    => 'Autore',
-                    // Use whatever field you want for display, e.g. "name" or "full_name"
-                    'choices'  => User::pluck('name', 'id')->all(),
-                    'validate' => 'numeric',
-                ],
-            ])
             ->addColumns([
                 IdColumn::make(),
                 ImageColumn::make(),

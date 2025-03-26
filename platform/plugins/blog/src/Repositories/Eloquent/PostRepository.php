@@ -260,7 +260,13 @@ class PostRepository extends RepositoriesAbstract implements PostInterface
         if ($filters['search'] !== null) {
             $data = $this->search($data, $filters['search']);
         }
-
+    // NEW: Filter by author name
+    if (!empty($filters['author_name'])) {
+        $authorName = $filters['author_name'];
+        $data = $data->whereHas('author', function (Builder $query) use ($authorName) {
+            $query->where('name', 'like', '%' . $authorName . '%');
+        });
+    }
         $orderBy = Arr::get($filters, 'order_by', 'updated_at');
         $order = Arr::get($filters, 'order', 'desc');
 
