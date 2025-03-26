@@ -121,7 +121,7 @@ class CommentTable extends TableAbstract
         if ($postName = request()->input('post_name')) {
             $query->whereHas('reference', function ($q) use ($postName) {
                 // If your post column is "title", change this accordingly
-                $q->where('title', 'LIKE', '%' . $postName . '%');
+                $q->where('name', 'LIKE', '%' . $postName . '%');
             });
         }
     
