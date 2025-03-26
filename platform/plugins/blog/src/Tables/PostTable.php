@@ -94,7 +94,8 @@ class PostTable extends TableAbstract
                     ->width(80)
                     ->orderable(false)
                     ->searchable(false)
-                    ->renderUsing(function ($post) {
+                    ->renderUsing(function (FormattedColumn $column) {
+                        $post = $column->getItem();
                     // Count the comments for this post, filtering by reference_type as well
                     $count = Comment::where('reference_id', $post->id)
                         ->where('reference_type', \Botble\Blog\Models\Post::class)
