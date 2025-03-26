@@ -3,6 +3,7 @@
     @foreach (DashboardMenu::getAll() as $menu)
         @if (
             $menu['id'] == 'cms-core-plugins' ||
+                $menu['id'] == 'cms-core-system' ||
                 $menu['id'] == 'cms-plugins-custom-field' ||
                 $menu['id'] == 'cms-plugins-block' ||
                 $menu['id'] == 'cms-plugins-gallery')
