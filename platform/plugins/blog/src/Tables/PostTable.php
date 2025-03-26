@@ -50,30 +50,21 @@ class PostTable extends TableAbstract
                 IdColumn::make(),
                 ImageColumn::make(),
                 NameColumn::make()->route('posts.edit'),
-                FormattedColumn::make('comments')
-                    ->title('Comments')
-                    ->width(80)
-                    ->orderable(false)
-                    ->searchable(false)
-                    ->renderUsing(function ($post) {
-                        // Count the comments for this post (you might adjust this if you have a relationship)
-                        $count = Comment::where('reference_id', $post->id)->count();
-                        // Build the URL to the comments page filtered by post name
-                        $url = url('admin/comments?post_name=' . urlencode($post->name));
-                        // Return an HTML badge with a comment icon and the count, wrapped in a link
-                        return '<a href="' . $url . '" class="badge badge-primary">
-                                    <i class="fa fa-comment"></i> ' . $count . '
-                                </a>';
-                    }),
                 FormattedColumn::make('categories_name')
                     ->title(trans('plugins/blog::posts.categories'))
                     ->width(150)
                     ->orderable(false)
                     ->searchable(false)
                     ->getValueUsing(function (FormattedColumn $column) {
-                        $categories = $column->getItem()->categories->sortBy('name')->map(function (Category $category) {
-                            return Html::link(route('categories.edit', $category->getKey()), $category->name, ['target' => '_blank']);
-                        })->all();
+                        $categories = $column
+                            ->getItem()
+                            ->categories
+                            ->sortBy('name')
+                            ->map(function (Category $category) {
+                                return Html::link(route('categories.edit', $category->getKey()), $category->name, ['target' => '_blank']);
+                            })
+                            ->all();
+
                         return implode(', ', $categories);
                     })
                     ->withEmptyState(),
@@ -86,18 +77,37 @@ class PostTable extends TableAbstract
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
                         $author = $post->author;
+
                         if (! $author->getKey()) {
                             return null;
                         }
+
                         if ($post->author_id && $post->author_type === User::class) {
                             return Html::link($author->url, $author->name, ['target' => '_blank']);
                         }
+
                         return null;
                     })
                     ->withEmptyState(),
+                    FormattedColumn::make('comments')
+                    ->title('Comments')
+                    ->width(80)
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->renderUsing(function ($post) {
+                        // Count the comments for this post
+                        $count = \FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->count();
+                        // Build the URL to the comments page with the post name filter
+                        $url = url('admin/comments?post_name=' . urlencode($post->name));
+                        // Return a badge with an icon and count, wrapped in a link
+                        return '<a href="' . $url . '" class="badge badge-primary">
+                                    <i class="fa fa-comment"></i> ' . $count . '
+                                </a>';
+                    }),
                 CreatedAtColumn::make(),
                 StatusColumn::make(),
             ])
+
             ->addBulkActions([
                 DeleteBulkAction::make()->permission('posts.destroy'),
             ])
