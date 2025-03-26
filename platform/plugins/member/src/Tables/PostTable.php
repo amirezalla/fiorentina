@@ -113,7 +113,7 @@ class PostTable extends TableAbstract
                 ->choices(fn () => Category::query()->pluck('name', 'id')->all()),
         // New Author filter
         SelectBulkChange::make()
-            ->name('author')
+            ->name('author_name')
             ->title(trans('plugins/blog::posts.author'))
             ->searchable()
             ->choices(fn () => \Botble\ACL\Models\User::query()->pluck('name', 'id')->all()),
