@@ -95,14 +95,16 @@ class PostTable extends TableAbstract
                     ->orderable(false)
                     ->searchable(false)
                     ->renderUsing(function ($post) {
-                        // Count the comments for this post
-                        $count = \FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->count();
-                        // Build the URL to the comments page with the post name filter
-                        $url = url('admin/comments?post_name=' . urlencode($post->name));
-                        // Return a badge with an icon and count, wrapped in a link
-                        return '<a href="' . $url . '" class="badge badge-primary">
-                                    <i class="fa fa-comment"></i> ' . $count . '
-                                </a>';
+                    // Count the comments for this post, filtering by reference_type as well
+                    $count = Comment::where('reference_id', $post->id)
+                        ->where('reference_type', \Botble\Blog\Models\Post::class)
+                        ->count();
+                    // Build the URL with the actual post name as the query parameter
+                    $url = url('admin/comments?post_name=' . urlencode($post->name));
+                    // Return a badge with a comment icon and the count, wrapped in a link
+                    return '<a href="' . $url . '" class="badge badge-primary">
+                                <i class="fa fa-comment"></i> ' . $count . '
+                            </a>';
                     }),
                 CreatedAtColumn::make(),
                 StatusColumn::make(),
