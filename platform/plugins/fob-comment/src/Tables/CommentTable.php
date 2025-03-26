@@ -110,13 +110,26 @@ class CommentTable extends TableAbstract
     }
 
     public function query()
-{
-    $query = parent::query();
-
-    if (request()->get('onlyTrashed')) {
-        $query->onlyTrashed();
+    {
+        // Call the parent to get the base query
+        $query = parent::query();
+    
+        // Eager-load the reference relationship (important for filtering by post)
+        $query->with('reference');
+    
+        // If you have a GET param "post_name", filter by the Post title
+        if ($postName = request()->input('post_name')) {
+            $query->whereHas('reference', function ($q) use ($postName) {
+                // If your post column is "title", change this accordingly
+                $q->where('title', 'LIKE', '%' . $postName . '%');
+            });
+        }
+    
+        // Preserve your "onlyTrashed" filter
+        if (request()->get('onlyTrashed')) {
+            $query->onlyTrashed();
+        }
+    
+        return $query;
     }
-
-    return $query;
-}
 }
