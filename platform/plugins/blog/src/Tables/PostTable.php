@@ -46,6 +46,23 @@ class PostTable extends TableAbstract
                 EditAction::make()->route('posts.edit'),
                 DeleteAction::make()->route('posts.destroy'),
             ])
+            ->filters([
+                [
+                    'key'      => 'category',
+                    'type'     => 'select',
+                    'title'    => 'Categoria',
+                    'choices'  => Category::pluck('name', 'id')->all(),
+                    'validate' => 'numeric',
+                ],
+                [
+                    'key'      => 'author_id',
+                    'type'     => 'select',
+                    'title'    => 'Autore',
+                    // Use whatever field you want for display, e.g. "name" or "full_name"
+                    'choices'  => User::pluck('name', 'id')->all(),
+                    'validate' => 'numeric',
+                ],
+            ])
             ->addColumns([
                 IdColumn::make(),
                 ImageColumn::make(),
@@ -185,6 +202,14 @@ class PostTable extends TableAbstract
                         'categories',
                         fn (BaseQueryBuilder $query) => $query->where('categories.id', $value)
                     );
+                    // 2) Handle the new "author_id" filter
+                if ($key === 'author_id') {
+                    // Filter posts whose author_id = $value, and author_type = User::class
+                    return $query->where('author_id', $value)
+                                 ->where('author_type', User::class);
+                }
+
+                return false;
                 }
             )
             ->onSavingBulkChangeItem(function (Post $item, string $inputKey, ?string $inputValue) {
