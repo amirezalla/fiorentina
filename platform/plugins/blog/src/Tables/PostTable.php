@@ -123,6 +123,12 @@ class PostTable extends TableAbstract
                     ->title(trans('plugins/blog::posts.category'))
                     ->searchable()
                     ->choices(fn () => Category::query()->pluck('name', 'id')->all()),
+                            // New Author filter
+        SelectBulkChange::make()
+        ->name('author_name')
+        ->title(trans('plugins/blog::posts.author'))
+        ->searchable()
+        ->choices(fn () => \Botble\ACL\Models\User::query()->pluck('name', 'id')->all()),
             ])
             ->queryUsing(function (Builder $query) {
                 return $query
