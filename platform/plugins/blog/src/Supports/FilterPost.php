@@ -29,6 +29,7 @@ class FilterPost
             'categories_exclude' => $request['categories_exclude'] ?? null,
             'tags' => $request['tags'] ?? null,
             'tags_exclude' => $request['tags_exclude'] ?? null,
+            'author_name'=> $request['author_name'] ?? null,
             'featured' => $request['featured'] ?? null,
         ];
     }
