@@ -128,7 +128,7 @@ class PostTable extends TableAbstract
         ->name('author_name')
         ->title(trans('plugins/blog::posts.author'))
         ->searchable()
-        ->choices(fn () => \Botble\ACL\Models\User::query()->pluck('name', 'id')->all()),
+        ->choices(fn () => User::query()->pluck('first_name', 'id')->all()),
             ])
             ->queryUsing(function (Builder $query) {
                 return $query
