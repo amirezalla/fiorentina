@@ -28,6 +28,8 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use FriendsOfBotble\Comment\Models\Comment;
+
 
 class PostTable extends TableAbstract
 {
@@ -84,6 +86,58 @@ class PostTable extends TableAbstract
                             return Html::link($author->url, $author->name, ['target' => '_blank']);
                         }
 
+                        return null;
+                    })
+                    ->withEmptyState(),
+                CreatedAtColumn::make(),
+                StatusColumn::make(),
+            ])
+            ->addColumns([
+                IdColumn::make(),
+                ImageColumn::make(),
+                NameColumn::make()->route('posts.edit'),
+                FormattedColumn::make('comments')
+                    ->title('Comments')
+                    ->width(80)
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->renderUsing(function ($post) {
+                        // Count the comments for this post (you might adjust this if you have a relationship)
+                        $count = Comment::where('reference_id', $post->id)->count();
+                        // Build the URL to the comments page filtered by post name
+                        $url = url('admin/comments?post_name=' . urlencode($post->name));
+                        // Return an HTML badge with a comment icon and the count, wrapped in a link
+                        return '<a href="' . $url . '" class="badge badge-primary">
+                                    <i class="fa fa-comment"></i> ' . $count . '
+                                </a>';
+                    }),
+                FormattedColumn::make('categories_name')
+                    ->title(trans('plugins/blog::posts.categories'))
+                    ->width(150)
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->getValueUsing(function (FormattedColumn $column) {
+                        $categories = $column->getItem()->categories->sortBy('name')->map(function (Category $category) {
+                            return Html::link(route('categories.edit', $category->getKey()), $category->name, ['target' => '_blank']);
+                        })->all();
+                        return implode(', ', $categories);
+                    })
+                    ->withEmptyState(),
+                FormattedColumn::make('author_id')
+                    ->title(trans('plugins/blog::posts.author'))
+                    ->width(150)
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->getValueUsing(fn (FormattedColumn $column) => $column->getItem()->author?->name)
+                    ->renderUsing(function (FormattedColumn $column) {
+                        $post = $column->getItem();
+                        $author = $post->author;
+                        if (! $author->getKey()) {
+                            return null;
+                        }
+                        if ($post->author_id && $post->author_type === User::class) {
+                            return Html::link($author->url, $author->name, ['target' => '_blank']);
+                        }
                         return null;
                     })
                     ->withEmptyState(),
