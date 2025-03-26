@@ -102,6 +102,7 @@ class PostTable extends TableAbstract
 
     public function getFilters(): array
     {
+        dd('test');
         return [
             NameBulkChange::make(),
             StatusBulkChange::make(),
