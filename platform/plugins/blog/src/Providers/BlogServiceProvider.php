@@ -98,15 +98,22 @@ class BlogServiceProvider extends ServiceProvider
                     'route' => 'posts.index',
                 ])
                 ->registerItem([
+                    'id'          => 'cms-plugins-blog-bozza', // Unique ID for this menu item
+                    'priority'    => 2, // Adjust this number to position it among the Blog children (e.g. posts, categories, tags)
+                    'parent_id'   => 'cms-plugins-blog', // Use the parent menu ID for Blog – adjust if your Blog menu has a different ID
+                    'name'        => 'Bozza',
+                    'url'         => url('/admin/blog/posts?filter_table_id=botble-blog-tables-post-table&class=Botble%5CBlog%5CTables%5CPostTable&filter_columns%5B0%5D=status&filter_operators%5B0%5D=%3D&filter_values%5B0%5D=draft'), // Create a route for your "bozza" page
+                ])
+                ->registerItem([
                     'id' => 'cms-plugins-blog-categories',
-                    'priority' => 2,
+                    'priority' => 3,
                     'parent_id' => 'cms-plugins-blog',
                     'name' => 'plugins/blog::categories.menu_name',
                     'route' => 'categories.index',
                 ])
                 ->registerItem([
                     'id' => 'cms-plugins-blog-tags',
-                    'priority' => 3,
+                    'priority' => 4,
                     'parent_id' => 'cms-plugins-blog',
                     'name' => 'plugins/blog::tags.menu_name',
                     'route' => 'tags.index',
