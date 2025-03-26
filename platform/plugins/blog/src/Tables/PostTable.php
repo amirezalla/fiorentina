@@ -103,7 +103,7 @@ class PostTable extends TableAbstract
                     // Build the URL with the actual post name as the query parameter
                     $url = url('admin/comments?post_name=' . urlencode($post->name));
                     // Return a badge with a comment icon and the count, wrapped in a link
-                    return '<a href="' . $url . '" class="badge badge-primary text-dark">
+                    return '<a href="' . $url . '" class="badge badge-primary text-primary">
                                 <i class="fa fa-comment"></i> ' . $count . '
                             </a>';
                     }),
