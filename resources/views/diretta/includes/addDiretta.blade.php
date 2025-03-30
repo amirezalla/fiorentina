@@ -2,7 +2,7 @@
     use App\Models\MatchCommentary;
 
     $uniqueCommentClasses = MatchCommentary::select('comment_class')->distinct()->pluck('comment_class');
-
+    dd($commentaries[0]);
 @endphp
 @if (session('success'))
     <div class="alert alert-success">
