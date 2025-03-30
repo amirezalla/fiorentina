@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Session;
 use Botble\Base\Supports\Breadcrumb;
 
 use Botble\Base\Http\Controllers\BaseController;
+use App\Jobs\StoreCommentaryJob;
+use Illuminate\Support\Facades\Queue;
 
 // sportmonks B0lZqWEdqBzEPrLW5gDcm87Svgb5bnEEa807fd7kOiONHbcbetXywqPQafqC
 
@@ -71,6 +73,8 @@ class DirettaController extends BaseController
             'is_bold' => $request->has('is_bold'),
             'is_important' => $request->has('is_important'),
         ]);
+        Queue::push(new StoreCommentaryJob($commentaryData));
+
     
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Commentary added successfully.');
