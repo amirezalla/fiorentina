@@ -7,6 +7,8 @@ use App\Models\Calendario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use App\Jobs\StoreCommentaryJob;
+use Illuminate\Support\Facades\Queue;
 
 class MatchCommentaryController extends Controller
 {
@@ -70,6 +72,8 @@ $this->storeCommentaries($matchId);
                         'is_bold' => $comment['COMMENT_IS_BOLD'] ?? NULL,'is_important' => $comment['COMMENT_IS_IMPORTANT'] ?? 0,
                     ]
                 );
+                $commentaryData = $newItem->toArray(); 
+                Queue::push(new StoreCommentaryJob($commentaryData));
             
         }
 

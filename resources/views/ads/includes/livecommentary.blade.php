@@ -2,16 +2,15 @@
     use App\Http\Controllers\MatchCommentaryController;
 @endphp
 
-<div class="container mt-3" id="commentary-container">
-
-</div>
+<!-- resources/views/match-commentary.blade.php or similar -->
+<div class="container mt-3" id="commentary-container"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var matchId = "{{ $matchId }}"; // Pass the match ID from the Blade
-        var interval = 100000; // 15 seconds
+        var matchId = "{{ $matchId }}"; // from Blade
+        var interval = 15000; // 15s, if you still want fallback polling (optional)
 
-        // Function to fetch latest commentaries
+        // Function to fetch latest commentaries via Laravel
         function fetchCommentaries() {
             fetch('/match/' + matchId + '/commentaries')
                 .then(response => response.json())
@@ -30,20 +29,60 @@
 
             commentaries.forEach(function(comment) {
                 var commentRow = `
-                    <div class="commentary-row ${comment.comment_class} ${comment.is_important ? 'important' : ''} ${comment.is_bold ? 'comment-is-bold' : ''}">
+                    <div class="commentary-row ${comment.comment_class} 
+                         ${comment.is_important ? 'important' : ''} 
+                         ${comment.is_bold ? 'comment-is-bold' : ''}">
                         <div class="comment-time">${comment.comment_time || ''}</div>
                         <div class="comment-icon"></div>
-                        <div class="comment-text ${comment.is_bold ? 'comment-bold' : ''}">${comment.comment_text || ''}</div>
+                        <div class="comment-text ${comment.is_bold ? 'comment-bold' : ''}">
+                            ${comment.comment_text || ''}
+                        </div>
                     </div>
                 `;
                 container.innerHTML += commentRow;
             });
         }
 
-        // Initial fetch
+        // -----------------------
+        // 1) Initial fetch
+        // -----------------------
         fetchCommentaries();
 
-        // Periodically fetch new commentaries every 15 seconds
+        // -----------------------
+        // 2) OPTIONAL Polling
+        // -----------------------
+        // If you rely on WebSocket, you can remove or reduce this
         setInterval(fetchCommentaries, interval);
+
+        // -----------------------
+        // 3) Setup WebSocket
+        // -----------------------
+        const wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
+        const ws = new WebSocket(wsUrl);
+
+        ws.onopen = function() {
+            console.log("WebSocket connection for commentary established.");
+            // Instruct server to watch the Wasabi file for commentary
+            // e.g. "commentary/commentary_12345.json"
+            const subscriptionMessage = JSON.stringify({
+                filePath: `commentary/commentary_${matchId}.json`
+            });
+            ws.send(subscriptionMessage);
+        };
+
+        ws.onmessage = function(event) {
+            console.log("WebSocket commentary update received:", event.data);
+
+            // Since the file changed in Wasabi, let's fetch from our Laravel endpoint
+            fetchCommentaries();
+        };
+
+        ws.onerror = function(error) {
+            console.error("WebSocket error (commentary):", error);
+        };
+
+        ws.onclose = function() {
+            console.log("WebSocket closed (commentary).");
+        };
     });
 </script>
