@@ -83,7 +83,7 @@
         setInterval(() => {
 
             fetch(`/match/${matchId}/sync-all-commentaries`, {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}', // if needed
                         'Accept': 'application/json',
