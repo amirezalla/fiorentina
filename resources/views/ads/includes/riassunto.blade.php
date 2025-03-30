@@ -150,7 +150,7 @@
             ws.onmessage = (event) => {
                 console.log("Summary file changed:", event.data);
                 // Re-fetch the summary from the server
-                fetchSummary();
+                fetchSummaryHtml();
             };
 
             ws.onerror = (error) => {
