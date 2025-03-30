@@ -45,7 +45,7 @@ public static function storeCommentariesAndRegenerateJson($matchId)
 {
     // 1) Fetch from external API
     // Adjust your API key and endpoint as necessary
-    $apiKey = 'YOUR_RAPIDAPI_KEY';
+    $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
     $url = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary?locale=it_IT&event_id={$matchId}";
 
     $response = Http::withHeaders([
@@ -149,7 +149,7 @@ public static function storeCommentaries($matchId)
     $match = Calendario::where('match_id', $matchId)->first();
 
     // 2) Call the external API
-    $apiKey = 'YOUR_RAPIDAPI_KEY'; // example only
+    $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb'; // example only
     $url = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary?locale=it_IT&event_id={$matchId}";
 
     $response = Http::withHeaders([
