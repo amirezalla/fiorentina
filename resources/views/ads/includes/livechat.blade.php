@@ -301,33 +301,38 @@
         fetchMessages();
 
 
+        function createWebSocket() {
+            ws.onopen = function() {
+                console.log("WebSocket connection established.");
 
-        ws.onopen = function() {
-            console.log("WebSocket connection established.");
+                // Send the filePath message to instruct the server which file to check
+                const subscriptionMessage = JSON.stringify({
+                    filePath: `chat/messages_${matchId}.json`
+                });
+                ws.send(subscriptionMessage);
+            };
 
-            // Send the filePath message to instruct the server which file to check
-            const subscriptionMessage = JSON.stringify({
-                filePath: `chat/messages_${matchId}.json`
-            });
-            ws.send(subscriptionMessage);
-        };
+            ws.onmessage = function(event) {
+                console.log("WebSocket message received: ", event.data);
+                // When a message is received from the WebSocket server (indicating a change),
+                // fetch the latest messages from your server.
+                fetchMessages();
+            };
 
-        ws.onmessage = function(event) {
-            console.log("WebSocket message received: ", event.data);
-            // When a message is received from the WebSocket server (indicating a change),
-            // fetch the latest messages from your server.
-            fetchMessages();
-        };
+            ws.onerror = function(error) {
+                console.error("WebSocket error: ", error);
+            };
 
-        ws.onerror = function(error) {
-            console.error("WebSocket error: ", error);
-        };
+            ws.onclose = function() {
+                console.log("WebSocket closed (commentary). Reconnecting in 5 seconds...");
+                // Attempt to reconnect after 5 seconds
+                setTimeout(createWebSocket, 5000);
+            };
+        }
 
-        ws.onclose = function() {
-            console.log("WebSocket connection closed.");
-        };
-
-        // Remove polling, since WebSocket now handles updates
-        // setInterval(fetchMessages, 2500);
     };
+
+    // Remove polling, since WebSocket now handles updates
+    // setInterval(fetchMessages, 2500);
+    createWebSocket(); // Start the WebSocket connection
 </script>

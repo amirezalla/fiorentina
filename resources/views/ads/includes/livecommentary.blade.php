@@ -79,7 +79,6 @@
         fetchCommentaries(); // Initial data load
         createWebSocket(); // Create WebSocket and auto-reconnect on close
 
-        // Optional: fallback polling (every 15s) if you want extra safety
         setInterval(() => {
 
             fetch(`/match/${matchId}/sync-all-commentaries`)
