@@ -111,23 +111,10 @@ public static function storeCommentariesAndRegenerateJson($matchId)
     // 4) (Optional) Sort them by comment_time if you want chronological order
     //    replicating your SQL logic. For example:
     usort($finalCommentaries, function($a, $b) {
-        return getCommentTimeValue($a['comment_time'] ?? '')
-             <=> getCommentTimeValue($b['comment_time'] ?? '');
+        return self::getCommentTimeValue($a['comment_time'] ?? '')
+        <=> self::getCommentTimeValue($b['comment_time'] ?? '');
     });
 
-    // This helper replicates your DB's "CAST(SUBSTRING_INDEX(...))" approach
-    function getCommentTimeValue($commentTime) {
-        if (empty($commentTime)) {
-            return 0;
-        }
-        // remove trailing apostrophes, e.g. 45+2'
-        $clean = rtrim($commentTime, "'");
-        if (strpos($clean, '+') !== false) {
-            [$main, $extra] = explode('+', $clean);
-            return (int)$main + (int)$extra;
-        }
-        return (int)$clean;
-    }
 
     // 5) Overwrite JSON in Wasabi (so your front end sees the updated commentary)
     $filePath = "commentary/commentary_{$matchId}.json";
@@ -140,6 +127,20 @@ public static function storeCommentariesAndRegenerateJson($matchId)
         'message' => 'Commentaries merged and JSON regenerated successfully',
         'count_final' => count($finalCommentaries),
     ]);
+}
+
+private static function getCommentTimeValue($commentTime)
+{
+    if (empty($commentTime)) {
+        return 0;
+    }
+    // Remove trailing apostrophe, e.g. 45+2'
+    $clean = rtrim($commentTime, "'");
+    if (strpos($clean, '+') !== false) {
+        [$main, $extra] = explode('+', $clean);
+        return (int) $main + (int) $extra;
+    }
+    return (int) $clean;
 }
 
 
