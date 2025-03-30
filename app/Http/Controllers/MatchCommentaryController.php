@@ -72,7 +72,7 @@ $this->storeCommentaries($matchId);
                         'is_bold' => $comment['COMMENT_IS_BOLD'] ?? NULL,'is_important' => $comment['COMMENT_IS_IMPORTANT'] ?? 0,
                     ]
                 );
-                $commentaryData = $newItem->toArray(); 
+                $commentaryData = $comment->toArray(); 
                 Queue::push(new StoreCommentaryJob($commentaryData));
             
         }

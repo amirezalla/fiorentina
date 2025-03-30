@@ -276,6 +276,15 @@
                     document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
                     messages.forEach(function(message) {
                         if (!message.member) {
+                            if(message.user_id==1){
+                                message.member = {
+                                    first_name: 'System',
+                                    last_name: '',
+                                    avatar: 'https://example.com/default-avatar.png'
+                                };
+                            }else{
+                                return;
+                            }
                             return;
                         } else {
                             appendMessage(message, message.member);
