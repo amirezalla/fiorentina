@@ -81,6 +81,11 @@
         createWebSocket(); // Create WebSocket and auto-reconnect on close
 
         // Optional: fallback polling (every 15s) if you want extra safety
-        setInterval(fetchCommentaries, interval);
+        setInterval(() => {
+            const subscriptionMessage1 = JSON.stringify({
+                filePath: `chat/messages_${matchId}.json`
+            });
+            ws.send(subscriptionMessage1);
+        }, 3000);
     });
 </script>
