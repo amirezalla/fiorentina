@@ -134,14 +134,23 @@ private static function getCommentTimeValue($commentTime)
     if (empty($commentTime)) {
         return 0;
     }
-    // Remove trailing apostrophe, e.g. 45+2'
+
+    // Remove trailing apostrophes, e.g. "45+3'"
     $clean = rtrim($commentTime, "'");
+
+    // If there's a plus sign, parse main minute and extra
     if (strpos($clean, '+') !== false) {
         [$main, $extra] = explode('+', $clean);
-        return (int) $main + (int) $extra;
+        $mainVal  = (int) $main;
+        $extraVal = (int) $extra;
+        // e.g. 45+3 => 45.003, 90+2 => 90.002
+        return $mainVal + ($extraVal / 1000);
     }
+
+    // Otherwise just convert to int (e.g. "46'" => 46)
     return (int) $clean;
 }
+
 
 
 public static function storeCommentaries($matchId)
