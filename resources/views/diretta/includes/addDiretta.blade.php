@@ -2,7 +2,6 @@
     use App\Models\MatchCommentary;
 
     $uniqueCommentClasses = MatchCommentary::select('comment_class')->distinct()->pluck('comment_class');
-    dd($commentaries[0]);
 @endphp
 @if (session('success'))
     <div class="alert alert-success">
@@ -38,7 +37,7 @@
             </select>
         </div>
     </div>
-    <input type="hidden" name="match_id" value="{{ $commentaries[0]->match_id }}">
+    <input type="hidden" name="match_id" value="{{ $commentaries[0]['match_id'] }}">
 
     <!-- Comment Text Area -->
     <div class="mb-3">
