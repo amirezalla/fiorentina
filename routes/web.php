@@ -37,6 +37,8 @@ use App\Http\Controllers\AssetController;
 
 
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
+Route::post('/match/{matchId}/store-commentaries', [MatchCommentaryController::class, 'storeCommentariesEndpoint'])
+    ->name('match.storeCommentaries');
 
 Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
 Route::get('/admin/ads/create', [AdController::class, 'create'])->name('ads.create');

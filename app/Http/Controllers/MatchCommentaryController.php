@@ -38,6 +38,18 @@ $this->storeCommentaries($matchId);
     return response()->json($commentaries);
 }
 
+public function storeCommentariesEndpoint($matchId)
+{
+    // 1) Call your existing static function or logic
+    //    that fetches new commentary from the external API,
+    //    saves to DB, updates Wasabi, etc.
+    //    For example:
+    self::storeCommentaries($matchId);
+
+    // 2) Return a JSON response or whatever you prefer
+    return response()->json(['status' => 'ok']);
+}
+
     public static function storeCommentaries($matchId)
 {
     // Fetch match commentary count from the database

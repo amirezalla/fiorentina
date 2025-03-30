@@ -7,7 +7,6 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var matchId = "{{ $matchId }}"; // from Blade
-        var interval = 15000; // fallback polling in ms (optional)
         var wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
 
         // ---------------------------------------
@@ -82,6 +81,26 @@
 
         // Optional: fallback polling (every 15s) if you want extra safety
         setInterval(() => {
+
+            fetch(`/match/${matchId}/store-commentaries`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // if needed
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('storeCommentaries triggered:', data);
+                })
+                .catch(error => {
+                    console.error('Error calling storeCommentaries:', error);
+                });
+
+
+
+
             const subscriptionMessage1 = JSON.stringify({
                 filePath: `chat/messages_${matchId}.json`
             });
