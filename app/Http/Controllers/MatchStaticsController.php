@@ -56,7 +56,8 @@ class MatchStaticsController extends Controller
      * Re-fetch or refresh logic, then rewrite stats JSON in Wasabi
      */
     public function refreshStats($matchId)
-    {
+    {    MatchStatics::where('match_id', $matchId)->delete();
+
         // Option A: Just call storeMatchStatistics each time 
         //           (which might re-fetch from API or skip if $match isn't found)
         self::storeMatchStatistics($matchId);
