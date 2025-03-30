@@ -64,7 +64,8 @@
                     <div class="d-grid text-center">
                         @if ($match->status == 'LIVE')
                             <a href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}"
-                                class="btn-sm btn-primary mb-2 fiorentina-btn text-white" style="grid-area: auto;">Vai
+                                class="btn-sm btn-primary mb-2 btn-comment-submit text-white"
+                                style="grid-area: auto;">Vai
                                 alla
                                 diretta!</a>
                         @else
