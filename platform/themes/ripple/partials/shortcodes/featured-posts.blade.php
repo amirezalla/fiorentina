@@ -62,7 +62,7 @@
                 <!-- Ticket Buttons -->
                 <div class="col-md-3">
                     <div class="d-grid text-center">
-                        @if ($match->status == 'live')
+                        @if ($match->status == 'LIVE')
                             <a href="https://laviola.collaudo.biz/diretta?match_id={{ $match->match_id }}"
                                 class="btn-sm btn-primary mb-2 fiorentina-btn text-white" style="grid-area: auto;">Vai
                                 alla
