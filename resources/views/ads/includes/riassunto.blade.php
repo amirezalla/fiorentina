@@ -149,8 +149,6 @@
 
             ws.onmessage = (event) => {
                 console.log("Summary file changed:", event.data);
-                // Re-fetch the summary from the server
-                fetchSummaryHtml();
             };
 
             ws.onerror = (error) => {
@@ -194,13 +192,13 @@
                 .catch(error => {
                     console.error('Error calling refresh-summary:', error);
                 });
-
+            fetchSummaryHtml();
             // 4B) Re-subscribe to chat/messages_{matchId}.json (if you want)
             const subscriptionMessage1 = JSON.stringify({
                 filePath: `summary/summary_${matchId}.json`
             });
             ws.send(subscriptionMessage1);
 
-        }, 3000); // every 3 seconds
+        }, 60000); // every 60 seconds
     });
 </script>
