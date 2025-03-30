@@ -1,4 +1,4 @@
-<div class="statistics-container">
+<div class="statistics-container" id="stats-container">
 
     @foreach ($statics as $stat)
         @if ($stat['stage_name'] == 'Partita')
