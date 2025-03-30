@@ -276,13 +276,14 @@
                     document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
                     messages.forEach(function(message) {
                         if (!message.member) {
-                            if(message.user_id==1){
+                            if (message.user_id == 1) {
                                 message.member = {
-                                    first_name: 'System',
+                                    first_name: 'Redazione Laviola',
                                     last_name: '',
                                     avatar: 'https://example.com/default-avatar.png'
                                 };
-                            }else{
+                                appendMessage(message, message.member);
+                            } else {
                                 return;
                             }
                             return;
