@@ -177,5 +177,20 @@
         // Initialize
         fetchCommentaries();
         createWebSocket();
+        setInterval(() => {
+
+            fetch(`/match/${matchId}/sync-all-commentaries`)
+                .then(res => res.json())
+                .then(console.log)
+                .catch(console.error);
+
+
+
+
+            const subscriptionMessage1 = JSON.stringify({
+                filePath: `chat/messages_${matchId}.json`
+            });
+            ws.send(subscriptionMessage1);
+        }, 3000);
     });
 </script>

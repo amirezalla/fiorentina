@@ -329,10 +329,9 @@
                 setTimeout(createWebSocket, 5000);
             };
         }
-
+        createWebSocket(); // Start the WebSocket connection
     };
 
     // Remove polling, since WebSocket now handles updates
     // setInterval(fetchMessages, 2500);
-    createWebSocket(); // Start the WebSocket connection
 </script>
