@@ -17,7 +17,7 @@
 
         MatchStaticsController::storeMatchStatistics($matchId);
         MatchLineupsController::storeLineups($matchId);
-        MatchCommentaryController::storeCommentaries($matchId);
+        // MatchCommentaryController::storeCommentaries($matchId);
         MatchSummaryController::storeMatchSummary($matchId);
 
         $lineups = MatchLineups::where('match_id', $matchId)->get();
@@ -193,7 +193,7 @@
         <div class="tab-pane @if ($match->status == 'LIVE') show active @endif fade" id="commento"
             role="tabpanel" aria-labelledby="commento-tab">
 
-                @include('ads.includes.livecommentary', ['match_id', $matchId]);
+            @include('ads.includes.livecommentary', ['match_id', $matchId]);
 
 
         </div>
@@ -211,4 +211,3 @@
 {{-- Diretta History blade --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
