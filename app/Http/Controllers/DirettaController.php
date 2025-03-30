@@ -18,6 +18,8 @@ use Botble\Base\Supports\Breadcrumb;
 use Botble\Base\Http\Controllers\BaseController;
 use App\Jobs\StoreCommentaryJob;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Storage;
+
 
 // sportmonks B0lZqWEdqBzEPrLW5gDcm87Svgb5bnEEa807fd7kOiONHbcbetXywqPQafqC
 
@@ -28,6 +30,28 @@ class DirettaController extends BaseController
         return parent::breadcrumb()
             ->add("Diretta");
     }
+
+
+    private function regenerateCommentaryFile($matchId)
+{
+    // 1) Load all non-deleted commentaries for the match
+    $commentaries = MatchCommentary::where('match_id', $matchId)
+        ->orderBy('id', 'desc')
+        ->get()
+        ->toArray();
+
+    // 2) Create JSON
+    $jsonContent = json_encode($commentaries);
+
+    // 3) Build file path in Wasabi
+    $filePath = "commentary/commentary_{$matchId}.json";
+
+    // 4) Store in Wasabi (using the default disk or your wasabi disk)
+    Storage::put($filePath, $jsonContent);
+
+    // That’s it! The ETag changes in Wasabi, so the Node WebSocket server
+    // will detect it.
+}
     // Fetch latest comments
     public function fetchLastComments(Request $request)
     {
@@ -85,79 +109,73 @@ class DirettaController extends BaseController
     
 
     public function deleteCommentary(Request $request)
-{
-    // Get the commentary ID from the request
-    $commentaryId = $request->query('id');
-
-    // Fetch the commentary by its ID
-    $commentary = MatchCommentary::find($commentaryId);
-
-    // If the commentary exists, soft delete it
-    if ($commentary) {
-        $matchId = $commentary->match_id; // Get the match ID before deletion
-        $commentary->delete(); // Soft delete the commentary
-
-        // Store the commentary ID in the session for undo functionality
-        Session::put('deleted_commentary_id', $commentaryId);
-
-        // Redirect with a success message and an option to undo
-        return redirect()->to("https://laviola.collaudo.biz/diretta/view?match_id=$matchId")
-                         ->with('success', 'Commentary deleted successfully. <a href="' . route('undo-commentary') . '">Undo</a>');
-    }
-
-    // If the commentary doesn't exist, handle it (optional)
-    return redirect()->back()->with('error', 'Commentary not found');
-}
-
-public function undoCommentary()
-{
-    // Check if there's a deleted commentary ID in the session
-    $commentaryId = Session::get('deleted_commentary_id');
-
-    if ($commentaryId) {
-        // Fetch the soft-deleted commentary
-        $commentary = MatchCommentary::withTrashed()->find($commentaryId);
-
-        // Restore the commentary if it was soft deleted
+    {
+        $commentaryId = $request->query('id');
+        $commentary = MatchCommentary::find($commentaryId);
+    
         if ($commentary) {
-            $commentary->restore();
-
-            // Clear the session after restoring
-            Session::forget('deleted_commentary_id');
-
-            // Redirect back with a success message
-            return redirect()->back()->with('success', 'Commentary restored successfully.');
+            $matchId = $commentary->match_id;
+            $commentary->delete(); // Soft delete
+    
+            // Store the commentary ID in the session for undo
+            Session::put('deleted_commentary_id', $commentaryId);
+    
+            // **Regenerate JSON** so Wasabi is in sync
+            $this->regenerateCommentaryFile($matchId);
+    
+            return redirect()
+                ->to("https://laviola.collaudo.biz/diretta/view?match_id=$matchId")
+                ->with('success', 'Commentary deleted successfully. <a href="' . route('undo-commentary') . '">Undo</a>');
         }
+    
+        return redirect()->back()->with('error', 'Commentary not found');
     }
+    
 
-    // If there's no commentary to restore
-    return redirect()->back()->with('error', 'Nothing to undo.');
-}
+    public function undoCommentary()
+    {
+        $commentaryId = Session::get('deleted_commentary_id');
+        if ($commentaryId) {
+            // withTrashed() to find soft-deleted entries
+            $commentary = MatchCommentary::withTrashed()->find($commentaryId);
+            if ($commentary) {
+                $matchId = $commentary->match_id;
+                $commentary->restore();
+                Session::forget('deleted_commentary_id');
+    
+                // **Regenerate JSON** after restoring
+                $this->regenerateCommentaryFile($matchId);
+    
+                return redirect()->back()->with('success', 'Commentary restored successfully.');
+            }
+        }
+    
+        return redirect()->back()->with('error', 'Nothing to undo.');
+    }
+    
 
-public function updateCommentary(Request $request)
-{
-    // Validate the incoming request data
-    $validatedData = $request->validate([
-        'id' => 'required|exists:match_commentaries,id',
-        'comment_text' => 'required|string|max:500',
-        'is_important' => 'nullable',
-        'is_bold' => 'nullable',
-    ]);
-
-    // Find the commentary by ID
-    $commentary = MatchCommentary::findOrFail($validatedData['id']);
-
-    // Normalize the values for 'is_important' and 'is_bold' to ensure true or false
-    $commentary->is_important = $request->has('is_important') ? 1 : 0;
-    $commentary->is_bold = $request->has('is_bold') ? 1 : 0;
-
-    // Update the comment text
-    $commentary->comment_text = $validatedData['comment_text'];
-    $commentary->save();
-
-    // Redirect back with a success message
-    return redirect()->back()->with('success', 'Commentary updated successfully.');
-}
+    public function updateCommentary(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:match_commentaries,id',
+            'comment_text' => 'required|string|max:500',
+            'is_important' => 'nullable',
+            'is_bold' => 'nullable',
+        ]);
+    
+        $commentary = MatchCommentary::findOrFail($validatedData['id']);
+    
+        $commentary->is_important = $request->has('is_important') ? 1 : 0;
+        $commentary->is_bold = $request->has('is_bold') ? 1 : 0;
+        $commentary->comment_text = $validatedData['comment_text'];
+        $commentary->save();
+    
+        // **Regenerate JSON** after update
+        $this->regenerateCommentaryFile($commentary->match_id);
+    
+        return redirect()->back()->with('success', 'Commentary updated successfully.');
+    }
+    
 
 
     
