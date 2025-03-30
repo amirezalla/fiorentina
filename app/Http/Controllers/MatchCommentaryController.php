@@ -63,7 +63,7 @@ $this->storeCommentaries($matchId);
         foreach ($newItems as $comment) {
             // Add the new commentary to the database
 
-                MatchCommentary::create(
+                $newItem=MatchCommentary::create(
                     [
                         'match_id' => $matchId,
                         'comment_time' => $comment['COMMENT_TIME'] ?? NULL,
@@ -72,7 +72,7 @@ $this->storeCommentaries($matchId);
                         'is_bold' => $comment['COMMENT_IS_BOLD'] ?? NULL,'is_important' => $comment['COMMENT_IS_IMPORTANT'] ?? 0,
                     ]
                 );
-                $commentaryData = $comment->toArray(); 
+                $commentaryData = $newItem->toArray(); 
                 Queue::push(new StoreCommentaryJob($commentaryData));
             
         }
