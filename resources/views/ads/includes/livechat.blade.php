@@ -275,7 +275,12 @@
                     const messages = response.data.messages;
                     document.getElementById('messages-list').innerHTML = ''; // Clear existing messages
                     messages.forEach(function(message) {
-                        appendMessage(message, message.member);
+                        if (!message.member) {
+                            return;
+                        } else {
+                            appendMessage(message, message.member);
+
+                        }
                     });
                 })
                 .catch(error => {
