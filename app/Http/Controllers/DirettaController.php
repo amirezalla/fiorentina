@@ -65,7 +65,7 @@ class DirettaController extends BaseController
         ]);
     
         // Create a new commentary
-        MatchCommentary::create([
+        $newItem=MatchCommentary::create([
             'match_id' => $validatedData['match_id'],
             'comment_time' => $validatedData['time']."'",
             'comment_class' => $validatedData['tipo_event'],
@@ -73,6 +73,7 @@ class DirettaController extends BaseController
             'is_bold' => $request->has('is_bold'),
             'is_important' => $request->has('is_important'),
         ]);
+        $commentaryData = $newItem->toArray(); 
         Queue::push(new StoreCommentaryJob($commentaryData));
 
     
