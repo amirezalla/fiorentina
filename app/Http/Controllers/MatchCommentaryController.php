@@ -67,6 +67,7 @@ public function storeCommentariesEndpoint($matchId)
     $data = $response->json()['DATA'];
     $newCommentaryCount = count($data);
     // If there are new commentaries (newCommentaryCount > existingCommentaryCount)
+    dd($newCommentaryCount, $existingCommentaryCount,$data);
     if ($newCommentaryCount > $existingCommentaryCount) {
         // Calculate how many new items to insert
         $data=array_reverse($data);
