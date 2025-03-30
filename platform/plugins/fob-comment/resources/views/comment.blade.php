@@ -35,6 +35,7 @@
 
     .fob-comment-item-pending {
         color: #5e5e5e;
+        margin-bottom: 10px;
         display: block;
         font-style: normal !important;
         background: lightyellow;
