@@ -251,9 +251,11 @@
                                 </div>
 
                                 <!-- Ticket Buttons -->
-                                <div class="col-md-12 text-center">
+                                <div class="col-md-12 text-center mt-2">
                                     @if ($match->status == 'LIVE')
-                                        <button class="btn btn-primary">VAI ALLA DIRETTA</button>
+                                        <a href="/diretta?match_id={{ $match->match_id }}"
+                                            class="btn-comment-submit text-white">VAI ALLA
+                                            DIRETTA</a>
                                     @else
                                         <div id="countdown mt-10"
                                             style="background: #441274;padding:10px;border-radius:3px;">
