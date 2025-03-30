@@ -49,3 +49,70 @@
         @endif
     @endforeach
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const matchId = "{{ $matchId }}";
+        const wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
+        let ws;
+
+        // 1) Function to fetch the partial HTML
+        function fetchStatsHtml() {
+            // This endpoint returns the partial, e.g. /match/{matchId}/stats-html
+            fetch(`/match/${matchId}/stats-html`)
+                .then(res => res.text()) // we expect HTML
+                .then(html => {
+                    // Replace #stats-container content
+                    document.getElementById('stats-container').innerHTML = html;
+                })
+                .catch(console.error);
+        }
+
+        // 2) Create WebSocket for stats/stats_{matchId}.json
+        function createWebSocket() {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log("WebSocket for stats connected.");
+                ws.send(JSON.stringify({
+                    filePath: `stats/stats_${matchId}.json`
+                }));
+            };
+
+            ws.onmessage = (event) => {
+                console.log("Stats file changed:", event.data);
+
+            };
+
+            ws.onerror = console.error;
+            ws.onclose = () => {
+                console.log("WS stats closed. Reconnecting in 5 seconds...");
+                setTimeout(createWebSocket, 5000);
+            };
+        }
+
+        // 3) Kick it off
+        // We already have initial Blade HTML, so we only do fetchStatsHtml() if we want to guarantee 
+        // the DB matches the displayed data immediately. Otherwise, we rely on real-time updates.
+        // fetchStatsHtml();
+
+        createWebSocket();
+
+        // 4) Example: refresh logic every 3 seconds
+        setInterval(() => {
+            fetch(`/match/${matchId}/refresh-stats`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => console.log('refresh-stats triggered:', data))
+                .catch(console.error);
+            setTimeout(fetchStatsHtml, 10000);
+
+
+        }, 60000);
+    });
+</script>

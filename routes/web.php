@@ -45,6 +45,10 @@ Route::post('/match/{matchId}/refresh-summary', [MatchSummaryController::class, 
      ->name('match.refreshSummary');
      Route::get('/match/{matchId}/summary-html', [MatchSummaryController::class, 'getSummaryHtml'])
      ->name('match.summaryHtml');
+     Route::post('/match/{matchId}/refresh-stats', [MatchStaticsController::class, 'refreshStats'])
+     ->name('match.refreshSummary');
+     Route::get('/match/{matchId}/stats-html', [MatchStaticsController::class, 'getStatsHtml'])
+     ->name('match.getStatsHtml');
 
 
 Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');

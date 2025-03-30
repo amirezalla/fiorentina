@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MatchStatics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class MatchStaticsController extends Controller
 {
@@ -49,5 +50,46 @@ class MatchStaticsController extends Controller
         
 
         return response()->json(['success' => 'Match statistics saved successfully!']);
+    }
+
+    /**
+     * Re-fetch or refresh logic, then rewrite stats JSON in Wasabi
+     */
+    public function refreshStats($matchId)
+    {
+        // Option A: Just call storeMatchStatistics each time 
+        //           (which might re-fetch from API or skip if $match isn't found)
+        self::storeMatchStatistics($matchId);
+
+        // Optionally, always rewrite the JSON to ensure ETag changes
+        $this->regenerateStatsJson($matchId);
+
+        return response()->json(['success' => 'Stats refreshed']);
+    }
+
+    /**
+     * Generate or overwrite the JSON file in Wasabi for stats
+     */
+    private function regenerateStatsJson($matchId)
+    {
+        // 1) Load from DB
+        $allStats = MatchStatics::where('match_id', $matchId)->get();
+        $data = $allStats->toArray();
+
+        // 2) Write to Wasabi
+        $filePath = "stats/stats_{$matchId}.json";
+        Storage::put($filePath, json_encode($data));
+    }
+
+    /**
+     * Return the stats in an HTML partial 
+     */
+    public function getStatsHtml($matchId)
+    {
+        // 1) Retrieve from DB
+        $allStats = MatchStatics::where('match_id', $matchId)->get();
+
+        // 2) Return the partial with the data
+        return view('diretta.partials.stats-html', compact('allStats'));
     }
 }
