@@ -192,11 +192,9 @@
 
         <div class="tab-pane @if ($match->status == 'LIVE') show active @endif fade" id="commento"
             role="tabpanel" aria-labelledby="commento-tab">
-            @if ($match->status == 'LIVE')
+
                 @include('ads.includes.livecommentary', ['match_id', $matchId]);
-            @else
-                @include('ads.includes.commentary', ['commentaries' => $commentaries])
-            @endif
+
 
         </div>
         @if ($match->status == 'FINISHED')

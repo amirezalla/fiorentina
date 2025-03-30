@@ -168,4 +168,4 @@
         color: yellow;
     }
 </style>
-@include('ads.includes.commentary', ['commentaries' => $commentaries])
+@include('ads.includes.livecommentary', ['commentaries' => $commentaries])
