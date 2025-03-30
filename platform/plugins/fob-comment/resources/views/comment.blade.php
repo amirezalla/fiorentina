@@ -36,7 +36,10 @@
     .fob-comment-item-pending {
         color: #5e5e5e;
         display: block;
-        margin-bottom: .75em
+        font-style: normal !important;
+        background: lightyellow;
+        font-size: smaller !important;
+        padding: 10px !important;
     }
 
     .fob-comment-item-body p {

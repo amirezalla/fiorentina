@@ -25,7 +25,10 @@
 .fob-comment-item-pending {
     color: #5e5e5e;
     display: block;
-    margin-bottom: .75em;
+    font-style: normal !important;
+    background: lightyellow;
+    font-size: smaller !important;
+    padding: 10px !important;
 }
 
 .fob-comment-item-body p {
@@ -107,7 +110,8 @@
     text-decoration: none;
 }
 
-.fob-comment-item-like-btn, .fob-comment-item-dislike-btn {
+.fob-comment-item-like-btn,
+.fob-comment-item-dislike-btn {
     font-size: 12px;
     text-decoration: none;
     display: -webkit-inline-box;
@@ -140,5 +144,3 @@
 .fob-comment-item-dislike-btn {
     left: 100px;
 }
-
-
