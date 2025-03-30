@@ -50,54 +50,75 @@ public function storeCommentariesEndpoint($matchId)
     return response()->json(['status' => 'ok']);
 }
 
-    public static function storeCommentaries($matchId)
+public static function storeCommentaries($matchId)
 {
-    // Fetch match commentary count from the database
-    $match = Calendario::where('match_id',$matchId)->first();
-    $existingCommentaryCount = $match->commentary_count;
-    $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
-    // Simulate fetching data from an API, replace with your actual API request logic
+    // 1) Fetch the existing match row
+    $match = Calendario::where('match_id', $matchId)->first();
+
+    // 2) Call the external API
+    $apiKey = 'YOUR_RAPIDAPI_KEY'; // example only
     $url = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary?locale=it_IT&event_id={$matchId}";
+
     $response = Http::withHeaders([
-        "x-rapidapi-host" => 'flashlive-sports.p.rapidapi.com',
-        "x-rapidapi-key" => $apiKey
+        'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
+        'x-rapidapi-key' => $apiKey
     ])->get($url);
 
-    // Assuming the response returns the data in the format provided
-    $data = $response->json()['DATA'];
-    $newCommentaryCount = count($data);
-    // If there are new commentaries (newCommentaryCount > existingCommentaryCount)
-    dd($newCommentaryCount, $existingCommentaryCount,$data);
-    if ($newCommentaryCount > $existingCommentaryCount) {
-        // Calculate how many new items to insert
-        $data=array_reverse($data);
-        $newItems = array_slice($data, $existingCommentaryCount);
-        // Get only the new items
-        foreach ($newItems as $comment) {
-            // Add the new commentary to the database
-
-                $newItem=MatchCommentary::create(
-                    [
-                        'match_id' => $matchId,
-                        'comment_time' => $comment['COMMENT_TIME'] ?? NULL,
-                        'comment_class' => $comment['COMMENT_CLASS'] ?? NULL,
-                        'comment_text' => $comment['COMMENT_TEXT'] ?? NULL,
-                        'is_bold' => $comment['COMMENT_IS_BOLD'] ?? NULL,'is_important' => $comment['COMMENT_IS_IMPORTANT'] ?? 0,
-                    ]
-                );
-                $commentaryData = $newItem->toArray(); 
-                Queue::push(new StoreCommentaryJob($commentaryData));
-            
-        }
-
-        // Update the commentary count in the Match model
-        $match->commentary_count = $newCommentaryCount;
-        $match->save();
-        return response()->json(['success' => 'New match commentaries saved successfully!']);
-
+    // 3) Assuming the response returns the data in ['DATA']...
+    $data = $response->json()['DATA'] ?? [];
+    if (empty($data)) {
+        return response()->json(['info' => 'No commentary data found from API']);
     }
 
+    // 4) Reverse the array so we process oldest -> newest
+    $data = array_reverse($data);
+
+    // 5) For each item, check if we already have it in DB
+    $insertedCount = 0;
+    foreach ($data as $comment) {
+        // Optionally skip if it has no meaningful fields:
+        if (empty($comment['COMMENT_TIME']) && empty($comment['COMMENT_TEXT'])) {
+            continue; // skip items that are basically empty
+        }
+
+        // Check if we already stored this exact comment
+        // Using match_id + comment_time + comment_text
+        // Adjust to match your actual logic (some events might not have comment_time)
+        $exists = MatchCommentary::where('match_id', $matchId)
+            ->where('comment_time', $comment['COMMENT_TIME'] ?? null)
+            ->where('comment_text', $comment['COMMENT_TEXT'] ?? null)
+            ->exists();
+        if ($exists) {
+            // already in DB, skip
+            continue;
+        }
+
+        // Not in DB yet, so create
+        $newItem = MatchCommentary::create([
+            'match_id'      => $matchId,
+            'comment_time'  => $comment['COMMENT_TIME']     ?? null,
+            'comment_class' => $comment['COMMENT_CLASS']    ?? null,
+            'comment_text'  => $comment['COMMENT_TEXT']     ?? null,
+            'is_bold'       => $comment['COMMENT_IS_BOLD']  ?? 0,
+            'is_important'  => $comment['COMMENT_IS_IMPORTANT'] ?? 0,
+        ]);
+
+        // Optionally queue a job to update your Wasabi JSON
+        Queue::push(new StoreCommentaryJob($newItem->toArray()));
+
+        $insertedCount++;
+    }
+
+    // 6) Update commentary_count, if desired (optional)
+    // e.g. $match->commentary_count = MatchCommentary::where('match_id', $matchId)->count();
+    // $match->save();
+
+    return response()->json([
+        'success' => 'Commentary sync completed',
+        'inserted_count' => $insertedCount,
+    ]);
 }
+
 
 
     public static function liveComments($matchId)
