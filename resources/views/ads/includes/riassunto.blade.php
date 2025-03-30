@@ -192,7 +192,7 @@
                 .catch(error => {
                     console.error('Error calling refresh-summary:', error);
                 });
-            fetchSummaryHtml();
+            setTimeout(fetchSummaryHtml, 10000);
             // 4B) Re-subscribe to chat/messages_{matchId}.json (if you want)
             const subscriptionMessage1 = JSON.stringify({
                 filePath: `summary/summary_${matchId}.json`
