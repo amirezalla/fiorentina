@@ -52,8 +52,12 @@
         // 2) OPTIONAL Polling
         // -----------------------
         // If you rely on WebSocket, you can remove or reduce this
-        setInterval(fetchCommentaries, interval);
-
+        setInterval(() => {
+            const subscriptionMessage1 = JSON.stringify({
+                filePath: `commentary/commentary_${matchId}.json`
+            });
+            ws.send(subscriptionMessage1);
+        }, 2000);
         // -----------------------
         // 3) Setup WebSocket
         // -----------------------
