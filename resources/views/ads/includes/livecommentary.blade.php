@@ -82,7 +82,7 @@
         // Optional: fallback polling (every 15s) if you want extra safety
         setInterval(() => {
 
-            fetch(`/match/${matchId}/store-commentaries`, {
+            fetch(`/match/${matchId}/sync-all-commentaries`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}', // if needed
