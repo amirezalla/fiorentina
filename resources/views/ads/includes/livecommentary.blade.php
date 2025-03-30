@@ -79,12 +79,24 @@
         fetchCommentaries(); // Initial data load
         createWebSocket(); // Create WebSocket and auto-reconnect on close
 
+        // Optional: fallback polling (every 15s) if you want extra safety
         setInterval(() => {
 
-            fetch(`/match/${matchId}/sync-all-commentaries`)
-                .then(res => res.json())
-                .then(console.log)
-                .catch(console.error);
+            fetch(`/match/${matchId}/store-commentaries`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // if needed
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('storeCommentaries triggered:', data);
+                })
+                .catch(error => {
+                    console.error('Error calling storeCommentaries:', error);
+                });
 
 
 
