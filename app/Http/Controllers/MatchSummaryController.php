@@ -8,6 +8,16 @@ use Illuminate\Support\Facades\Http;
 
 class MatchSummaryController extends Controller
 {
+
+
+    public function refreshMatchSummary($matchId)
+{
+    // 1) Remove all old records for this match
+    MatchSummary::where('match_id', $matchId)->delete();
+
+    // 2) Fetch again from the external API + regenerate JSON
+    return self::storeMatchSummary($matchId);
+}
     public static function storeMatchSummary($matchId)
     {
         $match=MatchSummary::where('match_id',$matchId)->first();
@@ -57,9 +67,25 @@ class MatchSummaryController extends Controller
             
         }
     }
+    self::regenerateSummaryJson($matchId);
 
         return response()->json(['success' => 'Match summary saved successfully.']);
     }
+
+    private static function regenerateSummaryJson($matchId)
+    {
+        // 1) Fetch all match summary rows from DB
+        $allSummaries = MatchSummary::where('match_id', $matchId)->get();
+        // Convert them to array (or you can transform them as needed)
+        $data = $allSummaries->toArray();
+    
+        // 2) Build the file path, e.g. "summary/summary_{matchId}.json"
+        $filePath = "summary/summary_{$matchId}.json";
+    
+        // 3) Write to Wasabi
+        Storage::put($filePath, json_encode($data));
+    }
+
 
     public function showMatchSummary($matchId)
     {
@@ -67,4 +93,18 @@ class MatchSummaryController extends Controller
 
         return view('match.summary', compact('matchSummary'));
     }
+
+
+    public function getSummaryHtml($matchId)
+{
+    // 1) Fetch data from DB (or merged JSON) just like your main summary
+    $summaries = MatchSummary::where('match_id', $matchId)->get();
+
+    // 2) Return a partial Blade view that ONLY renders the summary HTML
+    //    We'll create something like "match.partials.summary-html"
+    //    and pass $summaries
+    return view('diretta.partials.summary-html', compact('summaries'));
+}
+
+
 }

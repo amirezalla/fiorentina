@@ -39,7 +39,7 @@
             ->get();
 
         $summaries = MatchSummary::where('match_id', $matchId)->get();
-        dd($summaries);
+
 
         $fiorentinaLineups = $lineups
             ->filter(function ($lineup) {

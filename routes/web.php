@@ -13,6 +13,9 @@
 
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\MatchCommentaryController;
+use App\Http\Controllers\MatchStaticsController;
+use App\Http\Controllers\MatchSummaryController;
+
 use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
 use Illuminate\Database\Schema\Blueprint;
@@ -38,6 +41,10 @@ use App\Http\Controllers\AssetController;
 
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 Route::get('/match/{matchId}/sync-all-commentaries', [MatchCommentaryController::class, 'storeCommentariesAndRegenerateJson']);
+Route::post('/match/{matchId}/refresh-summary', [MatchSummaryController::class, 'refreshMatchSummary'])
+     ->name('match.refreshSummary');
+     Route::get('/match/{matchId}/summary-html', [MatchSummaryController::class, 'getSummaryHtml'])
+     ->name('match.summaryHtml');
 
 
 Route::get('/admin/ads', [AdController::class, 'index'])->name('ads.index');
