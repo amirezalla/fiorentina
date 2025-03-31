@@ -14,7 +14,6 @@
     $matchId = request()->query('match_id');
     if ($matchId) {
         $match = Calendario::where('match_id', $matchId)->first();
-
         MatchStaticsController::storeMatchStatistics($matchId);
         MatchLineupsController::storeLineups($matchId);
         // MatchCommentaryController::storeCommentaries($matchId);
@@ -40,7 +39,6 @@
 
         $summaries = MatchSummary::where('match_id', $matchId)->get();
 
-
         $fiorentinaLineups = $lineups
             ->filter(function ($lineup) {
                 return in_array($lineup->formation_name, [
@@ -62,7 +60,7 @@
 @endphp
 
 
-@if ($match)
+@if (isset($match))
     @php
         $homeTeam = json_decode($match->home_team, true);
         $awayTeam = json_decode($match->away_team, true);
