@@ -9,7 +9,7 @@
 
 <style>
     .error-code {
-        color: #22292f;
+        color: #ffffff;
         font-size: 6rem;
     }
 
@@ -25,7 +25,7 @@
     }
 
     .error-page ul li {
-        margin-bottom : 5px;
+        margin-bottom: 5px;
     }
 </style>
 <section class="section pt-50 pb-100">
@@ -37,7 +37,7 @@
 
             <div class="error-border"></div>
 
-            <h4>{{ __('This may have occurred because of several reasons') }}:</h4>
+            <h4 class="text-white">{{ __('This may have occurred because of several reasons') }}:</h4>
             <ul>
                 <li>{{ __('The page you requested does not exist.') }}</li>
                 <li>{{ __('The link you clicked is no longer.') }}</li>
@@ -47,7 +47,12 @@
             </ul>
             <br>
 
-            <strong>{!! BaseHelper::clean(__('Please try again in a few minutes, or alternatively return to the homepage by <a href=":link">clicking here</a>.', ['link' => BaseHelper::getHomepageUrl()])) !!}</strong>
+            <strong>{!! BaseHelper::clean(
+                __(
+                    'Please try again in a few minutes, or alternatively return to the homepage by <a href=":link">clicking here</a>.',
+                    ['link' => BaseHelper::getHomepageUrl()],
+                ),
+            ) !!}</strong>
         </div>
     </div>
 </section>
