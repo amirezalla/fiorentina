@@ -37,7 +37,7 @@
 
             <div class="error-border"></div>
 
-            <h4 class="text-white">{{ __('This may have occurred because of several reasons') }}:</h4>
+            <h4 class="text-white">{{ __('This may have occurred because of several reasons') }}</h4>
             <ul>
                 <li>{{ __('The page you requested does not exist.') }}</li>
                 <li>{{ __('The link you clicked is no longer.') }}</li>
