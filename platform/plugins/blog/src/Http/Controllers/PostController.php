@@ -161,19 +161,43 @@ class PostController extends BaseController
 
     public function quickEdit(Request $request, $id)
     {
-        // Validate the incoming request.
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        // Retrieve the post by id.
         $post = Post::findOrFail($id);
-
-        // Update the post's name.
-        $post->name = $validatedData['name'];
+    
+        // Validate incoming data as needed:
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
+            'date' => 'nullable|date',
+            'hour' => 'nullable|integer|min:0|max:23',
+            'minute' => 'nullable|integer|min:0|max:59',
+            'status' => 'required|in:published,draft',
+            'categories' => 'array',
+            'tags' => 'nullable|string',
+            // Add other rules for additional fields
+        ]);
+    
+        // Update post fields:
+        $post->name = $data['name'];
+        $post->slug = $data['slug'];
+        // Combine date + hour + minute if provided
+        if (isset($data['date'])) {
+            $dateTime = $data['date'] . ' ' . str_pad($data['hour'] ?? 0, 2, '0', STR_PAD_LEFT) . ':' . str_pad($data['minute'] ?? 0, 2, '0', STR_PAD_LEFT) . ':00';
+            $post->created_at = $dateTime;
+        }
+        $post->status = $data['status'];
+    
+        // Handle categories relationship
+        if (isset($data['categories'])) {
+            // Example: if your categories are a BelongsToMany relationship
+            $post->categories()->sync($data['categories']);
+        }
+    
+        // Handle tags
+        // If you store tags in a pivot table or a custom field, adapt accordingly.
+    
         $post->save();
-
-        // Optionally, return a redirect or JSON response.
-        return redirect()->back()->with('success', 'Post name updated successfully.');
+    
+        // Return or redirect
+        return redirect()->back()->with('success', 'Post updated successfully via Quick Edit!');
     }
 }
