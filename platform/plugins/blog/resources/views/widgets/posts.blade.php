@@ -37,4 +37,3 @@
 @else
     <x-core::empty-state :title="__('No results found')" :subtitle="trans('plugins/blog::posts.no_new_post_now')" />
 @endif
-@dd('hereI can add the script   to handle the quick edit form')

@@ -43,7 +43,7 @@ class PostTable extends TableAbstract
             ->addHeaderAction(CreateHeaderAction::make()->route('posts.create'))
             ->addActions([
                 EditAction::make()->route('posts.edit'),
-                // Quick Edit will be rendered as an extra column below.
+                // Quick Edit button will be handled via JavaScript to insert a new row
                 DeleteAction::make()->route('posts.destroy'),
             ])
             ->addColumns([
@@ -91,50 +91,31 @@ class PostTable extends TableAbstract
                     ->withEmptyState(),
                 FormattedColumn::make('comments')
                     ->title('Comments')
-                    ->width(60)
+                    ->width(80)
                     ->orderable(false)
                     ->searchable(false)
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
-                        // Count the comments for this post, filtering by reference_type as well.
                         $count = Comment::where('reference_id', $post->id)
                             ->where('reference_type', \Botble\Blog\Models\Post::class)
                             ->count();
-                        // Build the URL with the actual post name as the query parameter.
                         $url = url('admin/comments?post_name=' . urlencode($post->name));
-                        // Return a badge with a comment icon and the count, wrapped in a link.
                         return '<a href="' . $url . '" class="badge badge-primary text-primary">
                                     <i class="fa fa-comment"></i> ' . $count . '
                                 </a>';
                     }),
                 CreatedAtColumn::make(),
                 StatusColumn::make(),
-                // New column for Quick Edit
+                // New column that outputs only the Quick Edit button.
                 FormattedColumn::make('quick_edit')
                     ->title('Quick Edit')
                     ->orderable(false)
                     ->searchable(false)
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
-                        // The Quick Edit button with an icon.
-                        $button = '<button type="button" class="btn btn-sm btn-secondary quick-edit-btn" data-id="' . $post->id . '">
-                                        <i class="fa fa-edit"></i> Quick Edit
-                                    </button>';
-                        // The inline Quick Edit form, hidden by default.
-                        $form = '
-                        <div id="quick-edit-row-' . $post->id . '" class="quick-edit-row" style="display: none; margin-top: 10px;">
-                            <form action="' . route('posts.quick-edit', $post->id) . '" method="POST" class="quick-edit-form">
-                                ' . csrf_field() . '
-                                <div class="form-group">
-                                    <label for="name-' . $post->id . '">Post Name</label>
-                                    <input type="text" name="name" id="name-' . $post->id . '" value="' . e($post->name) . '" class="form-control">
-                                </div>
-                                <!-- Add additional fields as needed -->
-                                <button type="submit" class="btn btn-primary">Save</button>
-                                <button type="button" class="btn btn-secondary cancel-quick-edit" data-id="' . $post->id . '">Cancel</button>
-                            </form>
-                        </div>';
-                        return $button . $form;
+                        return '<button type="button" class="btn btn-sm btn-secondary quick-edit-btn" data-id="' . $post->id . '" data-name="' . e($post->name) . '">
+                                    <i class="fa fa-edit"></i> Quick Edit
+                                </button>';
                     }),
             ])
             ->addBulkActions([
@@ -149,7 +130,6 @@ class PostTable extends TableAbstract
                     ->title(trans('plugins/blog::posts.category'))
                     ->searchable()
                     ->choices(fn () => Category::query()->pluck('name', 'id')->all()),
-                // New Author filter
                 SelectBulkChange::make()
                     ->name('author_id')
                     ->title(trans('plugins/blog::posts.author'))
@@ -217,7 +197,6 @@ class PostTable extends TableAbstract
                     );
                 }
                 if ($key === 'author_id') {
-                    // Filter posts whose author_id equals the value and author_type is User.
                     return $query->where('author_id', $value)
                                  ->where('author_type', User::class);
                 }
