@@ -89,34 +89,52 @@ class PostTable extends TableAbstract
                         return null;
                     })
                     ->withEmptyState(),
-                    FormattedColumn::make('quick_edit')
-                    ->title('Quick Edit')
+                FormattedColumn::make('comments')
+                    ->title('Comments')
+                    ->width(80)
                     ->orderable(false)
                     ->searchable(false)
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
-                        $categoriesJson = json_encode($post->categories->pluck('id'));
-                        $tagsJson = ''; // Adapt as needed
-                
-                        return '
-                            <button 
-                                type="button" 
-                                class="btn btn-sm btn-secondary quick-edit-btn"
-                                data-id="' . $post->id . '"
-                                data-name="' . e($post->name) . '"
-                                data-slug="' . e($post->slug) . '"
-                                data-date="' . $post->created_at->format('Y-m-d') . '"
-                                data-hour="' . $post->created_at->format('H') . '"
-                                data-minute="' . $post->created_at->format('i') . '"
-                                data-categories=\'' . $categoriesJson . '\'
-                                data-tags="' . e($tagsJson) . '"
-                                data-status="' . e($post->status) . '"
-                            >
-                                <i class="fa fa-edit"></i> Quick Edit
-                            </button>
-                        ';
+                        $count = Comment::where('reference_id', $post->id)
+                            ->where('reference_type', \Botble\Blog\Models\Post::class)
+                            ->count();
+                        $url = url('admin/comments?post_name=' . urlencode($post->name));
+                        return '<a href="' . $url . '" class="badge badge-primary text-primary">
+                                    <i class="fa fa-comment"></i> ' . $count . '
+                                </a>';
                     }),
-                
+                CreatedAtColumn::make(),
+                StatusColumn::make(),
+                // New column that outputs only the Quick Edit button.
+                FormattedColumn::make('quick_edit')
+                ->title('Quick Edit')
+                ->orderable(false)
+                ->searchable(false)
+                ->renderUsing(function (FormattedColumn $column) {
+                    $post = $column->getItem();
+                    $categoriesJson = json_encode($post->categories->pluck('id'));
+                    $tagsJson = ''; // Adapt as needed
+            
+                    return '
+                        <button 
+                            type="button" 
+                            class="btn btn-sm btn-secondary quick-edit-btn"
+                            data-id="' . $post->id . '"
+                            data-name="' . e($post->name) . '"
+                            data-slug="' . e($post->slug) . '"
+                            data-date="' . $post->created_at->format('Y-m-d') . '"
+                            data-hour="' . $post->created_at->format('H') . '"
+                            data-minute="' . $post->created_at->format('i') . '"
+                            data-categories=\'' . $categoriesJson . '\'
+                            data-tags="' . e($tagsJson) . '"
+                            data-status="' . e($post->status) . '"
+                        >
+                            <i class="fa fa-edit"></i> Quick Edit
+                        </button>
+                    ';
+                }),
+            
             
             ])
             ->addBulkActions([
