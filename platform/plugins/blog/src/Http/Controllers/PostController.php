@@ -204,12 +204,17 @@ class PostController extends BaseController
     public function getQuickEditForm($id)
     {
         $post = Post::findOrFail($id);
-        $form = \Botble\Blog\Forms\PostQuickEditForm::create()
-                    ->setModel($post)
-                    ->renderForm();
-                    
-        return response()->json(['html' => $form]);
+    
+        // Build the form instance
+        $form = app(\Botble\Blog\Forms\PostQuickEditForm::class)
+            ->setModel($post);
+    
+        // Render the partial that ONLY has the form
+        $html = view('plugins/blog.partials.quick-edit-only-form', compact('form'))->render();
+    
+        // Return JSON that your JS will inject into the modal
+        return response()->json(['html' => $html]);
     }
-        
+    
 
 }
