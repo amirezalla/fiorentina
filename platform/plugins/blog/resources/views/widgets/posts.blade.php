@@ -37,17 +37,4 @@
 @else
     <x-core::empty-state :title="__('No results found')" :subtitle="trans('plugins/blog::posts.no_new_post_now')" />
 @endif
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    // Toggle the inline quick edit form when the Quick Edit button is clicked.
-    $(document).on('click', '.quick-edit-btn', function() {
-        var id = $(this).data('id');
-        $('#quick-edit-row-' + id).toggle();
-    });
-
-    // Hide the quick edit form when the Cancel button is clicked.
-    $(document).on('click', '.cancel-quick-edit', function() {
-        var id = $(this).data('id');
-        $('#quick-edit-row-' + id).hide();
-    });
-</script>
+@dd('hereI can add the script   to handle the quick edit form')
