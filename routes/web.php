@@ -39,6 +39,7 @@ use App\Http\Controllers\WpImportController;
 use App\Http\Controllers\AssetController;
 
 
+
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
 Route::get('/match/{matchId}/sync-all-commentaries', [MatchCommentaryController::class, 'storeCommentariesAndRegenerateJson']);
 Route::post('/match/{matchId}/refresh-summary', [MatchSummaryController::class, 'refreshMatchSummary'])
@@ -187,3 +188,11 @@ Route::get('/test-db2-connection', function () {
         return "DB connection failed: " . $e->getMessage();
     }
 });
+
+
+
+
+
+Route::post('posts/{id}/quick-edit', [PostController::class, 'quickEdit'])
+    ->name('posts.quick-edit');
+

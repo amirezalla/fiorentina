@@ -157,4 +157,23 @@ class PostController extends BaseController
             ->httpResponse()
             ->setData(view('plugins/blog::widgets.posts', compact('posts', 'limit'))->render());
     }
+
+
+    public function quickEdit(Request $request, $id)
+    {
+        // Validate the incoming request.
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        // Retrieve the post by id.
+        $post = Post::findOrFail($id);
+
+        // Update the post's name.
+        $post->name = $validatedData['name'];
+        $post->save();
+
+        // Optionally, return a redirect or JSON response.
+        return redirect()->back()->with('success', 'Post name updated successfully.');
+    }
 }
