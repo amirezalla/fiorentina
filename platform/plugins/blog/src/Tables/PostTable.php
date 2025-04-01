@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use FriendsOfBotble\Comment\Models\Comment;
 
-
 class PostTable extends TableAbstract
 {
     protected string $exportClass = PostExport::class;
@@ -44,6 +43,7 @@ class PostTable extends TableAbstract
             ->addHeaderAction(CreateHeaderAction::make()->route('posts.create'))
             ->addActions([
                 EditAction::make()->route('posts.edit'),
+                // Quick Edit will be rendered as an extra column below.
                 DeleteAction::make()->route('posts.destroy'),
             ])
             ->addColumns([
@@ -89,28 +89,54 @@ class PostTable extends TableAbstract
                         return null;
                     })
                     ->withEmptyState(),
-                    FormattedColumn::make('comments')
+                FormattedColumn::make('comments')
                     ->title('Comments')
-                    ->width(80)
+                    ->width(60)
                     ->orderable(false)
                     ->searchable(false)
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
-                    // Count the comments for this post, filtering by reference_type as well
-                    $count = Comment::where('reference_id', $post->id)
-                        ->where('reference_type', \Botble\Blog\Models\Post::class)
-                        ->count();
-                    // Build the URL with the actual post name as the query parameter
-                    $url = url('admin/comments?post_name=' . urlencode($post->name));
-                    // Return a badge with a comment icon and the count, wrapped in a link
-                    return '<a href="' . $url . '" class="badge badge-primary text-primary">
-                                <i class="fa fa-comment"></i> ' . $count . '
-                            </a>';
+                        // Count the comments for this post, filtering by reference_type as well.
+                        $count = Comment::where('reference_id', $post->id)
+                            ->where('reference_type', \Botble\Blog\Models\Post::class)
+                            ->count();
+                        // Build the URL with the actual post name as the query parameter.
+                        $url = url('admin/comments?post_name=' . urlencode($post->name));
+                        // Return a badge with a comment icon and the count, wrapped in a link.
+                        return '<a href="' . $url . '" class="badge badge-primary text-primary">
+                                    <i class="fa fa-comment"></i> ' . $count . '
+                                </a>';
                     }),
                 CreatedAtColumn::make(),
                 StatusColumn::make(),
+                // New column for Quick Edit
+                FormattedColumn::make('quick_edit')
+                    ->title('Quick Edit')
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->renderUsing(function (FormattedColumn $column) {
+                        $post = $column->getItem();
+                        // The Quick Edit button with an icon.
+                        $button = '<button type="button" class="btn btn-sm btn-secondary quick-edit-btn" data-id="' . $post->id . '">
+                                        <i class="fa fa-edit"></i> Quick Edit
+                                    </button>';
+                        // The inline Quick Edit form, hidden by default.
+                        $form = '
+                        <div id="quick-edit-row-' . $post->id . '" class="quick-edit-row" style="display: none; margin-top: 10px;">
+                            <form action="' . route('posts.quick-edit', $post->id) . '" method="POST" class="quick-edit-form">
+                                ' . csrf_field() . '
+                                <div class="form-group">
+                                    <label for="name-' . $post->id . '">Post Name</label>
+                                    <input type="text" name="name" id="name-' . $post->id . '" value="' . e($post->name) . '" class="form-control">
+                                </div>
+                                <!-- Add additional fields as needed -->
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary cancel-quick-edit" data-id="' . $post->id . '">Cancel</button>
+                            </form>
+                        </div>';
+                        return $button . $form;
+                    }),
             ])
-
             ->addBulkActions([
                 DeleteBulkAction::make()->permission('posts.destroy'),
             ])
@@ -123,12 +149,12 @@ class PostTable extends TableAbstract
                     ->title(trans('plugins/blog::posts.category'))
                     ->searchable()
                     ->choices(fn () => Category::query()->pluck('name', 'id')->all()),
-                            // New Author filter
-        SelectBulkChange::make()
-        ->name('author_id')
-        ->title(trans('plugins/blog::posts.author'))
-        ->searchable()
-        ->choices(fn () => User::query()->pluck('first_name', 'id')->all()),
+                // New Author filter
+                SelectBulkChange::make()
+                    ->name('author_id')
+                    ->title(trans('plugins/blog::posts.author'))
+                    ->searchable()
+                    ->choices(fn () => User::query()->pluck('first_name', 'id')->all()),
             ])
             ->queryUsing(function (Builder $query) {
                 return $query
@@ -161,8 +187,7 @@ class PostTable extends TableAbstract
                                 return $query
                                     ->where('name', 'LIKE', $keyword)
                                     ->orWhereHas('categories', function ($subQuery) use ($keyword) {
-                                        return $subQuery
-                                            ->where('name', 'LIKE', $keyword);
+                                        return $subQuery->where('name', 'LIKE', $keyword);
                                     })
                                     ->orWhereHas('author', function ($subQuery) use ($keyword) {
                                         return $subQuery
@@ -176,31 +201,28 @@ class PostTable extends TableAbstract
                         })
                 );
             })
-            ->onFilterQuery(
-                function (
-                    EloquentBuilder|QueryBuilder|EloquentRelation $query,
-                    string $key,
-                    string $operator,
-                    ?string $value
-                ) {
-                    if (! $value || $key !== 'category') {
-                        return false;
-                    }
-
+            ->onFilterQuery(function (
+                EloquentBuilder|QueryBuilder|EloquentRelation $query,
+                string $key,
+                string $operator,
+                ?string $value
+            ) {
+                if (! $value) {
+                    return false;
+                }
+                if ($key === 'category') {
                     return $query->whereHas(
                         'categories',
                         fn (BaseQueryBuilder $query) => $query->where('categories.id', $value)
                     );
-                    // 2) Handle the new "author_id" filter
+                }
                 if ($key === 'author_id') {
-                    // Filter posts whose author_id = $value, and author_type = User::class
+                    // Filter posts whose author_id equals the value and author_type is User.
                     return $query->where('author_id', $value)
                                  ->where('author_type', User::class);
                 }
-
                 return false;
-                }
-            )
+            })
             ->onSavingBulkChangeItem(function (Post $item, string $inputKey, ?string $inputValue) {
                 if ($inputKey !== 'category') {
                     return null;
