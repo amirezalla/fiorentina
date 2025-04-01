@@ -202,13 +202,14 @@ class PostController extends BaseController
     }
 
     public function getQuickEditForm($id)
-{
-    $post = Post::findOrFail($id);
-    $form = app(\Botble\Blog\Forms\PostQuickEditForm::class)
-                ->setModel($post)
-                ->renderForm(); // renderForm() returns the HTML for the form
-
-    return response()->json(['html' => $form]);
-}
+    {
+        $post = Post::findOrFail($id);
+        $form = \Botble\Blog\Forms\PostQuickEditForm::create()
+                    ->setModel($post)
+                    ->renderForm();
+                    
+        return response()->json(['html' => $form]);
+    }
+    
 
 }
