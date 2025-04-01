@@ -603,32 +603,73 @@ abstract class TableAbstract extends DataTable implements ExtensibleContract
         return <<<'JS'
             var tableWrapper = $(this).closest(".dataTables_wrapper");
             var dtDataCount = this.api().data().count();
-
+    
             if (dtDataCount === 0) {
                 tableWrapper.find(".card-footer").prop('style', 'display: none !important;');
             } else {
                 tableWrapper.find(".card-footer").prop('style', null);
             }
-
+    
             tableWrapper.find(".dataTables_paginate").toggle(this.api().page.info().pages > 1);
-
             tableWrapper.find(".dataTables_length").toggle(dtDataCount >= 10);
             tableWrapper.find(".dataTables_info").toggle(dtDataCount > 0);
-
+    
             setTimeout(function () {
                 var searchInputWrapper = $(".table-wrapper .table-search-input input");
                 if (! searchInputWrapper.val()) {
                     searchInputWrapper.val(tableWrapper.find(".dataTables_filter input").val());
                 }
-
                 if (searchInputWrapper.val()) {
-                    searchInputWrapper.addClass('border-primary bg-info-subtle')
+                    searchInputWrapper.addClass('border-primary bg-info-subtle');
                 } else {
-                    searchInputWrapper.removeClass('border-primary bg-info-subtle')
+                    searchInputWrapper.removeClass('border-primary bg-info-subtle');
                 }
             }, 200);
+    
+            // Quick Edit functionality
+            $(document).on('click', '.quick-edit-btn', function() {
+                var postId = $(this).data('id');
+                var postName = $(this).data('name');
+                var $currentRow = $(this).closest('tr');
+    
+                // If a quick edit row already exists for this post, toggle its visibility.
+                if ($currentRow.next().hasClass('quick-edit-row') && $currentRow.next().data('id') == postId) {
+                    $currentRow.next().toggle();
+                } else {
+                    // Remove any existing quick edit rows.
+                    $('.quick-edit-row').remove();
+    
+                    // Determine how many columns the current row has.
+                    var colCount = $currentRow.find('td').length;
+                    // Build the CSRF field using the CSRF token from the meta tag.
+                    var csrfField = '<input type="hidden" name="_token" value="' + $('meta[name="csrf-token"]').attr('content') + '">';
+                    // Build the quick edit form row.
+                    var formRow = '<tr class="quick-edit-row" data-id="'+ postId +'">' +
+                        '<td colspan="'+ colCount +'">' +
+                            '<form action="/posts/' + postId + '/quick-edit" method="POST" class="quick-edit-form">' +
+                            csrfField +
+                            '<div class="form-group">' +
+                                '<label for="name-' + postId + '">Post Name</label>' +
+                                '<input type="text" name="name" id="name-' + postId + '" value="' + postName + '" class="form-control">' +
+                            '</div>' +
+                            '<button type="submit" class="btn btn-primary">Save</button> ' +
+                            '<button type="button" class="btn btn-secondary cancel-quick-edit" data-id="' + postId + '">Cancel</button>' +
+                            '</form>' +
+                        '</td>' +
+                    '</tr>';
+    
+                    // Insert the quick edit form row right after the current row.
+                    $currentRow.after(formRow);
+                }
+            });
+    
+            // Remove the quick edit row when Cancel is clicked.
+            $(document).on('click', '.cancel-quick-edit', function() {
+                $(this).closest('tr').remove();
+            });
         JS . $this->htmlInitCompleteFunction();
     }
+    
 
     public function renderTable(array $data = [], array $mergeData = []): View|Factory|Response
     {
