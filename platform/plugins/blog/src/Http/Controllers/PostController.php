@@ -210,6 +210,6 @@ class PostController extends BaseController
                     
         return response()->json(['html' => $form]);
     }
-    
+        
 
 }
