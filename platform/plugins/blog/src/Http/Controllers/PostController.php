@@ -200,4 +200,15 @@ class PostController extends BaseController
         // Return or redirect
         return redirect()->back()->with('success', 'Post updated successfully via Quick Edit!');
     }
+
+    public function getQuickEditForm($id)
+{
+    $post = Post::findOrFail($id);
+    $form = app(\Botble\Blog\Forms\PostQuickEditForm::class)
+                ->setModel($post)
+                ->renderForm(); // renderForm() returns the HTML for the form
+
+    return response()->json(['html' => $form]);
+}
+
 }

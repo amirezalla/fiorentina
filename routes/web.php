@@ -193,6 +193,5 @@ Route::get('/test-db2-connection', function () {
 
 
 
-Route::post('posts/{id}/quick-edit', [PostController::class, 'quickEdit'])
-    ->name('posts.quick-edit');
-
+Route::get('posts/{id}/quick-edit', [PostController::class, 'getQuickEditForm'])
+    ->name('posts.quick-edit.form');
