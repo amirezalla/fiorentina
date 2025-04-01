@@ -24,31 +24,73 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- The quick edit form will be loaded here via AJAX -->
+                    <form id="quickEditForm" method="POST" action="">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type="hidden" id="post_id" name="id" value="">
+                        <div class="form-group">
+                            <label for="post_name">Name</label>
+                            <input type="text" id="post_name" name="name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="post_slug">Slug</label>
+                            <input type="text" id="post_slug" name="slug" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="post_date">Date</label>
+                            <input type="date" id="post_date" name="date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="post_hour">Hour</label>
+                            <input type="number" id="post_hour" name="hour" class="form-control" min="0"
+                                max="23">
+                        </div>
+                        <div class="form-group">
+                            <label for="post_minute">Minute</label>
+                            <input type="number" id="post_minute" name="minute" class="form-control" min="0"
+                                max="59">
+                        </div>
+                        <div class="form-group">
+                            <label for="post_status">Status</label>
+                            <select id="post_status" name="status" class="form-control">
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                        <!-- Optionally, you can add categories and tags fields if needed -->
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
 
+
     <script>
         $(document).on('click', '.quick-edit-btn', function() {
-            var postId = $(this).data('id');
+            var $btn = $(this);
+            var postId = $btn.data('id');
+            var postName = $btn.data('name');
+            var postSlug = $btn.data('slug');
+            var postDate = $btn.data('date');
+            var postHour = $btn.data('hour');
+            var postMinute = $btn.data('minute');
+            var postStatus = $btn.data('status');
 
-            $.ajax({
-                url: '/posts/' + postId + '/quick-edit',
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    // Insert the form HTML into the modal's body
-                    $('#quickEditModal .modal-body').html(response.html);
-                    // Show the modal
-                    $('#quickEditModal').modal('show');
-                },
-                error: function() {
-                    alert('Failed to load the quick edit form.');
-                }
-            });
+            // Set the form action URL (adjust the URL to your route)
+            $('#quickEditForm').attr('action', '/posts/' + postId + '/quick-edit');
+
+            // Populate form fields with data from the button
+            $('#post_id').val(postId);
+            $('#post_name').val(postName);
+            $('#post_slug').val(postSlug);
+            $('#post_date').val(postDate);
+            $('#post_hour').val(postHour);
+            $('#post_minute').val(postMinute);
+            $('#post_status').val(postStatus);
+
+            // Open the modal
+            $('#quickEditModal').modal('show');
         });
     </script>
 
