@@ -1,12 +1,13 @@
 <IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
     <IfModule mod_headers.c>
         Header set X-Robots-Tag "noindex, nofollow"
     </IfModule>
-
-    RewriteEngine On
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -15,7 +16,7 @@
     # Redirect /diretta without a match_id parameter to /404
     RewriteCond %{REQUEST_URI} ^/diretta/?$ [NC]
     RewriteCond %{QUERY_STRING} !(^|&)match_id= [NC]
-    RewriteRule ^ /404 [L,R=301]
+    RewriteRule ^ 404 [L,R=301]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
