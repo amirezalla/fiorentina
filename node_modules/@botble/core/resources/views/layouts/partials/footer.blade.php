@@ -176,7 +176,7 @@
 
 
             // Open the modal
-            $('.modal-backdrop').remove();
+            $('.modal-backdrop').removeClass('show');
             $('#quickEditModal').modal('show');
         });
     </script>
