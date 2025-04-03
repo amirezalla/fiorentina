@@ -225,7 +225,7 @@ class PostController extends BaseController
             'year'               => $post->created_at->format('Y'),
             'hour'               => $post->created_at->format('H'),
             'minute'             => $post->created_at->format('i'),
-            'status'             => $post->status,
+            ''             => $post->status,
             'categories'         => $categories, // All available categories
             'tags'         => $tags, // All available categories
             'selectedCategories' => $post->categories->pluck('id')->toArray(),
@@ -241,7 +241,8 @@ class PostController extends BaseController
     $post = Post::findOrFail($id);
 
     // Instead of deleting, update the deleted_at column to mark as soft deleted.
-    $post->update(['deleted_at' => now()]);
+    $post->update(['status'=>'draft',
+    'deleted_at' => now()]);
 
     return redirect()->back()->with('success', 'Post soft-deleted successfully!');
 }
