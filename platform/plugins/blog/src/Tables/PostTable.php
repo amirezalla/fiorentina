@@ -44,12 +44,12 @@ class PostTable extends TableAbstract
             if (request()->get('deleted') == 1) {
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
-                    new class extends \Botble\Table\Abstracts\TableActionAbstract {
+                    new class([]) extends \Botble\Table\Abstracts\TableActionAbstract {
                         public function render(): string
                         {
                             $post = $this->getItem();
-                            return '<a class="btn btn-sm btn-icon btn-success" href="' 
-                                . route('posts.restore', $post->id) 
+                            return '<a class="btn btn-sm btn-icon btn-success" href="'
+                                . route('posts.restore', $post->id)
                                 . '" data-dt-single-action data-method="POST" data-confirmation-modal="true" data-confirmation-modal-title="Conferma ripristino" data-confirmation-modal-message="Sei sicuro di voler ripristinare questo record?" data-confirmation-modal-button="Ripristina" data-confirmation-modal-cancel-button="Annulla">
                                     <i class="fa fa-trash-arrow-up"><span class="sr-only">Ripristina</span></i>
                                 </a>';
