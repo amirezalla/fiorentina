@@ -12,7 +12,7 @@ use Botble\Table\Abstracts\TableAbstract;
 use Botble\Table\Actions\DeleteAction;
 use Botble\Table\Actions\EditAction;
 use Botble\Table\BulkActions\DeleteBulkAction;
-use Botble\Table\BulkActions\RestoreBulkAction;
+use Botble\Blog\BulkActions\RestoreBulkAction;
 use Botble\Table\BulkChanges\CreatedAtBulkChange;
 use Botble\Table\BulkChanges\NameBulkChange;
 use Botble\Table\BulkChanges\SelectBulkChange;
