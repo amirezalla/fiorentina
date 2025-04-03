@@ -87,7 +87,8 @@
                         <div class="form-group">
                             <label for="categories">Categorie</label>
                             <!-- Add a container with a set height and overflow -->
-                            <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 5px;">
+                            <div
+                                style="max-height: 150px; overflow-y: auto; border: 1px solid #dddddd1f; padding: 5px;">
                                 @if (isset($categories) && is_array($categories))
                                     @foreach ($categories as $catId => $catName)
                                         <label style="display: block;">
@@ -115,7 +116,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">Aggiorna</button>
-                        <button type="submit" class="btn btn-primary close">Annulla</button>
+                        <button class="btn btn-outline-primary close">Annulla</button>
                     </form>
                 </div>
             </div>
