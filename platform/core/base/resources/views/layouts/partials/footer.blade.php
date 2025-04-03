@@ -112,7 +112,7 @@
             const url = $btn.data('href');
 
             // Gather selected IDs from your table checkboxes (adjust the selector as needed)
-            s
+
             const selectedIds = Array.from(document.querySelectorAll('tr.selected input[name="id[]"]'))
                 .map(input => input.value);
             console.log(selectedIds);
