@@ -2,9 +2,9 @@
 
 namespace App\Table\HeaderActions;
 
-use Botble\Table\Abstracts\HeaderActionAbstract;
+use Botble\Table\HeaderActions\HeaderAction;
 
-class BulkRestoreHeaderAction extends HeaderActionAbstract
+class BulkRestoreHeaderAction extends HeaderAction
 {
     public static function make(): static
     {
