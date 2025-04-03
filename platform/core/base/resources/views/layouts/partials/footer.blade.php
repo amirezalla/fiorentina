@@ -26,6 +26,8 @@
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+    <link rel = "stylesheet" type = "text/css" href = "https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         $(document).on('click', '.quick-edit-btn', function() {
             var postId = $(this).data('id');
@@ -44,6 +46,51 @@
                 },
                 error: function() {
                     alert('Error loading quick edit form.');
+                }
+            });
+        });
+
+
+
+
+        // Listen for the quick edit form submission
+        $(document).on('submit', '#quickEditForm', function(e) {
+            e.preventDefault(); // Prevent normal form submission
+
+            var $form = $(this);
+            var url = $form.attr('action');
+            var formData = $form.serialize();
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Optionally, you might refresh your table here
+
+                    // Close the modal
+                    $('#quickEditModal').modal('hide');
+
+                    // Show success toast
+                    Toastify({
+                        text: "Post updated successfully!",
+                        duration: 3000,
+                        gravity: "top", // top or bottom
+                        position: "right", // left, center or right
+                        backgroundColor: "#28a745",
+                        stopOnFocus: true, // Stop if user hovers over toast
+                    }).showToast();
+                },
+                error: function(xhr, status, error) {
+                    // Show error toast
+                    Toastify({
+                        text: "Error updating post: " + error,
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "#dc3545",
+                        stopOnFocus: true,
+                    }).showToast();
                 }
             });
         });
