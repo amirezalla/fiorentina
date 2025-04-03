@@ -106,10 +106,12 @@
 
 
 
-        $(document).on('click', '[data-custom-bulk-restore]', function(e) {
+        $(document).on('click', '[data-action="restore"]', function(e) {
             e.preventDefault();
+            const $btn = $(this);
+            const url = $btn.data('href');
 
-            // Gather selected IDs from checkboxes, assuming checkboxes have a common class, e.g. ".table-checkbox"
+            // Gather selected IDs from your table checkboxes (adjust the selector as needed)
             const selectedIds = [];
             $('.table-checkbox:checked').each(function() {
                 selectedIds.push($(this).val());
@@ -121,14 +123,14 @@
             }
 
             $.ajax({
-                url: $(this).attr('href'),
+                url: url,
                 method: 'POST',
                 data: {
                     ids: selectedIds,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
-                    // Optionally show a toast or reload your table/ page
+                    // Optionally refresh the table or show a notification
                     location.reload();
                 },
                 error: function() {
