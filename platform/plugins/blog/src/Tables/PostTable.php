@@ -11,7 +11,6 @@ use Botble\Blog\Models\Post;
 use Botble\Table\Abstracts\TableAbstract;
 use Botble\Table\Actions\DeleteAction;
 use Botble\Table\Actions\EditAction;
-use Botble\Table\Actions\CustomAction;
 use Botble\Table\BulkActions\DeleteBulkAction;
 use Botble\Table\BulkChanges\CreatedAtBulkChange;
 use Botble\Table\BulkChanges\NameBulkChange;
@@ -48,8 +47,16 @@ class PostTable extends TableAbstract
 
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
-                    CustomAction::make()->route('posts.soft-delete'),
-                ]);
+                    FormattedColumn::make('restore')
+                    ->title('Ripristina')
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->renderUsing(function (FormattedColumn $column) {
+                        $post = $column->getItem();
+                        return '<a class="btn btn-sm btn-icon btn-success" href="' 
+                            . route('posts.restore', $post->id) 
+                            . '" data-dt-single-action data-method="POST" data-confirmation-modal="true" data-confirmation-modal-title="Conferma ripristino" data-confirmation-modal-message="Sei sicuro di voler ripristinare questo record?" data-confirmation-modal-button="Ripristina" data-confirmation-modal-cancel-button="Annulla"><i class="fa fa-trash-arrow-up"><span class="sr-only">Ripristina</span></i></a>';
+                    }),                ]);
             } else {
                 // Otherwise, show the normal edit and soft delete actions
                 $this->addActions([
