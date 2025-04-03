@@ -231,7 +231,7 @@ class PostController extends BaseController
             'year'               => $post->created_at->format('Y'),
             'hour'               => $post->created_at->format('H'),
             'minute'             => $post->created_at->format('i'),
-            ''             => $post->status,
+            'status'             => $post->status,
             'categories'         => $categories, // All available categories
             'tags'         => $tags, // All available categories
             'selectedCategories' => $post->categories->pluck('id')->toArray(),
