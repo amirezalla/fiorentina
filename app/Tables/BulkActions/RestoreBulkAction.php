@@ -1,6 +1,6 @@
 <?php
 
-namespace Botble\Blog\BulkActions;
+namespace App\Tables\BulkActions;
 
 use Botble\Base\Contracts\BaseModel;
 use Botble\Base\Http\Responses\BaseHttpResponse;
