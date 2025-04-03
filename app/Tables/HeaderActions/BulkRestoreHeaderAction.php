@@ -36,13 +36,7 @@ class BulkRestoreHeaderAction extends HeaderAction
         return $this->options[$key] ?? $default;
     }
 
-    /**
-     * Get the URL for the bulk restore action.
-     */
-    public function getUrl(): string
-    {
-        return $this->getOption('link', '#');
-    }
+
 
     /**
      * Get the label for the bulk restore action.
@@ -57,7 +51,6 @@ class BulkRestoreHeaderAction extends HeaderAction
      */
     public function render(): string
     {
-        $url = $this->getUrl();
         $label = $this->getLabel();
         // Return a button with the data-action attribute set to the header action name
         // and data-href set to your custom URL.

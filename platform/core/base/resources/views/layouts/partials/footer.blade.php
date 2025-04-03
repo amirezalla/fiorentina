@@ -106,35 +106,37 @@
 
 
 
-        $(document).on('click', '[data-action="restore"]', function(e) {
-            e.preventDefault();
-            const $btn = $(this);
+        $(document).ready(function() {
+            $(document).on('click', '[data-action="restore"]', function(e) {
+                e.preventDefault();
 
+                // Gather selected IDs from table checkboxes inside rows with class "selected"
+                const selectedIds = $('tr.selected input[name="id[]"]').map(function() {
+                    return $(this).val();
+                }).get();
+                console.log(selectedIds);
 
-            // Gather selected IDs from your table checkboxes (adjust the selector as needed)
-
-            const selectedIds = Array.from(document.querySelectorAll('tr.selected input[name="id[]"]'))
-                .map(input => input.value);
-            console.log(selectedIds);
-
-            if (!selectedIds.length) {
-                alert('No items selected.');
-                return;
-            }
-
-            $.ajax({
-                url: {{ route('posts.bulk-restore') }},
-                method: 'POST',
-                data: {
-                    ids: selectedIds,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    // Optionally refresh the table or show a notification
-                },
-                error: function() {
-                    alert('Error restoring posts.');
+                if (!selectedIds.length) {
+                    alert('No items selected.');
+                    return;
                 }
+
+                $.ajax({
+                    url: "{{ route('posts.bulk-restore') }}",
+                    method: "POST",
+                    data: {
+                        ids: selectedIds,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        // Optionally, show a notification or refresh your table
+                        // For example, reload the page:
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error restoring posts: " + error);
+                    }
+                });
             });
         });
     </script>

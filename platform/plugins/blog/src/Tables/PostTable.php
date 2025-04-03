@@ -47,7 +47,6 @@ class PostTable extends TableAbstract
                 $this->addHeaderActions([
                     CreateHeaderAction::make()->route('posts.create'),
                     \App\Tables\HeaderActions\BulkRestoreHeaderAction::make()->setOptions([
-                        'link'  => '',
                         'label' => 'Bulk Restore',
                     ]),
                 ]);
