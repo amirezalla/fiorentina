@@ -182,7 +182,7 @@ class PostTable extends TableAbstract
 
                 if (request()->get('deleted') == 1) {
                     $this->addBulkActions([
-                        new RestoreBulkAction(),
+                        'bulk-restore' => new RestoreBulkAction(),
                     ]);
                 } else {
                     $this->addBulkActions([
