@@ -11,7 +11,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="quickEditForm" method="POST" action="{{ route('posts.quick-edit') }}">
+                    <form id="quickEditForm" method="POST" action="">
+
                         @csrf
                         <input type="hidden" id="post_id" name="post_id" value="{{ $postId }}">
 

@@ -41,6 +41,8 @@
                     // (Assuming your modal is defined in the partial)
                     $('body').append(response.html);
                     // Show the modal
+                    $('#quickEditForm').attr('action', '/posts/' + postId + '/quick-edit');
+
                     $('#quickEditModal').modal('show');
                     $('.modal-backdrop').remove();
                 },
