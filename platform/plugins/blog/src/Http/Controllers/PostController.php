@@ -265,7 +265,8 @@ public function bulkRestore(Request $request)
         $post = Post::find($id);
         if ($post) {
             // If using SoftDeletes:
-            $post->restore();
+            $post->update([
+                'deleted_at' => NULL]);
             // Or if you only have a deleted_at column:
             // $post->deleted_at = null;
             // $post->status = BaseStatusEnum::PUBLISHED;
