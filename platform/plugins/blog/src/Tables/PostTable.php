@@ -40,13 +40,25 @@ class PostTable extends TableAbstract
     {
         $this
             ->model(Post::class)
-            ->addHeaderAction(CreateHeaderAction::make()->route('posts.create'))
-            ->addActions([
-                EditAction::make()->route('posts.edit'),
-                // Quick Edit button will be handled via JavaScript to insert a new row
-                DeleteAction::make()->route('posts.soft-delete'),
-                ])
-            ->addColumns([
+            ->addHeaderAction(CreateHeaderAction::make()->route('posts.create'));
+            // Conditionally add actions based on the request parameter 'deleted'
+            if (request()->get('deleted') == 1) {
+                // When ?deleted=1, show edit and restore actions
+                $this->addActions([
+                    EditAction::make()->route('posts.edit'),
+                    // Restore action as a custom action:
+                    new \Botble\Table\Actions\CustomAction(function ($item) {
+                        return '<a class="btn btn-sm btn-icon btn-success" href="' . route('posts.restore', $item->id) . '" data-dt-single-action data-method="POST" data-confirmation-modal="true" data-confirmation-modal-title="Conferma ripristino" data-confirmation-modal-message="Sei sicuro di voler ripristinare questo record?" data-confirmation-modal-button="Ripristina" data-confirmation-modal-cancel-button="Annulla"><i class="fa fa-trash-arrow-up"><span class="sr-only">Ripristina</span></i></a>';
+                    }),
+                ]);
+            } else {
+                // Otherwise, show the normal edit and soft delete actions
+                $this->addActions([
+                    EditAction::make()->route('posts.edit'),
+                    DeleteAction::make()->route('posts.soft-delete'),
+                ]);
+            }
+            $this->addColumns([
                 ImageColumn::make(),
                 NameColumn::make()->route('posts.edit'),
                 FormattedColumn::make('categories_name')
