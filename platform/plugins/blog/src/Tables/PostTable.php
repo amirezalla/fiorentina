@@ -44,7 +44,7 @@ class PostTable extends TableAbstract
             if (request()->get('deleted') == 1) {
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
-                    new class([]) extends \Botble\Table\Abstracts\TableActionAbstract {
+                    new class('restore') extends \Botble\Table\Abstracts\TableActionAbstract {
                         public function render(): string
                         {
                             $post = $this->getItem();
