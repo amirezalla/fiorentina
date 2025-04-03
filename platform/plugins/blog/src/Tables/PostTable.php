@@ -76,7 +76,7 @@ class PostTable extends TableAbstract
                     ->title(trans('plugins/blog::posts.author'))
                     ->width(100)
                     ->orderable(false)
-                    ->searchable(false)
+                    ->searchable(true)
                     ->getValueUsing(fn (FormattedColumn $column) => $column->getItem()->author?->name)
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
@@ -96,7 +96,7 @@ class PostTable extends TableAbstract
                     FormattedColumn::make('views')
                     ->title('Views')
                     ->width(60)
-                    ->orderable(false)
+                    ->orderable(true)
                     ->searchable(false)
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
