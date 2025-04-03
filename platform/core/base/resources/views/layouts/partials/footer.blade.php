@@ -109,7 +109,7 @@
         $(document).on('click', '[data-action="restore"]', function(e) {
             e.preventDefault();
             const $btn = $(this);
-            const url = $btn.data('href');
+
 
             // Gather selected IDs from your table checkboxes (adjust the selector as needed)
 
@@ -123,7 +123,7 @@
             }
 
             $.ajax({
-                url: url,
+                url: {{ route('post.bulk-restore') }},
                 method: 'POST',
                 data: {
                     ids: selectedIds,
