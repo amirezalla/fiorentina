@@ -150,31 +150,37 @@ class PostTable extends TableAbstract
                     }),
                 
                 
-                                StatusColumn::make(),
+                                StatusColumn::make()
+                            ]);
                 // New column that outputs only the Quick Edit button.
-                FormattedColumn::make('quick_edit')
-                ->title('Azione rapida')
-                ->orderable(false)
-                ->searchable(false)
-                ->renderUsing(function (FormattedColumn $column) {
-                    $post = $column->getItem();
-                    $categoriesJson = json_encode($post->categories->pluck('id'));
-                    $tagsJson = ''; // Adapt as needed
+                if (request()->get('deleted') != 1){
+                    $this->addColumns([
+                    FormattedColumn::make('quick_edit')
+                    ->title('Azione rapida')
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->renderUsing(function (FormattedColumn $column) {
+                        $post = $column->getItem();
+                        $categoriesJson = json_encode($post->categories->pluck('id'));
+                        $tagsJson = ''; // Adapt as needed
+                
+                        return '
+                            <button 
+                                type="button" 
+                                class="btn btn-sm btn-secondary quick-edit-btn"
+                                data-id="' . $post->id . '"
+                            >
+                                <i class="fa fa-edit"></i> Modifica Rapida
+                            </button>
+                        ';
+                    })
+                    ]);
+                }
+                
             
-                    return '
-                        <button 
-                            type="button" 
-                            class="btn btn-sm btn-secondary quick-edit-btn"
-                            data-id="' . $post->id . '"
-                        >
-                            <i class="fa fa-edit"></i> Modifica Rapida
-                        </button>
-                    ';
-                }),
             
-            
-            ])
-            ->addBulkActions([
+
+            $this->addBulkActions([
                 DeleteBulkAction::make()->permission('posts.destroy'),
             ])
             ->addBulkChanges([
