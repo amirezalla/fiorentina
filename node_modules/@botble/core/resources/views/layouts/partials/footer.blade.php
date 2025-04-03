@@ -19,7 +19,6 @@
     <input type="hidden" id="post_id" name="post_id" value="">
 
     @include('core/base::partials.quick_edit', [
-        'action' => route('posts.quick-edit', $post->id ?? 0),
         'postId' => $post->id ?? '',
     ])
 
