@@ -182,8 +182,7 @@ class PostTable extends TableAbstract
                 if (request()->get('deleted') == 1) {
                     $this->addBulkActions([
                         new class('bulk-restore') extends \Botble\Table\Abstracts\TableBulkActionAbstract {
-                            // Implement the dispatch method to process the bulk action:
-                            public function dispatch(array $ids): bool
+                            public function dispatch(\Illuminate\Database\Eloquent\Model $model, array $ids): \Botble\Base\Http\Responses\BaseHttpResponse
                             {
                                 foreach ($ids as $id) {
                                     $post = \Botble\Blog\Models\Post::find($id);
@@ -194,7 +193,8 @@ class PostTable extends TableAbstract
                                         ]);
                                     }
                                 }
-                                return true;
+                                return (new \Botble\Base\Http\Responses\BaseHttpResponse())
+                                    ->setMessage('Post ripristinati con successo!');
                             }
                 
                             public function name(): string
@@ -213,6 +213,7 @@ class PostTable extends TableAbstract
                         DeleteBulkAction::make()->permission('posts.destroy'),
                     ]);
                 }
+                
             $this->addBulkChanges([
                 NameBulkChange::make(),
                 StatusBulkChange::make(),
