@@ -41,24 +41,22 @@ class PostTable extends TableAbstract
         $this
             ->model(Post::class)
             ->addHeaderAction(CreateHeaderAction::make()->route('posts.create'));
-            // Conditionally add actions based on the request parameter 'deleted'
             if (request()->get('deleted') == 1) {
-                // When ?deleted=1, show edit and restore actions
-
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
-                    FormattedColumn::make('restore')
-                    ->title('Ripristina')
-                    ->orderable(false)
-                    ->searchable(false)
-                    ->renderUsing(function (FormattedColumn $column) {
-                        $post = $column->getItem();
-                        return '<a class="btn btn-sm btn-icon btn-success" href="' 
-                            . route('posts.restore', $post->id) 
-                            . '" data-dt-single-action data-method="POST" data-confirmation-modal="true" data-confirmation-modal-title="Conferma ripristino" data-confirmation-modal-message="Sei sicuro di voler ripristinare questo record?" data-confirmation-modal-button="Ripristina" data-confirmation-modal-cancel-button="Annulla"><i class="fa fa-trash-arrow-up"><span class="sr-only">Ripristina</span></i></a>';
-                    }),                ]);
+                    new class extends \Botble\Table\Abstracts\TableActionAbstract {
+                        public function render()
+                        {
+                            $post = $this->getItem();
+                            return '<a class="btn btn-sm btn-icon btn-success" href="' 
+                                . route('posts.restore', $post->id) 
+                                . '" data-dt-single-action data-method="POST" data-confirmation-modal="true" data-confirmation-modal-title="Conferma ripristino" data-confirmation-modal-message="Sei sicuro di voler ripristinare questo record?" data-confirmation-modal-button="Ripristina" data-confirmation-modal-cancel-button="Annulla">
+                                    <i class="fa fa-trash-arrow-up"><span class="sr-only">Ripristina</span></i>
+                                </a>';
+                        }
+                    },
+                ]);
             } else {
-                // Otherwise, show the normal edit and soft delete actions
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
                     DeleteAction::make()->route('posts.soft-delete'),
