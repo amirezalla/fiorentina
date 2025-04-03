@@ -201,19 +201,39 @@ class PostController extends BaseController
         return redirect()->back()->with('success', 'Post updated successfully via Quick Edit!');
     }
 
-    public function getQuickEditForm($id)
+    public function quickEditForm($id)
     {
         $post = Post::findOrFail($id);
     
-        // Build the form instance
-        $form = app(\Botble\Blog\Forms\PostQuickEditForm::class)
-            ->setModel($post);
+        // For example, get all categories as an associative array (id => name)
+        $categories = \Botble\Blog\Models\Category::query()
+            ->pluck('name', 'id')
+            ->toArray();
+
+        $tags= $post->tags->pluck('name')->toArray();
+        $tags = implode(',', $tags);
     
-        // Render the partial that ONLY has the form
-        $html = view('plugins/blog.partials.quick-edit-only-form', compact('form'))->render();
+        // Prepare data to pass to the partial.
+        $data = [
+            'action'             => route('posts.quick-edit', $post->id),
+            'postId'             => $post->id,
+            'name'               => $post->name,
+            'slug'               => $post->slug,
+            'day'                => $post->created_at->format('d'),
+            'month'              => $post->created_at->format('m'),
+            'year'               => $post->created_at->format('Y'),
+            'hour'               => $post->created_at->format('H'),
+            'minute'             => $post->created_at->format('i'),
+            'status'             => $post->status,
+            'categories'         => $categories, // All available categories
+            'tags'         => $tags, // All available categories
+            'selectedCategories' => $post->categories->pluck('id')->toArray(),
+            'tags'               => $post->tags->implode(','),
+        ];
     
-        // Return JSON that your JS will inject into the modal
-        return response()->json(['html' => $html]);
+        return response()->json([
+            'html' => view('core/base::partials.quick_edit', $data)->render()
+        ]);
     }
     
 

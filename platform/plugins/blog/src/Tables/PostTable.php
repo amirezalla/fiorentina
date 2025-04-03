@@ -121,14 +121,6 @@ class PostTable extends TableAbstract
                             type="button" 
                             class="btn btn-sm btn-secondary quick-edit-btn"
                             data-id="' . $post->id . '"
-                            data-name="' . e($post->name) . '"
-                            data-slug="' . e($post->slug) . '"
-                            data-date="' . $post->created_at->format('Y-m-d') . '"
-                            data-hour="' . $post->created_at->format('H') . '"
-                            data-minute="' . $post->created_at->format('i') . '"
-                            data-categories=\'' . $categoriesJson . '\'
-                            data-tags="' . e($tagsJson) . '"
-                            data-status="' . e($post->status) . '"
                         >
                             <i class="fa fa-edit"></i> Quick Edit
                         </button>

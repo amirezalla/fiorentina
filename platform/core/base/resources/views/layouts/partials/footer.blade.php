@@ -28,13 +28,23 @@
 
     <script>
         $(document).on('click', '.quick-edit-btn', function() {
-            var $btn = $(this);
-            var postId = $btn.data('id');
+            var postId = $(this).data('id');
 
-            // Open the modal
-            $('#quickEditModal').modal('show');
-            $('.modal-backdrop').remove();
-
+            $.ajax({
+                url: '/posts/quick-edit-form/' + postId,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    // Inject the rendered HTML into a container
+                    // (Assuming your modal is defined in the partial)
+                    $('body').append(response.html);
+                    // Show the modal
+                    $('#quickEditModal').modal('show');
+                },
+                error: function() {
+                    alert('Error loading quick edit form.');
+                }
+            });
         });
     </script>
 
