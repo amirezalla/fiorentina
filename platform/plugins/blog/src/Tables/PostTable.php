@@ -45,7 +45,7 @@ class PostTable extends TableAbstract
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
                     new class extends \Botble\Table\Abstracts\TableActionAbstract {
-                        public function render()
+                        public function render(): string
                         {
                             $post = $this->getItem();
                             return '<a class="btn btn-sm btn-icon btn-success" href="' 
