@@ -57,13 +57,18 @@ class PostTable extends TableAbstract
                     ->searchable(false)
                     ->getValueUsing(function (FormattedColumn $column) {
                         $categories = $column
-                            ->getItem()
-                            ->categories
-                            ->sortBy('name')
-                            ->map(function (Category $category) {
-                                return Html::link(route('categories.edit', $category->getKey()), $category->name, ['target' => '_blank']);
-                            })
-                            ->all();
+                        ->getItem()
+                        ->categories
+                        ->unique('id') // Remove duplicate category models
+                        ->sortBy('name')
+                        ->map(function (Category $category) {
+                            return Html::link(
+                                route('categories.edit', $category->getKey()),
+                                $category->name,
+                                ['target' => '_blank']
+                            );
+                        })
+                        ->all();
 
                         return implode(', ', $categories);
                     })
