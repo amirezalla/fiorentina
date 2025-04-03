@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use FriendsOfBotble\Comment\Models\Comment;
+use Botble\Table\BulkActions\BulkActionAbstract; // Make sure this exists in your project
+
 
 class PostTable extends TableAbstract
 {
@@ -176,14 +178,42 @@ class PostTable extends TableAbstract
                     })
                     ]);
                 }
-                
-            
-            
 
-            $this->addBulkActions([
-                DeleteBulkAction::make()->permission('posts.destroy'),
-            ])
-            ->addBulkChanges([
+                if (request()->get('deleted') == 1) {
+                    // When showing deleted posts, add a bulk restore action:
+                    $this->addBulkActions([
+                        new class('bulk-restore') extends BulkActionAbstract {
+                            public function handle($ids)
+                            {
+                                foreach ($ids as $id) {
+                                    $post = \Botble\Blog\Models\Post::find($id);
+                                    if ($post) {
+                                        // Restore: clear deleted_at and set status to published
+                                        $post->update([
+                                            'deleted_at' => null,
+                                            'status'     => BaseStatusEnum::PUBLISHED,
+                                        ]);
+                                    }
+                                }
+                                return true;
+                            }
+                            public function name(): string
+                            {
+                                return 'Ripristina selezionati';
+                            }
+                            public function messageSuccess(): string
+                            {
+                                return 'Post ripristinati con successo!';
+                            }
+                        },
+                    ]);
+                } else {
+                    // Otherwise, add the bulk delete action (soft delete)
+                    $this->addBulkActions([
+                        DeleteBulkAction::make()->permission('posts.destroy'),
+                    ]);
+                }
+            $this->addBulkChanges([
                 NameBulkChange::make(),
                 StatusBulkChange::make(),
                 CreatedAtBulkChange::make(),
