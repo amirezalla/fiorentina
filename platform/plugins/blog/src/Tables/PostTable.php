@@ -224,7 +224,8 @@ class PostTable extends TableAbstract
                         'updated_at',
                         'author_id',
                         'author_type',
-                    ]);
+                    ])
+                    ->orderBy('created_at', 'desc');
             })
             ->onAjax(function (PostTable $table) {
                 return $table->toJson(
