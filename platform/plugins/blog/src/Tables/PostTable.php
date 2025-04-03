@@ -47,12 +47,11 @@ class PostTable extends TableAbstract
                 DeleteAction::make()->route('posts.destroy'),
             ])
             ->addColumns([
-                IdColumn::make(),
                 ImageColumn::make(),
                 NameColumn::make()->route('posts.edit'),
                 FormattedColumn::make('categories_name')
                     ->title(trans('plugins/blog::posts.categories'))
-                    ->width(150)
+                    ->width(100)
                     ->orderable(false)
                     ->searchable(false)
                     ->getValueUsing(function (FormattedColumn $column) {
@@ -75,7 +74,7 @@ class PostTable extends TableAbstract
                     ->withEmptyState(),
                 FormattedColumn::make('author_id')
                     ->title(trans('plugins/blog::posts.author'))
-                    ->width(150)
+                    ->width(100)
                     ->orderable(false)
                     ->searchable(false)
                     ->getValueUsing(fn (FormattedColumn $column) => $column->getItem()->author?->name)
@@ -96,7 +95,7 @@ class PostTable extends TableAbstract
                     ->withEmptyState(),
                 FormattedColumn::make('comments')
                     ->title('Comments')
-                    ->width(80)
+                    ->width(60)
                     ->orderable(false)
                     ->searchable(false)
                     ->renderUsing(function (FormattedColumn $column) {
