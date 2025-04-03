@@ -177,6 +177,14 @@ class PostTable extends TableAbstract
                     ->choices(fn () => User::query()->pluck('first_name', 'id')->all()),
             ])
             ->queryUsing(function (Builder $query) {
+                // If the request parameter 'deleted' is not 1, only show non-deleted posts:
+                if (request()->get('deleted') != 1) {
+                    $query->whereNull('deleted_at');
+                } else {
+                    // When ?deleted=1 is set, only show soft-deleted posts:
+                    $query->whereNotNull('deleted_at');
+                }
+                
                 return $query
                     ->with([
                         'categories' => function (BelongsToMany $query) {
