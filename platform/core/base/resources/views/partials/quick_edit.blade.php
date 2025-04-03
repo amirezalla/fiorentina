@@ -114,7 +114,8 @@
                             <textarea id="post_tags" name="tags" class="form-control" placeholder="Separa i tag con delle virgole">{{ $tags }}</textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary">Aggiorna</button>
+                        <button type="submit" class="btn btn-primary close">Annulla</button>
                     </form>
                 </div>
             </div>
