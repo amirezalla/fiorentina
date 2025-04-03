@@ -11,6 +11,7 @@ use Botble\Blog\Models\Post;
 use Botble\Table\Abstracts\TableAbstract;
 use Botble\Table\Actions\DeleteAction;
 use Botble\Table\Actions\EditAction;
+use Botble\Table\Actions\CustomAction;
 use Botble\Table\BulkActions\DeleteBulkAction;
 use Botble\Table\BulkChanges\CreatedAtBulkChange;
 use Botble\Table\BulkChanges\NameBulkChange;
@@ -44,12 +45,10 @@ class PostTable extends TableAbstract
             // Conditionally add actions based on the request parameter 'deleted'
             if (request()->get('deleted') == 1) {
                 // When ?deleted=1, show edit and restore actions
+
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
-                    // Restore action as a custom action:
-                    new \Botble\Table\Actions\CustomAction(function ($item) {
-                        return '<a class="btn btn-sm btn-icon btn-success" href="' . route('posts.restore', $item->id) . '" data-dt-single-action data-method="POST" data-confirmation-modal="true" data-confirmation-modal-title="Conferma ripristino" data-confirmation-modal-message="Sei sicuro di voler ripristinare questo record?" data-confirmation-modal-button="Ripristina" data-confirmation-modal-cancel-button="Annulla"><i class="fa fa-trash-arrow-up"><span class="sr-only">Ripristina</span></i></a>';
-                    }),
+                    CustomAction::make()->route('posts.soft-delete'),
                 ]);
             } else {
                 // Otherwise, show the normal edit and soft delete actions
