@@ -39,6 +39,7 @@ class Post extends BaseModel
         'author_id',
         'author_type',
         'published_at',
+        'deleted_at',
         'category_id', // Add this
         'plain_slug',
         'hero_order',

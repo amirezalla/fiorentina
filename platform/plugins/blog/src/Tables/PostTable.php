@@ -44,8 +44,8 @@ class PostTable extends TableAbstract
             ->addActions([
                 EditAction::make()->route('posts.edit'),
                 // Quick Edit button will be handled via JavaScript to insert a new row
-                DeleteAction::make()->route('posts.destroy'),
-            ])
+                DeleteAction::make()->route('posts.soft-delete'),
+                ])
             ->addColumns([
                 ImageColumn::make(),
                 NameColumn::make()->route('posts.edit'),

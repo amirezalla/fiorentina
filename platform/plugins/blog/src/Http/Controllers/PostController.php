@@ -236,7 +236,15 @@ class PostController extends BaseController
             'html' => view('core/base::partials.quick_edit', $data)->render()
         ]);
     }
-    
+    public function softDelete(Request $request, $id)
+{
+    $post = Post::findOrFail($id);
+
+    // Instead of deleting, update the deleted_at column to mark as soft deleted.
+    $post->update(['deleted_at' => now()]);
+
+    return redirect()->back()->with('success', 'Post soft-deleted successfully!');
+}
 
 
 
