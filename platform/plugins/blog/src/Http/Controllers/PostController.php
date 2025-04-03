@@ -178,8 +178,9 @@ class PostController extends BaseController
     
         // Update post fields:
         $post->name = $data['name'];
-        $post->slug = $data['slug'];
-        // Combine date + hour + minute if provided
+        if ($data['slug'] !== $post->slug) {
+            $post->slug()->update(['slug' => $request->input('slug')]);
+        }        // Combine date + hour + minute if provided
         if (isset($data['date'])) {
             $dateTime = $data['date'] . ' ' . str_pad($data['hour'] ?? 0, 2, '0', STR_PAD_LEFT) . ':' . str_pad($data['minute'] ?? 0, 2, '0', STR_PAD_LEFT) . ':00';
             $post->created_at = $dateTime;
