@@ -17,7 +17,7 @@ class CreatedAtColumn extends DateColumn
                 // Parse the date, set locale to Italian, and format as "05 Feb 2025"
                 // Note: translatedFormat will output month abbreviations according to the locale.
                 $date = Carbon::parse($value)->locale('it')->translatedFormat('d M Y');
-                return 'abbase bouazar';
+                return $date;
             });
     }
 }
