@@ -44,7 +44,7 @@ class PostTable extends TableAbstract
         $this
             ->model(Post::class);
             if (request()->get('deleted') == 1) {
-                $this->setHeaderActions([
+                $this->addHeaderActions([
                     CreateHeaderAction::make()->route('posts.create'),
                     \App\Tables\HeaderActions\BulkRestoreHeaderAction::make()->setOptions([
                         'link'  => route('posts.bulk-restore'),
@@ -52,7 +52,7 @@ class PostTable extends TableAbstract
                     ]),
                 ]);
             }else{
-                $this->setHeaderActions([
+                $this->addHeaderActions([
                     \Botble\Table\HeaderActions\CreateHeaderAction::make()->route('posts.create'),
                 ]);
             }
