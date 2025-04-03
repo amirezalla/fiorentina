@@ -160,47 +160,51 @@ class PostController extends BaseController
 
 
     public function quickEdit(Request $request, $id)
-    {
-        $post = Post::findOrFail($id);
-    
-        // Validate incoming data as needed:
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
-            'date' => 'nullable|date',
-            'hour' => 'nullable|integer|min:0|max:23',
-            'minute' => 'nullable|integer|min:0|max:59',
-            'status' => 'required|in:published,draft',
-            'categories' => 'array',
-            'tags' => 'nullable|string',
-            // Add other rules for additional fields
-        ]);
-    
-        // Update post fields:
-        $post->name = $data['name'];
-        if ($data['slug'] !== $post->slug) {
-            $post->slug()->update(['slug' => $request->input('slug')]);
-        }        // Combine date + hour + minute if provided
-        if (isset($data['date'])) {
-            $dateTime = $data['date'] . ' ' . str_pad($data['hour'] ?? 0, 2, '0', STR_PAD_LEFT) . ':' . str_pad($data['minute'] ?? 0, 2, '0', STR_PAD_LEFT) . ':00';
-            $post->created_at = $dateTime;
-        }
-        $post->status = $data['status'];
-    
-        // Handle categories relationship
-        if (isset($data['categories'])) {
-            // Example: if your categories are a BelongsToMany relationship
-            $post->categories()->sync($data['categories']);
-        }
-    
-        // Handle tags
-        // If you store tags in a pivot table or a custom field, adapt accordingly.
-    
-        $post->save();
-    
-        // Return or redirect
-        return redirect()->back()->with('success', 'Post updated successfully via Quick Edit!');
+{
+    $post = Post::findOrFail($id);
+
+    // Validate incoming data:
+    $data = $request->validate([
+        'name'     => 'required|string|max:255',
+        'slug'     => 'required|string|max:255',
+        'date'     => 'nullable|date',
+        'hour'     => 'nullable|integer|min:0|max:23',
+        'minute'   => 'nullable|integer|min:0|max:59',
+        'status'   => 'required|in:published,draft',
+        'categories' => 'array',
+        'tags'     => 'nullable|string',
+    ]);
+
+    // Update post fields:
+    $post->name = $data['name'];
+
+    if ($data['slug'] !== $post->slug) {
+        // Update the slug on its dedicated relationship/model:
+        $post->slug()->update(['slug' => $data['slug']]);
     }
+
+    // Combine date + hour + minute if provided:
+    if (isset($data['date'])) {
+        $dateTime = $data['date'] . ' ' . str_pad($data['hour'] ?? 0, 2, '0', STR_PAD_LEFT)
+            . ':' . str_pad($data['minute'] ?? 0, 2, '0', STR_PAD_LEFT) . ':00';
+        $post->created_at = $dateTime;
+    }
+
+    // Use BaseStatusEnum for status:
+    $post->status = $data['status'] === 'published' ? BaseStatusEnum::PUBLISHED : BaseStatusEnum::DRAFT;
+
+    // Handle categories relationship:
+    if (isset($data['categories'])) {
+        $post->categories()->sync($data['categories']);
+    }
+
+    // Handle tags if needed (e.g., sync tags in a pivot table)
+
+    $post->save();
+
+    return redirect()->back()->with('success', 'Post updated successfully via Quick Edit!');
+}
+
 
     public function quickEditForm($id)
     {
@@ -240,12 +244,15 @@ class PostController extends BaseController
 {
     $post = Post::findOrFail($id);
 
-    // Instead of deleting, update the deleted_at column to mark as soft deleted.
-    $post->update(['status'=>'draft',
-    'deleted_at' => now()]);
+    // Instead of deleting, update the deleted_at column and mark as draft using BaseStatusEnum
+    $post->update([
+        'status'     => BaseStatusEnum::DRAFT,
+        'deleted_at' => now(),
+    ]);
 
     return redirect()->back()->with('success', 'Post soft-deleted successfully!');
 }
+
 public function bulkRestore(Request $request, $id)
 {
     $post = Post::findOrFail($id);

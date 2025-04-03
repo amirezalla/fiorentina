@@ -51,7 +51,7 @@ class PostTable extends TableAbstract
                             return '<a class="btn btn-sm btn-icon btn-success" href="'
                                 . route('posts.restore', $post->id)
                                 . '" data-dt-single-action data-method="POST" data-confirmation-modal="true" data-confirmation-modal-title="Conferma ripristino" data-confirmation-modal-message="Sei sicuro di voler ripristinare questo record?" data-confirmation-modal-button="Ripristina" data-confirmation-modal-cancel-button="Annulla">
-                                    <i class="fa fa-trash-arrow-up"><span class="sr-only">Ripristina</span></i>
+                                    <i class="fa fa-trash-arrow-up" style="margin:0 !important"><span class="sr-only">Ripristina</span></i>
                                 </a>';
                         }
                     },
