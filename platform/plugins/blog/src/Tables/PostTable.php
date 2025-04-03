@@ -42,17 +42,21 @@ class PostTable extends TableAbstract
     public function setup(): void
     {
         $this
-            ->model(Post::class)
-            ->addHeaderAction(CreateHeaderAction::make()->route('posts.create'));
+            ->model(Post::class);
             if (request()->get('deleted') == 1) {
-                // When deleted items are shown, add the Bulk Restore header action:
-                $this->addHeaderAction(
+                $this->setHeaderActions([
+                    \Botble\Table\HeaderActions\CreateHeaderAction::make()->route('posts.create'),
                     \App\Tables\HeaderActions\BulkRestoreHeaderAction::make()->setOptions([
                         'link'  => route('posts.bulk-restore'),
                         'label' => 'Bulk Restore',
-                    ])
-                );
+                    ]),
+                ]);
+            }else{
+                $this->setHeaderActions([
+                    \Botble\Table\HeaderActions\CreateHeaderAction::make()->route('posts.create'),
+                ]);
             }
+
             if (request()->get('deleted') == 1) {
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),
