@@ -76,15 +76,17 @@
                     // Show success toast
                     Toastify({
                         text: "Post updated successfully!",
-                        duration: 3000,
+                        duration: 2000,
                         gravity: "top", // top or bottom
                         position: "right", // left, center or right
                         backgroundColor: "#28a745",
                         stopOnFocus: true, // Stop if user hovers over toast
+                        onClose: function() {
+                            // Instead of reloading the page, trigger the button with data-bb-target=".buttons-reload"
+                            $('[data-bb-target=".buttons-reload"]').trigger('click');
+                        }
                     }).showToast();
-                    setTimeout(function() {
-                        location.reload();
-                    }, 300);
+
                 },
                 error: function(xhr, status, error) {
                     // Show error toast

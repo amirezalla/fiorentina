@@ -108,7 +108,7 @@ class PostTable extends TableAbstract
                 StatusColumn::make(),
                 // New column that outputs only the Quick Edit button.
                 FormattedColumn::make('quick_edit')
-                ->title('Quick Edit')
+                ->title('Azione rapida')
                 ->orderable(false)
                 ->searchable(false)
                 ->renderUsing(function (FormattedColumn $column) {
@@ -122,7 +122,7 @@ class PostTable extends TableAbstract
                             class="btn btn-sm btn-secondary quick-edit-btn"
                             data-id="' . $post->id . '"
                         >
-                            <i class="fa fa-edit"></i> Quick Edit
+                            <i class="fa fa-edit"></i> Modifica Rapida
                         </button>
                     ';
                 }),
