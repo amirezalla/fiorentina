@@ -6,14 +6,26 @@ use Botble\Table\HeaderActions\HeaderAction;
 
 class BulkRestoreHeaderAction extends HeaderAction
 {
+    protected array $options = [];
+
     public static function make(string $name = 'restore'): static
     {
         return new static($name);
     }
 
+    public function setOptions(array $options): static
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    public function getOption(string $key, $default = null)
+    {
+        return $this->options[$key] ?? $default;
+    }
+
     public function render(): string
     {
-        // Use the options to get the link and label.
         $link  = $this->getOption('link', '#');
         $label = $this->getOption('label', 'Bulk Restore');
 
