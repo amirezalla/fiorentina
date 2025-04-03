@@ -180,27 +180,28 @@ class PostTable extends TableAbstract
                 }
 
                 if (request()->get('deleted') == 1) {
-                    // When showing deleted posts, add a bulk restore action:
                     $this->addBulkActions([
-                        new class('bulk-restore') extends TableBulkActionAbstract {
-                            public function handle($ids)
+                        new class('bulk-restore') extends \Botble\Table\Abstracts\TableBulkActionAbstract {
+                            // Implement the dispatch method to process the bulk action:
+                            public function dispatch(array $ids): bool
                             {
                                 foreach ($ids as $id) {
                                     $post = \Botble\Blog\Models\Post::find($id);
                                     if ($post) {
-                                        // Restore: clear deleted_at and set status to published
                                         $post->update([
                                             'deleted_at' => null,
-                                            'status'     => BaseStatusEnum::PUBLISHED,
+                                            'status'     => \Botble\Base\Enums\BaseStatusEnum::PUBLISHED,
                                         ]);
                                     }
                                 }
                                 return true;
                             }
+                
                             public function name(): string
                             {
                                 return 'Ripristina selezionati';
                             }
+                
                             public function messageSuccess(): string
                             {
                                 return 'Post ripristinati con successo!';
@@ -208,7 +209,6 @@ class PostTable extends TableAbstract
                         },
                     ]);
                 } else {
-                    // Otherwise, add the bulk delete action (soft delete)
                     $this->addBulkActions([
                         DeleteBulkAction::make()->permission('posts.destroy'),
                     ]);
