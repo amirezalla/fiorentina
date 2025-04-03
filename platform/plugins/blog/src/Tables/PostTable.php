@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use FriendsOfBotble\Comment\Models\Comment;
-use Botble\Table\BulkActions\TableBulkActionAbstract; // Make sure this exists in your project
+use Botble\Table\Abstracts\TableBulkActionAbstract; // Make sure this exists in your project
 
 
 class PostTable extends TableAbstract
