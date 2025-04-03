@@ -12,7 +12,6 @@ use Botble\Table\Abstracts\TableAbstract;
 use Botble\Table\Actions\DeleteAction;
 use Botble\Table\Actions\EditAction;
 use Botble\Table\BulkActions\DeleteBulkAction;
-use App\Tables\BulkActions\RestoreBulkAction;
 use Botble\Table\BulkChanges\CreatedAtBulkChange;
 use Botble\Table\BulkChanges\NameBulkChange;
 use Botble\Table\BulkChanges\SelectBulkChange;
@@ -24,6 +23,7 @@ use Botble\Table\Columns\ImageColumn;
 use Botble\Table\Columns\NameColumn;
 use Botble\Table\Columns\StatusColumn;
 use Botble\Table\HeaderActions\CreateHeaderAction;
+use App\Tables\HeaderActions\BulkRestoreHeaderAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -44,6 +44,15 @@ class PostTable extends TableAbstract
         $this
             ->model(Post::class)
             ->addHeaderAction(CreateHeaderAction::make()->route('posts.create'));
+            if (request()->get('deleted') == 1) {
+                // When deleted items are shown, add the Bulk Restore header action:
+                $this->addHeaderAction(
+                    BulkRestoreHeaderAction::make()->setOptions([
+                        'link'  => route('posts.bulk-restore'),
+                        'label' => 'Bulk Restore',
+                    ])
+                );
+            }
             if (request()->get('deleted') == 1) {
                 $this->addActions([
                     EditAction::make()->route('posts.edit'),

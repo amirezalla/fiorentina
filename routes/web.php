@@ -199,5 +199,7 @@ Route::get('posts/quick-edit-form/{id}', [PostController::class, 'quickEditForm'
 
     Route::delete('posts/{id}/soft-delete', [PostController::class, 'softDelete'])
     ->name('posts.soft-delete');
-    
+
     Route::post('posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
+Route::post('admin/posts/bulk-restore', [PostController::class, 'bulkRestore'])
+    ->name('posts.bulk-restore');

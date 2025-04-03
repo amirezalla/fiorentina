@@ -103,6 +103,39 @@
         $(document).on('click', '.modal .close', function() {
             $(this).closest('.modal').modal('hide');
         });
+
+
+
+        $(document).on('click', '[data-custom-bulk-restore]', function(e) {
+            e.preventDefault();
+
+            // Gather selected IDs from checkboxes, assuming checkboxes have a common class, e.g. ".table-checkbox"
+            const selectedIds = [];
+            $('.table-checkbox:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (!selectedIds.length) {
+                alert('No items selected.');
+                return;
+            }
+
+            $.ajax({
+                url: $(this).attr('href'),
+                method: 'POST',
+                data: {
+                    ids: selectedIds,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    // Optionally show a toast or reload your table/ page
+                    location.reload();
+                },
+                error: function() {
+                    alert('Error restoring posts.');
+                }
+            });
+        });
     </script>
 
 
