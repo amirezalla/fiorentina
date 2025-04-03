@@ -82,6 +82,9 @@
                         backgroundColor: "#28a745",
                         stopOnFocus: true, // Stop if user hovers over toast
                     }).showToast();
+                    setTimeout(function() {
+                        location.reload();
+                    }, 300);
                 },
                 error: function(xhr, status, error) {
                     // Show error toast
@@ -95,6 +98,9 @@
                     }).showToast();
                 }
             });
+        });
+        $(document).on('click', '.modal .close', function() {
+            $(this).closest('.modal').modal('hide');
         });
     </script>
 

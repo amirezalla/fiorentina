@@ -5,7 +5,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="quickEditModalLabel">Quick Edit Post</h5>
+                    <h5 class="modal-title" id="quickEditModalLabel">Modifica Rapida</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -18,7 +18,7 @@
 
                         <!-- Name -->
                         <div class="form-group">
-                            <label for="post_name">Name</label>
+                            <label for="post_name">Titolo</label>
                             <input type="text" id="post_name" name="name" class="form-control"
                                 value="{{ $name }}">
                         </div>
@@ -75,7 +75,7 @@
 
                         <!-- Status -->
                         <div class="form-group">
-                            <label for="post_status">Status</label>
+                            <label for="post_status">Stato</label>
                             <select id="post_status" name="status" class="form-control">
                                 <option value="published" @if ($status === 'published') selected @endif>Published
                                 </option>
@@ -86,21 +86,22 @@
                         <!-- Categories -->
                         <div class="form-group">
                             <label for="categories">Categorie</label>
-                            <div>
+                            <!-- Add a container with a set height and overflow -->
+                            <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 5px;">
                                 @if (isset($categories) && is_array($categories))
                                     @foreach ($categories as $catId => $catName)
-                                        <label>
+                                        <label style="display: block;">
                                             <input type="checkbox" name="categories[]" value="{{ $catId }}"
                                                 @if (in_array($catId, $selectedCategories)) checked @endif>
                                             {{ $catName }}
-                                        </label><br>
+                                        </label>
                                     @endforeach
                                 @else
                                     <!-- Fallback static list -->
-                                    <label>
+                                    <label style="display: block;">
                                         <input type="checkbox" name="categories[]" value="1"> Archivio Sondaggi
-                                    </label><br>
-                                    <label>
+                                    </label>
+                                    <label style="display: block;">
                                         <input type="checkbox" name="categories[]" value="2"> Featured
                                     </label>
                                 @endif
