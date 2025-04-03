@@ -112,10 +112,9 @@
             const url = $btn.data('href');
 
             // Gather selected IDs from your table checkboxes (adjust the selector as needed)
-            const selectedIds = [];
-            $('.table-checkbox:checked').each(function() {
-                selectedIds.push($(this).val());
-            });
+s            const selectedIds = Array.from(document.querySelectorAll('tr.selected input[name="id[]"]'))
+                .map(input => input.value);
+            console.log(selectedIds);
 
             if (!selectedIds.length) {
                 alert('No items selected.');
