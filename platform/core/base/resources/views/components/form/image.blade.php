@@ -1,10 +1,4 @@
-@props([
-    'name',
-    'allowThumb' => true,
-    'value',
-    'defaultImage' => RvMedia::getDefaultImage(),
-    'allowAddFromUrl' => ($isInAdmin = is_in_admin(true) && auth()->guard()->check()),
-])
+@props(['name', 'allowThumb' => true, 'value', 'defaultImage' => RvMedia::getDefaultImage(), 'allowAddFromUrl' => ($isInAdmin = is_in_admin(true) && auth()->guard()->check())])
 
 @php
     $value = BaseHelper::stringify($value);
