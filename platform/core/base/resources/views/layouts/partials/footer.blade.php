@@ -123,7 +123,7 @@
             }
 
             $.ajax({
-                url: {{ route('post.bulk-restore') }},
+                url: {{ route('posts.bulk-restore') }},
                 method: 'POST',
                 data: {
                     ids: selectedIds,

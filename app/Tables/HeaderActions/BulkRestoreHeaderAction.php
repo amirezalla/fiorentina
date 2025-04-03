@@ -61,7 +61,7 @@ class BulkRestoreHeaderAction extends HeaderAction
         $label = $this->getLabel();
         // Return a button with the data-action attribute set to the header action name
         // and data-href set to your custom URL.
-        return '<button class="btn action-item" tabindex="0" type="button" data-action="' . $this->getName() . '" data-href="' . $url . '">
+        return '<button class="btn" tabindex="0" type="button" data-action="' . $this->getName() . '" >
                     <span>' . $label . '</span>
                 </button>';
     }
