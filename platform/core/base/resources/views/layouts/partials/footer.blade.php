@@ -40,112 +40,120 @@
                             <input type="text" id="post_slug" name="slug" class="form-control">
                         </div>
 
-                        <!-- Data (Scheduled Publishing) -->
-                        <label>Data</label>
-                        <div class="form-row align-items-center mb-3">
-                            <!-- Day -->
-                            <div class="col-auto">
-                                <input type="number" name="day" id="post_day" class="form-control" min="1"
-                                    max="31" placeholder="01" style="width: 60px;">
-                            </div>
-                            <!-- Month -->
-                            <div class="col-auto">
-                                <select name="month" id="post_month" class="form-control">
-                                    <option value="1">Gen</option>
-                                    <option value="2">Feb</option>
-                                    <option value="3">Mar</option>
-                                    <option value="4">Apr</option>
-                                    <option value="5">Mag</option>
-                                    <option value="6">Giu</option>
-                                    <option value="7">Lug</option>
-                                    <option value="8">Ago</option>
-                                    <option value="9">Set</option>
-                                    <option value="10">Ott</option>
-                                    <option value="11">Nov</option>
-                                    <option value="12">Dic</option>
-                                </select>
-                            </div>
-                            <!-- Year -->
-                            <div class="col-auto">
-                                <input type="number" name="year" id="post_year" class="form-control"
-                                    placeholder="2025" style="width: 80px;">
-                            </div>
-                            <div class="col-auto">
-                                alle
-                            </div>
-                            <!-- Hour -->
-                            <div class="col-auto">
-                                <input type="number" name="hour" id="post_hour" class="form-control" min="0"
-                                    max="23" placeholder="17" style="width: 60px;">
-                            </div>
-                            <div class="col-auto">
-                                :
-                            </div>
-                            <!-- Minute -->
-                            <div class="col-auto">
-                                <input type="number" name="minute" id="post_minute" class="form-control"
-                                    min="0" max="59" placeholder="22" style="width: 60px;">
-                            </div>
-                        </div>
+                        <<div class="form-group">
+                            <label>Data</label>
+                            <div class="row">
 
-                        <!-- Status -->
-                        <div class="form-group">
-                            <label for="post_status">Status</label>
-                            <select id="post_status" name="status" class="form-control">
-                                <option value="published">Published</option>
-                                <option value="draft">Draft</option>
-                            </select>
-                        </div>
+                                <!-- Day -->
+                                <div class="col-4 col-sm-4 col-md-2 mb-2">
+                                    <input type="number" name="day" id="post_day" class="form-control"
+                                        placeholder="01" min="1" max="31">
+                                </div>
 
-                        <!-- Categories (Example Static List) -->
-                        <div class="form-group">
-                            <label for="categories">Categorie</label>
-                            <div>
-                                <!-- Replace with dynamic generation as needed -->
-                                <label>
-                                    <input type="checkbox" name="categories[]" value="1">
-                                    Archivio Sondaggi
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" name="categories[]" value="2">
-                                    Featured
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" name="categories[]" value="3">
-                                    Fotoalbum
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" name="categories[]" value="4">
-                                    Fotogallery
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" name="categories[]" value="5">
-                                    Stagione 2015-16
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" name="categories[]" value="6">
-                                    Stagione 2016-17
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" name="categories[]" value="7">
-                                    Stagione 2017-18
-                                </label>
+                                <!-- Month -->
+                                <div class="col-8 col-sm-4 col-md-2 mb-2">
+                                    <select name="month" id="post_month" class="form-control">
+                                        <option value="1">Gen</option>
+                                        <option value="2">Feb</option>
+                                        <option value="3">Mar</option>
+                                        <option value="4">Apr</option>
+                                        <option value="5">Mag</option>
+                                        <option value="6">Giu</option>
+                                        <option value="7">Lug</option>
+                                        <option value="8">Ago</option>
+                                        <option value="9">Set</option>
+                                        <option value="10">Ott</option>
+                                        <option value="11">Nov</option>
+                                        <option value="12">Dic</option>
+                                    </select>
+                                </div>
+
+                                <!-- Year -->
+                                <div class="col-6 col-sm-4 col-md-2 mb-2">
+                                    <input type="number" name="year" id="post_year" class="form-control"
+                                        placeholder="2025" min="2023">
+                                </div>
+
+                                <!-- "alle" label -->
+                                <div
+                                    class="col-6 col-sm-2 col-md-1 mb-2 d-flex align-items-center justify-content-center">
+                                    alle
+                                </div>
+
+                                <!-- Hour -->
+                                <div class="col-6 col-sm-4 col-md-2 mb-2">
+                                    <input type="number" name="hour" id="post_hour" class="form-control"
+                                        min="0" max="23" placeholder="06">
+                                </div>
+
+                                <!-- Minute -->
+                                <div class="col-6 col-sm-4 col-md-2 mb-2">
+                                    <input type="number" name="minute" id="post_minute" class="form-control"
+                                        min="0" max="59" placeholder="30">
+                                </div>
+
                             </div>
-                        </div>
-
-                        <!-- Tags -->
-                        <div class="form-group">
-                            <label for="post_tags">Tag</label>
-                            <textarea id="post_tags" name="tags" class="form-control" placeholder="Separa i tag con delle virgole"></textarea>
-                        </div>
-
-                        <!-- Submit -->
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-
                 </div>
+
+
+                <!-- Status -->
+                <div class="form-group">
+                    <label for="post_status">Status</label>
+                    <select id="post_status" name="status" class="form-control">
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                </div>
+
+                <!-- Categories (Example Static List) -->
+                <div class="form-group">
+                    <label for="categories">Categorie</label>
+                    <div>
+                        <!-- Replace with dynamic generation as needed -->
+                        <label>
+                            <input type="checkbox" name="categories[]" value="1">
+                            Archivio Sondaggi
+                        </label><br>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="2">
+                            Featured
+                        </label><br>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="3">
+                            Fotoalbum
+                        </label><br>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="4">
+                            Fotogallery
+                        </label><br>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="5">
+                            Stagione 2015-16
+                        </label><br>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="6">
+                            Stagione 2016-17
+                        </label><br>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="7">
+                            Stagione 2017-18
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="form-group">
+                    <label for="post_tags">Tag</label>
+                    <textarea id="post_tags" name="tags" class="form-control" placeholder="Separa i tag con delle virgole"></textarea>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+
             </div>
         </div>
+    </div>
     </div>
 
 
