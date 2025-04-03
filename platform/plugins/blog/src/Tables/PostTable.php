@@ -175,6 +175,7 @@ class PostTable extends TableAbstract
                         'id',
                         'name',
                         'image',
+                        'views',
                         'created_at',
                         'status',
                         'updated_at',
