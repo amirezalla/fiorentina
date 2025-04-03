@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use FriendsOfBotble\Comment\Models\Comment;
-use Botble\Table\BulkActions\BulkActionAbstract; // Make sure this exists in your project
+use Botble\Table\BulkActions\TableBulkActionAbstract; // Make sure this exists in your project
 
 
 class PostTable extends TableAbstract
@@ -182,7 +182,7 @@ class PostTable extends TableAbstract
                 if (request()->get('deleted') == 1) {
                     // When showing deleted posts, add a bulk restore action:
                     $this->addBulkActions([
-                        new class('bulk-restore') extends BulkActionAbstract {
+                        new class('bulk-restore') extends TableBulkActionAbstract {
                             public function handle($ids)
                             {
                                 foreach ($ids as $id) {
