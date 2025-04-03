@@ -274,7 +274,7 @@ public function bulkRestore(Request $request)
         }
     }
 
-    return redirect()->back()->with('success', 'Posts restored successfully!');
+    // return redirect()->back()->with('success', 'Posts restored successfully!');
 }
 
 
