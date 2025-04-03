@@ -47,7 +47,7 @@ class PostTable extends TableAbstract
             if (request()->get('deleted') == 1) {
                 // When deleted items are shown, add the Bulk Restore header action:
                 $this->addHeaderAction(
-                    BulkRestoreHeaderAction::make()->setOptions([
+                    \App\Tables\HeaderActions\BulkRestoreHeaderAction::make()->setOptions([
                         'link'  => route('posts.bulk-restore'),
                         'label' => 'Bulk Restore',
                     ])
