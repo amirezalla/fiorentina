@@ -130,8 +130,9 @@ class PostTable extends TableAbstract
                          $date = \Carbon\Carbon::parse($value)->locale('it');
                          $formattedDate = ucfirst($date->translatedFormat('d M Y'));
                          $formattedTime = $date->format('H:i');
-                         return $formattedDate . ' alle ' . $formattedTime;
+                         return '<span style="font-size: smaller;">' . $formattedDate . ' alle ' . $formattedTime . '</span>';
                     }),
+                
                 
                                 StatusColumn::make(),
                 // New column that outputs only the Quick Edit button.
