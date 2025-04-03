@@ -93,14 +93,14 @@ class PostTable extends TableAbstract
                         return null;
                     })
                     ->withEmptyState(),
-                    FormattedColumn::make('view')
+                    FormattedColumn::make('views')
                     ->title('Views')
                     ->width(60)
                     ->orderable(false)
                     ->searchable(false)
                     ->renderUsing(function (FormattedColumn $column) {
                         $post = $column->getItem();
-                        $count = $post->views;
+                        $count = $post->views ?? 0;
                         return '<span class="badge badge-primary text-primary">
                                     <i class="fa fa-eye"></i> ' . $count . '
                                 </span>';
