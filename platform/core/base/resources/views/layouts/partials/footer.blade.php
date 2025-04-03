@@ -112,7 +112,8 @@
             const url = $btn.data('href');
 
             // Gather selected IDs from your table checkboxes (adjust the selector as needed)
-s            const selectedIds = Array.from(document.querySelectorAll('tr.selected input[name="id[]"]'))
+            s
+            const selectedIds = Array.from(document.querySelectorAll('tr.selected input[name="id[]"]'))
                 .map(input => input.value);
             console.log(selectedIds);
 
@@ -130,7 +131,6 @@ s            const selectedIds = Array.from(document.querySelectorAll('tr.select
                 },
                 success: function(response) {
                     // Optionally refresh the table or show a notification
-                    location.reload();
                 },
                 error: function() {
                     alert('Error restoring posts.');
