@@ -52,8 +52,10 @@ class PostTable extends TableAbstract
                 ]);
             }else{
                 $this->addHeaderActions([
-                    \Botble\Table\HeaderActions\CreateHeaderAction::make()->route('posts.create'),
-                ]);
+                    CreateHeaderAction::make()->route('posts.create'),
+                    \App\Tables\HeaderActions\BulkDeleteHeaderAction::make()->setOptions([
+                        'label' => 'Bulk Delete',
+                    ]),                ]);
             }
 
             if (request()->get('deleted') == 1) {

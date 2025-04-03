@@ -255,26 +255,37 @@ class PostController extends BaseController
     return redirect()->back()->with('success', 'Post soft-deleted successfully!');
 }
 
-public function bulkRestore(Request $request)
+public function bulkDelete(Request $request)
 {
     // The request can contain an array of selected IDs, e.g. "ids" => [123, 456]
     $ids = $request->input('ids', []);
 
-    // For each ID, restore the post
+    foreach ($ids as $id) {
+        $post = Post::findOrFail($id);
+        if($post){
+            $post->update([
+                'status'     => BaseStatusEnum::DRAFT,
+                'deleted_at' => now(),
+            ]);
+        }
+
+    }
+
+}
+
+public function bulkRestore(Request $request)
+{
+    $ids = $request->input('ids', []);
+
     foreach ($ids as $id) {
         $post = Post::find($id);
         if ($post) {
-            // If using SoftDeletes:
             $post->update([
                 'deleted_at' => NULL]);
-            // Or if you only have a deleted_at column:
-            // $post->deleted_at = null;
-            // $post->status = BaseStatusEnum::PUBLISHED;
-            // $post->save();
+
         }
     }
 
-    // return redirect()->back()->with('success', 'Posts restored successfully!');
 }
 
 

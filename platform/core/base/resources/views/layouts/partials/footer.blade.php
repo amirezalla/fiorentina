@@ -138,6 +138,37 @@
                     }
                 });
             });
+            $(document).on('click', '[data-action="bulk-delete"]', function(e) {
+                e.preventDefault();
+
+                // Gather selected IDs from table checkboxes inside rows with class "selected"
+                const selectedIds = $('tr.selected input[name="id[]"]').map(function() {
+                    return $(this).val();
+                }).get();
+                console.log(selectedIds);
+
+                if (!selectedIds.length) {
+                    alert('No items selected.');
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('posts.bulk-delete') }}",
+                    method: "POST",
+                    data: {
+                        ids: selectedIds,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        // Optionally, show a notification or refresh your table
+                        // For example, reload the page:
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error restoring posts: " + error);
+                    }
+                });
+            });
         });
     </script>
 
