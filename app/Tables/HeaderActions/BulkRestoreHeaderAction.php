@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Table\HeaderActions;
+namespace App\Tables\HeaderActions;
 
 use Botble\Table\HeaderActions\HeaderAction;
 
