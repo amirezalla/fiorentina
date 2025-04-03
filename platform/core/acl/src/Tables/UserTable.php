@@ -64,19 +64,8 @@ class UserTable extends TableAbstract
 
                         return view('core/acl::users.partials.role', compact('item', 'role'))->render();
                     }),
-                    FormattedColumn::make('created_at')
-                    ->title(trans('core/base::tables.created_at'))
-                    ->renderUsing(function ($value) {
-                        if (!$value) {
-                            return '';
-                        }
-                        $date = \Carbon\Carbon::parse($value)->locale('it');
-                        // Format date as "05 Feb 2025" (translated month) and time as "HH:mm"
-                        $formattedDate = ucfirst($date->translatedFormat('d M Y'));
-                        $formattedTime = $date->format('H:i');
-                        return $formattedDate . ' alle ' . $formattedTime;
-                    }),
-                                FormattedColumn::make('status_name')
+                CreatedAtColumn::make(),
+                FormattedColumn::make('status_name')
                     ->title(trans('core/base::tables.status'))
                     ->width(100)
                     ->searchable(false)

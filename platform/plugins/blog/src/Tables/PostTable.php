@@ -122,16 +122,17 @@ class PostTable extends TableAbstract
                     }),
                     FormattedColumn::make('created_at')
                     ->title(trans('core/base::tables.created_at'))
-                    ->renderUsing(function ($value) {
-                        if (!$value) {
-                            return '';
-                        }
-                        $date = \Carbon\Carbon::parse($value)->locale('it');
-                        // Format date as "05 Feb 2025" (translated month) and time as "HH:mm"
-                        $formattedDate = ucfirst($date->translatedFormat('d M Y'));
-                        $formattedTime = $date->format('H:i');
-                        return $formattedDate . ' alle ' . $formattedTime;
+                    ->renderUsing(function (\Botble\Table\Columns\FormattedColumn $column) {
+                         $value = $column->getItem()->created_at;
+                         if (!$value) {
+                             return '';
+                         }
+                         $date = \Carbon\Carbon::parse($value)->locale('it');
+                         $formattedDate = ucfirst($date->translatedFormat('d M Y'));
+                         $formattedTime = $date->format('H:i');
+                         return $formattedDate . ' alle ' . $formattedTime;
                     }),
+                
                                 StatusColumn::make(),
                 // New column that outputs only the Quick Edit button.
                 FormattedColumn::make('quick_edit')
