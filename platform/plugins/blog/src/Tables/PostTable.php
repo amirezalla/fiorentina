@@ -12,6 +12,7 @@ use Botble\Table\Abstracts\TableAbstract;
 use Botble\Table\Actions\DeleteAction;
 use Botble\Table\Actions\EditAction;
 use Botble\Table\BulkActions\DeleteBulkAction;
+use Botble\Table\BulkActions\RestoreBulkAction;
 use Botble\Table\BulkChanges\CreatedAtBulkChange;
 use Botble\Table\BulkChanges\NameBulkChange;
 use Botble\Table\BulkChanges\SelectBulkChange;
@@ -181,58 +182,11 @@ class PostTable extends TableAbstract
 
                 if (request()->get('deleted') == 1) {
                     $this->addBulkActions([
-                        new class('bulk-restore') extends \Botble\Table\Abstracts\TableBulkActionAbstract {
-                
-                            /**
-                             * Unique handle for identifying this bulk action.
-                             */
-                            public function getHandle(): string
-                            {
-                                return 'bulk-restore';
-                            }
-                
-                            /**
-                             * The visible label in the dropdown menu.
-                             */
-                            public function name(): string
-                            {
-                                return 'Ripristina selezionati';
-                            }
-                
-                            /**
-                             * Called when the user confirms the bulk action.
-                             */
-                            public function dispatch(\Illuminate\Database\Eloquent\Model $model, array $ids): \Botble\Base\Http\Responses\BaseHttpResponse
-                            {
-                                foreach ($ids as $id) {
-                                    $post = \Botble\Blog\Models\Post::find($id);
-                                    if ($post) {
-                                        $post->update([
-                                            'deleted_at' => null,
-                                            'status'     => \Botble\Base\Enums\BaseStatusEnum::PUBLISHED,
-                                        ]);
-                                    }
-                                }
-                                
-                                // Return a success message
-                                return (new \Botble\Base\Http\Responses\BaseHttpResponse())
-                                    ->setMessage('Post ripristinati con successo!');
-                            }
-                
-                            /**
-                             * (Optional) If Botble calls this for a final success message,
-                             * you can provide it here.
-                             */
-                            public function messageSuccess(): string
-                            {
-                                return 'Post ripristinati con successo!';
-                            }
-                        },
+                        new RestoreBulkAction(),
                     ]);
                 } else {
                     $this->addBulkActions([
-                        // The normal soft-delete bulk action
-                        \Botble\Table\BulkActions\DeleteBulkAction::make()->permission('posts.destroy'),
+                        DeleteBulkAction::make()->permission('posts.destroy'),
                     ]);
                 }
                 
