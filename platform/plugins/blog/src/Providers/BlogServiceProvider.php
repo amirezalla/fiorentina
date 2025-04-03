@@ -87,14 +87,14 @@ class BlogServiceProvider extends ServiceProvider
                 ->registerItem([
                     'id' => 'cms-plugins-blog',
                     'priority' => 3,
-                    'name' => 'plugins/blog::base.menu_name',
+                    'name' => 'Articoli',
                     'icon' => 'ti ti-article',
                 ])
                 ->registerItem([
                     'id' => 'cms-plugins-blog-post',
                     'priority' => 1,
                     'parent_id' => 'cms-plugins-blog',
-                    'name' => 'plugins/blog::posts.menu_name',
+                    'name' => 'Articoli',
                     'route' => 'posts.index',
                 ])
                 ->registerItem([
@@ -105,19 +105,27 @@ class BlogServiceProvider extends ServiceProvider
                     'url'         => url('/admin/blog/posts?filter_table_id=botble-blog-tables-post-table&class=Botble%5CBlog%5CTables%5CPostTable&filter_columns%5B0%5D=status&filter_operators%5B0%5D=%3D&filter_values%5B0%5D=draft'), // Create a route for your "bozza" page
                 ])
                 ->registerItem([
+                    'id'          => 'cms-plugins-blog-deleted', // Unique ID for this menu item
+                    'priority'    => 3, // Adjust this number to position it among the Blog children (e.g. posts, categories, tags)
+                    'parent_id'   => 'cms-plugins-blog', // Use the parent menu ID for Blog – adjust if your Blog menu has a different ID
+                    'name'        => 'Rimossi',
+                    'url'         => url('/admin/blog/posts?deleted=1'), // Create a route for your "bozza" page
+                ])
+                ->registerItem([
                     'id' => 'cms-plugins-blog-categories',
-                    'priority' => 3,
+                    'priority' => 4,
                     'parent_id' => 'cms-plugins-blog',
                     'name' => 'plugins/blog::categories.menu_name',
                     'route' => 'categories.index',
                 ])
                 ->registerItem([
                     'id' => 'cms-plugins-blog-tags',
-                    'priority' => 4,
+                    'priority' => 5,
                     'parent_id' => 'cms-plugins-blog',
                     'name' => 'plugins/blog::tags.menu_name',
                     'route' => 'tags.index',
                 ]);
+                
         });
 
         PanelSectionManager::default()->beforeRendering(function () {
