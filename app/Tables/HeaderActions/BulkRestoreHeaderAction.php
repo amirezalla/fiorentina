@@ -6,9 +6,9 @@ use Botble\Table\HeaderActions\HeaderAction;
 
 class BulkRestoreHeaderAction extends HeaderAction
 {
-    public static function make(string $name = 'resstore'): static
+    public static function make(string $name = 'restore'): static
     {
-        return new static();
+        return new static($name);
     }
 
     public function render(): string
