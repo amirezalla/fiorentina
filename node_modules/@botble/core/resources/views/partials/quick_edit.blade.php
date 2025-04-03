@@ -3,28 +3,28 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="quickEditModalLabel">Modifica rapida</h5>
+                <h5 class="modal-title" id="quickEditModalLabel">Quick Edit Post</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="quickEditForm" method="POST" action="{{ $action ?? '' }}">
+                <form id="quickEditForm" method="POST" action="{{ $action }}">
                     @csrf
-                    <input type="hidden" id="post_id" name="id" value="{{ $postId ?? '' }}">
+                    <input type="hidden" id="post_id" name="post_id" value="{{ $postId }}">
 
                     <!-- Name -->
                     <div class="form-group">
                         <label for="post_name">Name</label>
                         <input type="text" id="post_name" name="name" class="form-control"
-                            value="{{ $name ?? '' }}">
+                            value="{{ $name }}">
                     </div>
 
                     <!-- Slug -->
                     <div class="form-group">
                         <label for="post_slug">Slug</label>
                         <input type="text" id="post_slug" name="slug" class="form-control"
-                            value="{{ $slug ?? '' }}">
+                            value="{{ $slug }}">
                     </div>
 
                     <!-- Data (Scheduled Publishing) -->
@@ -34,14 +34,14 @@
                             <!-- Day -->
                             <div class="col-4 col-sm-4 col-md-2 mb-2">
                                 <input type="number" name="day" id="post_day" class="form-control"
-                                    placeholder="01" min="1" max="31" value="{{ $day ?? '' }}">
+                                    placeholder="01" min="1" max="31" value="{{ $day }}">
                             </div>
                             <!-- Month -->
                             <div class="col-8 col-sm-4 col-md-2 mb-2">
                                 <select name="month" id="post_month" class="form-control">
                                     @for ($m = 1; $m <= 12; $m++)
                                         <option value="{{ $m }}"
-                                            @if (isset($month) && (int) $month === $m) selected @endif>
+                                            @if ((int) $month === $m) selected @endif>
                                             {{ \Carbon\Carbon::createFromFormat('!m', $m)->format('M') }}
                                         </option>
                                     @endfor
@@ -50,7 +50,7 @@
                             <!-- Year -->
                             <div class="col-6 col-sm-4 col-md-2 mb-2">
                                 <input type="number" name="year" id="post_year" class="form-control"
-                                    placeholder="2025" min="2023" value="{{ $year ?? '' }}">
+                                    placeholder="2025" min="2023" value="{{ $year }}">
                             </div>
                             <!-- "alle" label -->
                             <div class="col-6 col-sm-2 col-md-1 mb-2 d-flex align-items-center justify-content-center">
@@ -59,12 +59,12 @@
                             <!-- Hour -->
                             <div class="col-6 col-sm-4 col-md-2 mb-2">
                                 <input type="number" name="hour" id="post_hour" class="form-control" min="0"
-                                    max="23" placeholder="06" value="{{ $hour ?? '' }}">
+                                    max="23" placeholder="06" value="{{ $hour }}">
                             </div>
                             <!-- Minute -->
                             <div class="col-6 col-sm-4 col-md-2 mb-2">
                                 <input type="number" name="minute" id="post_minute" class="form-control"
-                                    min="0" max="59" placeholder="30" value="{{ $minute ?? '' }}">
+                                    min="0" max="59" placeholder="30" value="{{ $minute }}">
                             </div>
                         </div>
                     </div>
@@ -73,9 +73,9 @@
                     <div class="form-group">
                         <label for="post_status">Status</label>
                         <select id="post_status" name="status" class="form-control">
-                            <option value="published" @if (isset($status) && $status === 'published') selected @endif>Published
+                            <option value="published" @if ($status === 'published') selected @endif>Published
                             </option>
-                            <option value="draft" @if (isset($status) && $status === 'draft') selected @endif>Draft</option>
+                            <option value="draft" @if ($status === 'draft') selected @endif>Draft</option>
                         </select>
                     </div>
 
@@ -87,7 +87,7 @@
                                 @foreach ($categories as $catId => $catName)
                                     <label>
                                         <input type="checkbox" name="categories[]" value="{{ $catId }}"
-                                            @if (isset($selectedCategories) && in_array($catId, $selectedCategories)) checked @endif>
+                                            @if (in_array($catId, $selectedCategories)) checked @endif>
                                         {{ $catName }}
                                     </label><br>
                                 @endforeach
@@ -106,7 +106,7 @@
                     <!-- Tags -->
                     <div class="form-group">
                         <label for="post_tags">Tag</label>
-                        <textarea id="post_tags" name="tags" class="form-control" placeholder="Separa i tag con delle virgole">{{ $tags ?? '' }}</textarea>
+                        <textarea id="post_tags" name="tags" class="form-control" placeholder="Separa i tag con delle virgole">{{ $tags }}</textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Save Changes</button>
