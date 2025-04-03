@@ -40,6 +40,7 @@
                     $('body').append(response.html);
                     // Show the modal
                     $('#quickEditModal').modal('show');
+                    $('.modal-backdrop').remove();
                 },
                 error: function() {
                     alert('Error loading quick edit form.');
