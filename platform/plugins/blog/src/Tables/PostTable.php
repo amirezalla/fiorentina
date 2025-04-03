@@ -193,15 +193,7 @@ class PostTable extends TableAbstract
                     ]);
                 }
 
-                if (request()->get('deleted') == 1) {
-                    $this->addBulkActions([
-                        RestoreBulkAction::class => new RestoreBulkAction(),
-                    ]);
-                } else {
-                    $this->addBulkActions([
-                        DeleteBulkAction::make()->permission('posts.destroy'),
-                    ]);
-                }
+
                 
             $this->addBulkChanges([
                 NameBulkChange::make(),
