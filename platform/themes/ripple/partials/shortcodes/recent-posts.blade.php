@@ -429,8 +429,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-        const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : null;
+        const csrfToken = "{{ csrf_token() }}"; // Laravel CSRF token
 
         if (!csrfToken) {
             console.warn('CSRF token not found!');
