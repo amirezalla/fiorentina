@@ -23,7 +23,7 @@ class MemberForm extends FormAbstract
 {
     public function getActionButtons(): string
     {
-        return view('plugins/blog::partials.form-actions')->render();
+        return view('core/base::forms.partials.form-actions')->render();
     }   
     public function setup(): void
     {
