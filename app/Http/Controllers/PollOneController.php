@@ -120,8 +120,8 @@ class PollOneController extends BaseController
         $optionId = $request->input('optionId');
         
         // Find the PollOption by its ID
-        $option = PollOption::with('poll')->findOrFail($optionId);
-        $poll = $option->poll;
+        $option = PollOption::findOrFail($optionId);
+        dd($option,Poll::findOrFail($option->poll_one_id));
     
         // Check if the poll is active
         if (!$poll->active) {
