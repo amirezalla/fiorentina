@@ -215,7 +215,7 @@
 
 
             @if ($topSidebarContent)
-                @if ($poll->position == 'under_calendario')
+                @if ($poll->position == 'top')
                     @include('polls.includes.poll-sidebar', $poll)
                 @endif
                 @php
