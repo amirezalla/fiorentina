@@ -10,7 +10,7 @@ class PollOne extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['question', 'active', 'min_choices'];
+    protected $fillable = ['question', 'active', 'min_choices','position', 'expiry_date'];
 
     /**
      * Relationship: A poll has many options
