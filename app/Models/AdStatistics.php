@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -14,17 +15,29 @@ class AdStatistic extends Model
 
     public static function trackImpression($adId)
     {
-        self::updateOrCreate(
-            ['ad_id' => $adId, 'date' => now()->toDateString()],
-            ['impressions' => \DB::raw('impressions + 1')]
+        static::updateOrCreate(
+            [
+                'ad_id' => $adId,
+                'date'  => now()->toDateString(),
+            ],
+            [
+                // increments impressions by 1
+                'impressions' => \DB::raw('impressions + 1'),
+            ]
         );
     }
 
     public static function trackClick($adId)
     {
-        self::updateOrCreate(
-            ['ad_id' => $adId, 'date' => now()->toDateString()],
-            ['clicks' => \DB::raw('clicks + 1')]
+        static::updateOrCreate(
+            [
+                'ad_id' => $adId,
+                'date'  => now()->toDateString(),
+            ],
+            [
+                // increments clicks by 1
+                'clicks' => \DB::raw('clicks + 1'),
+            ]
         );
     }
 }
