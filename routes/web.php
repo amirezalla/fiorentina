@@ -31,6 +31,7 @@ use App\Console\Commands\OptimizeGifs;
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\PollController;
+use App\Http\Controllers\PollOneController;
 use App\Http\Controllers\NotificaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DirettaController;
@@ -90,14 +91,7 @@ Route::delete('/admin/votes/{vote}', [VoteController::class, 'destroy'])->name('
 
 Route::post('/polls/{matchLineup}', [PollController::class, 'store'])->name('polls.store');
 
-Route::get('/polls/create', [PollController::class, 'create'])->name('polls.create');
-Route::post('/polls', [PollController::class, 'storepoll'])->name('polls.storepoll');
-Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
-Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->name('polls.vote');
-Route::get('/polls/{id}/toggle', [PollController::class, 'toggleActive'])->name('polls.toggle');
-Route::get('/polls/{id}/export', [PollController::class, 'exportResults'])->name('polls.export');
-Route::get('/polls/{id}/edit', [PollController::class, 'edit'])->name('polls.edit'); // Assumes an edit method
-Route::delete('/polls/{id}', [PollController::class, 'destroy'])->name('polls.destroy');
+
 
 
 Route::get('/chat/{match}', [ChatController::class, 'fetchMessages']);
@@ -189,7 +183,14 @@ Route::get('/test-db2-connection', function () {
     }
 });
 
-
+Route::get('/polls/create', [PollOneController::class, 'create'])->name('polls.create');
+Route::post('/polls', [PollOneController::class, 'storepoll'])->name('polls.storepoll');
+Route::get('/polls', [PollOneController::class, 'index'])->name('polls.index');
+Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->name('polls.vote');
+Route::get('/polls/{id}/toggle', [PollOneController::class, 'toggleActive'])->name('polls.toggle');
+Route::get('/polls/{id}/export', [PollOneController::class, 'exportResults'])->name('polls.export');
+Route::get('/polls/{id}/edit', [PollOneController::class, 'edit'])->name('polls.edit'); // Assumes an edit method
+Route::delete('/polls/{id}', [PollOneController::class, 'destroy'])->name('polls.destroy');
 
 
 
