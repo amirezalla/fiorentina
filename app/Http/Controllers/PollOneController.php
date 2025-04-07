@@ -119,6 +119,7 @@ class PollOneController extends BaseController
         $option = PollOption::findOrFail($optionId);
 
         $poll=PollOne::findOrFail($option->poll_id);
+        
         if (!$poll->active) {
             return response()->json(['error' => 'Questo sondaggio è attualmente inattivo.'], 403);
         }
