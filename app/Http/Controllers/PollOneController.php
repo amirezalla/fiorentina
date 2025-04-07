@@ -114,20 +114,29 @@ class PollOneController extends BaseController
         ]);
     }
 
-    public function vote(Request $request, $optionId)
+    public function vote(Request $request)
     {
+        // Retrieve the optionId from the JSON payload
+        $optionId = $request->input('optionId');
+        
+        // Find the PollOption by its ID
         $option = PollOption::findOrFail($optionId);
-
-        $poll=PollOne::findOrFail($option->poll_id);
-
+    
+        // Retrieve the associated poll
+        $poll = PollOne::findOrFail($option->poll_id);
+    
+        // Check if the poll is active
         if (!$poll->active) {
             return response()->json(['error' => 'Questo sondaggio è attualmente inattivo.'], 403);
         }
-
+    
+        // Increment the vote count for the option
         $option->increment('votes');
-
+    
+        // Return the updated poll results
         return response()->json($this->getResults($option->poll_id));
     }
+    
 
     private function getResults($pollId)
     {

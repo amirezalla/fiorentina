@@ -47,13 +47,16 @@
             button.addEventListener('click', function() {
                 const optionId = this.getAttribute('data-id');
                 console.log(optionId);
-                fetch(`/pollone-options/${optionId}/vote`, {
+                // Assume optionId is obtained from the clicked button's data-id attribute
+                fetch(`/pollone-options/vote`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken
                         },
-                        body: JSON.stringify({})
+                        body: JSON.stringify({
+                            optionId: optionId
+                        }) // send the optionId in the payload
                     })
                     .then(response => {
                         if (!response.ok) {
@@ -73,6 +76,7 @@
                     .catch(error => {
                         console.error('Vote submission failed:', error);
                     });
+
 
 
                 // Disable the clicked button
