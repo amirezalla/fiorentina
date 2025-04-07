@@ -11,6 +11,7 @@
                     @php
                         $percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0;
                     @endphp
+                    @dd($poll,$option)
                     <div class="mb-3">
                         <button
                             class="btn btn-outline-primary vote-btn w-100 position-relative d-flex justify-content-between align-items-center"
@@ -117,5 +118,5 @@
             div.textContent = `${result.option}: ${result.votes} voti (${newPercentage}%)`;
             resultsContainer.appendChild(div);
         });
-    }
+    } 
 </script>
