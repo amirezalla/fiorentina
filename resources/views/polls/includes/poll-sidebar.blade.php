@@ -14,7 +14,7 @@
                     <div class="mb-3">
                         <button
                             class="btn btn-outline-primary vote-btn w-100 position-relative d-flex justify-content-between align-items-center"
-                            data-id="{{ $option->poll_one_id }}" style="overflow: hidden;">
+                            data-id="{{ $option->id }}" style="overflow: hidden;">
                             {{-- "Filling" background using an absolutely positioned div --}}
                             <div class="position-absolute top-0 start-0 h-100 bg-primary opacity-25"
                                 style="width: {{ $percentage }}%; z-index:1;">
