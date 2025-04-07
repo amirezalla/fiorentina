@@ -428,57 +428,74 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    document.addEventListener('DOMContentLoaded', function () {
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : null;
+
+        if (!csrfToken) {
+            console.warn('CSRF token not found!');
+            return;
+        }
+
         const buttons = document.querySelectorAll('.vote-btn');
+
         buttons.forEach(button => {
-            button.onclick = function() {
+            button.addEventListener('click', function () {
                 const optionId = this.getAttribute('data-id');
+
                 fetch(`/poll-options/${optionId}/vote`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: JSON.stringify({
-                            // Additional data can be added here if needed
-                        })
-                    })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({})
+                })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok: ' + response
-                                .statusText);
+                            throw new Error(`Request failed: ${response.status} ${response.statusText}`);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        updateResults(data.results, optionId);
+                        if (data && data.results) {
+                            updateResults(data.results, optionId);
+                        } else {
+                            console.warn('Unexpected response format:', data);
+                        }
                     })
-                    .catch(error => console.error('Error:', error));
-                this.disabled = true; // Disable the button after vote
-            };
+                    .catch(error => {
+                        console.error('Vote submission failed:', error);
+                    });
+
+                this.disabled = true; // Disable the voted button
+            });
         });
     });
 
     function updateResults(results, votedOptionId) {
         results.forEach(result => {
             const button = document.querySelector(`.vote-btn[data-id="${result.id}"]`);
-            if (button) {
-                const percentage = result.percentage;
-                const optionText = result.option;
+            if (!button) return;
 
-                // Update button width according to the new percentage
-                button.style.setProperty('--fill-width', `${percentage}%`);
-                button.querySelector('.percentage-text').textContent = `${percentage}%`;
+            const percentage = result.percentage || 0;
+            const optionText = result.option || '';
 
-                // Optionally disable other buttons after voting
-                if (result.id.toString() !== votedOptionId) {
-                    button.disabled = true;
-                }
+            // Update button style and text
+            button.style.setProperty('--fill-width', `${percentage}%`);
+            const percentageText = button.querySelector('.percentage-text');
+            if (percentageText) {
+                percentageText.textContent = `${percentage}%`;
+            }
+
+            // Disable buttons that weren’t voted on
+            if (result.id.toString() !== votedOptionId) {
+                button.disabled = true;
             }
         });
     }
 </script>
+
 
 <style>
     .btn-purple {
