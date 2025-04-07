@@ -47,7 +47,7 @@
             button.addEventListener('click', function() {
                 const optionId = this.getAttribute('data-id');
                 console.log(optionId);
-                fetch(`/pollone-options/${optionId}/vote`, {
+                fetch(`/options/${optionId}/vote`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
