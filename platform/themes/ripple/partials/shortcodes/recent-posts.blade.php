@@ -398,75 +398,7 @@
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const csrfToken = "{{ csrf_token() }}"; // Laravel CSRF token
 
-        if (!csrfToken) {
-            console.warn('CSRF token not found!');
-            return;
-        }
-
-        const buttons = document.querySelectorAll('.vote-btn');
-
-        buttons.forEach(button => {
-            button.addEventListener('click', function() {
-                const optionId = this.getAttribute('data-id');
-
-                fetch(`/poll-options/${optionId}/vote`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: JSON.stringify({})
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(
-                                `Request failed: ${response.status} ${response.statusText}`
-                            );
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data && data.results) {
-                            updateResults(data.results, optionId);
-                        } else {
-                            console.warn('Unexpected response format:', data);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Vote submission failed:', error);
-                    });
-
-                this.disabled = true; // Disable the voted button
-            });
-        });
-    });
-
-    function updateResults(results, votedOptionId) {
-        results.forEach(result => {
-            const button = document.querySelector(`.vote-btn[data-id="${result.id}"]`);
-            if (!button) return;
-
-            const percentage = result.percentage || 0;
-            const optionText = result.option || '';
-
-            // Update button style and text
-            button.style.setProperty('--fill-width', `${percentage}%`);
-            const percentageText = button.querySelector('.percentage-text');
-            if (percentageText) {
-                percentageText.textContent = `${percentage}%`;
-            }
-
-            // Disable buttons that weren’t voted on
-            if (result.id.toString() !== votedOptionId) {
-                button.disabled = true;
-            }
-        });
-    }
-</script>
 
 
 <style>
