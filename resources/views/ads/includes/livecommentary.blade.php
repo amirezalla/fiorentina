@@ -102,9 +102,9 @@
 
 
             const subscriptionMessage1 = JSON.stringify({
-                filePath: `chat/messages_${matchId}.json`
+                filePath: `commentary/commentary_${matchId}.json`
             });
             ws.send(subscriptionMessage1);
-        }, 3000);
+        }, 70000);
     });
 </script>

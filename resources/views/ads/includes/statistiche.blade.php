@@ -113,6 +113,6 @@
             setTimeout(fetchStatsHtml, 10000);
 
 
-        }, 60000);
+        }, 400000); //every 400seconds (6.67 minutes)
     });
 </script>
