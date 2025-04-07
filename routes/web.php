@@ -190,6 +190,7 @@ Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->n
 Route::get('/polls/{id}/toggle', [PollOneController::class, 'toggleActive'])->name('polls.toggle');
 Route::get('/polls/{id}/export', [PollOneController::class, 'exportResults'])->name('polls.export');
 Route::get('/polls/{id}/edit', [PollOneController::class, 'edit'])->name('polls.edit'); // Assumes an edit method
+Route::put('polls/{id}', [PollOneController::class, 'update'])->name('polls.update');
 Route::delete('/polls/{id}', [PollOneController::class, 'destroy'])->name('polls.destroy');
 
 
