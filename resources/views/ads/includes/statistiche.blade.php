@@ -111,8 +111,6 @@
                 .then(data => console.log('refresh-stats triggered:', data))
                 .catch(console.error);
             setTimeout(fetchStatsHtml, 10000);
-
-
         }, 400000); //every 400seconds (6.67 minutes)
     });
 </script>
