@@ -1,8 +1,8 @@
 @if (isset($name))
 
-    <div class="modal fade" id="quickEditModal" tabindex="-1" role="dialog" aria-labelledby="quickEditModalLabel"
-        aria-hidden="true" style="margin-top: 100px;">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade modal-blur" id="quickEditModal" tabindex="-1" role="dialog"
+        aria-labelledby="quickEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="quickEditModalLabel">Modifica Rapida</h5>
@@ -52,8 +52,9 @@
                                 </div>
                                 <!-- Year -->
                                 <div class="col-6 col-sm-4 col-md-2 mb-2">
-                                    <input type="number" name="year" id="post_year" class="form-control"
-                                        placeholder="2025" min="2023" value="{{ $year }}">
+                                    <input style="padding-right: 0;" type="number" name="year" id="post_year"
+                                        class="form-control" placeholder="2025" min="2023"
+                                        value="{{ $year }}">
                                 </div>
                                 <!-- "alle" label -->
                                 <div
