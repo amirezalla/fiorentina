@@ -47,7 +47,7 @@
             button.addEventListener('click', function() {
                 const optionId = this.getAttribute('data-id');
                 console.log(optionId);
-                fetch(`/options/${optionId}/vote`, {
+                fetch(`/pollone-options/${optionId}/vote`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -59,7 +59,7 @@
                         if (!response.ok) {
                             throw new Error(
                                 `Request failed: ${response.status} ${response.statusText}`
-                            );
+                                );
                         }
                         return response.json();
                     })
@@ -73,6 +73,7 @@
                     .catch(error => {
                         console.error('Vote submission failed:', error);
                     });
+
 
                 // Disable the clicked button
                 this.disabled = true;
