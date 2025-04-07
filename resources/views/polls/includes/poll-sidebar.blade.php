@@ -1,34 +1,33 @@
-<div class="row container mt-4">
-    <div class="col-12">
-        <div>
-            <h1>{{ $poll->question }}</h1>
+<div class="container my-4">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h2 class="card-title mb-0">{{ $poll->question }}</h2>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Totale voti: {{ $totalVotes }}</p>
+
             <div id="options-container">
                 @foreach ($poll->options as $option)
-                    <div class="row">
-                        <button class="col-12 btn btn-outline-primary vote-btn" data-id="{{ $option->id }}"
-                            style="--fill-width: {{ $option->percentage }}%;">
-                            <span
-                                @if ($option->percentage > 16.66) class="option-text-w"
-
-                @else
-                    class="option-text-p" @endif>
-                                {{ $option->option }}</span>
-                            <span
-                                @if ($option->percentage < 88) class="percentage-text-p"
-
-                @else
-                    class="percentage-text-w" @endif>{{ $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0 }}
-                                %</span>
+                    @php
+                        $percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0;
+                    @endphp
+                    <div class="mb-3">
+                        <button
+                            class="btn btn-outline-primary vote-btn w-100 position-relative d-flex justify-content-between align-items-center"
+                            data-id="{{ $option->id }}" style="overflow: hidden;">
+                            {{-- "Filling" background using an absolutely positioned div --}}
+                            <div class="position-absolute top-0 start-0 h-100 bg-primary opacity-25"
+                                style="width: {{ $percentage }}%; z-index:1;">
+                            </div>
+                            <span class="mx-2" style="z-index:2;">{{ $option->option }}</span>
+                            <span class="mx-2" style="z-index:2;">{{ $percentage }}%</span>
                         </button>
                     </div>
                 @endforeach
             </div>
-            <div id="results-container">
-                @foreach ($poll->options as $option)
-                    <div class="result" id="result-{{ $option->id }}">
-                        {{ $option->option }}: <span class="percentage">0%</span>
-                    </div>
-                @endforeach
+
+            <div id="results-container" class="mt-4 d-none">
+                {{-- We’ll dynamically update if you want more details here --}}
             </div>
         </div>
     </div>
@@ -48,7 +47,7 @@
             button.addEventListener('click', function() {
                 const optionId = this.getAttribute('data-id');
 
-                fetch(`poll-options/${optionId}/vote`, {
+                fetch(`pollone-options/${optionId}/vote`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -60,7 +59,7 @@
                         if (!response.ok) {
                             throw new Error(
                                 `Request failed: ${response.status} ${response.statusText}`
-                            );
+                                );
                         }
                         return response.json();
                     })
@@ -75,30 +74,48 @@
                         console.error('Vote submission failed:', error);
                     });
 
-                this.disabled = true; // Disable the voted button
+                // Disable the clicked button
+                this.disabled = true;
             });
         });
     });
 
     function updateResults(results, votedOptionId) {
+        // Optionally show a "results-container" or just update the buttons
+        const resultsContainer = document.getElementById('results-container');
+        resultsContainer.classList.remove('d-none');
+        resultsContainer.innerHTML = '';
+
+        let totalVotes = 0;
+        results.forEach(r => totalVotes += (r.votes || 0));
+
         results.forEach(result => {
+            // Update each button’s background fill and text
             const button = document.querySelector(`.vote-btn[data-id="${result.id}"]`);
             if (!button) return;
 
-            const percentage = result.percentage || 0;
-            const optionText = result.option || '';
-
-            // Update button style and text
-            button.style.setProperty('--fill-width', `${percentage}%`);
-            const percentageText = button.querySelector('.percentage-text');
-            if (percentageText) {
-                percentageText.textContent = `${percentage}%`;
+            const newPercentage = result.percentage || 0;
+            const fillDiv = button.querySelector('div.bg-primary');
+            if (fillDiv) {
+                fillDiv.style.width = newPercentage + '%';
             }
 
-            // Disable buttons that weren’t voted on
+            // The text at the end of the button
+            const spans = button.querySelectorAll('span');
+            // Typically spans[1] might be the percentage text
+            if (spans[1]) {
+                spans[1].textContent = `${newPercentage}%`;
+            }
+
+            // If it’s not the voted button, disable it
             if (result.id.toString() !== votedOptionId) {
                 button.disabled = true;
             }
+
+            // Add a line to resultsContainer if you want a separate summary
+            const div = document.createElement('div');
+            div.textContent = `${result.option}: ${result.votes} voti (${newPercentage}%)`;
+            resultsContainer.appendChild(div);
         });
     }
 </script>
