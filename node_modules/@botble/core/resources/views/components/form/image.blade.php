@@ -27,37 +27,9 @@
                 class="image-box-actions" data-result="{{ $name }}"
                 data-action="{{ $attributes['action'] ?? 'select-image' }}" data-allow-thumb="{{ $allowThumb == true }}"
                 href="#">
-                @php
-                    use Illuminate\Support\Facades\Storage;
-                    use Botble\Media\Facades\RvMedia;
-
-                    if ($value) {
-                        $thumbSize = '150x150';
-                        $extension = pathinfo($value, PATHINFO_EXTENSION);
-                        $filename = pathinfo($value, PATHINFO_FILENAME);
-
-                        // If there's no extension, fallback to the default image.
-    if ($extension) {
-        $thumbFile = $filename . '-' . $thumbSize . '.' . $extension;
-        // Use the original directory path of the file.
-        $dirname = pathinfo($value, PATHINFO_DIRNAME);
-        $fullPath = $dirname . '/' . $thumbFile;
-        $disk = Storage::disk('wasabi');
-
-                            // Generate a temporary signed URL for the thumbnail.
-                            $signedThumbUrl = $disk->temporaryUrl($fullPath, now()->addMinutes(15));
-                        } else {
-                            $signedThumbUrl = RvMedia::getDefaultImage();
-                        }
-                    } else {
-                        $signedThumbUrl = RvMedia::getDefaultImage();
-                    }
-                @endphp
-
-                <x-core::image class="preview-image" src="{!! $signedThumbUrl !!}"
-                    alt="{{ trans('core/base::base.preview_image') }}" />
-
-
+                <x-core::image @class(['preview-image', 'default-image' => !$value])
+                    data-default="{{ $defaultImage = $defaultImage ?: RvMedia::getDefaultImage() }}"
+                    src="{!! RvMedia::getImageUrl($value) !!}" alt="{{ trans('core/base::base.preview_image') }}" />
                 <span class="image-picker-backdrop"></span>
             </a>
             <x-core::button @style(['display: none' => empty($value), '--bb-btn-font-size: 0.5rem']) class="image-picker-remove-button p-0" :pill="true"
