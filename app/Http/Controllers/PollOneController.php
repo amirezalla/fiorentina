@@ -122,15 +122,13 @@ class PollOneController extends BaseController
         // Find the PollOption by its ID
         $option = PollOption::findOrFail($optionId);
         $poll=PollOne::findOrFail($option->poll_one_id);
-    
+        dd($poll);
         // Check if the poll is active
         if (!$poll->active) {
             return response()->json(['error' => 'Questo sondaggio è attualmente inattivo.'], 403);
         }
     
-        // Increment the vote count for the option
-        $option->votes=$option->votes+1;
-        $option->save();
+
     
         // Return the updated poll results
         return response()->json($this->getResults($option->poll_id));
