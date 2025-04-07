@@ -49,33 +49,16 @@
                 console.log(optionId);
                 // Assume optionId is obtained from the clicked button's data-id attribute
                 fetch(`/pollone-options/vote`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: JSON.stringify({
-                            optionId: optionId
-                        }) // send the optionId in the payload
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(
-                                `Request failed: ${response.status} ${response.statusText}`
-                                );
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data && data.results) {
-                            updateResults(data.results, optionId);
-                        } else {
-                            console.warn('Unexpected response format:', data);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Vote submission failed:', error);
-                    });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        optionId: optionId
+                    }) // send the optionId in the payload
+                })
+                location.reload(); // Reload the page to show updated results
 
 
 
