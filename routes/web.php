@@ -190,7 +190,7 @@ Route::get('/polls/create', [PollOneController::class, 'create'])->name('polls.c
 Route::post('/polls', [PollOneController::class, 'storepoll'])->name('polls.storepoll');
 Route::get('/polls', [PollOneController::class, 'index'])->name('polls.index');
 Route::post('/poll-options/{optionId}/vote', [PollController::class, 'vote'])->name('polls.vote');
-Route::post('/options/{optionId}/vote', [PollOneController::class, 'vote']);
+Route::post('/options/{optionId}/vote', [PollOneController::class, 'option']);
 Route::get('/polls/{id}/toggle', [PollOneController::class, 'toggleActive'])->name('polls.toggle');
 Route::get('/polls/{id}/export', [PollOneController::class, 'exportResults'])->name('polls.export');
 Route::get('/polls/{id}/edit', [PollOneController::class, 'edit'])->name('polls.edit'); // Assumes an edit method
