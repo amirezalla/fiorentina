@@ -31,16 +31,27 @@
                     use Illuminate\Support\Facades\Storage;
                     use Botble\Media\Facades\RvMedia;
 
-                    $thumbSize = '150x150';
-                    $pathInfo = pathinfo($value);
-                    $thumbFile = $pathInfo['filename'] . '-' . $thumbSize . '.' . $pathInfo['extension'];
+                    if ($value) {
+                        $thumbSize = '150x150';
+                        $extension = pathinfo($value, PATHINFO_EXTENSION);
+                        $filename = pathinfo($value, PATHINFO_FILENAME);
 
-                    $disk = Storage::disk('wasabi');
+                        // If there's no extension, fallback to the default image.
+    if ($extension) {
+        $thumbFile = $filename . '-' . $thumbSize . '.' . $extension;
+        // Use the original directory path of the file.
+        $dirname = pathinfo($value, PATHINFO_DIRNAME);
+        $fullPath = $dirname . '/' . $thumbFile;
+                            $disk = Storage::disk(RvMedia::getDefaultCloudDriver());
 
-                    $signedThumbUrl = $disk->temporaryUrl(
-                        'posts/' . $thumbFile, // change 'posts/' if path is different
-                        now()->addMinutes(15),
-                    );
+                            // Generate a temporary signed URL for the thumbnail.
+                            $signedThumbUrl = $disk->temporaryUrl($fullPath, now()->addMinutes(15));
+                        } else {
+                            $signedThumbUrl = RvMedia::getDefaultImage();
+                        }
+                    } else {
+                        $signedThumbUrl = RvMedia::getDefaultImage();
+                    }
                 @endphp
 
                 <x-core::image class="preview-image" src="{{ $signedThumbUrl }}"
