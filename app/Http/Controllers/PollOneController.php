@@ -133,7 +133,7 @@ class PollOneController extends BaseController
         $option->save();
     
         // Return the updated poll results
-        return response()->json($this->getResults($option->poll_id));
+        return redirect()->to(url()->current());
     }
     
 
