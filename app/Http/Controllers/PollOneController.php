@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Poll;
 use App\Models\PollOne;
 use App\Models\PollOption;
 use Illuminate\Http\Request;
@@ -33,14 +32,18 @@ class PollOneController extends BaseController
     public function storepoll(Request $request)
     {
         $request->validate([
-            'question' => 'required|string|max:255',
-            'options.*' => 'required|string|max:255',
-            'min_choices' => 'required|integer|min:1'
+            'question'     => 'required|string|max:255',
+            'options.*'    => 'required|string|max:255',
+            'min_choices'  => 'required|integer|min:1',
+            'position'     => 'required|string|in:end,top,under_calendario',
+            'expiry_date'  => 'nullable|date',
         ]);
 
         $poll = PollOne::create([
-            'question' => $request->question,
+            'question'    => $request->question,
             'min_choices' => $request->min_choices,
+            'position'    => $request->position,
+            'expiry_date' => $request->expiry_date, // can be null or a valid date
         ]);
 
         foreach ($request->options as $option) {
@@ -60,19 +63,23 @@ class PollOneController extends BaseController
     public function update(Request $request, $id)
     {
         $request->validate([
-            'question' => 'required|string|max:255',
-            'options.*' => 'required|string|max:255',
-            'min_choices' => 'required|integer|min:1'
+            'question'     => 'required|string|max:255',
+            'options.*'    => 'required|string|max:255',
+            'min_choices'  => 'required|integer|min:1',
+            'position'     => 'required|string|in:end,top,under_calendario',
+            'expiry_date'  => 'nullable|date',
         ]);
 
         $poll = PollOne::findOrFail($id);
         $poll->update([
-            'question' => $request->question,
+            'question'    => $request->question,
             'min_choices' => $request->min_choices,
+            'position'    => $request->position,
+            'expiry_date' => $request->expiry_date,
         ]);
 
+        // Re-create poll options
         $poll->options()->delete();
-
         foreach ($request->options as $optionText) {
             $poll->options()->create(['option' => $optionText]);
         }
@@ -102,7 +109,7 @@ class PollOneController extends BaseController
         $csv = $csvExporter->build($poll->options, ['option', 'votes'])->getCsv();
 
         return Response::make($csv, 200, [
-            'Content-Type' => 'application/csv',
+            'Content-Type'        => 'application/csv',
             'Content-Disposition' => 'attachment; filename="poll_results.csv"',
         ]);
     }
@@ -127,10 +134,12 @@ class PollOneController extends BaseController
 
         $results = $poll->options->map(function ($option) use ($totalVotes) {
             return [
-                'id' => $option->id,
-                'option' => $option->option,
-                'votes' => $option->votes,
-                'percentage' => $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0
+                'id'         => $option->id,
+                'option'     => $option->option,
+                'votes'      => $option->votes,
+                'percentage' => $totalVotes > 0
+                    ? round(($option->votes / $totalVotes) * 100, 2)
+                    : 0
             ];
         });
 
