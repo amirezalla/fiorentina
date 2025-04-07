@@ -5,6 +5,7 @@
         <div class="mb-3">
             <a href="{{ route('ads.create') }}" class="btn btn-primary">Crea</a>
         </div>
+
         <form action="" method="get" class="mb-3">
             <div class="row">
                 <div class="col-12 col-md-3 mb-2">
@@ -13,7 +14,8 @@
                         <option value="">All</option>
                         @foreach (\App\Models\Ad::GROUPS as $key => $title)
                             <option value="{{ $key }}" @selected(request('group') == $key)>
-                                {{ $title }}</option>
+                                {{ $title }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -33,19 +35,22 @@
                     <button type="submit" class="col-12 btn btn-primary">Search</button>
                 </div>
             </div>
-
         </form>
+
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Title</th>
-                    <th>type</th>
-                    <th>group</th>
-                    <th>image</th>
+                    <th>Type</th>
+                    <th>Group</th>
+                    <th>Image</th>
                     <th>Weight</th>
                     <th>Status</th>
-
+                    <!-- New columns -->
+                    <th>Impressions</th>
+                    <th>Clicks</th>
+                    <!-- Actions col -->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -67,16 +72,21 @@
                                 <img src="{{ $ad->getImageUrl() }}" width="140" alt="{{ $ad->title }}">
                             @endif
                         </td>
-                        <td>{{ $ad->getWeightPercentage() }}%</td>
-                        <td>
+                        <td class="align-middle">{{ $ad->getWeightPercentage() }}%</td>
+                        <td class="align-middle">
                             @if ($ad->status)
                                 Published
                             @else
                                 Draft
                             @endif
                         </td>
-
-
+                        <!-- Show totals from the sums we loaded -->
+                        <td class="align-middle">
+                            {{ $ad->total_impressions ?? 0 }}
+                        </td>
+                        <td class="align-middle">
+                            {{ $ad->total_clicks ?? 0 }}
+                        </td>
                         <td class="align-middle">
                             <div class="d-flex gap-2">
                                 <a href="{{ route('ads.edit', $ad->id) }}" class="btn btn-primary">Edit</a>

@@ -27,11 +27,16 @@ class AdController extends BaseController
     {
         return parent::breadcrumb()->add("Advertisements");
     }
-
     public function index(Request $request)
     {
         $this->pageTitle("Ads List");
+    
         $ads = Ad::query()
+            // 1) add the sums for impressions & clicks:
+            ->withSum('adStatistics as total_impressions', 'impressions')
+            ->withSum('adStatistics as total_clicks', 'clicks')
+            
+            // 2) apply the existing filters
             ->where(function ($q) use ($request) {
                 $q->when(
                     $request->filled('group') && in_array($request->group, array_keys(Ad::GROUPS)),
@@ -52,7 +57,7 @@ class AdController extends BaseController
             })
             ->latest()
             ->paginate(20);
-
+    
         return view('ads.view', compact('ads'));
     }
 

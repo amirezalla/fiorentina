@@ -269,5 +269,14 @@ class Ad extends BaseModel
         return $q->orderByRaw('-LOG(1-RAND()) / `' . $this->getTable() . '`.`weight`');
     }
 
+
+    public function adStatistics()
+{
+    return $this->hasMany(\App\Models\AdStatistic::class, 'ad_id');
+}
+
+
+
+
 }
 
