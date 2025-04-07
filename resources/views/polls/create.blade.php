@@ -32,11 +32,6 @@
                             value="1" required>
                     </div>
 
-                    {{-- (Optional) Additional fields, like a description --}}
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Descrizione (opzionale)</label>
-                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
-                    </div>
                 </div>
             </div>
         </div>
@@ -54,10 +49,6 @@
                         <button type="submit" class="btn btn-primary" name="action" value="save">
                             Salva
                         </button>
-                        {{-- Save & exit button (optional) --}}
-                        <button type="submit" class="btn btn-secondary" name="action" value="save_exit">
-                            Salva e Esci
-                        </button>
                     </div>
                 </div>
             </div>
@@ -69,8 +60,8 @@
                 </div>
                 <div class="card-body">
                     <select class="form-select" name="status" required>
-                        <option value="pubblicato">Pubblicato</option>
-                        <option value="bozza">Bozza</option>
+                        <option value="1">Pubblicato</option>
+                        <option value="0">Bozza</option>
                     </select>
                 </div>
             </div>
