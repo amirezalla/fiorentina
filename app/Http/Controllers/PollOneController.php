@@ -80,6 +80,35 @@ class PollOneController extends BaseController
     }
 
 
+    public function edit($id)
+    {
+        $this->pageTitle("Edit Poll");
+
+        $poll = PollOne::with('options')->findOrFail($id);
+
+        return view('polls.edit', compact('poll'));
+    }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'question' => 'required|string|max:255',
+            'options.*' => 'required|string|max:255',
+        ]);
+
+        $poll = PollOne::findOrFail($id);
+        $poll->update(['question' => $request->question]);
+
+        // Remove existing options first (optional approach)
+        $poll->options()->delete();
+
+        // Add new/updated options
+        foreach ($request->options as $optionText) {
+            $poll->options()->create(['option' => $optionText]);
+        }
+
+        return redirect()->route('polls.index')
+            ->with('success', 'Poll updated successfully!');
+    }
 
 
     public function exportResults($id)
