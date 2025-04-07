@@ -34,7 +34,7 @@
                     $filename = $value
                         ? pathinfo($value, PATHINFO_FILENAME) . '-150x150.' . pathinfo($value, PATHINFO_EXTENSION)
                         : null;
-                    $disk = Storage::disk(RvMedia::getDefaultCloudDriver());
+                    $disk = Storage::disk('wasabi');
 
                     $signedThumbUrl = $filename
                         ? $disk->temporaryUrl('posts/' . $filename, now()->addMinutes(15))
