@@ -428,87 +428,57 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-        if (!csrfMeta) {
-            console.warn("CSRF meta tag not found.");
-            return;
-        }
-
-        const csrfToken = csrfMeta.getAttribute('content');
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const buttons = document.querySelectorAll('.vote-btn');
-
-        if (buttons.length === 0) {
-            console.info("No vote buttons found on this page.");
-            return;
-        }
-
         buttons.forEach(button => {
-            button.addEventListener('click', function () {
+            button.onclick = function() {
                 const optionId = this.getAttribute('data-id');
-                if (!optionId) {
-                    console.warn("Button missing data-id.");
-                    return;
-                }
-
                 fetch(`/poll-options/${optionId}/vote`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({})
-                })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            // Additional data can be added here if needed
+                        })
+                    })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error(`Network response was not ok: ${response.statusText}`);
+                            throw new Error('Network response was not ok: ' + response
+                                .statusText);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        if (data.results) {
-                            updateResults(data.results, optionId);
-                        } else {
-                            console.warn("No results returned from server.");
-                        }
+                        updateResults(data.results, optionId);
                     })
-                    .catch(error => {
-                        console.error('Voting error:', error);
-                    });
-
-                this.disabled = true; // Disable the clicked button
-            });
+                    .catch(error => console.error('Error:', error));
+                this.disabled = true; // Disable the button after vote
+            };
         });
     });
 
     function updateResults(results, votedOptionId) {
-        if (!Array.isArray(results)) {
-            console.warn("Results format invalid.");
-            return;
-        }
-
         results.forEach(result => {
             const button = document.querySelector(`.vote-btn[data-id="${result.id}"]`);
-            if (!button) return;
+            if (button) {
+                const percentage = result.percentage;
+                const optionText = result.option;
 
-            const percentageText = button.querySelector('.percentage-text');
-            const percentage = result.percentage;
+                // Update button width according to the new percentage
+                button.style.setProperty('--fill-width', `${percentage}%`);
+                button.querySelector('.percentage-text').textContent = `${percentage}%`;
 
-            if (percentageText) {
-                percentageText.textContent = `${percentage}%`;
-            }
-
-            // Animate or visually reflect vote (e.g. progress bar style)
-            button.style.setProperty('--fill-width', `${percentage}%`);
-
-            // Disable other options
-            if (result.id.toString() !== votedOptionId) {
-                button.disabled = true;
+                // Optionally disable other buttons after voting
+                if (result.id.toString() !== votedOptionId) {
+                    button.disabled = true;
+                }
             }
         });
     }
 </script>
-
 
 <style>
     .btn-purple {
