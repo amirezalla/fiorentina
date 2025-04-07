@@ -215,9 +215,7 @@
 
 
             @if ($topSidebarContent)
-                @if ($poll->position == 'top')
-                    @include('polls.includes.poll-sidebar', $poll)
-                @endif
+
                 @php
                     $match = App\Models\Calendario::where('status', 'SCHEDULED')
                         ->orWhere('status', 'LIVE')
@@ -230,6 +228,9 @@
                 <div class="col-lg-4">
                     <div class="page-sidebar">
                         <section>
+                            @if ($poll->position == 'top')
+                                @include('polls.includes.poll-sidebar', $poll)
+                            @endif
                             <div class="row align-items-center upcoming-match upcoming-match-sidebar">
                                 <!-- Match Date, Time, and Venue -->
                                 <div class="col-md-12 text-center">
