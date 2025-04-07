@@ -3,7 +3,7 @@
     use Carbon\Carbon;
 
     $poll = null;
-   $poll = PollOne::with('options')->where('active', true)->latest()->first();
+    $poll = PollOne::with('options')->where('active', true)->latest()->first();
     // Check if the poll exists and has options
 
     if ($poll) {
@@ -215,6 +215,9 @@
 
 
             @if ($topSidebarContent)
+                @if ($poll->position == 'under_calendario')
+                    @include('polls.includes.poll-sidebar', $poll)
+                @endif
                 @php
                     $match = App\Models\Calendario::where('status', 'SCHEDULED')
                         ->orWhere('status', 'LIVE')
@@ -378,49 +381,17 @@
                             style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
                         Serie B
                     </div>
+                    @if ($poll->position == 'under_calendario')
+                        @include('polls.includes.poll-sidebar', $poll)
+                    @endif
                     @include('videos.includes.adsvideo', ['foo' => 'bar'])
 
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_C1')
                     </div>
 
-                    @if ($poll)
-                        <div class="row container mt-4">
-                            <div class="col-12">
-                                <div>
-                                    <h1>{{ $poll->question }}</h1>
-                                    <div id="options-container">
-                                        @foreach ($poll->options as $option)
-                                            <div class="row">
-                                                <button class="col-12 btn btn-outline-primary vote-btn"
-                                                    data-id="{{ $option->id }}"
-                                                    style="--fill-width: {{ $option->percentage }}%;">
-                                                    <span
-                                                        @if ($option->percentage > 16.66) class="option-text-w"
-
-                                        @else
-                                            class="option-text-p" @endif>
-                                                        {{ $option->option }}</span>
-                                                    <span
-                                                        @if ($option->percentage < 88) class="percentage-text-p"
-
-                                        @else
-                                            class="percentage-text-w" @endif>{{ $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0 }}
-                                                        %</span>
-                                                </button>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <div id="results-container">
-                                        @foreach ($poll->options as $option)
-                                            <div class="result" id="result-{{ $option->id }}">
-                                                {{ $option->option }}: <span class="percentage">0%</span>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    @if ($poll->position == 'end')
+                        @include('polls.includes.poll-sidebar', $poll)
                     @endif
 </section>
 </div>
@@ -428,7 +399,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const csrfToken = "{{ csrf_token() }}"; // Laravel CSRF token
 
         if (!csrfToken) {
@@ -439,20 +410,22 @@
         const buttons = document.querySelectorAll('.vote-btn');
 
         buttons.forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 const optionId = this.getAttribute('data-id');
 
                 fetch(`/poll-options/${optionId}/vote`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({})
-                })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({})
+                    })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error(`Request failed: ${response.status} ${response.statusText}`);
+                            throw new Error(
+                                `Request failed: ${response.status} ${response.statusText}`
+                            );
                         }
                         return response.json();
                     })
