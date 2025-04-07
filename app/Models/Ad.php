@@ -150,7 +150,6 @@ class Ad extends BaseModel
     public function getImageUrl()
     {
         if ($this->type == 1) {
-            // AdStatistic::trackImpression($this->id);
 
             return Storage::temporaryUrl($this->image, now()->addMinutes(15));
         }
@@ -269,6 +268,15 @@ class Ad extends BaseModel
     {
         return $q->orderByRaw('-LOG(1-RAND()) / `' . $this->getTable() . '`.`weight`');
     }
+
+
+    public function adStatistics()
+{
+    return $this->hasMany(\App\Models\AdStatistic::class, 'ad_id');
+}
+
+
+
 
 }
 

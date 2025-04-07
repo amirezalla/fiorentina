@@ -74,6 +74,9 @@ Route::post('/admin/ads', [AdController::class, 'store'])->name('ads.store');
 Route::get('/admin/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
 Route::put('/admin/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
 Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
+Route::get('/ads/click/{id}', [\App\Http\Controllers\AdController::class, 'trackClick'])
+    ->name('ads.click');
+
 
 Route::get('/admin/players', [PlayerController::class, 'index'])->name('players.index');
 Route::get('/admin/players/create', [PlayerController::class, 'create'])->name('players.create');
