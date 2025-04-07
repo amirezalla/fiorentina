@@ -76,7 +76,8 @@
                                     </a>
 
                                     {{-- Edit --}}
-                                    <a href="{{ route('polls.edit', $poll->id) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('polls.edit', $poll->id) }}" class="btn btn-sm btn-primary"
+                                        style="padding-right: 0">
                                         <svg class="icon" data-bs-toggle="tooltip" data-bs-title="Modifica"
                                             xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -95,7 +96,7 @@
                                         style="display: inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger"
+                                        <button type="submit" class="btn btn-sm btn-danger" style="padding-right: 0"
                                             onclick="return confirm('Sei sicuro di voler eliminare questo sondaggio?')">
                                             <svg class="icon" data-bs-toggle="tooltip" data-bs-title="Elimina"
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
