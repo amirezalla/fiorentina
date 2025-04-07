@@ -199,6 +199,6 @@
             });
             ws.send(subscriptionMessage1);
 
-        }, 60000); // every 60 seconds
+        }, 100000); // every 100 seconds
     });
 </script>
