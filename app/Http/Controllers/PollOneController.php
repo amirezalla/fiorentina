@@ -114,7 +114,7 @@ class PollOneController extends BaseController
         ]);
     }
 
-    public function option(Request $request, $optionId)
+    public function vote(Request $request, $optionId)
     {
         $option = PollOption::findOrFail($optionId);
 
