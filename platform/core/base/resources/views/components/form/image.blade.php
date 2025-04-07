@@ -54,7 +54,7 @@
                     }
                 @endphp
 
-                <x-core::image class="preview-image" src="{{ $signedThumbUrl }}"
+                <x-core::image class="preview-image" src="{!! $signedThumbUrl !!}"
                     alt="{{ trans('core/base::base.preview_image') }}" />
 
 
