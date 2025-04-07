@@ -129,7 +129,8 @@ class PollOneController extends BaseController
         }
     
         // Increment the vote count for the option
-        $option->increment('votes');
+        $option->votes=$option->votes+1;
+        $option->save();
     
         // Return the updated poll results
         return response()->json($this->getResults($option->poll_id));
