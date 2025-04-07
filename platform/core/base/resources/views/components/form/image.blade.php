@@ -29,7 +29,7 @@
                 href="#">
                 <x-core::image @class(['preview-image', 'default-image' => !$value])
                     data-default="{{ $defaultImage = $defaultImage ?? RvMedia::getDefaultImage() }}"
-                    src="{{ RvMedia::getImageUrl($value, $allowThumb ? 'thumb' : null) }}"
+                    src="{{ RvMedia::getImageUrl($value, $allowThumb ? 'medium' : null) }}"
                     alt="{{ trans('core/base::base.preview_image') }}" />
 
                 <span class="image-picker-backdrop"></span>
