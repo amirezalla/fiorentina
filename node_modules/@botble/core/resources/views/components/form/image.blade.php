@@ -29,7 +29,8 @@
                 href="#">
                 <x-core::image @class(['preview-image', 'default-image' => !$value])
                     data-default="{{ $defaultImage = $defaultImage ?: RvMedia::getDefaultImage() }}"
-                    src="{{ RvMedia::getImageUrl($value) }}" alt="{{ trans('core/base::base.preview_image') }}" />
+                    src="{{ RvMedia::getImageUrl($value, $allowThumb ? 'thumb' : null) }}"
+                    alt="{{ trans('core/base::base.preview_image') }}" />
                 <span class="image-picker-backdrop"></span>
             </a>
             <x-core::button @style(['display: none' => empty($value), '--bb-btn-font-size: 0.5rem']) class="image-picker-remove-button p-0" :pill="true"
