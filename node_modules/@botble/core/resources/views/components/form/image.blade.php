@@ -27,10 +27,22 @@
                 class="image-box-actions" data-result="{{ $name }}"
                 data-action="{{ $attributes['action'] ?? 'select-image' }}" data-allow-thumb="{{ $allowThumb == true }}"
                 href="#">
+                @php
+                    use Illuminate\Support\Facades\Storage;
+                    use Botble\Media\Facades\RvMedia;
+
+                    $filename = $value
+                        ? pathinfo($value, PATHINFO_FILENAME) . '-150x150.' . pathinfo($value, PATHINFO_EXTENSION)
+                        : null;
+                    $disk = Storage::disk(RvMedia::getDefaultCloudDriver());
+
+                    $signedThumbUrl = $filename
+                        ? $disk->temporaryUrl('posts/' . $filename, now()->addMinutes(15))
+                        : RvMedia::getDefaultImage();
+                @endphp
                 <x-core::image @class(['preview-image', 'default-image' => !$value])
                     data-default="{{ $defaultImage = $defaultImage ?? RvMedia::getDefaultImage() }}"
-                    src="{{ RvMedia::getImageUrl($value, $allowThumb ? 'medium' : null) }}"
-                    alt="{{ trans('core/base::base.preview_image') }}" />
+                    src="{{ $signedThumbUrl }}" alt="{{ trans('core/base::base.preview_image') }}" />
 
                 <span class="image-picker-backdrop"></span>
             </a>
