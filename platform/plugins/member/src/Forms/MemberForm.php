@@ -21,6 +21,10 @@ use Botble\Member\Models\Member;
 
 class MemberForm extends FormAbstract
 {
+    public function getActionButtons(): string
+    {
+        return view('plugins/blog::partials.form-actions')->render();
+    }
     public function setup(): void
     {
         $this
