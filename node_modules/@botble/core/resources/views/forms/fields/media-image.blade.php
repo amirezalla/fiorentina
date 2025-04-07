@@ -3,16 +3,9 @@
         $options['label'] = trans('core/base::forms.image');
     }
 @endphp
+@dd($options['value'])
 
-<x-core::form.field
-    :showLabel="$showLabel"
-    :showField="$showField"
-    :options="$options"
-    :name="$name"
-    :prepend="$prepend ?? null"
-    :append="$append ?? null"
-    :showError="$showError"
-    :nameKey="$nameKey"
->
+<x-core::form.field :showLabel="$showLabel" :showField="$showField" :options="$options" :name="$name" :prepend="$prepend ?? null"
+    :append="$append ?? null" :showError="$showError" :nameKey="$nameKey">
     {!! Form::mediaImage($name, $options['value'] ?? null) !!}
 </x-core::form.field>

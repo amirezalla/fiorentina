@@ -80,7 +80,7 @@ class PostTable extends TableAbstract
                 ]);
             }
             $this->addColumns([
-                ImageColumn::make(),
+                    ImageColumn::make(),
                 NameColumn::make()->route('posts.edit'),
                 FormattedColumn::make('categories_name')
                     ->title(trans('plugins/blog::posts.categories'))
