@@ -139,10 +139,11 @@ class PollOneController extends BaseController
 
     private function getResults($pollId)
     {
-        $poll = PollOne::with('options')->findOrFail($pollId);
-        $totalVotes = $poll->options->sum('votes');
+        $poll = PollOne::findOrFail($pollId);
+        $options = PollOption::where('poll_id', $pollId)->get();
+        $totalVotes = $options->sum('votes');
 
-        $results = $poll->options->map(function ($option) use ($totalVotes) {
+        $results = $options->map(function ($option) use ($totalVotes) {
             return [
                 'id'         => $option->id,
                 'option'     => $option->option,
