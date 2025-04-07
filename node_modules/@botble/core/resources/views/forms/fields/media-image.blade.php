@@ -3,7 +3,7 @@
         $options['label'] = trans('core/base::forms.image');
     }
 @endphp
-@dd($name, $options)
+@dd($name, $options, $showLabel, $showField, $prepend, $append, $showError, $nameKey)
 
 <x-core::form.field :showLabel="$showLabel" :showField="$showField" :options="$options" :name="$name" :prepend="$prepend ?? null"
     :append="$append ?? null" :showError="$showError" :nameKey="$nameKey">
