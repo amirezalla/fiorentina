@@ -42,7 +42,7 @@
         // Use the original directory path of the file.
         $dirname = pathinfo($value, PATHINFO_DIRNAME);
         $fullPath = $dirname . '/' . $thumbFile;
-                            $disk = Storage::disk(RvMedia::getDefaultCloudDriver());
+        $disk = Storage::disk('wasabi');
 
                             // Generate a temporary signed URL for the thumbnail.
                             $signedThumbUrl = $disk->temporaryUrl($fullPath, now()->addMinutes(15));
