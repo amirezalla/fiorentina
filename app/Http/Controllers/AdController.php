@@ -101,7 +101,7 @@ class AdController extends BaseController
                         // Generate a unique file name using a random string and the current timestamp.
                         $filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
                         // Read and optionally resize the image.
-                        $manager = new ImageManager(['driver' => 'imagick']);
+$manager = new ImageManager('imagick');
 $imageResized = $manager->make($file);
 if ($request->width && $request->height) {
     $imageResized = $imageResized->resize($request->width, $request->height);
