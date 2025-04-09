@@ -100,31 +100,25 @@ class AdController extends BaseController
                     if ($file->isValid()) {
                         // Generate a unique file name using a random string and the current timestamp.
                         $filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
-                        dd($files);
                         // Read and optionally resize the image.
-                        $imageResized = ImageManager::gd()->read($file);
-                        if ($request->width && $request->height) {
-                            $imageResized = $imageResized->resize($request->width, $request->height);
-                        }
-                        $imageResized = $imageResized->encode();
-            
-                        // Save the processed image to a temporary path.
-                        $tempPath = sys_get_temp_dir() . '/' . $filename;
-                        file_put_contents($tempPath, $imageResized);
-            
-                        // Upload the image via RvMedia to the 'ads-images/' folder.
-                        $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'ads-images/');
-            
-                        // Remove the temporary file.
-                        unlink($tempPath);
-            
-                        // Create an associated AdImage record for this ad.
-                        $advertisement->images()->create(
-                            [
-                                'image_url' => $uploadResult['data']->url,
-                                'ad_id' => $advertisement->id,
-                            ]
-                        );
+                        $manager = new ImageManager(['driver' => 'imagick']);
+$imageResized = $manager->make($file);
+if ($request->width && $request->height) {
+    $imageResized = $imageResized->resize($request->width, $request->height);
+}
+$imageResized = $imageResized->encode();
+
+// Save to a temporary path as before
+$filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
+$tempPath = sys_get_temp_dir() . '/' . $filename;
+file_put_contents($tempPath, $imageResized);
+
+// Proceed with your existing RvMedia upload code
+$uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'ads-images/');
+unlink($tempPath);
+
+// Create an AdImage record (if using multiple images) or assign the URL for single images.
+$advertisement->images()->create(['image_url' => $uploadResult['data']->url]);
                     }
                 }
             }
