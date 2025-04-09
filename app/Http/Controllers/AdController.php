@@ -116,7 +116,7 @@ class AdController extends BaseController
                         unlink($tempPath);
             
                         // Create an associated AdImage record for this ad.
-                        $ad->images()->create(['image_url' => $uploadResult['data']->url]);
+                        $advertisement->images()->create(['image_url' => $uploadResult['data']->url]);
                     }
                 }
             }
