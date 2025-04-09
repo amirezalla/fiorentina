@@ -104,7 +104,7 @@ class AdController extends BaseController
                         if ($ext === 'webp') {
                             return redirect()->back()
                             ->withInput()  // Preserve the input values
-                            ->withErrors(['image' => 'One or more uploaded images have a .webp extension, which is not acceptable.']);                        }                        // Read and optionally resize the image.
+                            ->withErrors(['image' => "Una o più immagini caricate hanno un'estensione .webp, che non è accettabile."]);                        }                        // Read and optionally resize the image.
                         $imageResized = ImageManager::gd()->read($file);
                         if ($request->width && $request->height) {
                             $imageResized = $imageResized->resize($request->width, $request->height);

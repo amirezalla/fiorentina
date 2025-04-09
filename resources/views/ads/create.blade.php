@@ -76,11 +76,6 @@
                             <!-- Image Upload Section -->
                             <div class="row mt-3 mb-3" id="imageUploadSection">
                                 <!-- Display error message for image upload if exists -->
-                                @if ($errors->has('image'))
-                                    <div class="alert alert-danger">
-                                        {{ $errors->first('image') }}
-                                    </div>
-                                @endif
 
                                 <input type="file" class="form-control mb-1" id="imageUpload" name="images[]" multiple
                                     accept="image/*">
