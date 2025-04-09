@@ -293,11 +293,11 @@ public function getDisplayImageUrl(): ?string
         // Calculate index using the display_count field.
         // Ensure display_count is incremented externally (see next section).
         $index = $this->display_count % $count;
-        return $images[$index]->image_url;
+        return Storage::temporaryUrl($images[$index]->image_url, now()->addMinutes(15));
     }
 
     // Fallback: return the single stored image (if present).
-    return $this->image;
+    return Storage::temporaryUrl($this->image, now()->addMinutes(15));
 }
 
 // Optionally, to compute effective weight per image:
