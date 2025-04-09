@@ -67,8 +67,8 @@
                                 <input type="text" class="form-control" name="url" id="url"
                                     placeholder="https://laviola.it">
                                 <div class="row mx-0 mt-3">
-                                    <div class="col-12">
-                                        <img src="" class="image-preview" alt="">
+                                    <div class="col-12 mt-3" id="previewContainer">
+                                        <!-- Previews will be added here -->
                                     </div>
                                 </div>
                             </div>
@@ -185,16 +185,34 @@
         });
 
 
+        // Add change event listener to the file input
         document.getElementById('imageUpload').addEventListener('change', function(e) {
-            const input = e.target;
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    document.querySelector('.image-preview').src = e.target.result;
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = ''; // Clear any existing previews
+
+            const files = e.target.files;
+
+            // Loop through each selected file
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        // Create an image element for the preview
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.alt = 'Image Preview';
+                        // Add Bootstrap classes for styling (modify as needed)
+                        img.classList.add('image-preview', 'img-fluid', 'mb-2');
+                        // Append the new image to the preview container
+                        previewContainer.appendChild(img);
+                    };
+                    // Read the file as a Data URL (base64-encoded)
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(input.files[0]);
             }
         });
+
 
         // Initialize CodeMirror on the textarea
         var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
