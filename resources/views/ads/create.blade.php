@@ -26,7 +26,7 @@
                                 <div class="mb-3">
                                     <label for="weight" class="form-label">Weight</label>
                                     <input type="text" class="form-control" name="weight" id="weight"
-                                           value="{{ old('weight') }}" autocomplete="off">
+                                        value="{{ old('weight') }}" autocomplete="off">
                                 </div>
                             </div>
 
@@ -62,10 +62,10 @@
 
                             <!-- Image Upload Section -->
                             <div class="row mt-3 mb-3" id="imageUploadSection">
-                                <input type="file" class="form-control mb-1" id="imageUpload" name="image"
+                                <input type="file" class="form-control mb-1" id="imageUpload" name="images[]" multiple
                                     accept="image/*">
                                 <input type="text" class="form-control" name="url" id="url"
-                                    placeholder="https://example.com">
+                                    placeholder="https://laviola.it">
                                 <div class="row mx-0 mt-3">
                                     <div class="col-12">
                                         <img src="" class="image-preview" alt="">

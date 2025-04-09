@@ -179,6 +179,9 @@ class Ad extends BaseModel
 
 }
 
+
+
+
     /**
      * @return bool
      */
@@ -276,6 +279,35 @@ class Ad extends BaseModel
 }
 
 
+public function images()
+{
+    return $this->hasMany(\App\Models\AdImage::class);
+}
+
+public function getDisplayImageUrl(): ?string
+{
+    $images = $this->images;
+    $count = $images->count();
+    
+    if ($count > 0) {
+        // Calculate index using the display_count field.
+        // Ensure display_count is incremented externally (see next section).
+        $index = $this->display_count % $count;
+        return $images[$index]->image_url;
+    }
+
+    // Fallback: return the single stored image (if present).
+    return $this->image;
+}
+
+// Optionally, to compute effective weight per image:
+public function getEffectiveWeightPerImage(): ?float
+{
+    if($this->images()->count() > 0) {
+        return $this->weight / $this->images()->count();
+    }
+    return $this->weight;
+}
 
 
 }

@@ -17,5 +17,5 @@ return [
         'minimal' => 'Minimal',
     ],
     'message' => 'Your experience on this site will be improved by allowing cookies.',
-    'button_text' => 'Allow cookies',
+    'button_text' => 'Consenti i cookie',
 ];
