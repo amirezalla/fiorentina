@@ -15,8 +15,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Imagick\Driver as ImagickDriver;
-
 use Botble\Media\RvMedia;
 
 class AdController extends BaseController
@@ -102,28 +100,34 @@ class AdController extends BaseController
                     if ($file->isValid()) {
                         // Generate a unique file name using a random string and the current timestamp.
                         $filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
-                        // Read and optionally resize the image.
-// Instantiate the Imagick driver explicitly:
-$driver = new ImagickDriver();
-
-// Create the ImageManager using the driver instance:
-$manager = new ImageManager($driver);$imageResized = $manager->make($file);
-if ($request->width && $request->height) {
-    $imageResized = $imageResized->resize($request->width, $request->height);
-}
-$imageResized = $imageResized->encode();
-
-// Save to a temporary path as before
-$filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
-$tempPath = sys_get_temp_dir() . '/' . $filename;
-file_put_contents($tempPath, $imageResized);
-
-// Proceed with your existing RvMedia upload code
-$uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'ads-images/');
-unlink($tempPath);
-
-// Create an AdImage record (if using multiple images) or assign the URL for single images.
-$advertisement->images()->create(['image_url' => $uploadResult['data']->url]);
+                        $ext = strtolower($file->getClientOriginalExtension());
+                        if ($ext === 'webp') {
+                            return redirect()->back()
+                            ->withInput()  // Preserve the input values
+                            ->withErrors(['image' => 'One or more uploaded images have a .webp extension, which is not acceptable.']);                        }                        // Read and optionally resize the image.
+                        $imageResized = ImageManager::gd()->read($file);
+                        if ($request->width && $request->height) {
+                            $imageResized = $imageResized->resize($request->width, $request->height);
+                        }
+                        $imageResized = $imageResized->encode();
+            
+                        // Save the processed image to a temporary path.
+                        $tempPath = sys_get_temp_dir() . '/' . $filename;
+                        file_put_contents($tempPath, $imageResized);
+            
+                        // Upload the image via RvMedia to the 'ads-images/' folder.
+                        $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'ads-images/');
+            
+                        // Remove the temporary file.
+                        unlink($tempPath);
+            
+                        // Create an associated AdImage record for this ad.
+                        $advertisement->images()->create(
+                            [
+                                'image_url' => $uploadResult['data']->url,
+                                'ad_id' => $advertisement->id,
+                            ]
+                        );
                     }
                 }
             }
