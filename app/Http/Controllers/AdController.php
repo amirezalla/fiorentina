@@ -100,7 +100,7 @@ class AdController extends BaseController
                     if ($file->isValid()) {
                         // Generate a unique file name using a random string and the current timestamp.
                         $filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
-            
+                        dd($files);
                         // Read and optionally resize the image.
                         $imageResized = ImageManager::gd()->read($file);
                         if ($request->width && $request->height) {
