@@ -93,6 +93,9 @@ class AdController extends BaseController
         if ($advertisement->type == 1) {
             if ($request->hasFile('images')) {
                 $files = $request->file('images');
+                
+                $advertisement->save();
+
                 foreach ($files as $file) {
                     if ($file->isValid()) {
                         // Generate a unique file name using a random string and the current timestamp.
@@ -129,6 +132,8 @@ class AdController extends BaseController
         } else {
             // For type=2 (google manager or custom script) we store the script/amp in 'image' field if you prefer
             $advertisement->image = $request->image;
+            $advertisement->save();
+
         }
 
         try {
