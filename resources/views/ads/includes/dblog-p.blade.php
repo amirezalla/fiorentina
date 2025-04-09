@@ -3,13 +3,15 @@
         {{-- Track impression for type=1 ads --}}
         @php
             \App\Models\AdStatistic::trackImpression($ad->id);
+            $ad->increment('display_count');
+
         @endphp
 
         <div class="row justify-content-center mx-0">
             <div class="col-12 mx-auto">
                 {{-- Link through your trackClick route so that a click is counted --}}
                 <a href="{{ route('ads.click', ['id' => $ad->id]) }}" class="d-block">
-                    <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}" class="img-fluid"
+                    <img src="{{ $ad->getDisplayImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
                         style="width: 100%; height: auto;">
                 </a>
             </div>
