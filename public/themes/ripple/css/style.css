@@ -4269,11 +4269,13 @@ body,
 
 .container.bg-white .post__vertical--single .post__title a {
     color: #111111;
+    line-height: 1.1;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02rem;
 }
 
-.container.bg-white .post__vertical--single .post__title a {
-    color: #111111;
-}
+
 
 .container.bg-white .post__vertical--single .post__content p {
     color: #555555;
@@ -4842,7 +4844,12 @@ header>.container,
     }
 
     .black-box .post__last4-badge {
-        color: rgb(95, 95, 95) !important;
+        color: #888 !important;
+        font-size: small !important;
+        font-weight: 700 !important;
+        font-family: "Titilium Web", sans-serif !important;
+        text-transform: uppercase !important;
+
     }
 
 
