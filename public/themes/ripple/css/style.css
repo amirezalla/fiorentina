@@ -1,5 +1,34 @@
+/* Titillium Web Regular */
+@font-face {
+    font-family: 'Titillium Web';
+    src: url('/fonts/TitilliumWeb-Regular.eot');
+    src: local('Titillium Web Regular'), local('TitilliumWeb-Regular'),
+        url('/fonts/TitilliumWeb-Regular.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/TitilliumWeb-Regular.woff2') format('woff2'),
+        url('/fonts/TitilliumWeb-Regular.woff') format('woff'),
+        url('/fonts/TitilliumWeb-Regular.ttf') format('truetype'),
+        url('/fonts/TitilliumWeb-Regular.svg#TitilliumWeb') format('svg');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Titillium Web Bold */
+@font-face {
+    font-family: 'Titillium Web';
+    src: url('/fonts/TitilliumWeb-Bold.eot');
+    src: local('Titillium Web Bold'), local('TitilliumWeb-Bold'),
+        url('/fonts/TitilliumWeb-Bold.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/TitilliumWeb-Bold.woff2') format('woff2'),
+        url('/fonts/TitilliumWeb-Bold.woff') format('woff'),
+        url('/fonts/TitilliumWeb-Bold.ttf') format('truetype'),
+        url('/fonts/TitilliumWeb-Bold.svg#TitilliumWeb') format('svg');
+    font-weight: 700;
+    font-style: normal;
+}
+
 :root {
     --primary-font: 'Roboto Condensed', sans-serif;
+    --secondary-font: 'Titillium Web', sans-serif;
 }
 
 body {
