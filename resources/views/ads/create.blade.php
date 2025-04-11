@@ -135,6 +135,7 @@
             </div>
             <!-- Sidebar Column -->
             <div class="col-md-3 gap-3 d-flex flex-column-reverse flex-md-column mb-md-0 mb-5">
+                <!-- Publish Card -->
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">
@@ -152,6 +153,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Status Card -->
                 <div class="card meta-boxes">
                     <div class="card-header">
                         <h4 class="card-title">
@@ -166,7 +169,29 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Dates Card -->
+                <div class="card meta-boxes">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            Impostazione data
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" id="start_date"
+                                value="{{ old('start_date') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="expiry_date" class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" name="expiry_date" id="expiry_date"
+                                value="{{ old('expiry_date') }}">
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </form>
 @endsection
