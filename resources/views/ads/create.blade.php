@@ -174,22 +174,28 @@
                 <div class="card meta-boxes">
                     <div class="card-header">
                         <h4 class="card-title">
-                            Impostazione data
+                            Impostazioni data
                         </h4>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="start_date" class="form-label">Start Date</label>
+                            <label for="start_date" class="form-label">Data inizio</label>
                             <input type="date" class="form-control" name="start_date" id="start_date"
-                                value="{{ old('start_date') }}">
+                                value="{{ old('start_date', date('Y-m-d')) }}">
                         </div>
                         <div class="mb-3">
-                            <label for="expiry_date" class="form-label">Expiry Date</label>
+                            <label for="expiry_date" class="form-label">Data Scadenza</label>
                             <input type="date" class="form-control" name="expiry_date" id="expiry_date"
                                 value="{{ old('expiry_date') }}">
                         </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="never_expire" name="never_expire"
+                                value="1" @if (old('never_expire')) checked @endif>
+                            <label class="form-check-label" for="never_expire">Scade mai</label>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -211,6 +217,16 @@
             } else {
                 imageUploadSection.style.display = 'block';
                 googleAdImageNameSection.style.display = 'none';
+            }
+        });
+
+        document.getElementById('never_expire').addEventListener('change', function() {
+            const expiryField = document.getElementById('expiry_date');
+            if (this.checked) {
+                expiryField.disabled = true;
+                expiryField.value = '';
+            } else {
+                expiryField.disabled = false;
             }
         });
 
