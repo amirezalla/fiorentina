@@ -4853,12 +4853,7 @@ header>.container,
     }
 
     .black-box .post__last4-badge {
-        color: #888 !important;
-        font-size: small !important;
-        font-weight: 700 !important;
-        font-family: "Titilium Web", sans-serif !important;
-        text-transform: uppercase !important;
-
+        color: rgb(95, 95, 95) !important;
     }
 
 
