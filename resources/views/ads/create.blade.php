@@ -43,16 +43,6 @@
                                 </div>
                             </div>
 
-                            <!-- Publish Section (if additional content is needed) -->
-                            <div class="postbox-container" id="postbox-container-1">
-                                <div class="meta-box-sortables ui-sortable" id="side-sortables">
-                                    <div class="postbox" id="submitdiv">
-                                        <div class="postbox-header">
-                                            <h2 class="hndle ui-sortable-handle">Pubblica</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <!-- Ad Type Selection -->
                             <div class="postbox-container" id="postbox-container-2">
