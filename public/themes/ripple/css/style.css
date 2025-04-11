@@ -1,23 +1,5 @@
 /* Titillium Web Regular */
-@font-face {
-    font-family: 'Titillium Web';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Titillium Web Regular'), local('TitilliumWeb-Regular'),
-        url('https://fonts.gstatic.com/s/titilliumweb/v11/0nkwCne7W7o5KQhVBWxa4eeIXx6oZdIQ.woff2') format('woff2');
-    /* Optional: specify the unicode-range for Latin characters if desired */
-    unicode-range: U+000-5FF;
-}
-
-/* Titillium Web Bold */
-@font-face {
-    font-family: 'Titillium Web';
-    font-style: normal;
-    font-weight: 700;
-    src: local('Titillium Web Bold'), local('TitilliumWeb-Bold'),
-        url('https://fonts.gstatic.com/s/titilliumweb/v11/0nkwCne7W7o5KQhVBWxa4eeIXx6oZHQ.woff2') format('woff2');
-    unicode-range: U+000-5FF;
-}
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
 
 :root {
