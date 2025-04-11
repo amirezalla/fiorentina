@@ -4255,6 +4255,11 @@ body,
 
 .container.bg-white .post__vertical--single .post__content p {
     color: #555555;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    letter-spacing: -0.02rem;
+    font-family: 'Titillium Web', sans-serif !important;
+    font-weight: 400;
 }
 
 .footer__options {
