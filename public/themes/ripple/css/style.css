@@ -5005,7 +5005,8 @@ header>.container,
     }
 
     .post__vertical--single .author-post {
-        font-size: revert !important;
+        font-size: smaller !important;
+        font-family: 'Titillium Web', sans-serif !important;
     }
 
     .black-box div article:last-child {
@@ -5014,8 +5015,19 @@ header>.container,
 
 
 
+
+
+
 }
 
+
+
+ .author-post {
+    font-size: smaller !important;
+    font-family: 'Titillium Web', sans-serif !important;
+    font-weight: 600 !important;
+
+}
 /* Ensure the table is scrollable on small screens */
 .table-responsive {
     overflow-x: auto;

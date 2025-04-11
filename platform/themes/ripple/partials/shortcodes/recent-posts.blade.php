@@ -113,7 +113,8 @@
                                                 </header>
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
-                                                    <span class=" text-dark mt-1 d-block">
+                                                    <span class=" text-dark mt-1 d-block"
+                                                        style="font-family: 'Titillium Web', sans-serif; font-weight: 600; font-size: 0.9rem;">
                                                         @php
                                                             $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                                 'reference_id',
