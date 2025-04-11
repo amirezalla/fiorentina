@@ -5022,12 +5022,17 @@ header>.container,
 
 
 
- .author-post {
+.author-post {
     font-size: smaller !important;
     font-family: 'Titillium Web', sans-serif !important;
     font-weight: 600 !important;
 
 }
+
+.author-post:hover {
+    text-decoration: underline;
+}
+
 /* Ensure the table is scrollable on small screens */
 .table-responsive {
     overflow-x: auto;
