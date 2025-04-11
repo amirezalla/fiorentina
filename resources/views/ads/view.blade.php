@@ -44,7 +44,7 @@
                     <th>Title</th>
                     <th>Type</th>
                     <th>Group</th>
-                    <th>Image</th>
+                    {{-- <th>Image</th> --}}
                     <th>Weight</th>
                     <th>Status</th>
                     <!-- New columns -->
@@ -67,11 +67,11 @@
                             @endif
                         </td>
                         <td class="align-middle">{{ $ad->group_name }}</td>
-                        <td class="align-middle">
+                        {{-- <td class="align-middle">
                             @if ($ad->getImageUrl())
                                 <img src="{{ $ad->getImageUrl() }}" width="140" alt="{{ $ad->title }}">
                             @endif
-                        </td>
+                        </td> --}}
                         <td class="align-middle">{{ $ad->getWeightPercentage() }}%</td>
                         <td class="align-middle">
                             @if ($ad->status)
