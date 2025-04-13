@@ -5022,6 +5022,15 @@ header>.container,
 
 
 
+.post__date {
+    font-family: 'Titillium Web', sans-serif !important;
+    font-size: medium !important;
+    font-weight: 600 !important;
+    color: #888 !important;
+}
+
+
+
 .author-post {
     font-size: smaller !important;
     font-family: 'Titillium Web', sans-serif !important;
