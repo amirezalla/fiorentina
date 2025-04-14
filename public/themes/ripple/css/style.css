@@ -5419,6 +5419,15 @@ header>.container,
     user-select: none;
 }
 
+.post-desc-first {
+    font-family: 'Titillium Web', sans-serif !important;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.3em;
+
+}
+
 .upcoming-match-sidebar {
     margin-top: 20px;
     padding: 25px 40px;
