@@ -129,7 +129,8 @@
                                                         class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
                                                 @endif
                                                 @if ($post->in_aggiornamento)
-                                                    <span class="post-group__left-red-badge mb-2 ml-2"><span class="pulse-circle"></span> In Aggiornamento
+                                                    <span class="post-group__left-red-badge mb-2 ml-2"><span
+                                                            class="pulse-circle"></span> In Aggiornamento
                                                     </span>
                                                 @endif
                                             </div>
@@ -139,6 +140,8 @@
                                                     href="{{ $post->url }}">{{ $post->name }}</a>
 
                                             </h3>
+                                            <p class="post-desc-first" style="margin: 10px 0 0;">
+                                                {{ $post->description }}</p>
                                             <span class=" text-dark mt-2 d-block">
                                                 @php
                                                     $date = Carbon::parse($post->published_at);
