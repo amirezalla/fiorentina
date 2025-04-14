@@ -24,13 +24,20 @@
                 </a>
 
                 {{-- The new line in gray: "editoriali / X ore fa" --}}
-                <span style="color: gray;display:block;margin-top:10px;">
+                <span style="color: gray;display:block;margin-top:10px;font-weight: 700;font-family: 'Titillium Web';">
+                    {{-- The category name --}}
+                    {{ $last_post->category->name ?? 'N/A' }} /
+                    {{-- The time since the post was created --}}
+                    {{ $timeText }}
+                    {{-- The category name --}}
+                    {{ $last_post->category->name ?? 'N/A' }} /
                     Editoriale / {{ $timeText }}
                 </span>
 
                 <a href="{{ $last_post->url }}" title="{{ $last_post->name }}"
                     class="editoriale-item-content-title py-2"
-                    style="font-size: x-large; font-family: 'Roboto Condensed'; color: black; font-weight: 700;">
+                    style="font-size: x-large; font-family: 'Roboto Condensed'; color: black; font-weight: 700;line-height:1.1;letter-spacing: -0.02em;">
+                    {{-- The title of the post --}}
                     {{ $last_post->name }}
                 </a>
             </div>
