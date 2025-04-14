@@ -25,12 +25,7 @@
 
                 {{-- The new line in gray: "editoriali / X ore fa" --}}
                 <span style="color: gray;display:block;margin-top:10px;font-weight: 700;font-family: 'Titillium Web';">
-                    {{-- The category name --}}
-                    {{ $last_post->category->name ?? 'N/A' }} /
-                    {{-- The time since the post was created --}}
-                    {{ $timeText }}
-                    {{-- The category name --}}
-                    {{ $last_post->category->name ?? 'N/A' }} /
+
                     Editoriale / {{ $timeText }}
                 </span>
 
