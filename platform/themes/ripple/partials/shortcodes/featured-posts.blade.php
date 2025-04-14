@@ -129,8 +129,7 @@
                                                         class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
                                                 @endif
                                                 @if ($post->in_aggiornamento)
-                                                    <span class="post-group__left-red-badge mb-2 ml-2"><i
-                                                            class="fa fa-spinner text-white"></i> In Aggiornamento
+                                                    <span class="post-group__left-red-badge mb-2 ml-2"><span class="pulse-circle"></span> In Aggiornamento
                                                     </span>
                                                 @endif
                                             </div>
