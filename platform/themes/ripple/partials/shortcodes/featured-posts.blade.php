@@ -148,7 +148,7 @@
                                                     setlocale(LC_TIME, 'it_IT.UTF-8');
                                                     Carbon::setLocale('it');
                                                     $date->locale('it');
-                                                    $formattedDate = $date->translatedFormat('j F - H:i');
+                                                    $formattedDate = $date->translatedFormat('d M H:i');
                                                     $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                         'reference_id',
                                                         $post->id,
@@ -200,7 +200,7 @@
                                                         setlocale(LC_TIME, 'it_IT.UTF-8');
                                                         Carbon::setLocale('it');
                                                         $date->locale('it');
-                                                        $formattedDate = $date->translatedFormat('j F - H:i');
+                                                        $formattedDate = $date->translatedFormat('d M H:i');
                                                         $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                             'reference_id',
                                                             $post->id,
@@ -277,7 +277,8 @@
                                 setlocale(LC_TIME, 'it_IT.UTF-8');
                                 Carbon::setLocale('it');
                                 $date->locale('it');
-                                $formattedDate = $date->translatedFormat('j F - H:i');
+                                $formattedDate = $date->translatedFormat('d M H:i');
+
                                 $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                     'reference_id',
                                     $post->id,
