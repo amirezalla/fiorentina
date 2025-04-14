@@ -975,6 +975,11 @@ p:empty {
     margin-bottom: 5px
 }
 
+.created_at {
+    font-family: 'Titillium Web', sans-serif;
+    font-weight: 600;
+}
+
 .post__inside--feature .post__title a {
     color: #fff;
     font-size: 26px;
