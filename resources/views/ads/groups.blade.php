@@ -49,7 +49,7 @@
                                             </a>
                                             <!-- Sort button using icon -->
                                             <a href="{{ route('ads.sort', ['group' => $groupId]) }}"
-                                                class="btn  btn-secondary" style='padding:10px 1px 7px 11px'
+                                                class="btn  btn-secondary" style='padding:10px 2px 8px 14px'
                                                 aria-label="Sort Weight">
                                                 <i class="fa fa-sort"></i>
                                             </a>
@@ -92,7 +92,7 @@
                                                 <i class="fa-solid fa-list-check"></i>
                                             </a>
                                             <a href="{{ route('ads.sort', ['group' => $groupId]) }}"
-                                                class="btn  btn-secondary" style='padding:10px 1px 7px 11px'
+                                                class="btn  btn-secondary" style='padding:10px 2px 8px 14px'
                                                 aria-label="Sort Weight">
                                                 <i class="fa-solid fa-sort"></i>
                                             </a>
