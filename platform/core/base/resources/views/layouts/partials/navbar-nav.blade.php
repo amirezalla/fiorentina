@@ -24,12 +24,30 @@
         </a>
     </li>
     <li class="nav-item dropdown">
-        <a href="{{ route('ads.index') }}" class="nav-link dropdown-toggle nav-priority-3000" id="ads"
-            data-bs-auto-close="false" role="button" aria-expanded="false" title="Ads">
+        <a href="#" class="nav-link dropdown-toggle nav-priority-3000" id="adsDropdown" role="button"
+            data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Ads">
             <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fa fa-link"></i></span>
-            <span class="nav-link-title  text-truncate">Ads</span>
+            <span class="nav-link-title text-truncate">Ads</span>
         </a>
+        <ul class="dropdown-menu" aria-labelledby="adsDropdown">
+            <li>
+                <a class="dropdown-item" href="{{ route('ads.create') }}" aria-label="Create Ad">
+                    Create
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ route('ads.index') }}" aria-label="List Ads">
+                    List
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ route('ads.groups.index') }}" aria-label="Groups">
+                    Groups
+                </a>
+            </li>
+        </ul>
     </li>
+
     <li class="nav-item dropdown">
         <a href="{{ route('players.index') }}" class="nav-link dropdown-toggle nav-priority-3000" id="ads"
             data-bs-auto-close="false" role="button" aria-expanded="false" title="Ads">

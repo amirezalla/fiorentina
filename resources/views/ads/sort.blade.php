@@ -27,6 +27,7 @@
                         <tr>
                             <th>Ad ID</th>
                             <th>Title</th>
+                            <th>Images</th>
                             <th>Current Weight</th>
                             <th>New Weight</th>
                         </tr>
@@ -36,37 +37,42 @@
                             <tr>
                                 <td>{{ $ad->id }}</td>
                                 <td>{{ $ad->title }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        {{ $ad->images->count() }}
+                                    </span>
+                                </td>
                                 <td>{{ $ad->weight }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <input type="range" class="form-range me-2" id="slider-{{ $ad->id }}"
-                                            name="weights[{{ $ad->id }}]" min="1" max="10" step="1"
-                                            value="{{ old('weights.' . $ad->id, $ad->weight) }}"
+                                            name="weights[{{ $ad->id }}]" min="1" max="10"
+                                            step="0.1" value="{{ old('weights.' . $ad->id, $ad->weight) }}"
                                             onchange="updateSliderValue({{ $ad->id }})">
-                                        <span
-                                            id="slider-value-{{ $ad->id }}">{{ old('weights.' . $ad->id, $ad->weight) }}</span>
+                                        <span id="slider-value-{{ $ad->id }}">
+                                            {{ old('weights.' . $ad->id, $ad->weight) }}
+                                        </span>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4">No ads found for this group.</td>
+                                <td colspan="5">No ads found for this group.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="mb-3 mt-3">
+            <div class="mb-3">
                 <button type="submit" class="btn btn-primary">Update Weights</button>
             </div>
         </form>
 
         <div class="alert alert-info mt-3">
             <small>
-                Note: If an ad has multiple images, its total weight will be divided evenly among those images.
-                For example, if an ad has a weight of 6 and contains 3 images, the ad will be shown a total of 6 times
-                overall,
+                Note: When an ad has multiple images, its total weight is divided evenly among those images.
+                For example, if an ad has a weight of 6 and contains 3 images, the ad will be shown 6 times overall,
                 with each image appearing approximately 2 times in rotation.
             </small>
         </div>
