@@ -40,11 +40,18 @@
                                     <td>{{ $groupName }}</td>
                                     <td>{{ $counts[$groupId] ?? 0 }}</td>
                                     <td>
-                                        <!-- Manage button that links to ads.index with group filter -->
-                                        <a href="{{ route('ads.index', ['group' => $groupId]) }}"
-                                            class="btn btn-sm btn-primary">
-                                            Manage
-                                        </a>
+                                        <div class="d-flex gap-2">
+                                            <!-- Manage button using icon -->
+                                            <a href="{{ route('ads.index', ['group' => $groupId]) }}"
+                                                class="btn btn-sm btn-primary" aria-label="Manage Group Ads">
+                                                <i class="fa fa-list-check"></i>
+                                            </a>
+                                            <!-- Sort button using icon -->
+                                            <a href="{{ route('ads.sort', ['group' => $groupId]) }}"
+                                                class="btn btn-sm btn-secondary" aria-label="Sort Weight">
+                                                <i class="fa fa-sort"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -76,10 +83,16 @@
                                     <td>{{ $groupName }}</td>
                                     <td>{{ $counts[$groupId] ?? 0 }}</td>
                                     <td>
-                                        <a href="{{ route('ads.index', ['group' => $groupId]) }}"
-                                            class="btn btn-sm btn-primary">
-                                            Manage
-                                        </a>
+                                        <div class="d-flex gap-2">
+                                            <a href="{{ route('ads.index', ['group' => $groupId]) }}"
+                                                class="btn btn-sm btn-primary" aria-label="Manage Group Ads">
+                                                <i class="fa-solid fa-list-check"></i>
+                                            </a>
+                                            <a href="{{ route('ads.sort', ['group' => $groupId]) }}"
+                                                class="btn btn-sm btn-secondary" aria-label="Sort Weight">
+                                                <i class="fa-solid fa-sort"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -91,6 +104,16 @@
                     </table>
                 </div>
             </div>
+        </div>
+
+        <!-- Note Section -->
+        <div class="mt-4">
+            <small class="text-muted">
+                Note: When an ad has multiple images, its total weight is divided evenly among the images.
+                For example, if an ad has a weight of 6 and contains 3 images, the ad will appear 6 times in rotation
+                overall,
+                with each image displayed approximately 2 times.
+            </small>
         </div>
     </div>
 @endsection

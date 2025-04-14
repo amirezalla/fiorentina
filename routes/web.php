@@ -61,6 +61,9 @@ Route::put('/admin/ads/{ad}', [AdController::class, 'update'])->name('ads.update
 Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
 
 Route::get('/admin/ads/groups', [AdController::class, 'groupsIndex'])->name('ads.groups.index');
+Route::get('/ads/sort', [AdController::class, 'sortAds'])
+    ->name('ads.sort');
+
 
 
 

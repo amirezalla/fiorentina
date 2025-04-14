@@ -277,4 +277,52 @@ public function groupsIndex()
         // redirect to the ad’s URL
         return redirect()->to($ad->url);
     }
+
+
+    public function sortAds(Request $request)
+{
+    // Expect the group id in the query string (?group=...)
+    $groupId = $request->query('group');
+    if (!$groupId) {
+        return redirect()->route('ads.groups.index')->with('error', 'No group specified.');
+    }
+
+    // Get group name from your Ad::GROUPS constant
+    $allGroups = Ad::GROUPS;
+    $groupName = isset($allGroups[$groupId]) ? $allGroups[$groupId] : 'Unknown Group';
+
+    // Query ads that belong to this group (you might want to add ordering here)
+    $ads = Ad::where('group', $groupId)->orderBy('id')->get();
+
+    return view('ads.sort', compact('ads', 'groupId', 'groupName'));
+}
+
+public function updateSortAds(Request $request)
+{
+    // Validate the incoming data
+    $validated = $request->validate([
+        'group'   => 'required|numeric',
+        'weights' => 'required|array',
+    ]);
+
+    $groupId = $validated['group'];
+    $weights = $validated['weights'];
+
+    try {
+        // Loop through each ad id and update the ad weight accordingly
+        foreach ($weights as $adId => $newWeight) {
+            $ad = Ad::find($adId);
+            if ($ad) {
+                $ad->weight = $newWeight;
+                $ad->save();
+            }
+        }
+        return redirect()->route('ads.sort', ['group' => $groupId])
+                         ->with('success', 'Ad weights updated successfully.');
+    } catch (\Exception $e) {
+        \Log::error('Error updating ad weights: ' . $e->getMessage());
+        return redirect()->route('ads.sort', ['group' => $groupId])
+                         ->with('error', 'Failed to update ad weights. Please try again.');
+    }
+}
 }
