@@ -5417,6 +5417,10 @@ header>.container,
     margin-bottom: 2px;
 }
 
+.post__last4 .post__last4-text {
+
+    color: #ffffff;
+}
 
 .post-group__left-purple-badge {
     text-transform: uppercase;
