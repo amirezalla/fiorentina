@@ -96,8 +96,8 @@
                                                             {{ $formattedDate }}
                                                         </span>
                                                         @if ($post->in_aggiornamento)
-                                                            <span class="post-group__left-red-badge ml-2"><i
-                                                                    class="fa fa-spinner text-white"></i> <span
+                                                            <span class="post-group__left-red-badge ml-2"><span
+                                                                    class='pulse-circle'></span> <span
                                                                     class="text-white">In
                                                                     Aggiornamento</span>
                                                             </span>
