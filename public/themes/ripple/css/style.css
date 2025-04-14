@@ -5047,6 +5047,7 @@ header>.container,
     border-radius: 50%;
     box-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
     animation: pulse 2s infinite;
+    margin-right: 4px;
 }
 
 @keyframes pulse {
@@ -5407,10 +5408,13 @@ header>.container,
 }
 
 .post-group__left-purple-badge {
+    text-transform: uppercase;
+    font-family: 'Titillium Web', sans-serif !important;
+    font-weight: 600 !important;
     background-color: rgb(68, 18, 116);
     color: #ffffff;
-    padding: 2px 10px;
-    font-size: 16px;
+    padding: 4px 10px;
+    font-size: small;
     /*border-radius: 10px;*/
     user-select: none;
 }
@@ -5455,9 +5459,12 @@ header>.container,
 }
 
 .post-group__left-red-badge {
+    font-family: 'Titillium Web', sans-serif !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
     display: inline-block;
     background-color: #dc3545;
-    margin-left: 0px;
+    margin-left: 4px;
     padding: 2px 10px 4px 10px;
     font-size: small;
     color: white;
