@@ -60,6 +60,9 @@ Route::get('/admin/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edi
 Route::put('/admin/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
 Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
 
+Route::get('/admin/ads/groups', [AdController::class, 'groupsIndex'])->name('ads.groups.index');
+
+
 
 Route::get('/admin/videos', [VideoController::class, 'index'])->name('videos.index');
 Route::get('/admin/videos/create', [VideoController::class, 'create'])->name('videos.create');

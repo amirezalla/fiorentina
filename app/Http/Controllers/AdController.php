@@ -173,6 +173,34 @@ class AdController extends BaseController
     }
 }
 
+public function groupsIndex()
+{
+    // 1) Retrieve all groups from the Ad model
+    $allGroups = Ad::GROUPS;  // an associative array: [groupId => "Group Name", ...]
+
+    // 2) Retrieve counts of ads per group in a single query, grouped by 'group' column
+    $counts = Ad::select('group', DB::raw('COUNT(*) as total'))
+        ->groupBy('group')
+        ->pluck('total', 'group')
+        ->toArray();
+    // $counts will look like [3 => 5, 4 => 2, ...] meaning group 3 has 5 ads, group 4 has 2 ads, etc.
+
+    // 3) Separate groups into desktop or mobile
+    //    We'll define "mobile" if the name has "MOBILE" in it. Otherwise it’s desktop.
+    $desktopGroups = [];
+    $mobileGroups = [];
+
+    foreach ($allGroups as $groupId => $groupName) {
+        if (Str::contains(Str::upper($groupName), 'MOBILE')) {
+            $mobileGroups[$groupId] = $groupName;
+        } else {
+            $desktopGroups[$groupId] = $groupName;
+        }
+    }
+
+    return view('ads.groups', compact('desktopGroups', 'mobileGroups', 'counts'));
+}
+
 
     public function edit(Ad $ad)
     {
