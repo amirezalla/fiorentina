@@ -43,13 +43,13 @@
                                         <div class="d-flex gap-2">
                                             <!-- Manage button using icon -->
                                             <a href="{{ route('ads.index', ['group' => $groupId]) }}"
-                                                class="btn  btn-primary" style='padding:2px 5px 2px 12px'
+                                                class="btn  btn-primary" style='padding:10px 1px 7px 11px'
                                                 aria-label="Manage Group Ads">
                                                 <i class="fa fa-list-check"></i>
                                             </a>
                                             <!-- Sort button using icon -->
                                             <a href="{{ route('ads.sort', ['group' => $groupId]) }}"
-                                                class="btn  btn-secondary" style='padding:2px 5px 2px 12px'
+                                                class="btn  btn-secondary" style='padding:10px 1px 7px 11px'
                                                 aria-label="Sort Weight">
                                                 <i class="fa fa-sort"></i>
                                             </a>
@@ -87,12 +87,12 @@
                                     <td>
                                         <div class="d-flex gap-2">
                                             <a href="{{ route('ads.index', ['group' => $groupId]) }}"
-                                                class="btn  btn-primary" style='padding:2px 5px 2px 12px'
+                                                class="btn  btn-primary" style='padding:10px 1px 7px 11px'
                                                 aria-label="Manage Group Ads">
                                                 <i class="fa-solid fa-list-check"></i>
                                             </a>
                                             <a href="{{ route('ads.sort', ['group' => $groupId]) }}"
-                                                class="btn  btn-secondary" style='padding:2px 5px 2px 12px'
+                                                class="btn  btn-secondary" style='padding:10px 1px 7px 11px'
                                                 aria-label="Sort Weight">
                                                 <i class="fa-solid fa-sort"></i>
                                             </a>
