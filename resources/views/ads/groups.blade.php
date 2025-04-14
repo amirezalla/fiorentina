@@ -43,13 +43,13 @@
                                         <div class="d-flex gap-2">
                                             <!-- Manage button using icon -->
                                             <a href="{{ route('ads.index', ['group' => $groupId]) }}"
-                                                class="btn btn-sm btn-primary" style='padding:2px 5px 2px 12px'
+                                                class="btn  btn-primary" style='padding:2px 5px 2px 12px'
                                                 aria-label="Manage Group Ads">
                                                 <i class="fa fa-list-check"></i>
                                             </a>
                                             <!-- Sort button using icon -->
                                             <a href="{{ route('ads.sort', ['group' => $groupId]) }}"
-                                                class="btn btn-sm btn-secondary" style='padding:2px 5px 2px 12px'
+                                                class="btn  btn-secondary" style='padding:2px 5px 2px 12px'
                                                 aria-label="Sort Weight">
                                                 <i class="fa fa-sort"></i>
                                             </a>
