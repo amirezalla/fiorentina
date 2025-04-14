@@ -980,6 +980,14 @@ p:empty {
     font-weight: 600;
 }
 
+.post__last4 .post__last4-text {
+    font-size: 1.04rem;
+    line-height: 1.1;
+    font-weight: 500;
+}
+
+
+
 .post__inside--feature .post__title a {
     color: #fff;
     font-size: 26px;
@@ -1065,8 +1073,10 @@ p:empty {
 }
 
 .post__inside--feature-small .post__title a {
-    font-size: 13px;
-    font-weight: 400;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
     text-transform: none
 }
 
