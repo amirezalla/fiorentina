@@ -16,6 +16,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManager;
 use Botble\Media\RvMedia;
+use Illuminate\Support\Facades\DB;
+
 
 class AdController extends BaseController
 {
