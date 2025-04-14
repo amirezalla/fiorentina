@@ -27,7 +27,7 @@
                         <tr>
                             <th>Ad ID</th>
                             <th>Title</th>
-                            <th>Images</th>
+                            {{-- <th>Images</th> --}}
                             <th>Current Weight</th>
                             <th>New Weight</th>
                         </tr>
@@ -37,17 +37,17 @@
                             <tr>
                                 <td>{{ $ad->id }}</td>
                                 <td>{{ $ad->title }}</td>
-                                <td>
-                                    <span class="badge bg-secondary">
+                                {{-- <td>
+                                    <span class="badge bg-secondary text-white">
                                         {{ $ad->images->count() }}
                                     </span>
-                                </td>
+                                </td> --}}
                                 <td>{{ $ad->weight }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <input type="range" class="form-range me-2" id="slider-{{ $ad->id }}"
-                                            name="weights[{{ $ad->id }}]" min="1" max="10"
-                                            step="0.1" value="{{ old('weights.' . $ad->id, $ad->weight) }}"
+                                            name="weights[{{ $ad->id }}]" min="1" max="10" step="0.1"
+                                            value="{{ old('weights.' . $ad->id, $ad->weight) }}"
                                             onchange="updateSliderValue({{ $ad->id }})">
                                         <span id="slider-value-{{ $ad->id }}">
                                             {{ old('weights.' . $ad->id, $ad->weight) }}
