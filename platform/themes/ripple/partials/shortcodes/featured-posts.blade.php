@@ -197,7 +197,10 @@
                                                 <span class=" text-dark mt-2 d-block" style="font-size: small;">
                                                     @php
                                                         $date = Carbon::parse($post->published_at);
-                                                        $formattedDate = $date->format('j F - H:i');
+                                                        setlocale(LC_TIME, 'it_IT.UTF-8');
+                                                        Carbon::setLocale('it');
+                                                        $date->locale('it');
+                                                        $formattedDate = $date->translatedFormat('j F - H:i');
                                                         $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                             'reference_id',
                                                             $post->id,
@@ -271,7 +274,10 @@
                         <span class=" text-dark mt-2 d-block" style="font-size: x-small">
                             @php
                                 $date = Carbon::parse($post->published_at);
-                                $formattedDate = $date->format('j F - H:i');
+                                setlocale(LC_TIME, 'it_IT.UTF-8');
+                                Carbon::setLocale('it');
+                                $date->locale('it');
+                                $formattedDate = $date->translatedFormat('j F - H:i');
                                 $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                     'reference_id',
                                     $post->id,
