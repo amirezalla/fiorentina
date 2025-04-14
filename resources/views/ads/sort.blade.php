@@ -64,7 +64,7 @@
                 </table>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 mt-3">
                 <button type="submit" class="btn btn-primary">Update Weights</button>
             </div>
         </form>
