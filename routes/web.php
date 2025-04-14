@@ -63,10 +63,7 @@ Route::delete('/admin/ads/{ad}', [AdController::class, 'destroy'])->name('ads.de
 Route::get('/admin/ads/groups', [AdController::class, 'groupsIndex'])->name('ads.groups.index');
 Route::get('/ads/sort', [AdController::class, 'sortAds'])
     ->name('ads.sort');
-// GET route to show the sort view – filtering by group.
 Route::get('/ads/sort', [AdController::class, 'sortAds'])->name('ads.sort');
-
-// POST route to update the ad weights.
 Route::post('/ads/sort/update', [AdController::class, 'updateSortAds'])->name('ads.sort.update');
 
 
