@@ -34,7 +34,7 @@ class MemberTable extends TableAbstract
                 ->getValueUsing(function ($column) {
                     $model = $column->getItem();
                     // Check if the member has an avatar, else return UI Avatars fallback URL
-                    if (empty($model->avatar_thumb_url)) {
+                    if (empty($model->avatar_id)) {
                         $name = $model->name ?? 'Member';
                         return "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=441274&color=fff&size=32&font-size=0.33&?format=svg";
                     }
