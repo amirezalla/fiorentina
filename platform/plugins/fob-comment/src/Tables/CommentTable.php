@@ -109,7 +109,8 @@ class CommentTable extends TableAbstract
                 StatusColumn::make(),
                 DateColumn::make('created_at')
                     ->label(trans('plugins/fob-comment::comment.submitted_on'))
-                    ->dateFormat('Y-m-d H:i:s'),
+                    ->dateFormat('Y-m-d H:i:s')
+                    ->orderable(true),
             ])
             ->addBulkAction(
                 DeleteBulkAction::make()->permission('fob-comment.comments.destroy'),
@@ -159,6 +160,9 @@ class CommentTable extends TableAbstract
                 }
             }
         }
+
+            // Default order by submitted date (newest first)
+    $query->orderBy('created_at', 'desc');
     
         // Preserve your "onlyTrashed" filter
         if (request()->get('onlyTrashed')) {

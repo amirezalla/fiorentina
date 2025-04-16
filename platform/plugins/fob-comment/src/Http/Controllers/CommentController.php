@@ -77,4 +77,13 @@ class CommentController extends BaseController
             ->httpResponse()
             ->setPreviousRoute('fob-comment.comments.index');
     }
+
+
+    public function spam(){
+
+    }
+
+    public function notApproved(){
+
+    }
 }
