@@ -124,6 +124,21 @@ class CommentTable extends TableAbstract
                 $q->where('name', 'LIKE', '%' . $postName . '%');
             });
         }
+
+        if ($filterColumns = request()->input('filter_columns')) {
+            $filterOperators = request()->input('filter_operators', []);
+            $filterValues = request()->input('filter_values', []);
+            
+            foreach ($filterColumns as $index => $column) {
+                // Default to '=' if operator is not set
+                $operator = isset($filterOperators[$index]) ? $filterOperators[$index] : '=';
+                $value = isset($filterValues[$index]) ? $filterValues[$index] : null;
+                
+                if ($value !== null) {
+                    $query->where($column, $operator, $value);
+                }
+            }
+        }
     
         // Preserve your "onlyTrashed" filter
         if (request()->get('onlyTrashed')) {
