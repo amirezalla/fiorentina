@@ -28,9 +28,18 @@ class MemberTable extends TableAbstract
             ->addColumns([
                 IdColumn::make(),
                 ImageColumn::make('avatar_thumb_url')
-                    ->title(trans('plugins/member::member.avatar'))
-                    ->fullMediaSize()
-                    ->relative(),
+                ->title(trans('plugins/member::member.avatar'))
+                ->fullMediaSize()
+                ->relative()
+                ->getValueUsing(function ($column) {
+                    $model = $column->getItem();
+                    // Check if the member has an avatar, else return UI Avatars fallback URL
+                    if (empty($model->avatar_thumb_url)) {
+                        $name = $model->name ?? 'Member';
+                        return "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=441274&color=fff&size=32&font-size=0.33&?format=svg";
+                    }
+                    return $model->avatar_thumb_url;
+                }),
                 NameColumn::make()->route('member.edit')->orderable(false),
                 EmailColumn::make()->linkable(),
                 CreatedAtColumn::make(),
