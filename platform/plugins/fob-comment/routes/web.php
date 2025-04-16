@@ -15,6 +15,9 @@ Route::name('fob-comment.')->group(function () {
             Route::resource('', CommentController::class)->parameters(['' => 'comment']);
             Route::post('{comment}/reply', [ReplyCommentController::class, '__invoke'])->name('reply');
             Route::post('{id}/restore', [CommentController::class, 'restore'])->name('restore'); // Restore route
+            Route::post('{id}/approved', [CommentController::class, 'approved'])->name('approved'); // Approve route
+            Route::post('{id}/notapproved', [CommentController::class, 'notapprove'])->name('notapproved'); // Not Approve route
+            Route::post('{id}/spam', [CommentController::class, 'spam'])->name('spam'); // Spam route
             Route::get('trash', [CommentController::class, 'trash'])->name('trash');
 
         });

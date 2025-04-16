@@ -44,12 +44,28 @@ class CommentTable extends TableAbstract
                         ]);
             }else{
                 $this->addActions([
+                    Action::make('approved')
+                    ->renderUsing(fn (Action $action) => view(
+                        'plugins/fob-comment::tables.approved-button',
+                        compact('action')
+                    )->render()),
                     Action::make('reply')
                         ->renderUsing(fn (Action $action) => view(
                             'plugins/fob-comment::tables.reply-button',
                             compact('action')
                         )->render()),
                     EditAction::make()->route('fob-comment.comments.edit'),
+                    Action::make('notapproved')
+                    ->renderUsing(fn (Action $action) => view(
+                        'plugins/fob-comment::tables.notapproved-button',
+                        compact('action')
+                    )->render()),
+                    Action::make('spam')
+                    ->renderUsing(fn (Action $action) => view(
+                        'plugins/fob-comment::tables.spam-button',
+                        compact('action')
+                    )->render()),
+                    
                     DeleteAction::make()->route('fob-comment.comments.destroy'),
                         ]);
             }

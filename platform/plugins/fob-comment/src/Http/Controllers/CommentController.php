@@ -80,10 +80,35 @@ class CommentController extends BaseController
 
 
     public function spam(){
+        // Find the soft-deleted comment
+        $comment = Comment::findOrFail($id);
 
+        $comment->status = CommentStatus::SPAM;
+        $comment->save();
+        return $this
+        ->httpResponse()
+        ->setPreviousRoute('fob-comment.comments.index');
     }
 
-    public function notApproved(){
+    public function notapprove(){
+        $comment = Comment::findOrFail($id);
+
+        $comment->status = CommentStatus::NOTAPPROVED;
+        $comment->save();
+        return $this
+        ->httpResponse()
+        ->setPreviousRoute('fob-comment.comments.index');
+    }
+
+    public function approved(){
+
+        $comment = Comment::findOrFail($id);
+
+        $comment->status = CommentStatus::APPROVED;
+        $comment->save();
+        return $this
+        ->httpResponse()
+        ->setPreviousRoute('fob-comment.comments.index');
 
     }
 }
