@@ -6,6 +6,8 @@ use Botble\Base\Http\Actions\DeleteResourceAction;
 use Botble\Base\Http\Controllers\BaseController;
 use FriendsOfBotble\Comment\Forms\CommentForm;
 use FriendsOfBotble\Comment\Http\Requests\CommentRequest;
+use FriendsOfBotble\Comment\Enums\CommentStatus;
+
 use FriendsOfBotble\Comment\Models\Comment;
 use FriendsOfBotble\Comment\Tables\CommentTable;
 
