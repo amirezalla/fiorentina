@@ -47,43 +47,41 @@
                     })
             })
         })
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOM fully loaded and parsed");
-            document.querySelectorAll('.restore-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    console.log("Restore button clicked");
+        document.addEventListener('click', function(event) {
+            // Look for a click on any element that or inside an element with the class "restore-btn"
+            const btn = event.target.closest('.restore-btn');
+            if (btn) {
+                // Log to ensure that a click is recognized
+                console.log("Delegated restore button click detected");
 
-                    // Retrieve the URL from the data attribute
-                    var url = btn.getAttribute('data-url');
-                    console.log("Request URL:", url);
+                const url = btn.getAttribute('data-url');
+                console.log("Restore URL: ", url);
 
-                    // Send a POST request using the Fetch API
-                    fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token for security
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                        })
-                        .then(response => {
-                            console.log("Response received:", response);
-                            if (!response.ok) {
-                                console.error("Response not ok:", response);
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Restore successful:', data);
-                            // Optionally update the UI or reload the page to reflect the change
-                            location.reload();
-                        })
-                        .catch(error => {
-                            console.error('Error restoring comment:', error);
-                        });
-                });
-            });
+                // Send a POST request using the Fetch API
+                fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        console.log("Response received: ", response);
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Restore successful:', data);
+                        // Optionally, update the UI or reload the page
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error restoring comment:', error);
+                    });
+            }
         });
     </script>
 @endpush
