@@ -48,38 +48,50 @@
             })
         })
         document.addEventListener('click', function(event) {
-            // Look for a click on any element that or inside an element with the class "restore-btn"
-            const btn = event.target.closest('.restore-btn');
+            // Capture clicks on any button with one of the specified classes.
+            const btn = event.target.closest('.restore-btn, .approved-btn, .notapproved-btn, .spam-btn');
             if (btn) {
-                // Log to ensure that a click is recognized
-                console.log("Delegated restore button click detected");
+                // Determine the action type based on the button class
+                let actionType = '';
+                if (btn.classList.contains('restore-btn')) {
+                    actionType = 'restore';
+                } else if (btn.classList.contains('approved-btn')) {
+                    actionType = 'approved';
+                } else if (btn.classList.contains('notapproved-btn')) {
+                    actionType = 'not approved';
+                } else if (btn.classList.contains('spam-btn')) {
+                    actionType = 'spam';
+                }
 
+                console.log(`Delegated ${actionType} button click detected`);
+
+                // Retrieve the URL from the data attribute
                 const url = btn.getAttribute('data-url');
-                console.log("Restore URL: ", url);
+                console.log(`${actionType} URL:`, url);
 
                 // Send a POST request using the Fetch API
                 fetch(url, {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token for Laravel
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         }
                     })
                     .then(response => {
-                        console.log("Response received: ", response);
+                        console.log("Response received:", response);
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Restore successful:', data);
-                        // Optionally, update the UI or reload the page
+                        console.log(`${actionType} successful:`, data);
+                        // Optionally update the UI or reload the page to reflect changes
                         location.reload();
                     })
                     .catch(error => {
-                        console.error('Error restoring comment:', error);
+                        console.error(`Error executing ${actionType}:`, error);
                     });
             }
         });
