@@ -57,7 +57,7 @@ class CommentController extends BaseController
         // Soft delete the comment
         $comment->status = CommentStatus::TRASH;
         $comment->save();
-        $comment->delete();
+        // $comment->delete();
 
         return $this
             ->httpResponse()
