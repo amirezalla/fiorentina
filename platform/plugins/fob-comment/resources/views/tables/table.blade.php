@@ -48,6 +48,7 @@
             })
         })
         document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded and parsed");
             document.querySelectorAll('.restore-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     console.log("Restore button clicked");
