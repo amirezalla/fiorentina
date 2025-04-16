@@ -55,7 +55,7 @@ class CommentServiceProvider extends ServiceProvider
                     'priority' => 1,
                     'parent_id' => 'cms-plugins-fob-comment',
                     'name' => 'Pending',
-                    'route' => url('/admin/comments?filter_table_id=fob-comment-table&class=FriendsOfBotble%5CComment%5CTables%5CCommentTable&filter_columns%5B0%5D=status&filter_operators%5B0%5D=%3D&filter_values%5B0%5D=pending'),
+                    'url' => url('/admin/comments?filter_table_id=fob-comment-table&class=FriendsOfBotble%5CComment%5CTables%5CCommentTable&filter_columns%5B0%5D=status&filter_operators%5B0%5D=%3D&filter_values%5B0%5D=pending'),
                 ])
                 ->registerItem([
                     'id'          => 'cms-plugins-fob-comment-spam', // Unique ID for this menu item
