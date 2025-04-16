@@ -79,7 +79,7 @@ class CommentController extends BaseController
     }
 
 
-    public function spam(){
+    public function spam($id){
         // Find the soft-deleted comment
         $comment = Comment::findOrFail($id);
 
@@ -90,7 +90,7 @@ class CommentController extends BaseController
         ->setPreviousRoute('fob-comment.comments.index');
     }
 
-    public function notapprove(){
+    public function notapprove($id){
         $comment = Comment::findOrFail($id);
 
         $comment->status = CommentStatus::NOTAPPROVED;
@@ -100,7 +100,7 @@ class CommentController extends BaseController
         ->setPreviousRoute('fob-comment.comments.index');
     }
 
-    public function approved(){
+    public function approved($id){
 
         $comment = Comment::findOrFail($id);
 
