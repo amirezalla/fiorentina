@@ -23,8 +23,8 @@ class CommentTable extends TableAbstract
     {
         $this
             ->setView('plugins/fob-comment::tables.table')
-            ->model(Comment::class)
-            ->setOption('id', 'fob-comment-table');
+            ->model(Comment::class);
+            // ->setOption('id', 'fob-comment-table');
             $filterValues = request()->input('filter_values', []);
             if(!empty($filterValues) && $filterValues[0] == 'trash'){
                 $this->addActions([
