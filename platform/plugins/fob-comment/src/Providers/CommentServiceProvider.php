@@ -49,6 +49,27 @@ class CommentServiceProvider extends ServiceProvider
                     'name' => 'plugins/fob-comment::comment.title',
                     'icon' => 'ti ti-messages',
                     'route' => 'fob-comment.comments.index',
+                ])
+                ->registerItem([
+                    'id' => 'cms-plugins-fob-comment-pending',
+                    'priority' => 1,
+                    'parent_id' => 'cms-plugins-fob-comment',
+                    'name' => 'Pending',
+                    'route' => url('/admin/comments?filter_table_id=fob-comment-table&class=FriendsOfBotble%5CComment%5CTables%5CCommentTable&filter_columns%5B0%5D=status&filter_operators%5B0%5D=%3D&filter_values%5B0%5D=pending'),
+                ])
+                ->registerItem([
+                    'id'          => 'cms-plugins-fob-comment-spam', // Unique ID for this menu item
+                    'priority'    => 2, // Adjust this number to position it among the Blog children (e.g. posts, categories, tags)
+                    'parent_id'   => 'cms-plugins-fob-comment', // Use the parent menu ID for Blog – adjust if your Blog menu has a different ID
+                    'name'        => 'Spam',
+                    'url'         => url('/admin/comments?filter_table_id=fob-comment-table&class=FriendsOfBotble%5CComment%5CTables%5CCommentTable&filter_columns%5B0%5D=status&filter_operators%5B0%5D=%3D&filter_values%5B0%5D=spam'),
+                ])
+                ->registerItem([
+                    'id'          => 'cms-plugins-fob-comment-trash', // Unique ID for this menu item
+                    'priority'    => 3, // Adjust this number to position it among the Blog children (e.g. posts, categories, tags)
+                    'parent_id'   => 'cms-plugins-fob-comment', // Use the parent menu ID for Blog – adjust if your Blog menu has a different ID
+                    'name'        => 'Rimossi',
+                    'url'         => url('/admin/comments?filter_table_id=fob-comment-table&class=FriendsOfBotble%5CComment%5CTables%5CCommentTable&filter_columns%5B0%5D=status&filter_operators%5B0%5D=%3D&filter_values%5B0%5D=trash'), // Create a route for your "bozza" page
                 ]);
         });
 
