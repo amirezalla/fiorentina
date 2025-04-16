@@ -46,7 +46,7 @@ class CommentServiceProvider extends ServiceProvider
                 ->registerItem([
                     'id' => 'cms-plugins-fob-comment',
                     'priority' => 99,
-                    'name' => 'plugins/fob-comment::comment.title',
+                    'name' => 'Commenti',
                     'icon' => 'ti ti-messages',
 
                 ])

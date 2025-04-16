@@ -24,17 +24,30 @@ class CommentTable extends TableAbstract
         $this
             ->setView('plugins/fob-comment::tables.table')
             ->model(Comment::class)
-            ->setOption('id', 'fob-comment-table')
-            ->addActions([
-                Action::make('reply')
-                    ->renderUsing(fn (Action $action) => view(
-                        'plugins/fob-comment::tables.reply-button',
-                        compact('action')
-                    )->render()),
-                EditAction::make()->route('fob-comment.comments.edit'),
-                DeleteAction::make()->route('fob-comment.comments.destroy'),
-            ])
-            ->addColumns([
+            ->setOption('id', 'fob-comment-table');
+            if(request()->input('filter_values')=='trash'){
+                $this->addActions([
+                    Action::make('reply')
+                        ->renderUsing(fn (Action $action) => view(
+                            'plugins/fob-comment::tables.reply-button',
+                            compact('action')
+                        )->render()),
+                    EditAction::make()->route('fob-comment.comments.edit')
+                    
+                        ]);
+            }else{
+                $this->addActions([
+                    Action::make('reply')
+                        ->renderUsing(fn (Action $action) => view(
+                            'plugins/fob-comment::tables.reply-button',
+                            compact('action')
+                        )->render()),
+                    EditAction::make()->route('fob-comment.comments.edit'),
+                    DeleteAction::make()->route('fob-comment.comments.destroy'),
+                        ]);
+            }
+            
+            $this->addColumns([
                 IdColumn::make(),
                 FormattedColumn::make('author')
                     ->label(trans('plugins/fob-comment::comment.author'))
