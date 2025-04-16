@@ -523,14 +523,15 @@ abstract class TableAbstract extends DataTable implements ExtensibleContract
         if (! $this->getActions()) {
             return [];
         }
+        return $this->getActions();
 
-        return [
-            [
-                'extend' => 'collection',
-                'text' => '<span>' . trans('core/base::forms.actions') . ' <span class="caret"></span></span>',
-                'buttons' => $this->getActions(),
-            ],
-        ];
+        // return [
+        //     [
+        //         'extend' => 'collection',
+        //         'text' => '<span>' . trans('core/base::forms.actions') . ' <span class="caret"></span></span>',
+        //         'buttons' => $this->getActions(),
+        //     ],
+        // ];
     }
 
     public function getActions(): array
