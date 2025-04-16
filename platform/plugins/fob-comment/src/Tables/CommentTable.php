@@ -25,6 +25,7 @@ class CommentTable extends TableAbstract
             ->setView('plugins/fob-comment::tables.table')
             ->model(Comment::class)
             ->setOption('id', 'fob-comment-table');
+            dd(request()->input('filter_values'));
             if(request()->input('filter_values')=='trash'){
                 $this->addActions([
                     Action::make('reply')
