@@ -10,5 +10,4 @@
         {{ $action->setItem($model) }}
     @endforeach
 
-    @endif
 </div>
