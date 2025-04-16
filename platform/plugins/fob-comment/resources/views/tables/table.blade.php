@@ -50,8 +50,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.restore-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
+                    console.log("Restore button clicked");
+
                     // Retrieve the URL from the data attribute
                     var url = btn.getAttribute('data-url');
+                    console.log("Request URL:", url);
 
                     // Send a POST request using the Fetch API
                     fetch(url, {
@@ -63,7 +66,9 @@
                             },
                         })
                         .then(response => {
+                            console.log("Response received:", response);
                             if (!response.ok) {
+                                console.error("Response not ok:", response);
                                 throw new Error('Network response was not ok');
                             }
                             return response.json();
