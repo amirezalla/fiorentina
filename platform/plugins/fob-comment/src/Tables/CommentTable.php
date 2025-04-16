@@ -35,8 +35,7 @@ class CommentTable extends TableAbstract
                         )->render()),
                     EditAction::make()->route('fob-comment.comments.edit'),
                     Action::make('restore')
-                    ->icon('fa fa-undo')  // Using a restore/undo icon, you can adjust this as needed.
-                    ->color('primary')    // Set the button color if required.
+                    ->color('success')    // Set the button color if required.
                     ->route('fob-comment.comments.restore')
                     ->renderUsing(fn (Action $action) => view(
                         'plugins/fob-comment::tables.restore-button',
