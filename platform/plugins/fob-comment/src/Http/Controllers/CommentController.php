@@ -68,10 +68,10 @@ class CommentController extends BaseController
     public function restore($id)
     {
         // Find the soft-deleted comment
-        $comment = Comment::onlyTrashed()->findOrFail($id);
+        $comment = Comment::findOrFail($id);
 
-        // Restore the comment
-        $comment->restore();
+        $comment->status = CommentStatus::APPROVED;
+        $comment->save();
 
         return $this
             ->httpResponse()
