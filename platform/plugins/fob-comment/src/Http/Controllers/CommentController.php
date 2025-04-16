@@ -53,6 +53,8 @@ class CommentController extends BaseController
     public function destroy(Comment $comment)
     {
         // Soft delete the comment
+        $comment->status = CommentStatus::TRASH;
+        $comment->save();
         $comment->delete();
 
         return $this
