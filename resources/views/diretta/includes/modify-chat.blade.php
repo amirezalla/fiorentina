@@ -2,6 +2,7 @@
     use Botble\Member\Models\Member;
 @endphp
 <div class="container mt-3">
+    @dd($chats)
     @foreach ($chats as $chat)
         <div class="commentary-row">
             <div style="flex: 0.5">
@@ -15,7 +16,8 @@
             <div class="user p-2">
                 @php $user=Member::find($chat['user_id']); @endphp
 
-                <a class="text-white text-underline" href="https://laviola.collaudo.biz/admin/members/edit/{{ $user->id }}">
+                <a class="text-white text-underline"
+                    href="https://laviola.collaudo.biz/admin/members/edit/{{ $user->id }}">
                     {{ $user->first_name }} {{ $user->last_name }} </a>
 
             </div>
