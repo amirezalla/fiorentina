@@ -37,7 +37,7 @@
 
 <div class="row">
 
-    @include('ads.includes.dblog-author')
+    @include('ads.includes.adsrecentp1')
 
 
 
@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    @include('ads.includes.dblog-title')
+    @include('ads.includes.adsrecentp2')
     <div class="d-block d-md-none col-12 text-center">
         @include('ads.includes.MOBILE_DOPO_FOTO_26')
     </div>

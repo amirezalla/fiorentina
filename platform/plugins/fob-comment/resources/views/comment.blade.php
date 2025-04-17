@@ -369,6 +369,10 @@
 </div>
 
 <div class="fob-comment-form-section">
+
+    @include('ads.includes.adsrecentp3')
+
+
     <h4 class="fob-comment-title fob-comment-form-title">
         {{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
