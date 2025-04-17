@@ -42,7 +42,7 @@ use App\Http\Controllers\AssetController;
 
 
 Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
-Route::get('/match/{matchId}/sync-all-commentaries', [MatchCommentaryController::class, 'importFromApi']);
+Route::get('/match/{matchId}/sync-all-commentaries', [MatchCommentaryController::class, 'importFromApi1']);
 Route::post('/match/{matchId}/refresh-summary', [MatchSummaryController::class, 'refreshMatchSummary'])
      ->name('match.refreshSummary');
      Route::get('/match/{matchId}/summary-html', [MatchSummaryController::class, 'getSummaryHtml'])

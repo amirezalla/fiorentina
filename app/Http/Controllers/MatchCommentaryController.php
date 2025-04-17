@@ -264,4 +264,51 @@ public static function storeCommentaries($matchId)
 }
 
 
+public function importFromApi1( $matchId)
+{
+    $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
+    $url    = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary"
+            . "?locale=it_IT&event_id={$matchId}";
+
+    $resp   = Http::withHeaders([
+        'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
+        'x-rapidapi-key'  => $apiKey,
+    ])->get($url);
+
+    $apiData = $resp->json()['DATA'] ?? [];
+    if (!$apiData) {
+        return;
+    }
+
+    // oldest ‑> newest so INSERT keeps order
+    $apiData = array_reverse($apiData);
+
+    foreach ($apiData as $row) {
+        if (empty($row['COMMENT_TIME']) && empty($row['COMMENT_TEXT'])) {
+            continue;                           // ignore blanks
+        }
+
+        // Skip if exists even in trashed
+        $exists = MatchCommentary::withTrashed()
+                    ->where('match_id', $matchId)
+                    ->where('comment_time', $row['COMMENT_TIME'] ?? null)
+                    ->where('comment_text', $row['COMMENT_TEXT'] ?? null)
+                    ->exists();
+
+        if ($exists) continue;
+
+        MatchCommentary::create([
+            'match_id'      => $matchId,
+            'comment_time'  => $row['COMMENT_TIME'] ?? null,
+            'comment_class' => $row['COMMENT_CLASS'] ?? null,
+            'comment_text'  => $row['COMMENT_TEXT'] ?? null,
+            'is_bold'       => $row['COMMENT_IS_BOLD'] ?? 0,
+            'is_important'  => $row['COMMENT_IS_IMPORTANT'] ?? 0,
+        ]);
+    }
+
+    // rewrite Wasabi JSON once
+    $this->regenerateJson($matchId);
+}
+
 }
