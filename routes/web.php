@@ -229,4 +229,7 @@ Route::post('admin/posts/bulk-restore', [PostController::class, 'bulkRestore'])
         // DELETE = soft delete
         Route::delete('/{message}', [ChatController::class, 'destroy'])
              ->name('chat.destroy');
+
+             Route::get('/body/{match}', [ChatController::class, 'body'])
+     ->name('chat.body');
     });

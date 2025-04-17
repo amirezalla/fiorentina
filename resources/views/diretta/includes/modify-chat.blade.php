@@ -14,42 +14,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($chats as $chat)
-                    @continue($loop->first)
-                    @php $user = Member::find($chat['user_id']); @endphp
-                    <tr id="row-{{ $chat->id }}">
-                        {{-- ACTIONS --}}
-                        @if (Str::contains(request()->url(), '/chat-view'))
-                            <td>
-                                <button class="btn btn-link p-0 me-2 text-danger delete-btn" data-id="{{ $chat->id }}"
-                                    aria-label="Delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                                <button class="btn btn-link p-0 text-muted edit-btn" data-id="{{ $chat->id }}"
-                                    data-message="{{ e($chat['message']) }}" aria-label="Edit">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                            </td>
-                        @endif
 
-                        {{-- USER --}}
-                        <td>
-                            @if ($user)
-                                <a href="{{ url("admin/members/edit/{$user->id}") }}">
-                                    {{ $user->first_name }} {{ $user->last_name }}
-                                </a>
-                            @else
-                                <em class="text-muted">Unknown</em>
-                            @endif
-                        </td>
-
-                        {{-- MESSAGE --}}
-                        <td class="chat-msg">{{ $chat['message'] }}</td>
-
-                        {{-- DATE --}}
-                        <td class="text-nowrap">{{ $chat['created_at'] }}</td>
-                    </tr>
-                @endforeach
             </tbody>
         </table>
     </div>
@@ -83,68 +48,77 @@
 @push('footer')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const matchId = '{{ request()->match_id ?? (request()->get('match') ?? '') }}'; // adapt if needed
+            const tbody = document.querySelector('#chat-table tbody');
             const editModal = new bootstrap.Modal(document.getElementById('editModal'));
-            let editIdInput = document.getElementById('edit-id');
-            let editMsgArea = document.getElementById('edit-message');
+            const editId = document.getElementById('edit-id');
+            const editMsg = document.getElementById('edit-message');
 
-            // ── OPEN MODAL ───────────────────────────────────────────────
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    editIdInput.value = btn.dataset.id;
-                    editMsgArea.value = btn.dataset.message;
-                    editModal.show();
+            // ───────────────────────── polling every 1000 ms ──────────────────────────
+            setInterval(fetchBody, 1000);
+
+            function fetchBody() {
+                fetch(`/chat/body/${matchId}`)
+                    .then(r => r.text())
+                    .then(html => {
+                        tbody.innerHTML = html;
+                        attachRowEvents();
+                    });
+            }
+
+            // ───────────────────── attach row buttons after (re)load ──────────────────
+            function attachRowEvents() {
+                // EDIT
+                tbody.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        editId.value = btn.dataset.id;
+                        editMsg.value = btn.dataset.message;
+                        editModal.show();
+                    };
                 });
-            });
 
-            // ── SUBMIT EDIT ─────────────────────────────────────────────
+                // DELETE
+                tbody.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        if (!confirm('Delete this message?')) return;
+                        const id = btn.dataset.id;
+                        fetch(`/chat/${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(r => r.json())
+                            .then(res => {
+                                if (res.success) fetchBody();
+                            });
+                    };
+                });
+            }
+
+            // ───────────────────────── initial event binding ──────────────────────────
+            attachRowEvents();
+
+            // ───────── submit edit (modal) ─────────
             document.getElementById('edit-form').addEventListener('submit', e => {
                 e.preventDefault();
-                const id = editIdInput.value;
-                fetch(`/chat/${id}`, {
+                fetch(`/chat/${editId.value}`, {
                         method: 'PATCH',
                         headers: {
-                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            message: editMsgArea.value
+                            message: editMsg.value
                         })
                     })
                     .then(r => r.json())
                     .then(res => {
                         if (res.success) {
-                            // update row text
-                            document.querySelector(`#row-${id} .chat-msg`).textContent = res.message;
-                            // update data-message attribute
-                            document.querySelector(`.edit-btn[data-id="${id}"]`).dataset.message = res
-                                .message;
                             editModal.hide();
-                        } else {
-                            alert('Error while updating');
+                            fetchBody(); // refresh immediately
                         }
                     });
-            });
-
-            // ── DELETE ──────────────────────────────────────────────────
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    if (!confirm('Delete this message?')) return;
-                    const id = btn.dataset.id;
-                    fetch(`/chat/${id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': @json(csrf_token())
-                            }
-                        })
-                        .then(r => r.json())
-                        .then(res => {
-                            if (res.success) {
-                                document.getElementById(`row-${id}`).remove();
-                            } else {
-                                alert('Error while deleting');
-                            }
-                        });
-                });
             });
         });
     </script>

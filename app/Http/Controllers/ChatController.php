@@ -209,5 +209,14 @@ class ChatController extends BaseController
         Storage::put($filePath, $messages->toJson());
     }
 
+    public function body(int $matchId)
+{
+    // get all non‑deleted messages for that match
+    $chats = Message::where('match_id', $matchId)
+                    ->orderBy('id')   // or created_at
+                    ->get();
+
+    return view('diretta.includes.chat-body', compact('chats'))->render();
+}
 
 }
