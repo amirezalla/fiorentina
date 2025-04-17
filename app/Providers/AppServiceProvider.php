@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ads', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_DBLOG_AUTHOR)->get());
         });
 
-        view()->composer('ads.includes.dblog-p', function ($view) {
+        view()->composer('ads.includes.dblog-p1', function ($view) {
             $ad = Ad::query()
                 ->typeAnnuncioImmagine()
                 ->where('group', Ad::GROUP_DBLOG_P1)
@@ -59,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
-        view()->composer('ads.includes.dblog-p', function ($view) {
+        view()->composer('ads.includes.dblog-p2', function ($view) {
             $ad = Ad::query()
                 ->typeAnnuncioImmagine()
                 ->where('group', Ad::GROUP_DBLOG_P2)
@@ -69,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
-        view()->composer('ads.includes.dblog-p', function ($view) {
+        view()->composer('ads.includes.dblog-p3', function ($view) {
             $ad = Ad::query()
                 ->typeAnnuncioImmagine()
                 ->where('group', Ad::GROUP_DBLOG_P3)
@@ -79,7 +79,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
-        view()->composer('ads.includes.dblog-p', function ($view) {
+        view()->composer('ads.includes.dblog-p4', function ($view) {
             $ad = Ad::query()
                 ->typeAnnuncioImmagine()
                 ->where('group', Ad::GROUP_DBLOG_P4)
@@ -89,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
-        view()->composer('ads.includes.dblog-p', function ($view) {
+        view()->composer('ads.includes.dblog-p5', function ($view) {
             $ad = Ad::query()
                 ->typeAnnuncioImmagine()
                 ->where('group', Ad::GROUP_DBLOG_P5)
