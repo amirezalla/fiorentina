@@ -220,7 +220,7 @@ public function body($matchId)
 public function trashBody($matchId)
 {
     $chats = Message::onlyTrashed()->where('match_id',$matchId)->latest()->get();
-    return view('diretta.includes.chat-body-trash', compact('chats'))->render();
+    return view('diretta.includes.trashmsg', compact('chats'))->render();
 }
 
 /* ---------- bulk soft‑delete -------------------------------- */

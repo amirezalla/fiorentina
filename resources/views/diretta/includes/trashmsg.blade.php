@@ -2,16 +2,10 @@
 
 <div class="container mt-3">
     <div class="d-flex mb-2">
-        <button class="btn btn-danger me-2" id="bulk-delete">Delete selected</button>
 
-        <a href="{{ request()->routeIs('chat.trash.body')
-            ? route('chat.view', ['match_id' => $matchId])
-            : route('chat.trash.body', ['match' => $matchId]) }}"
-            class="btn btn-secondary">
-            {{ request()->routeIs('chat.trash.body') ? 'Back to list' : 'Trash' }}
-        </a>
-
-
+        <button class="btn btn-primary ms-auto" id="bulk-restore">
+            Restore selected
+        </button>
     </div>
     <div class="table-responsive">
         <table class="table table-sm table-striped align-middle" id="chat-table">
