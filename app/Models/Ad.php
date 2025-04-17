@@ -227,7 +227,7 @@ class Ad extends BaseModel
             ->get()
             ->unique('group')
             ->mapWithKeys(fn ($a) => [$a->group => $a]);
-    
+        dd($ads);
         /* ─────────────────────────────────────────────────────────────
          * 1.  Inject the background ad (desktop skin)
          * ───────────────────────────────────────────────────────────*/
