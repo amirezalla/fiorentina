@@ -1,6 +1,6 @@
 @php use Botble\Member\Models\Member; @endphp
 
-@foreach ($msgs as $chat)
+@foreach ($chats as $chat)
     <tr id="row-{{ $chat->id }}">
         <td><input type="checkbox" class="row-check" value="{{ $chat->id }}"></td>
 

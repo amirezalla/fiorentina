@@ -212,15 +212,15 @@ class ChatController extends BaseController
 /* ---------- non‑deleted list (same as before) ---------------- */
 public function body($matchId)
 {
-    $msgs = Message::where('match_id', $matchId)->latest()->get();
-    return view('diretta.includes.chat-body', compact('msgs'))->render();
+    $chats = Message::where('match_id', $matchId)->latest()->get();
+    return view('diretta.includes.chat-body', compact('chats'))->render();
 }
 
 /* ---------- trashed list ------------------------------------ */
 public function trashBody($matchId)
 {
-    $msgs = Message::onlyTrashed()->where('match_id',$matchId)->latest()->get();
-    return view('diretta.includes.chat-body-trash', compact('msgs'))->render();
+    $chats = Message::onlyTrashed()->where('match_id',$matchId)->latest()->get();
+    return view('diretta.includes.chat-body-trash', compact('chats'))->render();
 }
 
 /* ---------- bulk soft‑delete -------------------------------- */
