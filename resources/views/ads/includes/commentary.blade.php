@@ -99,14 +99,14 @@
                     }
                 })
                 .then(res => {
-                    if (res.success) {
-                        // hide the edit box
-                        toggleEditBox(commentId);
-                        // sync JSON on the server
-                        fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
-                        // optional immediate UI refresh
-                        if (typeof refreshCommentaries === 'function') refreshCommentaries();
-                    }
+
+                    // hide the edit box
+                    toggleEditBox(commentId);
+                    // sync JSON on the server
+                    fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
+                    // optional immediate UI refresh
+                    refreshCommentaries();
+
                 })
                 .then(() => {
                     // The server will handle rewriting the JSON.
@@ -138,14 +138,14 @@
                     body: formData,
                 })
                 .then(res => {
-                    if (res.success) {
-                        // hide the edit box
-                        toggleEditBox(commentId);
-                        // sync JSON on the server
-                        fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
-                        // optional immediate UI refresh
-                        if (typeof refreshCommentaries === 'function') refreshCommentaries();
-                    }
+
+                    // hide the edit box
+                    toggleEditBox(commentId);
+
+                    fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
+                    // optional immediate UI refresh
+                    refreshCommentaries();
+
                 })
                 .then(() => {
                     // The server updates DB, rewrites Wasabi JSON

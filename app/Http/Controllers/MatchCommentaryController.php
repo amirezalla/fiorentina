@@ -268,7 +268,7 @@ public static function storeCommentaries($matchId)
  * Import commentary from RapidAPI, but never overwrite a row that
  * an admin has already edited (updated_at ≠ created_at).
  */
-public function importFromApi1(int $matchId): void
+public function importFromApi1($matchId): void
 {
     /* -------------------------------------------------- 1. Load API data */
     $resp = Http::withHeaders([
