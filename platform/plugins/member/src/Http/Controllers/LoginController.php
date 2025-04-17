@@ -75,7 +75,7 @@ class LoginController extends BaseController
 
     // If no member is found, immediately fail the login attempt
     if (!$member1) {
-        $this->throwFailed();    
+        $this->sendFailedLoginResponse();  
     }
 
     // Set up WordPress password check
@@ -117,7 +117,7 @@ class LoginController extends BaseController
         }
     }
 
-    $this->throwFailed();  
+    $this->sendFailedLoginResponse();
 }
 private function throwFailed(): void
 {
