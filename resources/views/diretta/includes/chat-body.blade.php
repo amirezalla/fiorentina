@@ -3,7 +3,6 @@
 @foreach ($chats as $chat)
     @continue($loop->first)
     @php $user = Member::find($chat['user_id']); @endphp
-    @dd($user)
     <tr id="row-{{ $chat->id }}">
 
         <td><input type="checkbox" class="row-check" value="{{ $chat->id }}"></td>
