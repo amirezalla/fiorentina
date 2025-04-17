@@ -5,18 +5,17 @@
     @php $user = Member::find($chat['user_id']); @endphp
     <tr id="row-{{ $chat->id }}">
         {{-- ACTIONS --}}
-        @if (Str::contains(request()->url(), '/chat-view'))
-            <td>
-                <button class="btn btn-link p-0 me-2 text-danger delete-btn" data-id="{{ $chat->id }}"
-                    aria-label="Delete">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-                <button class="btn btn-link p-0 text-muted edit-btn" data-id="{{ $chat->id }}"
-                    data-message="{{ e($chat['message']) }}" aria-label="Edit">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-            </td>
-        @endif
+
+        <td>
+            <button class="btn btn-link p-0 me-2 text-danger delete-btn" data-id="{{ $chat->id }}" aria-label="Delete">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+            <button class="btn btn-link p-0 text-muted edit-btn" data-id="{{ $chat->id }}"
+                data-message="{{ e($chat['message']) }}" aria-label="Edit">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+        </td>
+
 
         {{-- USER --}}
         <td>
