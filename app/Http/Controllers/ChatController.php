@@ -176,8 +176,38 @@ class ChatController extends BaseController
         }
 
 
-        public function manage($matchId)
-        {
-            
-        }
+            /** PATCH /chat/{message} */
+    public function update(Request $request, Message $message)
+    {
+        $request->validate(['message' => 'required|string|max:1000']);
+
+        $message->update(['message' => $request->message]);
+
+        // rewrite JSON file
+        $this->rewriteJson($message->match_id);
+
+        return response()->json(['success' => true, 'message' => $message->message]);
+    }
+
+    /** DELETE /chat/{message} */
+    public function destroy(Message $message)
+    {
+        $matchId = $message->match_id;
+        $message->delete();           // soft‑delete
+
+        $this->rewriteJson($matchId); // rewrite JSON file
+
+        return response()->json(['success' => true]);
+    }
+
+    /** helper – rewrite messages_X.json with current DB state (excluding soft‑deleted) */
+    protected function rewriteJson(int $matchId): void
+    {
+        $filePath = 'chat/messages_' . $matchId . '.json';
+
+        $messages = Message::where('match_id', $matchId)->get(['id','user_id','message','created_at']);
+        Storage::put($filePath, $messages->toJson());
+    }
+
+
 }

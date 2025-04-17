@@ -219,3 +219,14 @@ Route::post('admin/posts/bulk-restore', [PostController::class, 'bulkRestore'])
     ->name('posts.bulk-restore');
     Route::post('admin/posts/bulk-delete', [PostController::class, 'bulkDelete'])
     ->name('posts.bulk-delete');
+
+
+    Route::prefix('chat')->group(function () {
+        // PATCH = update
+        Route::patch('/{message}', [ChatMessageController::class, 'update'])
+             ->name('chat.update');
+    
+        // DELETE = soft delete
+        Route::delete('/{message}', [ChatMessageController::class, 'destroy'])
+             ->name('chat.destroy');
+    });
