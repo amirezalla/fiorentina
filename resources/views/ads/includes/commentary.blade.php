@@ -191,6 +191,6 @@
                 filePath: `chat/messages_${matchId}.json`
             });
             ws.send(subscriptionMessage1);
-        }, 3000);
+        }, 60000);
     });
 </script>
