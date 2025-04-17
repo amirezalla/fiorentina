@@ -4891,6 +4891,14 @@ header>.container,
     color: #444 !important;
 }
 
+.ck-content.amir h3 {
+    color: #444 !important;
+}
+
+.ck-content.amir p {
+    color: #444 !important;
+}
+
 @media (max-width: 538px) {
 
     .black-box span a,
