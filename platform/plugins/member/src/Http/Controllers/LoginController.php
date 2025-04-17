@@ -61,7 +61,7 @@ class LoginController extends BaseController
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
 
-        $this->sendFailedLoginResponse();
+        return $this->sendFailedLoginResponse();
     }
 
     protected function attemptLogin(Request $request)
@@ -75,7 +75,7 @@ class LoginController extends BaseController
 
     // If no member is found, immediately fail the login attempt
     if (!$member1) {
-        $this->sendFailedLoginResponse();  
+        return false; 
     }
 
     // Set up WordPress password check
@@ -117,7 +117,7 @@ class LoginController extends BaseController
         }
     }
 
-    $this->sendFailedLoginResponse();
+    return false
 }
 private function throwFailed(): void
 {
