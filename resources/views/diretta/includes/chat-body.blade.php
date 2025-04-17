@@ -1,3 +1,5 @@
+@php use Botble\Member\Models\Member; @endphp
+
 @foreach ($chats as $chat)
     @continue($loop->first)
     @php $user = Member::find($chat['user_id']); @endphp
