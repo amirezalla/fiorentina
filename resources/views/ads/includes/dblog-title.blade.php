@@ -1,22 +1,25 @@
-@if (isset($ads) && $ads)
-    <div class="row mx-0 dmnone mt-4 ">
-        @foreach ($ads as $ad)
-            @if ($ad->type == 1)
-                <div class="row justify-content-center mx-0">
+@if (isset($ad) && $ad)
+    @if ($ad->type == 1)
+        {{-- Track impression for type=1 ads --}}
+        @php
+            \App\Models\AdStatistic::trackImpression($ad->id);
+            $ad->increment('display_count');
 
-                    <div class="col-12 mx-auto">
-                        <a href="" class="d-block">
-                            <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}"
-                                class="img-fluid" style="width: 100%; height: auto;">
-                        </a>
-                    </div>
+        @endphp
 
-                </div>
-            @else
-                <div class="row justify-content-center mx-0">
-                    {!! $ad->amp !!}
-                </div>
-            @endif
-        @endforeach
-    </div>
+        <div class="row justify-content-center mx-0">
+            <div class="col-12 mx-auto">
+                {{-- Link through your trackClick route so that a click is counted --}}
+                <a href="{{ route('ads.click', ['id' => $ad->id]) }}" class="d-block">
+                    <img src="{{ $ad->getDisplayImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
+                        style="width: 100%; height: auto;">
+                </a>
+            </div>
+        </div>
+    @else
+        {{-- For type=2 (Google Ad Manager or custom HTML), no impression is tracked here --}}
+        <div class="row justify-content-center mx-0">
+            {!! $ad->amp !!}
+        </div>
+    @endif
 @endif
