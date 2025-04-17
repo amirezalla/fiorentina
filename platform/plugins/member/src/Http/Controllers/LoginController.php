@@ -49,7 +49,7 @@ class LoginController extends BaseController
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
 
-            $this->sendLockoutResponse($request);
+            return $this->sendLockoutResponse($request);
         }
 
         if ($this->attemptLogin($request)) {
