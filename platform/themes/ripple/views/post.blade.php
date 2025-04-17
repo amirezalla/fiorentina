@@ -46,22 +46,7 @@
         @if (defined('GALLERY_MODULE_SCREEN_NAME') && !empty(($galleries = gallery_meta_data($post))))
             {!! render_object_gallery($galleries, $post->first_category ? $post->first_category->name : __('Uncategorized')) !!}
         @endif
-        @php
-            /**
-             *  Wrap  <h1> … </h1>  …  <h6> … </h6>
-             *  into  <p class="ck-heading ck‑h1"> … </p>
-             *  so the regex inside addAdsToContent() does not remove them.
-             */
-            $contentForOutput = preg_replace(
-                '/<(h[1-6])([^>]*)>(.*?)<\/\1>/is',
-                '<p class="ck-heading $1"$2>$3</p>',
-                $content,
-            );
-        @endphp
-
-        <div class="ck-content amir" style="color:black">
-            {!! $contentForOutput !!}
-        </div>
+        <div class="ck-content amir" style="color:black">{!! BaseHelper::clean($content) !!}</div>
         <div class="fb-like" data-href="{{ request()->url() }}" data-layout="standard" data-action="like"
             data-show-faces="false" data-share="true"></div>
     </div>
