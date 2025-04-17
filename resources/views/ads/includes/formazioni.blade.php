@@ -1,33 +1,36 @@
 @php
     use App\Http\Controllers\MatchLineupsController;
     use App\Models\PlayerStats;
-    if ($team == 'fiorentina') {
-        $formationInitiali = $groupedLineups['Fiorentina Initial Lineup']; // The array of players
-        $panchina = $groupedLineups['Fiorentina Subs'];
-        $Allenatori = $groupedLineups['Fiorentina Coach'];
-    } elseif ($team == 'another') {
-        $formationInitiali = $groupedLineups['Another Initial Lineup']; // The array of players
-        $panchina = $groupedLineups['Another Subs'];
-        $Allenatori = $groupedLineups['Another Coach'];
+    $formationInitiali = collect();
+    $panchina = collect();
+    $Allenatori = collect();
+
+    if ($team === 'fiorentina') {
+        $formationInitiali = $groupedLineups['Fiorentina Initial Lineup'] ?? collect();
+        $panchina = $groupedLineups['Fiorentina Subs'] ?? collect();
+        $Allenatori = $groupedLineups['Fiorentina Coach'] ?? collect();
+    } elseif ($team === 'another') {
+        $formationInitiali = $groupedLineups['Another Initial Lineup'] ?? collect();
+        $panchina = $groupedLineups['Another Subs'] ?? collect();
+        $Allenatori = $groupedLineups['Another Coach'] ?? collect();
     }
-    // Get the initial lineup and the formation disposition
+
+    // if there’s no initial lineup, bail early
+    if ($formationInitiali->isEmpty()) {
+        echo '<p>Nessuna formazione disponibile.</p>';
+        return;
+    }
+
+    // Sort & build rows
     $formationInitiali = $formationInitiali->sortBy('player_position');
+    $formationDisposition = $formationInitiali->first()->formation_disposition ?? '';
+    $formationArray = array_filter(explode('-', $formationDisposition));
 
-    $formationDisposition = $formationInitiali->first()->formation_disposition; // Get formation like '1-3-4-2-1'
-
-    // Split the formation into an array, e.g. [1, 3, 4, 2, 1]
-    $formationArray = explode('-', $formationDisposition);
-
-    // Initialize an empty array to hold the rows of players
     $playerRows = [];
-
-    $currentIndex = 0; // To track the index of players
-
-    // Loop through the formation array to create the rows dynamically
-    foreach ($formationArray as $numPlayers) {
-        // Assign the correct number of players to each row
-        $playerRows[] = $formationInitiali->slice($currentIndex, $numPlayers);
-        $currentIndex += $numPlayers;
+    $currentIndex = 0;
+    foreach ($formationArray as $num) {
+        $playerRows[] = $formationInitiali->slice($currentIndex, $num);
+        $currentIndex += $num;
     }
     $playerRows = array_reverse($playerRows);
 
@@ -78,7 +81,6 @@
                             </div>
 
                         </div>
-
                     @endforeach
                 </div>
             @endforeach
