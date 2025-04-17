@@ -211,55 +211,102 @@ class Ad extends BaseModel
 
     public static function addAdsToContent($content)
     {
+        // Retrieve ads from the four dblog groups plus background
         $ads = self::query()
             ->typeAnnuncioImmagine()
-            ->whereIn('group', [self::GROUP_DBLOG_P1, self::GROUP_DBLOG_P2, self::GROUP_DBLOG_P3, self::GROUP_DBLOG_P4])
+            ->whereIn('group', [
+                self::GROUP_DBLOG_P1,
+                self::GROUP_DBLOG_P2,
+                self::GROUP_DBLOG_P3,
+                self::GROUP_DBLOG_P4,
+                self::GROUP_BACKGROUND_PAGE,
+            ])
             ->get()
             ->unique('group')
-            ->mapWithKeys(function ($item, $key) {
-                return [$item->group => $item];
-            });
+            ->mapWithKeys(fn($item) => [$item->group => $item]);
+
         $shortCodePattern = '/<shortcode>(.*?)<\/shortcode>/';
         $adsBackgroundShortCodeRegex = '/<shortcode>\[ads-background.*?\](.*?)\[\/ads-background.*?\]<\/shortcode>/';
-        preg_match_all('/<shortcode>(.*?)<\/shortcode>|<p[^>]*?>([\s\S]*?)<\/p>/', $content, $contentMatches);
-        if (count($contentMatches)) {
-            $contentMatches = collect(collect($contentMatches)->first());
-            if ($contentMatches->count()) {
-                $shortCodes = $contentMatches->filter(fn($item) => preg_match($shortCodePattern, $item));
-                $contentMatches = $contentMatches->forget($shortCodes->keys())->values();
-                $chunk = $contentMatches->chunk(ceil(count($contentMatches) / 4));
-                $content = $chunk->map(function ($item, $key) use ($ads) {
-                    if ($key == 0 && $ads->has(self::GROUP_DBLOG_P1)) {
-                        $item[] = view('ads.includes.dblog-p1', ['ad' => $ads->get(self::GROUP_DBLOG_P1)])->render();
-                        $item[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_1)])->render();
-                    } else if ($key == 1 && $ads->has(self::GROUP_DBLOG_P2)) {
-                        $item[] = view('ads.includes.dblog-p2', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
-                        $item[] = view('ads.includes.MOBILE_POSIZIONE_2', ['ad' => $ads->get(self::MOBILE_POSIZIONE_2)])->render();
-                    } else if ($key == 2 && $ads->has(self::GROUP_DBLOG_P3)) {
-                        $item[] = view('ads.includes.dblog-p3', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
-                        $item[] = view('ads.includes.MOBILE_POSIZIONE_5', ['ad' => $ads->get(self::MOBILE_POSIZIONE_5)])->render();
-                    } else if ($key == 3 && $ads->has(self::GROUP_DBLOG_P4)) {
-                        $item[] = view('ads.includes.dblog-p4', ['ad' => $ads->get(self::GROUP_DBLOG_P4)])->render();
-                        $item[] = view('ads.includes.MOBILE_POSIZIONE_4', ['ad' => $ads->get(self::MOBILE_POSIZIONE_4)])->render();
-                    } else if ($key == 4 && $ads->has(self::GROUP_DBLOG_P5)) {
-                        $item[] = view('ads.includes.dblog-p5', ['ad' => $ads->get(self::GROUP_DBLOG_P5)])->render();
+
+        // 1. Inject background-page ad before the ck-content container
+        if ($ads->has(self::GROUP_BACKGROUND_PAGE)) {
+            $backgroundAdHtml = view('ads.includes.background-page', ['ad' => $ads->get(self::GROUP_BACKGROUND_PAGE)])->render();
+            $content = preg_replace(
+                '/(<div[^>]*class="ck-content".*?>)/i',
+                $backgroundAdHtml . "$1",
+                $content
+            );
+        }
+
+        // 2. Break content into paragraphs and shortcodes
+        preg_match_all(
+            '/<shortcode>(.*?)<\/shortcode>|<p[^>]*?>([\s\S]*?)<\/p>/',
+            $content,
+            $matches
+        );
+
+        if (empty($matches[0])) {
+            return $content;
+        }
+
+        $elements = collect($matches[0]);
+
+        // Extract and remove shortcodes
+        $shortCodes = $elements->filter(fn($item) => preg_match($shortCodePattern, $item));
+        $paragraphs = $elements->diff($shortCodes)->values();
+
+        // Chunk into 4 parts
+        $chunks = $paragraphs->chunk(ceil($paragraphs->count() / 4));
+
+        // 3. Map each chunk, append dblog-P and mobile position ads
+        $assembled = $chunks->flatMap(function ($items, $idx) use ($ads) {
+            $items = $items->toArray();
+            switch ($idx) {
+                case 0:
+                    if ($ads->has(self::GROUP_DBLOG_P1)) {
+                        $items[] = view('ads.includes.dblog-p1', ['ad' => $ads->get(self::GROUP_DBLOG_P1)])->render();
+                        $items[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_1)])->render();
                     }
-                    return $item;
-                })->flatten();
-                if ($shortCodes->count()) {
-                    $adsBackground = $shortCodes->first(function ($item) use ($adsBackgroundShortCodeRegex) {
-                        return preg_match($adsBackgroundShortCodeRegex, $item);
-                    });
-                    if ($adsBackground) {
-                        Theme::set('has-ads-background', $adsBackground);
-                        $shortCodes = $shortCodes->filter(function ($item) use ($adsBackgroundShortCodeRegex) {
-                            return !preg_match($adsBackgroundShortCodeRegex, $item);
-                        });
+                    break;
+                case 1:
+                    if ($ads->has(self::GROUP_DBLOG_P2)) {
+                        $items[] = view('ads.includes.dblog-p2', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
+                        $items[] = view('ads.includes.MOBILE_POSIZIONE_2', ['ad' => $ads->get(self::MOBILE_POSIZIONE_2)])->render();
                     }
-                }
-                $content = $shortCodes->merge($content)->implode("");
+                    break;
+                case 2:
+                    if ($ads->has(self::GROUP_DBLOG_P3)) {
+                        $items[] = view('ads.includes.dblog-p3', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
+                        $items[] = view('ads.includes.MOBILE_POSIZIONE_5', ['ad' => $ads->get(self::MOBILE_POSIZIONE_5)])->render();
+                    }
+                    break;
+                case 3:
+                    if ($ads->has(self::GROUP_DBLOG_P4)) {
+                        $items[] = view('ads.includes.dblog-p4', ['ad' => $ads->get(self::GROUP_DBLOG_P4)])->render();
+                        $items[] = view('ads.includes.MOBILE_POSIZIONE_4', ['ad' => $ads->get(self::MOBILE_POSIZIONE_4)])->render();
+                    }
+                    break;
+                case 4:
+                    if ($ads->has(self::GROUP_DBLOG_P5)) {
+                        $items[] = view('ads.includes.dblog-p5', ['ad' => $ads->get(self::GROUP_DBLOG_P5)])->render();
+                    }
+                    break;
+            }
+            return $items;
+        });
+
+        // 4. Place background shortcodes if any
+        if ($shortCodes->count()) {
+            $bg = $shortCodes->first(fn($item) => preg_match($adsBackgroundShortCodeRegex, $item));
+            if ($bg) {
+                Theme::set('has-ads-background', $bg);
+                $shortCodes = $shortCodes->filter(fn($item) => !preg_match($adsBackgroundShortCodeRegex, $item));
             }
         }
+
+        // 5. Reassemble: shortcodes + content + appended ads
+        $content = $shortCodes->merge($assembled)->implode('');
+
         return $content;
     }
 
