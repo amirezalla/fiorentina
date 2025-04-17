@@ -201,7 +201,7 @@ class ChatController extends BaseController
     }
 
     /** helper – rewrite messages_X.json with current DB state (excluding soft‑deleted) */
-    protected function rewriteJson(int $matchId): void
+    protected function rewriteJson($matchId): void
     {
         $filePath = 'chat/messages_' . $matchId . '.json';
 
