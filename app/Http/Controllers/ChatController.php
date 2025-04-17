@@ -209,7 +209,7 @@ class ChatController extends BaseController
         Storage::put($filePath, $messages->toJson());
     }
 
-    public function body(int $matchId)
+    public function body($matchId)
 {
     // get all non‑deleted messages for that match
     $chats = Message::where('match_id', $matchId)
