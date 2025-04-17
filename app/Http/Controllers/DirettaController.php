@@ -74,13 +74,14 @@ class DirettaController extends BaseController
      | ==========  ADMIN  : AJAX update  ================================
      * route: PATCH /commentary/{id}
      * ---------------------------------------------------------------- */
-    public function ajaxUpdate(Request $request, $id)
+    public function ajaxUpdate(Request $request)
     {
         $request->validate([
             'comment_text' => 'required|string|max:500',
             'is_bold'      => 'nullable|boolean',
             'is_important' => 'nullable|boolean',
         ]);
+        $id=$request->id;
 
         $c = MatchCommentary::findOrFail($id);
 
@@ -99,8 +100,9 @@ class DirettaController extends BaseController
      | ==========  ADMIN  : AJAX soft‑delete  ===========================
      * route: DELETE /commentary/{id}
      * ---------------------------------------------------------------- */
-    public function ajaxDelete($id)
+    public function ajaxDelete(Request $request)
     {
+        $id=$request->id;
         $c = MatchCommentary::findOrFail($id);
         $c->delete();                                 // soft delete
         $this->regenerateCommentaryFile($c->match_id);
@@ -111,8 +113,9 @@ class DirettaController extends BaseController
      | ==========  ADMIN  : AJAX restore  ==============================
      * route: POST /commentary/{id}/restore
      * ---------------------------------------------------------------- */
-    public function ajaxRestore($id)
+    public function ajaxRestore(Request $request)
     {
+        $id=$request->id;
         $c = MatchCommentary::withTrashed()->findOrFail($id);
         $c->restore();
         $this->regenerateCommentaryFile($c->match_id);
