@@ -42,27 +42,28 @@ class LoginController extends BaseController
     public function login(LoginRequest $request)
     {
         $this->validateLogin($request);
-
-        // If the class is using the ThrottlesLogins trait, we can automatically throttle
-        // the login attempts for this application. We'll key this by the username and
-        // the IP address of the client making these requests into this application.
+    
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
-
-            $this->sendLockoutResponse($request);
+            return $this->sendLockoutResponse($request);   // ← return!
         }
-
-        if ($this->attemptLogin($request)) {
-            return $this->sendLoginResponse($request);
+    
+        try {
+            if ($this->attemptLogin($request)) {
+                return $this->sendLoginResponse($request); // ← return!
+            }
+        } catch (\Throwable $e) {
+            // If the custom attemptLogin threw a ValidationException (un‑confirmed account)
+            // just let Laravel handle it, but still count a failed attempt if you wish.
+            $this->incrementLoginAttempts($request);
+            throw $e;
         }
-
-        // If the login attempt was unsuccessful we will increment the number of attempts
-        // to log in and redirect the user back to the login form. Of course, when this
-        // user surpasses their maximum number of attempts they will get locked out.
+    
+        // login failed – increment counter then throw validation error
         $this->incrementLoginAttempts($request);
-
-        $this->sendFailedLoginResponse();
+        return $this->sendFailedLoginResponse($request);   // ← always return
     }
+    
 
     protected function attemptLogin(Request $request)
 {
@@ -115,6 +116,9 @@ class LoginController extends BaseController
 
             return $this->baseAttemptLogin($request);
         }
+    }
+    if (!$wpPassword->check($request->password, $member1->password)) {
+        return false;   // instead of falling through
     }
 
     return false;
