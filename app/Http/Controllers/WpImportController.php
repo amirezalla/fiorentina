@@ -434,7 +434,7 @@ private function category($primaryCategoryId,$post_id){
     public function generateSEO(Request $request)
     {
         try {
-            $post_id=$request->postId;
+            $post_id=556308;
             
             // Retrieve the post
             $post = DB::table('posts')->where('id', $postId)->first();
