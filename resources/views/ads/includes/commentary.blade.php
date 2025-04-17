@@ -98,13 +98,16 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     }
                 })
-                .then(res =>
+                .then(res => {
                     if (res.success) {
-                        // ── kick the Laravel sync (stores JSON, WebSocket will notice)
+                        // hide the edit box
+                        toggleEditBox(commentId);
+                        // sync JSON on the server
                         fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
-                        // ── or refresh immediately:
+                        // optional immediate UI refresh
                         if (typeof refreshCommentaries === 'function') refreshCommentaries();
-                    })
+                    }
+                })
                 .then(() => {
                     // The server will handle rewriting the JSON.
                     // We'll just rely on the WebSocket to refresh, or we can call fetchCommentaries()
@@ -134,13 +137,16 @@
                     method: 'POST',
                     body: formData,
                 })
-                .then(res =>
+                .then(res => {
                     if (res.success) {
-                        // ── kick the Laravel sync (stores JSON, WebSocket will notice)
+                        // hide the edit box
+                        toggleEditBox(commentId);
+                        // sync JSON on the server
                         fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
-                        // ── or refresh immediately:
+                        // optional immediate UI refresh
                         if (typeof refreshCommentaries === 'function') refreshCommentaries();
-                    })
+                    }
+                })
                 .then(() => {
                     // The server updates DB, rewrites Wasabi JSON
                     // We rely on WebSocket to refresh automatically
