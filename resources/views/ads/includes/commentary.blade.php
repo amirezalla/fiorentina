@@ -99,7 +99,7 @@
                 await fetch(`/commentary/${commentId}`, {
                     method: 'DELETE',
                     headers: {
-                        'X-CSRF-TOKEN': csrfToken
+                        'X-CSRF-TOKEN': {{ csrf_token() }}
                     }
                 });
 
@@ -131,7 +131,7 @@
                 await fetch(`/commentary/${id}`, {
                     method: 'PATCH',
                     headers: {
-                        'X-CSRF-TOKEN': csrfToken
+                        'X-CSRF-TOKEN': {{ csrf_token() }}
                     },
                     body: data
                 });
