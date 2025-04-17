@@ -232,7 +232,7 @@ class Ad extends BaseModel
         if ($ads->has(self::GROUP_BACKGROUND_PAGE)) {
             $backgroundAdHtml = view('ads.includes.background-page', ['ad' => $ads->get(self::GROUP_BACKGROUND_PAGE)])->render();
             $content = preg_replace(
-                '/(<div[^>]*class="section".*?>)/i',
+                '/(<section[^>]*class="section".*?>)/i',
                 $backgroundAdHtml . "$1",
                 $content
             );
