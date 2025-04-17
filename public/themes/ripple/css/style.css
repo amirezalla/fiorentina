@@ -4960,6 +4960,10 @@ header>.container,
         font-size: small !important;
     }
 
+    .fw-bold {
+        font-size: x-small !important;
+    }
+
     .post__vertical .post__title a {
         font-size: 1rem !important;
     }
@@ -5102,6 +5106,8 @@ header>.container,
     font-weight: 600 !important;
     color: #888 !important;
 }
+
+
 
 
 
