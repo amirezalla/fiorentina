@@ -39,7 +39,7 @@
 
 @if ($mostCommentedPosts->isNotEmpty())
     <div class="row mt-30 ad-top-sidebar">
-        @include('ads.includes.SIZE_300X250_C1')
+        @include('ads.includes.SIZE_300X250_TOP')
     </div>
     <div class="widget widget__recent-post mt-4 mb-4">
         <ul class="nav nav-tabs" id="postTabs" role="tablist">
@@ -155,7 +155,7 @@
         </div>
     </div>
     <div class="row mt-30 ad-top-sidebar">
-        @include('ads.includes.SIZE_300X250_TOP')
+        @include('ads.includes.SIZE_300X250_B1')
     </div>
     <div class="mt-30">
         @include('videos.includes.adsvideo')
@@ -197,6 +197,7 @@
             </div>
         </div>
     @endif
+    @include('ads.includes.SIZE_300X250_C1')
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script>
