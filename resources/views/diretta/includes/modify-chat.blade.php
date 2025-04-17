@@ -1,22 +1,16 @@
 @php use Botble\Member\Models\Member; @endphp
 
 <div class="container mt-3">
-    <div class="d-flex mb-2">
-        <div class="col-12 justify-content-end d-flex">
-            <button class="btn btn-sm btn-danger me-2" id="bulk-delete">Delete selected</button>
-        </div>
-    </div>
     <div class="table-responsive">
         <table class="table table-sm table-striped align-middle" id="chat-table">
             <thead class="table-light">
                 <tr>
-                    <th> </th>
-                    <th>User</th>
-                    <th>Message</th>
-                    <th>Date&nbsp;/&nbsp;Time</th>
                     @if (Str::contains(request()->url(), '/chat-view'))
                         <th style="width:70px;">Actions</th>
                     @endif
+                    <th>User</th>
+                    <th>Message</th>
+                    <th>Date&nbsp;/&nbsp;Time</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,13 +54,11 @@
             const editId = document.getElementById('edit-id');
             const editMsg = document.getElementById('edit-message');
 
-            // ───────────────────────── polling every 1000 ms ──────────────────────────
+            // ───────────────────────── polling every 1000 ms ──────────────────────────
             setInterval(fetchBody, 1000);
 
             function fetchBody() {
-                fetch(/chat/body / $ {
-                        matchId
-                    })
+                fetch(`/chat/body/${matchId}`)
                     .then(r => r.text())
                     .then(html => {
                         tbody.innerHTML = html;
@@ -90,9 +82,7 @@
                     btn.onclick = () => {
                         if (!confirm('Delete this message?')) return;
                         const id = btn.dataset.id;
-                        fetch(/chat/$ {
-                                id
-                            }, {
+                        fetch(`/chat/${id}`, {
                                 method: 'DELETE',
                                 headers: {
                                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -112,9 +102,7 @@
             // ───────── submit edit (modal) ─────────
             document.getElementById('edit-form').addEventListener('submit', e => {
                 e.preventDefault();
-                fetch(/chat/$ {
-                        editId.value
-                    }, {
+                fetch(`/chat/${editId.value}`, {
                         method: 'PATCH',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
