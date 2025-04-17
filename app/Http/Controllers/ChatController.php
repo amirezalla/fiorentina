@@ -212,7 +212,7 @@ class ChatController extends BaseController
 /* ---------- non‑deleted list (same as before) ---------------- */
 public function body($matchId)
 {
-    $chats = Message::where('match_id', $matchId)->latest()->get();
+    $chats = Message::where('match_id', $matchId)->get();
     return view('diretta.includes.chat-body', compact('chats'))->render();
 }
 
