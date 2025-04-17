@@ -116,11 +116,11 @@ Route::post('/notifica/store', [NotificaController::class, 'store']);
 Route::get('/diretta/list', [ChatController::class, 'list'])->name('diretta.list');
 Route::get('/diretta/view', [DirettaController::class, 'view'])->name('diretta.view');
 Route::get('/chat-view', [DirettaController::class, 'chatView'])->name('chat.view');
-Route::get('/delete-commentary', [DirettaController::class, 'deleteCommentary'])->name('delete-commentary');
+Route::get('/delete-commentary', [DirettaController::class, 'ajaxDelete'])->name('delete-commentary');
 Route::get('/delete-chat', [DirettaController::class, 'deleteChat'])->name('delete-chat');
-Route::get('/undo-commentary', [DirettaController::class, 'undoCommentary'])->name('undo-commentary');
+Route::get('/undo-commentary', [DirettaController::class, 'ajaxRestore'])->name('undo-commentary');
 Route::get('/undo-chat', [DirettaController::class, 'undoChat'])->name('undo-chat');
-Route::post('/update-commentary', [DirettaController::class, 'updateCommentary'])->name('update-commentary');
+Route::post('/update-commentary', [DirettaController::class, 'ajaxUpdate'])->name('update-commentary');
 Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])->name('store-commentary');
 
 
