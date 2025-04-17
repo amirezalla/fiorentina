@@ -42,12 +42,27 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('ads.includes.blog-page', function (View $view) {
             $view->with('ads', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BLOG_PAGE)->get());
         });
-        view()->composer('ads.includes.dblog-title', function (View $view) {
-            $view->with('ads', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_DBLOG_TITLE)->get());
+
+
+        view()->composer('ads.includes.dblog-author', function ($view) {
+            $ad = Ad::query()
+                ->typeAnnuncioImmagine()
+                ->where('group', Ad::GROUP_DBLOG_AUTHOR)
+                ->inRandomOrderByWeight()
+                ->first();
+    
+            $view->with('ad', $ad);
         });
-        view()->composer('ads.includes.dblog-author', function (View $view) {
-            $view->with('ads', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_DBLOG_AUTHOR)->get());
+        view()->composer('ads.includes.dblog-title', function ($view) {
+            $ad = Ad::query()
+                ->typeAnnuncioImmagine()
+                ->where('group', Ad::GROUP_DBLOG_TITLE)
+                ->inRandomOrderByWeight()
+                ->first();
+    
+            $view->with('ad', $ad);
         });
+
 
         view()->composer('ads.includes.dblog-p1', function ($view) {
             $ad = Ad::query()
