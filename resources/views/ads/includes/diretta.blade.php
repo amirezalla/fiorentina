@@ -86,7 +86,6 @@
             <div class="match-score">
                 <h6>{{ date('d.m.Y H:i', strtotime($match->match_date)) }}</h6>
                 <div>{{ $score['home'] }} - {{ $score['away'] }}</div>
-                <h6>FINALE</h6>
 
             </div>
             <div class="team away-team">
@@ -209,6 +208,4 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 @else
-
-
 @endif
