@@ -54,99 +54,84 @@
 @push('footer')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const matchId = '{{ $matchId }}';
+            const matchId = '{{ request()->match_id ?? (request()->get('match') ?? '') }}'; // adapt if needed
             const tbody = document.querySelector('#chat-table tbody');
-            const isTrash = {{ request()->routeIs('chat.trash.body') ? 'true' : 'false' }};
-            const csrf = '{{ csrf_token() }}';
+            const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+            const editId = document.getElementById('edit-id');
+            const editMsg = document.getElementById('edit-message');
 
-            /* ---------------- fetch body every second ---------------- */
-            setInterval(loadBody, 10000);
-            loadBody();
+            // ───────────────────────── polling every 1000 ms ──────────────────────────
+            setInterval(fetchBody, 1000);
 
-            function loadBody() {
-                const url = isTrash ? `/chat/trash-body/${matchId}` :
-                    `/chat/body/${matchId}`;
-                fetch(url).then(r => r.text()).then(html => {
-                    tbody.innerHTML = html;
-                    bindRowEvents();
-                });
-            }
-
-            /* ---------------- row‑level buttons ---------------------- */
-            function bindRowEvents() {
-                if (!isTrash) { // delete in normal list
-                    tbody.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.onclick = () => singleDelete(btn.dataset.id);
-                    });
-                } else { // restore in trash list
-                    tbody.querySelectorAll('.restore-btn').forEach(btn => {
-                        btn.onclick = () => singleRestore(btn.dataset.id);
-                    });
-                }
-            }
-
-            async function singleDelete(id) {
-                await fetch(`/commentary/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': csrf
-                    }
-                });
-                await fetch(`/match/${matchId}/sync-all-commentaries`);
-                loadBody();
-            }
-            async function singleRestore(id) {
-                await fetch(`/commentary/${id}/restore`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrf
-                    }
-                });
-                await fetch(`/match/${matchId}/sync-all-commentaries`);
-                loadBody();
-            }
-
-            /* ---------------- bulk actions --------------------------- */
-            document.getElementById('bulk-delete').onclick = async () => {
-                const ids = checkedIds();
-                if (!ids.length) return alert('Select rows first');
-                await fetch(`/chat/bulk`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': csrf,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ids,
-                        match_id: matchId
+            function fetchBody() {
+                fetch(/chat/body / $ {
+                        matchId
                     })
-                });
-                await fetch(`/match/${matchId}/sync-all-commentaries`);
-                loadBody();
-            };
-
-            document.getElementById('bulk-restore').onclick = async () => {
-                const ids = checkedIds();
-                if (!ids.length) return alert('Select rows first');
-                await fetch(`/chat/bulk-restore`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrf,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ids,
-                        match_id: matchId
-                    })
-                });
-                await fetch(`/match/${matchId}/sync-all-commentaries`);
-                loadBody();
-            };
-
-            function checkedIds() {
-                return [...document.querySelectorAll('.row-check:checked')]
-                    .map(cb => cb.value);
+                    .then(r => r.text())
+                    .then(html => {
+                        tbody.innerHTML = html;
+                        attachRowEvents();
+                    });
             }
+
+            // ───────────────────── attach row buttons after (re)load ──────────────────
+            function attachRowEvents() {
+                // EDIT
+                tbody.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        editId.value = btn.dataset.id;
+                        editMsg.value = btn.dataset.message;
+                        editModal.show();
+                    };
+                });
+
+                // DELETE
+                tbody.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        if (!confirm('Delete this message?')) return;
+                        const id = btn.dataset.id;
+                        fetch(/chat/$ {
+                                id
+                            }, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(r => r.json())
+                            .then(res => {
+                                if (res.success) fetchBody();
+                            });
+                    };
+                });
+            }
+
+            // ───────────────────────── initial event binding ──────────────────────────
+            attachRowEvents();
+
+            // ───────── submit edit (modal) ─────────
+            document.getElementById('edit-form').addEventListener('submit', e => {
+                e.preventDefault();
+                fetch(/chat/$ {
+                        editId.value
+                    }, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: editMsg.value
+                        })
+                    })
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.success) {
+                            editModal.hide();
+                            fetchBody(); // refresh immediately
+                        }
+                    });
+            });
         });
     </script>
 @endpush
