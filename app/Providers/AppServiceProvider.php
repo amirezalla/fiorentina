@@ -48,8 +48,8 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('ads.includes.dblog-author', function (View $view) {
             $view->with('ads', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_DBLOG_AUTHOR)->get());
         });
-        
-        View::composer('ads.includes.dblog-p', function ($view) {
+
+        view()->composer('ads.includes.dblog-p', function ($view) {
             $ad = Ad::query()
                 ->typeAnnuncioImmagine()
                 ->where('group', Ad::GROUP_DBLOG_P1)
