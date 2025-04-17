@@ -96,8 +96,8 @@
 
             try {
                 // 1. delete row
-                await fetch(`/commentary/${commentId}`, {
-                    method: 'DELETE',
+                await fetch(`/delete-commentary?id=${commentId}`, {
+                    method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
                     }
@@ -128,8 +128,8 @@
 
             try {
                 // 1. update row
-                await fetch(`/commentary/${id}`, {
-                    method: 'PATCH',
+                await fetch(form.action, {
+                    method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
                     },
