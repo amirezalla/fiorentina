@@ -41,7 +41,7 @@
 
 
 
-    <div class="col-lg-12 d-flex justify-content-center img-in-post mb-5 mt-5">
+    <div class="col-lg-12 d-flex justify-content-center img-in-post mb-3 mt-3">
         <div>
 
 
