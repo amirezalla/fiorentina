@@ -4952,7 +4952,20 @@ header>.container,
     }
 
     .post__last4-badge {
-        color: #1d2025 !important;
+        color: #888 !important;
+        font-size: x-small !important;
+    }
+
+    .post__date {
+        font-size: small !important;
+    }
+
+    .post__vertical .post__title a {
+        font-size: 1rem !important;
+    }
+
+    .post__content span {
+        font-size: small !important;
     }
 
 
