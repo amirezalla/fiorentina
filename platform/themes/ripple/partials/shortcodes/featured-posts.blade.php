@@ -140,7 +140,7 @@
                                                     href="{{ $post->url }}">{{ $post->name }}</a>
 
                                             </h3>
-                                            <p class="post-desc-first" style="margin: 3px 0 0;">
+                                            <p class="post-desc-first d-none d-md-block" style="margin: 3px 0 0;">
                                                 {{ $post->description }}</p>
                                             <span class=" text-dark mt-2 d-block">
                                                 @php
