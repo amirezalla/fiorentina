@@ -59,6 +59,46 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
+        view()->composer('ads.includes.dblog-p', function ($view) {
+            $ad = Ad::query()
+                ->typeAnnuncioImmagine()
+                ->where('group', Ad::GROUP_DBLOG_P2)
+                ->inRandomOrderByWeight()
+                ->first();
+    
+            $view->with('ad', $ad);
+        });
+
+        view()->composer('ads.includes.dblog-p', function ($view) {
+            $ad = Ad::query()
+                ->typeAnnuncioImmagine()
+                ->where('group', Ad::GROUP_DBLOG_P3)
+                ->inRandomOrderByWeight()
+                ->first();
+    
+            $view->with('ad', $ad);
+        });
+
+        view()->composer('ads.includes.dblog-p', function ($view) {
+            $ad = Ad::query()
+                ->typeAnnuncioImmagine()
+                ->where('group', Ad::GROUP_DBLOG_P4)
+                ->inRandomOrderByWeight()
+                ->first();
+    
+            $view->with('ad', $ad);
+        });
+
+        view()->composer('ads.includes.dblog-p', function ($view) {
+            $ad = Ad::query()
+                ->typeAnnuncioImmagine()
+                ->where('group', Ad::GROUP_DBLOG_P5)
+                ->inRandomOrderByWeight()
+                ->first();
+    
+            $view->with('ad', $ad);
+        });
+
         view()->composer('ads.includes.background-page', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrderByWeight()->first());
         });
