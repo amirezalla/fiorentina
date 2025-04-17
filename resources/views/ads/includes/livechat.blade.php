@@ -175,7 +175,7 @@
                  ${new Date(msg.created_at).toLocaleTimeString()}
              </div>`;
 
-            li.prepend(avatar, wrap);
+            li.append(avatar, wrap);
             return li;
         }
 
@@ -198,7 +198,7 @@
                                 avatar: null
                             };
                         }
-                        messagesUl.prepend(renderMessage(msg));
+                        messagesUl.append(renderMessage(msg));
                     });
                 })
                 .catch(console.error);
