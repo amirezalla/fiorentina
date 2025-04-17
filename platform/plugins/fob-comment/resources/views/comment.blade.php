@@ -369,8 +369,9 @@
 </div>
 
 <div class="fob-comment-form-section">
-
-    @include('ads.includes.adsrecentp3')
+    <div class="d-none d-md-block">
+        @include('ads.includes.adsrecentp3')
+    </div>
 
 
     <h4 class="fob-comment-title fob-comment-form-title">
