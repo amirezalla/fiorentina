@@ -215,11 +215,14 @@ class Ad extends BaseModel
         $ads = self::query()
             ->typeAnnuncioImmagine()
             ->whereIn('group', [
+                self::GROUP_BACKGROUND_PAGE,
+                self::GROUP_DBLOG_TITLE,
+                self::GROUP_DBLOG_AUTHOR,
                 self::GROUP_DBLOG_P1,
                 self::GROUP_DBLOG_P2,
                 self::GROUP_DBLOG_P3,
                 self::GROUP_DBLOG_P4,
-                self::GROUP_BACKGROUND_PAGE,
+                self::GROUP_DBLOG_P5,
             ])
             ->get()
             ->unique('group')
@@ -257,6 +260,42 @@ class Ad extends BaseModel
 
         // Chunk into 4 parts
         $chunks = $paragraphs->chunk(ceil($paragraphs->count() / 4));
+
+        if ($ads->has(self::GROUP_DBLOG_TITLE)) {
+            $titleHtml = view('ads.includes.dblog-title',
+                              ['ad' => $ads->get(self::GROUP_DBLOG_TITLE)])->render();
+    
+            // Insert before opening tag
+            $content = preg_replace(
+                '/(<div[^>]*class="[^"]*img-in-post[^"]*"[^>]*>)/i',
+                $titleHtml . '$1',
+                $content,
+                1
+            );
+        }
+    
+        if ($ads->has(self::GROUP_DBLOG_AUTHOR)) {
+            $authorHtml = view('ads.includes.dblog-author',
+                               ['ad' => $ads->get(self::GROUP_DBLOG_AUTHOR)])->render();
+    
+            // Insert immediately AFTER the closing tag of that div
+            $content = preg_replace(
+                '/(<\/div>\s*)<!--\s*END\s*img-in-post\s*-->/i',   // if you have a marker
+                '$1' . $authorHtml,
+                $content,
+                1
+            );
+    
+            // If no special end‑marker, fall back to first closing </div> of that block
+            if (strpos($content, $authorHtml) === false) {
+                $content = preg_replace(
+                    '/(<div[^>]*class="[^"]*img-in-post[^"]*"[^>]*>.*?<\/div>)/is',
+                    '$1' . $authorHtml,
+                    $content,
+                    1
+                );
+            }
+        }
 
         // 3. Map each chunk, append dblog-P and mobile position ads
         $assembled = $chunks->flatMap(function ($items, $idx) use ($ads) {
