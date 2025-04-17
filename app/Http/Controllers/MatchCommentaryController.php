@@ -184,7 +184,7 @@ private static function getCommentTimeValue($commentTime)
     return (int) $clean;
 }
 
-private function regenerateJson(int $matchId): void
+private function regenerateJson( $matchId): void
 {
     $content = MatchCommentary::where('match_id', $matchId)
                ->orderBy('id', 'desc')
