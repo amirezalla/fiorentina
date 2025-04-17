@@ -77,8 +77,7 @@
                                     <header class="post__header" style="flex: 1;">
                                         {{-- Optional: Category label in uppercase, if you want it above the title --}}
                                         @if ($post->categories->count())
-                                            <span
-                                                style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
+                                            <span class="category-span">
                                                 {{ strtoupper($post->categories->first()->name) }}
                                             </span>
                                         @endif
@@ -92,7 +91,7 @@
                                         </h4>
 
                                         {{-- Date --}}
-                                        <div class="post__meta"
+                                        <div class="post__meta date-span"
                                             style="font-size: 0.75rem; color: #999; margin-top: 2px;">
                                             <span class="post__created-at">
                                                 {{ Theme::formatDate($post->created_at) }}

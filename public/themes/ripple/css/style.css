@@ -1266,8 +1266,34 @@ p:empty {
 }
 
 .post__widget .post__title a {
-    color: #636363;
-    font-weight: 400
+    color: #111 !important;
+    font-weight: 700;
+    font-family: 'Roboto Condensed';
+    line-height: 1.1;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+}
+
+.post__widget .category-span {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 5px;
+    letter-spacing: 0.07rem;
+    font-family: 'Titillium Web';
+    line-height: 1;
+
+}
+
+.post__widget .date-span {
+    color: #555;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: .07em;
+    line-height: 1;
+    font-family: 'Titillium Web';
+    text-transform: uppercase;
 }
 
 .post__widget .post__title:hover a {
@@ -4400,7 +4426,7 @@ header>.container {
 }
 
 .post--single .post__title_in {
-    font-size: 3.5rem !important;
+    font-size: 3rem !important;
     letter-spacing: -0.02em !important;
     font-weight: 900;
     font-family: 'Roboto';
