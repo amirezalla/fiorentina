@@ -107,7 +107,7 @@
                 toggleEditBox(commentId);
 
                 // 3. tell backend to sync JSON
-                await fetch(`/match/${matchId}/sync-all-commentaries`);
+                fetch(`/match/${matchId}/sync-all-commentaries`);
 
                 // 4. refresh UI list
                 if (typeof refreshCommentaries === 'function') refreshCommentaries();
@@ -140,7 +140,7 @@
                 toggleEditBox(id);
 
                 // 3. sync JSON on server
-                await fetch(`/match/${matchId}/sync-all-commentaries`);
+                fetch(`/match/${matchId}/sync-all-commentaries`);
 
                 // 4. refresh UI
                 if (typeof refreshCommentaries === 'function') refreshCommentaries();
