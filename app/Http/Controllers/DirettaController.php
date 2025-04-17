@@ -1,185 +1,136 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Standing;
-use App\Models\Matches;
-use App\Models\Calendario;
-use App\Models\DirettaComment;
 use App\Models\MatchCommentary;
-use Illuminate\Support\Facades\Http;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Session;
-
-use Botble\Base\Supports\Breadcrumb;
-
-use Botble\Base\Http\Controllers\BaseController;
-use App\Jobs\StoreCommentaryJob;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
-
-// sportmonks B0lZqWEdqBzEPrLW5gDcm87Svgb5bnEEa807fd7kOiONHbcbetXywqPQafqC
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Queue;
+use Botble\Base\Supports\Breadcrumb;
+use Botble\Base\Http\Controllers\BaseController;
+use Illuminate\Validation\ValidationException;
 
 class DirettaController extends BaseController
 {
+    /* ------------------------------------------------------------------
+     | Breadcrumb for admin pages
+     * ---------------------------------------------------------------- */
     protected function breadcrumb(): Breadcrumb
     {
-        return parent::breadcrumb()
-            ->add("Diretta");
+        return parent::breadcrumb()->add('Diretta');
     }
 
-
-    private function regenerateCommentaryFile($matchId)
-{
-    // 1) Load all non-deleted commentaries for the match
-    $commentaries = MatchCommentary::where('match_id', $matchId)
-        ->orderBy('id', 'desc')
-        ->get()
-        ->toArray();
-
-    // 2) Create JSON
-    $jsonContent = json_encode($commentaries);
-
-    // 3) Build file path in Wasabi
-    $filePath = "commentary/commentary_{$matchId}.json";
-
-    // 4) Store in Wasabi (using the default disk or your wasabi disk)
-    Storage::put($filePath, $jsonContent);
-
-    // That’s it! The ETag changes in Wasabi, so the Node WebSocket server
-    // will detect it.
-}
-    // Fetch latest comments
-    public function fetchLastComments(Request $request)
+    /* ------------------------------------------------------------------
+     | Page that shows the commentary feed
+     * ---------------------------------------------------------------- */
+    public function view()
     {
-        $match_id=$request->input('match_id');
-        $comments = DirettaComment::where('match_id', $lastId)->orderBy('created_at', 'asc')->get();
-        return response()->json($comments);
-    }
-
-    public function view(){
         $matchId = request()->query('match_id');
-    
-        $this->pageTitle("Diretta di $matchId");
-
-        return view('diretta.view',compact('matchId'));
+        $this->pageTitle("Diretta {$matchId}");
+        return view('diretta.view', compact('matchId'));
     }
 
-    public function chatView(){
+    /* ------------------------------------------------------------------
+     | Page that shows the chat (same template, other tab)
+     * ---------------------------------------------------------------- */
+    public function chatView()
+    {
         $matchId = request()->query('match_id');
-    
-        $this->pageTitle("Chat di $matchId");
-
-        return view('diretta.view-chat',compact('matchId'));
+        $this->pageTitle("Chat {$matchId}");
+        return view('diretta.view-chat', compact('matchId'));
     }
 
+    /* ------------------------------------------------------------------
+     | ==========  ADMIN  : add commentary  =============================
+     * ---------------------------------------------------------------- */
     public function storeCommentary(Request $request)
     {
-        // Validate the incoming request data
-        $validatedData = $request->validate([
-            'match_id' => 'required',
-            'time' => 'required',
-            'tipo_event' => 'required|string|max:255',
+        $data = $request->validate([
+            'match_id'      => 'required',
+            'time'          => 'nullable|string|max:10',
+            'tipo_event'    => 'required|string|max:255',
+            'comment_text'  => 'required|string|max:500',
+            'is_bold'       => 'nullable|boolean',
+            'is_important'  => 'nullable|boolean',
+        ]);
+
+        $item = MatchCommentary::create([
+            'match_id'      => $data['match_id'],
+            'comment_time'  => $data['time'] ? "{$data['time']}'" : null,
+            'comment_class' => $data['tipo_event'],
+            'comment_text'  => $data['comment_text'],
+            'is_bold'       => (bool) ($data['is_bold'] ?? 0),
+            'is_important'  => (bool) ($data['is_important'] ?? 0),
+        ]);
+
+        // update JSON once
+        $this->regenerateCommentaryFile($item->match_id);
+
+        return back()->with('success', 'Commentary added.');
+    }
+
+    /* ------------------------------------------------------------------
+     | ==========  ADMIN  : AJAX update  ================================
+     * route: PATCH /commentary/{id}
+     * ---------------------------------------------------------------- */
+    public function ajaxUpdate(Request $request, $id)
+    {
+        $request->validate([
             'comment_text' => 'required|string|max:500',
-            'is_bold' => 'nullable|boolean',
+            'is_bold'      => 'nullable|boolean',
             'is_important' => 'nullable|boolean',
         ]);
-    
-        // Create a new commentary
-        $newItem=MatchCommentary::create([
-            'match_id' => $validatedData['match_id'],
-            'comment_time' => $validatedData['time']."'",
-            'comment_class' => $validatedData['tipo_event'],
-            'comment_text' => $validatedData['comment_text'],
-            'is_bold' => $request->has('is_bold'),
-            'is_important' => $request->has('is_important'),
+
+        $c = MatchCommentary::findOrFail($id);
+
+        $c->update([
+            'comment_text'  => $request->comment_text,
+            'is_bold'       => $request->boolean('is_bold'),
+            'is_important'  => $request->boolean('is_important'),
         ]);
-        $commentaryData = $newItem->toArray(); 
-        Queue::push(new StoreCommentaryJob($commentaryData));
 
-    
-        // Redirect back with a success message
-        return redirect()->back()->with('success', 'Commentary added successfully.');
+        $this->regenerateCommentaryFile($c->match_id);
+
+        return response()->json(['success' => true]);
     }
-    
-    
-    
 
-    public function deleteCommentary(Request $request)
+    /* ------------------------------------------------------------------
+     | ==========  ADMIN  : AJAX soft‑delete  ===========================
+     * route: DELETE /commentary/{id}
+     * ---------------------------------------------------------------- */
+    public function ajaxDelete($id)
     {
-        $commentaryId = $request->query('id');
-        $commentary = MatchCommentary::find($commentaryId);
-    
-        if ($commentary) {
-            $matchId = $commentary->match_id;
-            $commentary->delete(); // Soft delete
-    
-            // Store the commentary ID in the session for undo
-            Session::put('deleted_commentary_id', $commentaryId);
-    
-            // **Regenerate JSON** so Wasabi is in sync
-            $this->regenerateCommentaryFile($matchId);
-    
-            return redirect()
-                ->to("https://laviola.collaudo.biz/diretta/view?match_id=$matchId")
-                ->with('success', 'Commentary deleted successfully. <a href="' . route('undo-commentary') . '">Undo</a>');
-        }
-    
-        return redirect()->back()->with('error', 'Commentary not found');
+        $c = MatchCommentary::findOrFail($id);
+        $c->delete();                                 // soft delete
+        $this->regenerateCommentaryFile($c->match_id);
+        return response()->json(['success' => true]);
     }
-    
 
-    public function undoCommentary()
+    /* ------------------------------------------------------------------
+     | ==========  ADMIN  : AJAX restore  ==============================
+     * route: POST /commentary/{id}/restore
+     * ---------------------------------------------------------------- */
+    public function ajaxRestore($id)
     {
-        $commentaryId = Session::get('deleted_commentary_id');
-        if ($commentaryId) {
-            // withTrashed() to find soft-deleted entries
-            $commentary = MatchCommentary::withTrashed()->find($commentaryId);
-            if ($commentary) {
-                $matchId = $commentary->match_id;
-                $commentary->restore();
-                Session::forget('deleted_commentary_id');
-    
-                // **Regenerate JSON** after restoring
-                $this->regenerateCommentaryFile($matchId);
-    
-                return redirect()->back()->with('success', 'Commentary restored successfully.');
-            }
-        }
-    
-        return redirect()->back()->with('error', 'Nothing to undo.');
+        $c = MatchCommentary::withTrashed()->findOrFail($id);
+        $c->restore();
+        $this->regenerateCommentaryFile($c->match_id);
+        return response()->json(['success' => true]);
     }
-    
 
-    public function updateCommentary(Request $request)
+    /* ------------------------------------------------------------------
+     | Helper: rewrite Wasabi JSON (non‑deleted rows only)
+     * ---------------------------------------------------------------- */
+    private function regenerateCommentaryFile(int $matchId): void
     {
-        $validatedData = $request->validate([
-            'id' => 'required|exists:match_commentaries,id',
-            'comment_text' => 'required|string|max:500',
-            'is_important' => 'nullable',
-            'is_bold' => 'nullable',
-        ]);
-    
-        $commentary = MatchCommentary::findOrFail($validatedData['id']);
-    
-        $commentary->is_important = $request->has('is_important') ? 1 : 0;
-        $commentary->is_bold = $request->has('is_bold') ? 1 : 0;
-        $commentary->comment_text = $validatedData['comment_text'];
-        $commentary->save();
-    
-        // **Regenerate JSON** after update
-        $this->regenerateCommentaryFile($commentary->match_id);
-    
-        return redirect()->back()->with('success', 'Commentary updated successfully.');
+        $commentaries = MatchCommentary::where('match_id', $matchId)
+                        ->orderBy('id', 'desc')
+                        ->get();                         // SoftDeletes hides trashed
+
+        Storage::put(
+            "commentary/commentary_{$matchId}.json",
+            $commentaries->toJson()
+        );
     }
-    
-
-
-    
-
-
 }
-    

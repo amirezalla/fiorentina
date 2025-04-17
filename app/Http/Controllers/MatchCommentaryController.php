@@ -16,30 +16,63 @@ class MatchCommentaryController extends Controller
 {
 
     public function fetchLatestCommentaries($matchId)
-{
-$this->storeCommentaries($matchId);
+    {
+        // update DB from API each time
+        $this->importFromApi($matchId);
 
-    // Fetch the latest commentaries ordered by time
-    $commentaries = MatchCommentary::where('match_id', $matchId)
-    ->where(function($query) {
-        $query->whereNotNull('comment_time')
-              ->orWhereNotNull('comment_class')
-              ->orWhereNotNull('comment_text');
-    })
-    ->orderByRaw("
-        CAST(SUBSTRING_INDEX(comment_time, \"'\", 1) AS UNSIGNED) + 
-        IF(LOCATE('+', comment_time) > 0, 
-            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(comment_time, \"'\", 1), '+', -1) AS UNSIGNED), 
-            0
-        )
-    ")
-    ->get();
+        $commentaries = MatchCommentary::where('match_id', $matchId)
+                        ->orderBy('id', 'desc')
+                        ->get();
 
+        return response()->json($commentaries);
+    }
 
-    // Return JSON response
-    return response()->json($commentaries);
-}
+    private function importFromApi(int $matchId): void
+    {
+        $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
+        $url    = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary"
+                . "?locale=it_IT&event_id={$matchId}";
 
+        $resp   = Http::withHeaders([
+            'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
+            'x-rapidapi-key'  => $apiKey,
+        ])->get($url);
+
+        $apiData = $resp->json()['DATA'] ?? [];
+        if (!$apiData) {
+            return;
+        }
+
+        // oldest ‑> newest so INSERT keeps order
+        $apiData = array_reverse($apiData);
+
+        foreach ($apiData as $row) {
+            if (empty($row['COMMENT_TIME']) && empty($row['COMMENT_TEXT'])) {
+                continue;                           // ignore blanks
+            }
+
+            // Skip if exists even in trashed
+            $exists = MatchCommentary::withTrashed()
+                        ->where('match_id', $matchId)
+                        ->where('comment_time', $row['COMMENT_TIME'] ?? null)
+                        ->where('comment_text', $row['COMMENT_TEXT'] ?? null)
+                        ->exists();
+
+            if ($exists) continue;
+
+            MatchCommentary::create([
+                'match_id'      => $matchId,
+                'comment_time'  => $row['COMMENT_TIME'] ?? null,
+                'comment_class' => $row['COMMENT_CLASS'] ?? null,
+                'comment_text'  => $row['COMMENT_TEXT'] ?? null,
+                'is_bold'       => $row['COMMENT_IS_BOLD'] ?? 0,
+                'is_important'  => $row['COMMENT_IS_IMPORTANT'] ?? 0,
+            ]);
+        }
+
+        // rewrite Wasabi JSON once
+        $this->regenerateJson($matchId);
+    }
 
 public static function storeCommentariesAndRegenerateJson($matchId)
 {
@@ -151,7 +184,15 @@ private static function getCommentTimeValue($commentTime)
     return (int) $clean;
 }
 
+private function regenerateJson(int $matchId): void
+{
+    $content = MatchCommentary::where('match_id', $matchId)
+               ->orderBy('id', 'desc')
+               ->get()
+               ->toJson();
 
+    Storage::put("commentary/commentary_{$matchId}.json", $content);
+}
 
 public static function storeCommentaries($matchId)
 {
@@ -223,9 +264,4 @@ public static function storeCommentaries($matchId)
 }
 
 
-
-    public static function liveComments($matchId)
-    {
-
-    }
 }
