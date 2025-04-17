@@ -232,4 +232,15 @@ Route::post('admin/posts/bulk-restore', [PostController::class, 'bulkRestore'])
 
              Route::get('/body/{match}', [ChatController::class, 'body'])
      ->name('chat.body');
+
+     /* trash list (deleted) */
+Route::get ('/trash-body/{match}', [ChatMessageController::class, 'trashBody'])
+->name('chat.trash.body');
+
+/* bulk actions */
+Route::delete('/bulk',         [ChatMessageController::class, 'bulkDelete'])
+->name('chat.bulkDelete');
+
+Route::post  ('/bulk-restore', [ChatMessageController::class, 'bulkRestore'])
+->name('chat.bulkRestore');
     });

@@ -209,14 +209,36 @@ class ChatController extends BaseController
         Storage::put($filePath, $messages->toJson());
     }
 
-    public function body($matchId)
+/* ---------- non‑deleted list (same as before) ---------------- */
+public function body(int $matchId)
 {
-    // get all non‑deleted messages for that match
-    $chats = Message::where('match_id', $matchId)
-                    ->orderBy('id')   // or created_at
-                    ->get();
+    $msgs = Message::where('match_id', $matchId)->latest()->get();
+    return view('partials.chat-body', compact('msgs'))->render();
+}
 
-    return view('diretta.includes.chat-body', compact('chats'))->render();
+/* ---------- trashed list ------------------------------------ */
+public function trashBody(int $matchId)
+{
+    $msgs = Message::onlyTrashed()->where('match_id',$matchId)->latest()->get();
+    return view('partials.chat-body-trash', compact('msgs'))->render();
+}
+
+/* ---------- bulk soft‑delete -------------------------------- */
+public function bulkDelete(Request $req)
+{
+    $ids = $req->input('ids', []);
+    Message::whereIn('id', $ids)->delete();
+    $this->rewriteJson($req->input('match_id'));
+    return response()->json(['success'=>true]);
+}
+
+/* ---------- bulk restore ------------------------------------ */
+public function bulkRestore(Request $req)
+{
+    $ids = $req->input('ids', []);
+    Message::onlyTrashed()->whereIn('id',$ids)->restore();
+    $this->rewriteJson($req->input('match_id'));
+    return response()->json(['success'=>true]);
 }
 
 }

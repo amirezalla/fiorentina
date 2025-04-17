@@ -4,7 +4,14 @@
     @continue($loop->first)
     @php $user = Member::find($chat['user_id']); @endphp
     <tr id="row-{{ $chat->id }}">
-        {{-- ACTIONS --}}
+
+        <td><input type="checkbox" class="row-check" value="{{ $chat->id }}"></td>
+
+        {{-- existing columns (user / msg / date) … --}}
+        <td>{{ $chat->member->full_name ?? 'Unknown' }}</td>
+        <td class="chat-msg">{{ $chat->message }}</td>
+        <td class="text-nowrap">{{ $chat->created_at }}</td>
+
 
         <td>
             <button class="btn btn-link p-0 me-2 text-danger delete-btn" data-id="{{ $chat->id }}" aria-label="Delete">
@@ -15,23 +22,5 @@
                 <i class="fa-solid fa-pen-to-square"></i>
             </button>
         </td>
-
-
-        {{-- USER --}}
-        <td>
-            @if ($user)
-                <a href="{{ url("admin/members/edit/{$user->id}") }}">
-                    {{ $user->first_name }} {{ $user->last_name }}
-                </a>
-            @else
-                <em class="text-muted">Unknown</em>
-            @endif
-        </td>
-
-        {{-- MESSAGE --}}
-        <td class="chat-msg">{{ $chat['message'] }}</td>
-
-        {{-- DATE --}}
-        <td class="text-nowrap">{{ $chat['created_at'] }}</td>
     </tr>
 @endforeach
