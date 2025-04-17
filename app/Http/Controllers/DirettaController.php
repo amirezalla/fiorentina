@@ -76,11 +76,7 @@ class DirettaController extends BaseController
      * ---------------------------------------------------------------- */
     public function ajaxUpdate(Request $request)
     {
-        $request->validate([
-            'comment_text' => 'required|string|max:500',
-            'is_bold'      => 'nullable|boolean',
-            'is_important' => 'nullable|boolean',
-        ]);
+
         $id=$request->id;
 
         $c = MatchCommentary::findOrFail($id);
