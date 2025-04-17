@@ -1,7 +1,7 @@
 @php
     use Carbon\Carbon;
     $date = Carbon::parse($post->published_at);
-    $formattedDate = $date->translatedFormat('d F Y - H:i')->locale('it');
+    $formattedDate = $date->locale('it')->translatedFormat('d F Y - H:i');
 @endphp
 
 
