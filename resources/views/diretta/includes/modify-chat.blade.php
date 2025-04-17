@@ -58,7 +58,7 @@
             const csrf = '{{ csrf_token() }}';
 
             /* ---------------- fetch body every second ---------------- */
-            setInterval(loadBody, 1000);
+            setInterval(loadBody, 10000);
             loadBody();
 
             function loadBody() {
