@@ -8,6 +8,7 @@ use Botble\Base\Facades\BaseHelper;
 use Botble\Base\Http\Controllers\BaseController;
 use Botble\Member\Forms\Fronts\Auth\LoginForm;
 use Botble\Member\Http\Requests\Fronts\Auth\LoginRequest;
+use Botble\Member\Models\Member;
 use Botble\SeoHelper\Facades\SeoHelper;
 use Botble\Theme\Facades\Theme;
 use Illuminate\Http\Request;
@@ -15,12 +16,15 @@ use Illuminate\Validation\ValidationException;
 use Hautelook\Phpass\PasswordHash;
 use MikeMcLin\WpPassword\WpPassword;
 
-
 class LoginController extends BaseController
 {
     use AuthenticatesUsers, LogoutGuardTrait {
         AuthenticatesUsers::attemptLogin as baseAttemptLogin;
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*  VIEW                                                                      */
+    /* -------------------------------------------------------------------------- */
 
     public function showLoginForm()
     {
@@ -39,88 +43,95 @@ class LoginController extends BaseController
         )->render();
     }
 
+    /* -------------------------------------------------------------------------- */
+    /*  LOGIN                                                                     */
+    /* -------------------------------------------------------------------------- */
+
     public function login(LoginRequest $request)
     {
         $this->validateLogin($request);
 
-        // If the class is using the ThrottlesLogins trait, we can automatically throttle
-        // the login attempts for this application. We'll key this by the username and
-        // the IP address of the client making these requests into this application.
+        /* --- throttle -------------------------------------------------------- */
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
 
             return $this->sendLockoutResponse($request);
         }
 
+        /* --- attempt --------------------------------------------------------- */
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
 
-        // If the login attempt was unsuccessful we will increment the number of attempts
-        // to log in and redirect the user back to the login form. Of course, when this
-        // user surpasses their maximum number of attempts they will get locked out.
+        /* --- failed ---------------------------------------------------------- */
         $this->incrementLoginAttempts($request);
 
-        return $this->sendFailedLoginResponse($request);
+        return $this->sendFailedLoginResponse($request);   // ★ pass $request
     }
 
-    protected function attemptLogin(Request $request)
-{
-    $login = $request->email;
+    /**
+     * Custom attemptLogin that understands both WordPress and Laravel hashes.
+     *   – returns **true** on success, **false** on failure;
+     *   – never returns a Response.
+     */
+    protected function attemptLogin(Request $request): bool
+    {
+        $login = $request->input('email');                       // field name in the form
 
-    // Retrieve the member using either email or username
-    $member1 = \Botble\Member\Models\Member::where('email', $login)
-                ->orWhere('user_login', $login)
-                ->first();
+        /** @var Member|null $member */
+        $member = Member::query()
+            ->where('email', $login)
+            ->orWhere('user_login', $login)
+            ->first();
 
-    // If no member is found, immediately fail the login attempt
-    if (!$member1) {
-        return false; 
-    }
+        if (! $member) {
+            return false;                                        // wrong username / e‑mail
+        }
 
-    // Set up WordPress password check
-    $wp_hasher = new PasswordHash(8, false);
-    $wpPassword = new WpPassword($wp_hasher);
+        /* -------- WordPress‑hash branch ------------------------------------ */
+        $isWpHash = strlen($member->password) === 34
+                 && str_starts_with($member->password, '$P$');
 
-    // If the password appears to be WordPress-hashed, use the custom checker
-    if (strlen($member1->password) === 34 && substr($member1->password, 0, 3) === '$P$') {
-        if ($wpPassword->check($request->password, $member1->password)) {
-            if (setting('verify_account_email', config('plugins.member.general.verify_email')) && empty($member1->confirmed_at)) {
-                throw ValidationException::withMessages([
-                    'confirmation' => [
-                        trans('plugins/member::member.not_confirmed', [
-                            'resend_link' => route('public.member.resend_confirmation', ['email' => $member1->email]),
-                        ]),
-                    ],
-                ]);
+        if ($isWpHash) {
+            $wpHasher   = new PasswordHash(8, false);
+            $wpPassword = new WpPassword($wpHasher);
+
+            if (! $wpPassword->check($request->password, $member->password)) {
+                return false;                                    // wrong password
             }
 
-            $this->guard()->login($member1, $request->filled('remember'));
-            return true;
-        }
-    } else {
-        // If not a WP hash, use the default validation and login attempt
-        if ($this->guard()->validate($this->credentials($request))) {
+        /* -------- Normal Laravel hash branch ------------------------------- */
+        } else {
+            if (! $this->guard()->validate($this->credentials($request))) {
+                return false;                                    // wrong password
+            }
+
             $member = $this->guard()->getLastAttempted();
-
-            if (setting('verify_account_email', config('plugins.member.general.verify_email')) && empty($member->confirmed_at)) {
-                throw ValidationException::withMessages([
-                    'confirmation' => [
-                        trans('plugins/member::member.not_confirmed', [
-                            'resend_link' => route('public.member.resend_confirmation', ['email' => $member->email]),
-                        ]),
-                    ],
-                ]);
-            }
-
-            return $this->baseAttemptLogin($request);
         }
+
+        /* -------- Account confirmation ------------------------------------- */
+        if (
+            setting('verify_account_email', config('plugins.member.general.verify_email')) &&
+            empty($member->confirmed_at)
+        ) {
+            throw ValidationException::withMessages([
+                'confirmation' => [
+                    trans('plugins/member::member.not_confirmed', [
+                        'resend_link' => route('public.member.resend_confirmation', ['email' => $member->email]),
+                    ]),
+                ],
+            ]);
+        }
+
+        /* -------- Log the member in ---------------------------------------- */
+        $this->guard()->login($member, $request->filled('remember'));
+
+        return true;
     }
 
-    return false;
-}
-
-
+    /* -------------------------------------------------------------------------- */
+    /*  GUARD & LOGOUT                                                            */
+    /* -------------------------------------------------------------------------- */
 
     protected function guard()
     {
@@ -136,6 +147,7 @@ class LoginController extends BaseController
             if ($guardConfig['driver'] !== 'session') {
                 continue;
             }
+
             if ($this->isActiveGuard($request, $guard)) {
                 $activeGuards++;
             }
