@@ -1,10 +1,11 @@
 /* Titillium Web Regular */
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
 
 :root {
     --primary-font: 'Roboto Condensed', sans-serif;
     --secondary-font: 'Titillium Web', sans-serif;
+
 }
 
 body {
@@ -4399,8 +4400,12 @@ header>.container {
 }
 
 .post--single .post__title_in {
-    font-size: 44px !important;
-    letter-spacing: 0 !important;
+    font-size: 3.5rem !important;
+    letter-spacing: -0.02em !important;
+    font-weight: 900;
+    font-family: 'Roboto';
+    line-height: 1.1;
+    color: #333 !important;
 }
 
 .category-label {
