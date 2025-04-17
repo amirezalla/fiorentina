@@ -264,51 +264,86 @@ public static function storeCommentaries($matchId)
 }
 
 
-public function importFromApi1( $matchId)
+/**
+ * Import commentary from RapidAPI, but never overwrite a row that
+ * an admin has already edited (updated_at ≠ created_at).
+ */
+public function importFromApi1(int $matchId): void
 {
-    $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
-    $url    = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary"
-            . "?locale=it_IT&event_id={$matchId}";
-
-    $resp   = Http::withHeaders([
-        'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
-        'x-rapidapi-key'  => $apiKey,
-    ])->get($url);
+    /* -------------------------------------------------- 1. Load API data */
+    $resp = Http::withHeaders([
+                'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
+                'x-rapidapi-key'  => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb',
+            ])->get("https://flashlive-sports.p.rapidapi.com/v1/events/commentary"
+                   . "?locale=it_IT&event_id={$matchId}");
 
     $apiData = $resp->json()['DATA'] ?? [];
     if (!$apiData) {
         return;
     }
 
-    // oldest ‑> newest so INSERT keeps order
-    $apiData = array_reverse($apiData);
+    $apiData = array_reverse($apiData);             // oldest → newest
 
+    /* -------------------------------------------------- 2. Process rows  */
     foreach ($apiData as $row) {
-        if (empty($row['COMMENT_TIME']) && empty($row['COMMENT_TEXT'])) {
-            continue;                           // ignore blanks
+        if (empty($row['COMMENT_TIME']) && empty($row['COMMENT_TEXT'])) continue;
+
+        $minute = $row['COMMENT_TIME']  ?? null;
+        $class  = $row['COMMENT_CLASS'] ?? null;
+        $text   = $row['COMMENT_TEXT']  ?? null;
+
+        /* 2‑a  Was an admin edit already made for this minute ? */
+        $editedExists = MatchCommentary::where('match_id', $matchId)
+                        ->where('comment_time', $minute)
+                        ->whereColumn('updated_at', '!=', 'created_at')
+                        ->exists();
+
+        if ($editedExists) {
+            // respect admin edit – do not import/overwrite anything for this minute
+            continue;
         }
 
-        // Skip if exists even in trashed
-        $exists = MatchCommentary::withTrashed()
-                    ->where('match_id', $matchId)
-                    ->where('comment_time', $row['COMMENT_TIME'] ?? null)
-                    ->where('comment_text', $row['COMMENT_TEXT'] ?? null)
-                    ->exists();
-
-        if ($exists) continue;
-
-        MatchCommentary::create([
+        /* 2‑b  Check for existing row with the same composite key */
+        $key = [
             'match_id'      => $matchId,
-            'comment_time'  => $row['COMMENT_TIME'] ?? null,
-            'comment_class' => $row['COMMENT_CLASS'] ?? null,
-            'comment_text'  => $row['COMMENT_TEXT'] ?? null,
-            'is_bold'       => $row['COMMENT_IS_BOLD'] ?? 0,
-            'is_important'  => $row['COMMENT_IS_IMPORTANT'] ?? 0,
-        ]);
+            'comment_time'  => $minute,
+            'comment_class' => $class,
+            'comment_text'  => $text,
+        ];
+
+        $existing = MatchCommentary::withTrashed()
+                    ->where($key)
+                    ->first();
+
+        // If the exact composite row exists but is soft‑deleted, keep it deleted
+        if ($existing && $existing->trashed()) {
+            continue;
+        }
+
+        // If active row exists, update meta only (keep text)
+        if ($existing) {
+            $existing->update([
+                'is_bold'      => $row['COMMENT_IS_BOLD']      ?? $existing->is_bold,
+                'is_important' => $row['COMMENT_IS_IMPORTANT'] ?? $existing->is_important,
+            ]);
+            continue;
+        }
+
+        /* 2‑c  Otherwise create a brand‑new commentary */
+        MatchCommentary::create(array_merge($key, [
+            'is_bold'      => $row['COMMENT_IS_BOLD']      ?? 0,
+            'is_important' => $row['COMMENT_IS_IMPORTANT'] ?? 0,
+        ]));
     }
 
-    // rewrite Wasabi JSON once
-    $this->regenerateJson($matchId);
+    /* -------------------------------------------------- 3. Rewrite JSON  */
+    $content = MatchCommentary::where('match_id', $matchId)
+               ->orderBy('id', 'desc')
+               ->get()
+               ->toJson();
+
+    Storage::put("commentary/commentary_{$matchId}.json", $content);
 }
+
 
 }
