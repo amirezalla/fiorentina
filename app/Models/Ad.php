@@ -230,19 +230,19 @@ class Ad extends BaseModel
                 $chunk = $contentMatches->chunk(ceil(count($contentMatches) / 4));
                 $content = $chunk->map(function ($item, $key) use ($ads) {
                     if ($key == 0 && $ads->has(self::GROUP_DBLOG_P1)) {
-                        $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P1)])->render();
+                        $item[] = view('ads.includes.dblog-p1', ['ad' => $ads->get(self::GROUP_DBLOG_P1)])->render();
                         $item[] = view('ads.includes.MOBILE_POSIZIONE_1', ['ad' => $ads->get(self::MOBILE_POSIZIONE_1)])->render();
                     } else if ($key == 1 && $ads->has(self::GROUP_DBLOG_P2)) {
-                        $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
+                        $item[] = view('ads.includes.dblog-p2', ['ad' => $ads->get(self::GROUP_DBLOG_P2)])->render();
                         $item[] = view('ads.includes.MOBILE_POSIZIONE_2', ['ad' => $ads->get(self::MOBILE_POSIZIONE_2)])->render();
                     } else if ($key == 2 && $ads->has(self::GROUP_DBLOG_P3)) {
-                        $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
+                        $item[] = view('ads.includes.dblog-p3', ['ad' => $ads->get(self::GROUP_DBLOG_P3)])->render();
                         $item[] = view('ads.includes.MOBILE_POSIZIONE_5', ['ad' => $ads->get(self::MOBILE_POSIZIONE_5)])->render();
                     } else if ($key == 3 && $ads->has(self::GROUP_DBLOG_P4)) {
-                        $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P4)])->render();
+                        $item[] = view('ads.includes.dblog-p4', ['ad' => $ads->get(self::GROUP_DBLOG_P4)])->render();
                         $item[] = view('ads.includes.MOBILE_POSIZIONE_4', ['ad' => $ads->get(self::MOBILE_POSIZIONE_4)])->render();
                     } else if ($key == 4 && $ads->has(self::GROUP_DBLOG_P5)) {
-                        $item[] = view('ads.includes.dblog-p', ['ad' => $ads->get(self::GROUP_DBLOG_P5)])->render();
+                        $item[] = view('ads.includes.dblog-p5', ['ad' => $ads->get(self::GROUP_DBLOG_P5)])->render();
                     }
                     return $item;
                 })->flatten();
