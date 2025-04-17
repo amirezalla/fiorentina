@@ -9,7 +9,7 @@
     }
 @endphp
 
-@extends(BaseHelper::getAdminMasterLayoutTemplate())
+
 
 @section('content')
     <div class="container mt-3">
