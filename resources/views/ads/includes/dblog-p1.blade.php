@@ -1,3 +1,4 @@
+<div class="d-none d-md-block">
 @if (isset($ad) && $ad)
     @if ($ad->type == 1)
         {{-- Track impression for type=1 ads --}}
@@ -23,3 +24,4 @@
         </div>
     @endif
 @endif
+</div>
