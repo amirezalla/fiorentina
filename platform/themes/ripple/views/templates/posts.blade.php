@@ -14,7 +14,7 @@
                     </div>
                 </header>
                 <div class="post__content p-0">
-                    <p data-number-line="4">{{ $post->description }}</p>
+                    {!! $post->description !!}
                 </div>
             </div>
         </article>
