@@ -175,7 +175,7 @@
                  ${new Date(msg.created_at).toLocaleTimeString()}
              </div>`;
 
-            li.append(avatar, wrap);
+            li.prepend(avatar, wrap);
             return li;
         }
 
