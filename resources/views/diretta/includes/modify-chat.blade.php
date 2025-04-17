@@ -2,7 +2,9 @@
 
 <div class="container mt-3">
     <div class="d-flex mb-2">
-        <button class="btn btn-danger me-2" id="bulk-delete">Delete selected</button>
+        <div class="col-12 justify-content-end d-flex">
+            <button class="btn btn-danger me-2" id="bulk-delete">Delete selected</button>
+        </div>
     </div>
     <div class="table-responsive">
         <table class="table table-sm table-striped align-middle" id="chat-table">
