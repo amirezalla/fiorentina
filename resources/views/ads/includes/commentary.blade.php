@@ -87,77 +87,81 @@
             return rowHtml;
         }
 
-        // Delete commentary via AJAX, so we don’t need a full page reload
-        window.deleteCommentary = function(commentId, event) {
-            event.preventDefault();
+        /* ==============================================================
+         * 1)  DELETE commentary (soft‑delete) and refresh immediately
+         * ============================================================== */
+        window.deleteCommentary = async function(commentId, evt) {
+            evt.preventDefault();
             if (!confirm('Are you sure you want to delete this commentary?')) return;
 
-            fetch(`/delete-commentary?id=${commentId}`, {
-                    method: 'GET', // or 'POST' if your route is POST
+            try {
+                // 1. delete row
+                await fetch(`/commentary/${commentId}`, {
+                    method: 'DELETE',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': csrfToken
                     }
-                })
-                .then(res => {
+                });
 
-                    // hide the edit box
-                    toggleEditBox(commentId);
-                    // sync JSON on the server
-                    fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
-                    // optional immediate UI refresh
-                    refreshCommentaries();
+                // 2. hide edit box (if open)
+                toggleEditBox(commentId);
 
-                })
-                .then(() => {
-                    // The server will handle rewriting the JSON.
-                    // We'll just rely on the WebSocket to refresh, or we can call fetchCommentaries()
-                    // fetchCommentaries();
-                })
-                .catch(console.error);
+                // 3. tell backend to sync JSON
+                await fetch(`/match/${matchId}/sync-all-commentaries`);
+
+                // 4. refresh UI list
+                if (typeof refreshCommentaries === 'function') refreshCommentaries();
+
+            } catch (e) {
+                console.error(e);
+                alert('Error deleting commentary.');
+            }
         };
 
-        // Toggle the edit box
-        window.toggleEditBox = function(id, event) {
-            if (event) event.preventDefault();
-            const editBox = document.getElementById(`edit-box-${id}`);
-            if (!editBox) return;
+        /* ==============================================================
+         * 2)  EDIT commentary (AJAX PATCH) and refresh immediately
+         * ============================================================== */
+        window.submitEditForm = async function(evt, id) {
+            evt.preventDefault();
+            const form = evt.target;
+            const data = new FormData(form);
 
-            editBox.style.display = (editBox.style.display === 'none' || !editBox.style.display) ?
-                'block' :
-                'none';
-        };
+            try {
+                // 1. update row
+                await fetch(`/commentary/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: data
+                });
 
-        // Submit the edit form via AJAX
-        window.submitEditForm = function(event, id) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
+                // 2. hide edit box
+                toggleEditBox(id);
 
-            fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(res => {
+                // 3. sync JSON on server
+                await fetch(`/match/${matchId}/sync-all-commentaries`);
 
-                    // hide the edit box
-                    toggleEditBox(commentId);
+                // 4. refresh UI
+                if (typeof refreshCommentaries === 'function') refreshCommentaries();
 
-                    fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
-                    // optional immediate UI refresh
-                    refreshCommentaries();
+            } catch (e) {
+                console.error(e);
+                alert('Error updating commentary.');
+            }
 
-                })
-                .then(() => {
-                    // The server updates DB, rewrites Wasabi JSON
-                    // We rely on WebSocket to refresh automatically
-                    // Or we can do fetchCommentaries() if you want immediate update
-                    // fetchCommentaries();
-                })
-                .catch(console.error);
-
-            // Hide the edit box
-            toggleEditBox(id);
             return false;
+        };
+
+        /* ==============================================================
+         * 3)  Toggle edit box (unchanged)
+         * ============================================================== */
+        window.toggleEditBox = function(id, evt) {
+            if (evt) evt.preventDefault();
+            const box = document.getElementById(`edit-box-${id}`);
+            if (!box) return;
+            box.style.display = (box.style.display === 'none' || !box.style.display) ?
+                'block' : 'none';
         };
 
         // ---------------------------------------
