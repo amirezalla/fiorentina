@@ -4887,6 +4887,10 @@ header>.container,
 
 }
 
+.post--single .post__content {
+    color: #444 !important;
+}
+
 @media (max-width: 538px) {
 
     .black-box span a,
