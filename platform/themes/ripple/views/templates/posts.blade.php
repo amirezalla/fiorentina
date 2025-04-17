@@ -14,7 +14,7 @@
                     </div>
                 </header>
                 <div class="post__content p-0">
-                    {!! $post->description !!}
+                    <p data-number-line="4">{!! $post->description !!}</p>
                 </div>
             </div>
         </article>
