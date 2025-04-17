@@ -86,7 +86,7 @@
             `;
             return rowHtml;
         }
-
+        const csrfToken = '{{ csrf_token() }}';
         /* ==============================================================
          * 1)  DELETE commentary (soft‑delete) and refresh immediately
          * ============================================================== */
@@ -99,7 +99,7 @@
                 await fetch(`/commentary/${commentId}`, {
                     method: 'DELETE',
                     headers: {
-                        'X-CSRF-TOKEN': {{ csrf_token() }}
+                        'X-CSRF-TOKEN': csrfToken
                     }
                 });
 
@@ -131,7 +131,7 @@
                 await fetch(`/commentary/${id}`, {
                     method: 'PATCH',
                     headers: {
-                        'X-CSRF-TOKEN': {{ csrf_token() }}
+                        'X-CSRF-TOKEN': csrfToken
                     },
                     body: data
                 });
