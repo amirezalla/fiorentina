@@ -110,7 +110,8 @@
                 fetch(`/match/${matchId}/sync-all-commentaries`);
 
                 // 4. refresh UI list
-                if (typeof refreshCommentaries === 'function') refreshCommentaries();
+                fetchCommentaries();
+
 
             } catch (e) {
                 console.error(e);
@@ -143,7 +144,7 @@
                 fetch(`/match/${matchId}/sync-all-commentaries`);
 
                 // 4. refresh UI
-                if (typeof refreshCommentaries === 'function') refreshCommentaries();
+                fetchCommentaries();
 
             } catch (e) {
                 console.error(e);
