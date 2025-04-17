@@ -1287,6 +1287,7 @@ p:empty {
 }
 
 .post__widget .date-span {
+    margin-top: 5px;
     color: #555;
     font-size: 0.75rem;
     font-weight: 400;
