@@ -5,7 +5,7 @@
     <tr id="row-{{ $chat->id }}">
         <td><input type="checkbox" class="row-check" value="{{ $chat->id }}"></td>
 
-        <td>{{ $user->full_name ?? 'Unknown' }}</td>
+        <td>{{ $user->first_name ?? 'Unknown' }}</td>
         <td>{{ $chat->message }}</td>
         <td class="text-nowrap">{{ $chat->created_at }}</td>
 

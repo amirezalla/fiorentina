@@ -8,8 +8,7 @@
 
         <td><input type="checkbox" class="row-check" value="{{ $chat->id }}"></td>
 
-        {{-- existing columns (user / msg / date) … --}}
-        <td>{{ $user->full_name ?? 'Unknown' }}</td>
+        <td>{{ $user->first_name ?? 'Unknown' }}</td>
         <td class="chat-msg">{{ $chat->message }}</td>
         <td class="text-nowrap">{{ $chat->created_at }}</td>
 
