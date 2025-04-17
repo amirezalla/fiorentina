@@ -117,14 +117,10 @@ class LoginController extends BaseController
         }
     }
 
-    return false
+    return false;
 }
-private function throwFailed(): void
-{
-    throw ValidationException::withMessages([
-        'email' => ['authentication failed'],          // same message Laravel uses
-    ]);
-}
+
+
 
     protected function guard()
     {
