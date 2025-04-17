@@ -213,14 +213,14 @@ class ChatController extends BaseController
 public function body($matchId)
 {
     $msgs = Message::where('match_id', $matchId)->latest()->get();
-    return view('partials.chat-body', compact('msgs'))->render();
+    return view('diretta.includes.chat-body', compact('msgs'))->render();
 }
 
 /* ---------- trashed list ------------------------------------ */
 public function trashBody($matchId)
 {
     $msgs = Message::onlyTrashed()->where('match_id',$matchId)->latest()->get();
-    return view('partials.chat-body-trash', compact('msgs'))->render();
+    return view('diretta.includes.chat-body-trash', compact('msgs'))->render();
 }
 
 /* ---------- bulk soft‑delete -------------------------------- */
