@@ -27,7 +27,7 @@ class MatchCommentaryController extends Controller
         return response()->json($commentaries);
     }
 
-    private function importFromApi(int $matchId): void
+    private function importFromApi( $matchId): void
     {
         $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
         $url    = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary"

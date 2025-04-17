@@ -122,7 +122,7 @@ class DirettaController extends BaseController
     /* ------------------------------------------------------------------
      | Helper: rewrite Wasabi JSON (non‑deleted rows only)
      * ---------------------------------------------------------------- */
-    private function regenerateCommentaryFile(int $matchId): void
+    private function regenerateCommentaryFile($matchId): void
     {
         $commentaries = MatchCommentary::where('match_id', $matchId)
                         ->orderBy('id', 'desc')
