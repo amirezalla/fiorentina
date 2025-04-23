@@ -4129,6 +4129,10 @@ body {
     list-style: none
 }
 
+#myTab {
+    list-style-type: none !important;
+}
+
 .navigation .language-wrapper {
     padding-left: 15px
 }
