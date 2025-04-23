@@ -3882,14 +3882,13 @@ figure.image figcaption {
 
 .post__content ol,
 .post__content ul {
-    list-style: disc;
+
     padding-left: 25px
 }
 
 .post__content ol li,
 .post__content ul li {
     font-weight: 400;
-    list-style: disc
 }
 
 .post__content table {
@@ -4037,7 +4036,6 @@ body {
 
 .post.post--single .post__content ol,
 .post.post--single .post__content ul {
-    list-style: disc;
     margin-bottom: 25px;
     padding-left: 25px
 }
@@ -4045,7 +4043,6 @@ body {
 .post.post--single .post__content ol li,
 .post.post--single .post__content ul li {
     font-weight: 400;
-    list-style: disc
 }
 
 .post.post--single .post__content ol,
