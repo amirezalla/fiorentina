@@ -5251,6 +5251,7 @@ header>.container,
     position: absolute;
     top: -9px;
     left: 50%;
+    transform: translateX(-50%);
     flex: 1;
     text-align: center;
     color: #f0f6fc;
@@ -5258,7 +5259,7 @@ header>.container,
 }
 
 .stat-value {
-    width: 50px;
+    width: 100px;
     text-align: center;
     color: #202020;
     font-weight: 700;
