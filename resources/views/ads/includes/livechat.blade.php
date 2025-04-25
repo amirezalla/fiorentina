@@ -247,7 +247,7 @@
         // ------------------------------------------------------------------
         setInterval(() => {
             // triggers backend sync (if you have it) then refresh list
-            fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
+            // fetch(`/match/${matchId}/sync-all-commentaries`).catch(() => {});
             refreshMessages();
         }, 70000);
 

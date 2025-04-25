@@ -105,7 +105,7 @@
                             'X-CSRF-TOKEN': csrf
                         }
                     });
-                    await fetch(`/match/${matchId}/sync-all-commentaries`);
+                    // await fetch(`/match/${matchId}/sync-all-commentaries`);
                     loadBody();
                 }
                 async function singleRestore(id) {
@@ -115,7 +115,7 @@
                             'X-CSRF-TOKEN': csrf
                         }
                     });
-                    await fetch(`/match/${matchId}/sync-all-commentaries`);
+                    // await fetch(`/match/${matchId}/sync-all-commentaries`);
                     loadBody();
                 }
 
@@ -134,7 +134,7 @@
                             match_id: matchId
                         })
                     });
-                    await fetch(`/match/${matchId}/sync-all-commentaries`);
+                    // await fetch(`/match/${matchId}/sync-all-commentaries`);
                     loadBody();
                 };
 
@@ -152,7 +152,7 @@
                             match_id: matchId
                         })
                     });
-                    await fetch(`/match/${matchId}/sync-all-commentaries`);
+                    // await fetch(`/match/${matchId}/sync-all-commentaries`);
                     loadBody();
                 };
 
