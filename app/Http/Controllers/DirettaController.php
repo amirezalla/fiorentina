@@ -104,7 +104,7 @@ class DirettaController extends BaseController
             'comment_text' => '[Deleted]', // Mark as deleted
             'is_bold' => false,
             'is_important' => false,
-            'deleted_at' => now(), // Update deleted_at timestamp
+            'deleted_at' => '2025-04-25T10:47:55.000000Z', // Update deleted_at timestamp
         ]);
         $this->regenerateCommentaryFile($c->match_id);
         return response()->json(['success' => true]);
