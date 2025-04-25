@@ -15,16 +15,18 @@ use Illuminate\Support\Facades\Storage;
 class MatchCommentaryController extends Controller
 {
 
-    public function fetchLatestCommentaries($matchId)
+    public function fetchLatestCommentaries($matchId): JsonResponse
     {
-        // update DB from API each time
-        $this->importFromApi($matchId);
-
-        $commentaries = MatchCommentary::where('match_id', $matchId)
-                        ->orderBy('id', 'desc')
-                        ->get();
-
-        return response()->json($commentaries);
+        $path = "commentary/commentary_{$matchId}.json";
+    
+        if (!Storage::disk('wasabi')->exists($path)) {
+            return response()->json([], 404);
+        }
+    
+        $content = Storage::disk('wasabi')->get($path);
+        $json = json_decode($content, true);
+    
+        return response()->json($json);
     }
 
     private function importFromApi( $matchId): void

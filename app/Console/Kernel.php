@@ -15,6 +15,14 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:work --timeout=60 --tries=1 --once')
             ->everyMinute()
             ->withoutOverlapping();
+
+
+            $schedule->call(function () {
+                $liveMatches = Calendario::where('is_live', 1)->pluck('match_id');
+                foreach ($liveMatches as $matchId) {
+                    Artisan::queue('commentary:sync', ['matchId' => $matchId]);
+                }
+            })->everyMinute();
     }
 
     /**

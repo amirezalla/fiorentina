@@ -24,6 +24,8 @@
     // Sort & build rows
     $formationInitiali = $formationInitiali->sortBy('player_position');
     $formationDisposition = $formationInitiali->first()->formation_disposition ?? '';
+    $cleanDisposition = preg_replace('/^\d+-/', '', $formationDisposition);
+
     $formationArray = array_filter(explode('-', $formationDisposition));
 
     $playerRows = [];
@@ -55,7 +57,7 @@
             <div class="row">
                 <div class="col-12">
                     <h2 class="pl-5 text-dark text-bold">Formazioni Iniziali</h2>
-                    <p class="pl-5 text-dark text-bold">Formation: {{ $formationDisposition }}</p>
+                    <p class="pl-5 text-dark text-bold">Formation: {{ $cleanDisposition }}</p>
                 </div>
             </div>
 

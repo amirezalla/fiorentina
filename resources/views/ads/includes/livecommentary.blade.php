@@ -1,31 +1,25 @@
-@php
-    use App\Http\Controllers\MatchCommentaryController;
-@endphp
-
-<!-- resources/views/match-commentary.blade.php or similar -->
 <div class="container mt-3" id="commentary-container"></div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var matchId = "{{ $matchId }}"; // from Blade
-        var wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
+        const matchId = "{{ $matchId }}";
+        const wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
 
-        // ---------------------------------------
-        // 1) Function to fetch commentary via HTTP
-        // ---------------------------------------
+        // --- 1. Load from Laravel (reading Wasabi JSON file only) ---
         function fetchCommentaries() {
-            fetch('/match/' + matchId + '/commentaries')
+            fetch(`/match/${matchId}/commentaries`)
                 .then(response => response.json())
-                .then(data => updateCommentaries(data))
+                .then(updateCommentaries)
                 .catch(console.error);
         }
 
         function updateCommentaries(commentaries) {
-            var container = document.getElementById('commentary-container');
-            container.innerHTML = ''; // Clear existing commentaries
+            const container = document.getElementById('commentary-container');
+            container.innerHTML = ''; // Clear previous
 
-            commentaries.forEach(function(comment) {
-                var commentRow = `
-                    <div class="commentary-row ${comment.comment_class}
+            commentaries.forEach(comment => {
+                const row = `
+                    <div class="commentary-row ${comment.comment_class || ''}
                          ${comment.is_important ? 'important' : ''}
                          ${comment.is_bold ? 'comment-is-bold' : ''}">
                         <div class="comment-time">${comment.comment_time || ''}</div>
@@ -35,76 +29,43 @@
                         </div>
                     </div>
                 `;
-                container.innerHTML += commentRow;
+                container.innerHTML += row;
             });
         }
 
-        // ---------------------------------------
-        // 2) Create WebSocket (with reconnect)
-        // ---------------------------------------
-        let ws; // we'll store the websocket instance here
+        // --- 2. WebSocket live listener for file updates ---
+        let ws;
+
         function createWebSocket() {
             ws = new WebSocket(wsUrl);
 
             ws.onopen = () => {
-                console.log("WebSocket connected for commentary.");
-
-                // Tell server which file to watch
-                const subscriptionMessage = JSON.stringify({
+                console.log("WebSocket connected.");
+                ws.send(JSON.stringify({
                     filePath: `commentary/commentary_${matchId}.json`
-                });
-                ws.send(subscriptionMessage);
+                }));
             };
 
-            ws.onmessage = (event) => {
-                console.log("WebSocket commentary update received:", event.data);
-                // Reload commentary from Laravel
+            ws.onmessage = () => {
+                console.log("Update received. Reloading commentary.");
                 fetchCommentaries();
             };
 
-            ws.onerror = (error) => {
-                console.error("WebSocket error (commentary):", error);
+            ws.onerror = error => {
+                console.error("WebSocket error:", error);
             };
 
             ws.onclose = () => {
-                console.log("WebSocket closed (commentary). Reconnecting in 5 seconds...");
-                // Attempt to reconnect after 5 seconds
+                console.warn("WebSocket closed. Reconnecting...");
                 setTimeout(createWebSocket, 5000);
             };
         }
 
-        // ---------------------------------------
-        // 3) Kick things off
-        // ---------------------------------------
-        fetchCommentaries(); // Initial data load
-        createWebSocket(); // Create WebSocket and auto-reconnect on close
+        // --- 3. Kick things off ---
+        fetchCommentaries();
+        createWebSocket();
 
-        // Optional: fallback polling (every 15s) if you want extra safety
-        setInterval(() => {
-
-            fetch(`/match/${matchId}/sync-all-commentaries`, {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // if needed
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('storeCommentaries triggered:', data);
-                })
-                .catch(error => {
-                    console.error('Error calling storeCommentaries:', error);
-                });
-
-
-
-
-            const subscriptionMessage1 = JSON.stringify({
-                filePath: `commentary/commentary_${matchId}.json`
-            });
-            ws.send(subscriptionMessage1);
-        }, 70000);
+        // --- Optional polling fallback if WebSocket fails silently ---
+        setInterval(fetchCommentaries, 30000);
     });
 </script>
