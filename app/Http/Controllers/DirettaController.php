@@ -100,7 +100,12 @@ class DirettaController extends BaseController
     {
         $id=$request->id;
         $c = MatchCommentary::findOrFail($id);
-        $c->delete();                                 // soft delete
+        $c->update([
+            'comment_text' => '[Deleted]', // Mark as deleted
+            'is_bold' => false,
+            'is_important' => false,
+            'deleted_at' => now(), // Update deleted_at timestamp
+        ]);
         $this->regenerateCommentaryFile($c->match_id);
         return response()->json(['success' => true]);
     }
