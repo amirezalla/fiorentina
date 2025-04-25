@@ -123,7 +123,7 @@ class DirettaController extends BaseController
      * ---------------------------------------------------------------- */
     private function regenerateCommentaryFile($matchId): void
     {
-        $commentaries = MatchCommentary::withTrashed()->where('match_id', $matchId)
+        $commentaries = MatchCommentary::where('match_id', $matchId)
                         ->orderBy('id', 'desc')
                         ->get();                         // SoftDeletes hides trashed
 

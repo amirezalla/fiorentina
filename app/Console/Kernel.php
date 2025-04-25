@@ -18,11 +18,14 @@ class Kernel extends ConsoleKernel
 
 
             $schedule->call(function () {
-                $liveMatches = Calendario::where('is_live', 1)->pluck('match_id');
+                $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
                 foreach ($liveMatches as $matchId) {
                     Artisan::queue('commentary:sync', ['matchId' => $matchId]);
                 }
             })->everyMinute();
+            
+            $schedule->command('matches:start-scheduled')->everyTwoMinutes();
+
     }
 
     /**
