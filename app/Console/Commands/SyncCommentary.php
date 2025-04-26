@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Calendario;          // ← your “matches” table
 use App\Models\MatchCommentary;     // ← your commentary model
+use Illuminate\Support\Facades\Log; // ← for logging
 
 class SyncCommentary extends Command
 {
@@ -73,6 +74,7 @@ class SyncCommentary extends Command
                 ->get()
                 ->toJson();
 
+        Log::info($json);
         Storage::disk('wasabi')->put("commentary/commentary_{$matchId}.json", $json, 'public');
 
         $this->info("Updated commentary_{$matchId}.json (".strlen($json)." bytes)");

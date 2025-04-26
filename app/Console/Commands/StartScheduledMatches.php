@@ -34,7 +34,8 @@ class StartScheduledMatches extends Command
             $match->update([
                 'status' => 'LIVE'
             ]);
-            $this->info("Match {$match->match_id} set to LIVE.");
+            Log::info('Match {$match->match_id} set to LIVE.');
+
         }
 
         return Command::SUCCESS;
