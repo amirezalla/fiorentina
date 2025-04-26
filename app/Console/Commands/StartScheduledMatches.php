@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Calendario;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
 
 class StartScheduledMatches extends Command
 {
@@ -13,6 +15,9 @@ class StartScheduledMatches extends Command
 
     public function handle(): int
     {
+        
+        // Log the command execution
+        Log::info('StartScheduledMatches command executed.');
         $now = Carbon::now();
         $minutesLater = $now->copy()->addMinutes(15);
 

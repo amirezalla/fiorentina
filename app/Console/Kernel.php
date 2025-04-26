@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\Calendario;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 
 class Kernel extends ConsoleKernel
@@ -21,6 +22,7 @@ class Kernel extends ConsoleKernel
 
 
             $schedule->call(function () {
+                Log::info('Running commentary sync task.');
                 $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
                 foreach ($liveMatches as $matchId) {
                     Artisan::queue('commentary:sync', ['matchId' => $matchId]);
