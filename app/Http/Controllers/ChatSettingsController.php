@@ -22,12 +22,11 @@ class ChatSettingsController extends Controller
     public function updateLightWords(Request $request)
     {
         $request->validate([
-            'light_words' => 'required|array',       // validate as array
-            'light_words.*' => 'string',              // each item must be a string
+            'light_words' => 'required|string', // Expect a string like "kuni, madarjende"
         ]);
     
-        // $request->light_words is already an array, just trim each word
-        $wordsArray = array_map('trim', $request->light_words);
+        // split string by comma manually
+        $wordsArray = array_map('trim', explode(',', $request->light_words));
     
         Setting::updateOrCreate(
             ['key' => 'light_words_censor'],

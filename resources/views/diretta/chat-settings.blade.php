@@ -14,7 +14,7 @@
             @csrf
             <div class="form-group">
                 <label for="light_words">Censored Words (comma-separated):</label>
-                <textarea name="light_words[]" id="light_words" class="form-control" rows="5">{{ implode(',', $lightWords) }}</textarea>
+                <textarea name="light_words" id="light_words" class="form-control" rows="5">{{ implode(',', $lightWords) }}</textarea>
             </div>
             <button type="submit" class="btn btn-primary mt-2">Save Light Words</button>
         </form>
