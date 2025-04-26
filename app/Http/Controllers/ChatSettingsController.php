@@ -22,8 +22,10 @@ class ChatSettingsController extends Controller
     public function updateLightWords(Request $request)
     {
         $request->validate([
-            'light_words' => 'required|string', // ← Expect a single string
+            'light_words' => 'required|array',       // <-- array not string
+            'light_words.*' => 'string',              // <-- each item must be a string
         ]);
+        
     
         $wordsArray = array_map('trim', explode(',', $request->light_words)); // ← Split by comma
     
