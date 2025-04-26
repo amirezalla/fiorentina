@@ -101,6 +101,7 @@ class ChatController extends BaseController
 
         $lightWordsSetting = Setting::where('key', 'light_words_censor')->value('value');
         $light = json_decode($lightWordsSetting, true) ?? [];
+        dd($light);
     
         // Function to censor a word by keeping the first and last letter and replacing the middle with asterisks
         $censorWord = function ($word) {
