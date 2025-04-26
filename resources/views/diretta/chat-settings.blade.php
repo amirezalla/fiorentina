@@ -1,4 +1,4 @@
-@extends('layouts.app') <!-- or your layout -->
+@extends(BaseHelper::getAdminMasterLayoutTemplate())
 
 @section('content')
     <div class="container">
