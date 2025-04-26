@@ -14,6 +14,7 @@ use Botble\Base\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\StoreMessageJob;
+use Botble\Setting\Models\Setting;
 
 
 
@@ -52,12 +53,14 @@ class ChatController extends BaseController
             return response()->json(['error' => 'Chat is finished'], 403);
         }
     
+        $autoMessage = Setting::where('key', 'chat_first_message')->value('value') 
+                       ?? 'La chat è iniziata! Si prega di rispettare le regole, essere gentili e cortesi.';
         // If the chat was just created, create a welcome message from user_id = 1
         if ($liveChat->wasRecentlyCreated) {
             Message::create([
                 'match_id' => $matchId,
                 'user_id' => 1, // Admin user
-                'message' => 'La chat è iniziata! Si prega di rispettare le regole, essere gentili e cortesi.'
+                'message' => $autoMessage
             ]);
         }
     
@@ -83,18 +86,21 @@ class ChatController extends BaseController
     private function censorBadWords($message)
     {
         // List of light words you want to censor manually
-        $light = [
-            "bastardo", "bastardi", "bastarda", "bastarde", "bernarda", "bischero", "bischera", "bocchino",
-            "bordello", "cacare", "cacarella", "cagare", "cagata", "cagate", "caghetta", "cagone", "cazzata",
-            "cazzo", "cazzi", "cazzone", "cazzoni", "cazzona", "cesso", "ciucciata", "cogliona", "coglione",
-            "cretina", "cretino", "culattone", "culattona", "culo", "culone", "culona", "culoni", "deficiente",
-            "figa", "fighe", "fottuta", "fottuto", "frocio", "frocione", "frocetto", "gesu", "imbecille",
-            "imbecilli", "incazzare", "incazzato", "incazzati", "madonna", "maronna", "merda", "merdina",
-            "merdona", "merdaccia", "mignotta", "mignottona", "mignottone", "mortacci", "negro", "negra",
-            "pippa", "pippona", "pippone", "pippaccia", "pirla", "pompino", "porco", "puttana", "puttanona",
-            "puttanone", "puttaniere", "puttanate", "rompiballe", "rompipalle", "rompicoglioni", "scazzi", "stronzo", "stronzi", "scopare", "scopata", "stronzata", "stronzo", "stronzone", "troia", "troione", "trombata",
-            "vaffanculo", "zoccola", "zoccolona"
-        ];
+        // $light = [
+        //     "bastardo", "bastardi", "bastarda", "bastarde", "bernarda", "bischero", "bischera", "bocchino",
+        //     "bordello", "cacare", "cacarella", "cagare", "cagata", "cagate", "caghetta", "cagone", "cazzata",
+        //     "cazzo", "cazzi", "cazzone", "cazzoni", "cazzona", "cesso", "ciucciata", "cogliona", "coglione",
+        //     "cretina", "cretino", "culattone", "culattona", "culo", "culone", "culona", "culoni", "deficiente",
+        //     "figa", "fighe", "fottuta", "fottuto", "frocio", "frocione", "frocetto", "gesu", "imbecille",
+        //     "imbecilli", "incazzare", "incazzato", "incazzati", "madonna", "maronna", "merda", "merdina",
+        //     "merdona", "merdaccia", "mignotta", "mignottona", "mignottone", "mortacci", "negro", "negra",
+        //     "pippa", "pippona", "pippone", "pippaccia", "pirla", "pompino", "porco", "puttana", "puttanona",
+        //     "puttanone", "puttaniere", "puttanate", "rompiballe", "rompipalle", "rompicoglioni", "scazzi", "stronzo", "stronzi", "scopare", "scopata", "stronzata", "stronzo", "stronzone", "troia", "troione", "trombata",
+        //     "vaffanculo", "zoccola", "zoccolona"
+        // ];
+
+        $lightWordsSetting = Setting::where('key', 'light_words_censor')->value('value');
+    $light = json_decode($lightWordsSetting, true) ?? [];
     
         // Function to censor a word by keeping the first and last letter and replacing the middle with asterisks
         $censorWord = function ($word) {

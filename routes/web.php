@@ -18,6 +18,7 @@ use App\Http\Controllers\MatchSummaryController;
 
 use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
+use App\Http\Controllers\ChatSettingsController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -244,3 +245,11 @@ Route::delete('/bulk',         [ChatController::class, 'bulkDelete'])
 Route::post  ('/bulk-restore', [ChatController::class, 'bulkRestore'])
 ->name('chat.bulkRestore');
     });
+
+
+
+
+    Route::get('/chat-settings', [ChatSettingsController::class, 'index'])->name('chat-settings.index');
+    Route::post('/chat-settings/update-light-words', [ChatSettingsController::class, 'updateLightWords'])->name('chat-settings.update-light-words');
+    Route::post('/chat-settings/update-auto-message', [ChatSettingsController::class, 'updateAutoMessage'])->name('chat-settings.update-auto-message');
+    
