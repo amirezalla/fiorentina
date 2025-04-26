@@ -22,20 +22,21 @@ class ChatSettingsController extends Controller
     public function updateLightWords(Request $request)
     {
         $request->validate([
-            'light_words' => 'required|array',       // <-- array not string
-            'light_words.*' => 'string',              // <-- each item must be a string
+            'light_words' => 'required|array',       // validate as array
+            'light_words.*' => 'string',              // each item must be a string
         ]);
-        
     
-        $wordsArray = array_map('trim', explode(',', $request->light_words)); // ← Split by comma
+        // $request->light_words is already an array, just trim each word
+        $wordsArray = array_map('trim', $request->light_words);
     
         Setting::updateOrCreate(
             ['key' => 'light_words_censor'],
-            ['value' => json_encode($wordsArray)] // ← Save as proper array
+            ['value' => json_encode($wordsArray)]
         );
     
         return redirect()->back()->with('success', 'Light words updated successfully.');
     }
+    
     
 
     public function updateAutoMessage(Request $request)
