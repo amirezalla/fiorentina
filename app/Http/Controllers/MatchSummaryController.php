@@ -69,7 +69,6 @@ class MatchSummaryController extends Controller
             
         }
     }
-    self::regenerateSummaryJson($matchId);
 
         return response()->json(['success' => 'Match summary saved successfully.']);
     }

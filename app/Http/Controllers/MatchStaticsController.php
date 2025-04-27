@@ -12,6 +12,7 @@ class MatchStaticsController extends Controller
     public static function storeMatchStatistics($matchId)
     {
         $match=MatchStatics::where('match_id',$matchId)->first();
+
         if(!$match){
             // Simulate fetching data from an API, replace with your actual API request logic
             $url="https://flashlive-sports.p.rapidapi.com/v1/events/statistics?event_id={$matchId}&locale=it_IT";

@@ -28,6 +28,39 @@ class Kernel extends ConsoleKernel
                     Artisan::queue('commentary:sync', ['matchId' => $matchId]);
                 }
             })->everyMinute();
+
+
+
+                /*
+    |──────────────────────────────────────────────────────────
+    | 2. SUMMARY / RIASSUNTO → every 1 min 30 sec
+    |    (run each minute but dispatch the job with +30 s delay)
+    |──────────────────────────────────────────────────────────
+    */
+    $schedule->call(function () {
+        Log::info('⏱  summary sync (+30 s delay)');
+        $liveMatches = Calendario::where('status', 'LIVE')->pluck('match_id');
+
+        foreach ($liveMatches as $matchId) {
+            Artisan::queue('summary:sync', ['matchId' => $matchId])
+                   ->delay(now()->addSeconds(30));   // 90-second cadence
+        }
+    })->everyMinute();
+
+
+    /*
+    |──────────────────────────────────────────────────────────
+    | 3. STATISTICS → every 10 minutes
+    |──────────────────────────────────────────────────────────
+    */
+    $schedule->call(function () {
+        Log::info('⏱  stats sync');
+        $liveMatches = Calendario::where('status', 'LIVE')->pluck('match_id');
+
+        foreach ($liveMatches as $matchId) {
+            Artisan::queue('stats:sync', ['matchId' => $matchId]);
+        }
+    })->everyTenMinutes();    
             
             $schedule->command('matches:start-scheduled')->everyTwoMinutes();
 
