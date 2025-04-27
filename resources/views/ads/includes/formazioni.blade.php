@@ -78,7 +78,6 @@
                                         {{ $player->player_rating }}
                                     </div>
                                     <p class="player-name">{{ $player->short_name }}</p>
-
                                 </div>
                             </div>
 

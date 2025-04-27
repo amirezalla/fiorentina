@@ -16,10 +16,87 @@ use Botble\Theme\Supports\ThemeSupport;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Arr;
+use App\Models\Calendario;
+
 
 app('events')->listen(RouteMatched::class, function () {
     ThemeSupport::registerGoogleMapsShortcode();
     ThemeSupport::registerYoutubeShortcode();
+
+
+
+    // Shortcode::setPreviewImage(
+    //     'diretta-link',
+    //     Theme::asset()->url('images/ui-blocks/diretta-link.png')   // add any 300×200 png here
+    // );
+
+    
+
+    // 2️⃣  Register the frontend renderer
+    Shortcode::register(
+        'diretta-link',                     // ↰ tag name used inside posts
+        __('Diretta link'),                 // shortcode title (admin)
+        __('Insert a link to a live match'),// shortcode description (admin)
+        function (ShortcodeCompiler $sc) {  // what to render
+            $matchId = trim($sc->match_id);
+
+            // no ID → nothing to show
+            if (!$matchId) {
+                return null;
+            }
+
+            return Theme::partial('shortcodes.diretta-link', [
+                'matchId' => $matchId,
+            ]);
+        }
+    );
+
+    Shortcode::setAdminConfig('diretta-link', function (array $attrs) {
+
+        /*
+        |--------------------------------------------------------------
+        | Build <value , label> pairs for the <select>
+        |--------------------------------------------------------------
+        |  • only matches with status = 'Finished'
+        |  • value  -> match_id
+        |  • label  -> "Fiorentina – Udinese"  (home - away)
+        */
+        $choices = Calendario::query()
+            ->where('status', 'FINISHED')
+            ->orderByDesc('date')                         // newest first (optional)
+            ->get()
+            ->mapWithKeys(function (Calendario $m) {
+    
+                // home_team & away_team come as JSON strings → decode to arrays
+                $home = Arr::get(json_decode($m->home_team, true), 'name', '—');
+                $away = Arr::get(json_decode($m->away_team, true), 'name', '—');
+    
+                return [$m->match_id => "$home – $away"];
+            })
+            ->toArray();
+    
+        /*
+        |--------------------------------------------------------------
+        | Return the form (single <select>)
+        |--------------------------------------------------------------
+        */
+        return ShortcodeForm::createFromArray($attrs)
+            ->withLazyLoading()
+            ->add(
+                'match_id',
+                SelectField::class,
+                SelectFieldOption::make()
+                    ->label(__('Match'))                  // field label in the sidebar
+                    ->choices($choices)                   // <option value="match_id">home – away</option>
+                    ->attr('data-placeholder', __('Choose a finished match'))
+                    ->toArray()
+            );
+    });
+
+
+
+
+
 
     if (is_plugin_active('blog')) {
         Shortcode::setPreviewImage('blog-posts', Theme::asset()->url('images/ui-blocks/blog-posts.png'));
