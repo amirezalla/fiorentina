@@ -63,7 +63,7 @@ app('events')->listen(RouteMatched::class, function () {
         */
         $choices = Calendario::query()
             ->where('status', 'FINISHED')
-            ->orderByDesc('date')                         // newest first (optional)
+            ->orderByDesc('match_date')                         // newest first (optional)
             ->get()
             ->mapWithKeys(function (Calendario $m) {
     
