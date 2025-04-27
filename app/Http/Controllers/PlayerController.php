@@ -88,11 +88,11 @@ class PlayerController extends BaseController
         if ($request->hasFile('image')) {
             // Delete the old image if it exists
             if ($player->image) {
-                Storage::disk('public')->delete($player->image);
+                Storage::disk('wasabi')->delete($player->image);
             }
 
             // Store the new image
-            $imagePath = $request->file('image')->store('players', 'public');
+            $imagePath = $request->file('image')->store('players', 'wasabi');
             $player->image = $imagePath;
         }
 
