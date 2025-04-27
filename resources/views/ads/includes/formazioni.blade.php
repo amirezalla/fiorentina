@@ -63,7 +63,7 @@
 
             <!-- Loop through each row (group of players) in the formation and display the players -->
             @foreach ($playerRows as $row)
-                <div class="row justify-content-around mb-4">
+                <div class="row justify-content-around mb-4" style="flex-direction: row-reverse;">
                     @foreach ($row as $player)
                         <div class="col text-center">
                             <div class="player-container">
