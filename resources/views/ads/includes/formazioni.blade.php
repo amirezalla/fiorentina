@@ -42,30 +42,31 @@
 @inject('playerRepo', 'App\\Models\\Player')
 
 @php
+    if (!function_exists('lineupImgSrc')) {
+        function lineupImgSrc(object $flashPlayer, string $team, $playerRepo): ?string
+        {
+            // 1️⃣ Fiorentina: try the local DB first
+            if ($team === 'fiorentina') {
+                $dbPlayer = $playerRepo
+                    ->where('short_name', $flashPlayer->short_name) // or player_id, flashscore_id, …
+                    ->first();
 
-    function lineupImgSrc(object $flashPlayer, string $team, $playerRepo): ?string
-    {
-        // 1️⃣ Fiorentina: try the local DB first
-        if ($team === 'fiorentina') {
-            $dbPlayer = $playerRepo
-                ->where('short_name', $flashPlayer->short_name) // or player_id, flashscore_id, …
-                ->first();
-
-            if ($dbPlayer && $dbPlayer->image) {
-                // Same “https:// …” vs Wasabi logic you already use elsewhere
-                return Str::startsWith($dbPlayer->image, 'https://')
-                    ? $dbPlayer->image
-                    : $dbPlayer->wasabiImage($dbPlayer->name);
+                if ($dbPlayer && $dbPlayer->image) {
+                    // Same “https:// …” vs Wasabi logic you already use elsewhere
+                    return Str::startsWith($dbPlayer->image, 'https://')
+                        ? $dbPlayer->image
+                        : $dbPlayer->wasabiImage($dbPlayer->name);
+                }
             }
-        }
 
-        // 2️⃣ Anything not found above → keep the image that came with the API
-        if ($flashPlayer->player_image) {
-            return $flashPlayer->player_image;
-        }
+            // 2️⃣ Anything not found above → keep the image that came with the API
+            if ($flashPlayer->player_image) {
+                return $flashPlayer->player_image;
+            }
 
-        // 3️⃣ Nothing at all
-        return null;
+            // 3️⃣ Nothing at all
+            return null;
+        }
     }
 @endphp
 
