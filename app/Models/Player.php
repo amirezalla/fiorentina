@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Player extends Model
 {
@@ -26,5 +27,8 @@ class Player extends Model
 
     }
 
-
+    public function wasabiImage($playername){
+        $playerImage=Player::where('name',$playername)->first();
+        return Storage::temporaryUrl($playerImage->image, now()->addMinutes(20));
+    }
 }
