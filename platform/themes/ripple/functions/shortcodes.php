@@ -88,7 +88,7 @@ app('events')->listen(RouteMatched::class, function () {
                 SelectFieldOption::make()
                     ->label(__('Match'))                  // field label in the sidebar
                     ->choices($choices)                   // <option value="match_id">home – away</option>
-                    ->attr('data-placeholder', __('Choose a finished match'))
+                    ->defaultValue(array_key_first($choices) ?: null)
                     ->toArray()
             );
     });
