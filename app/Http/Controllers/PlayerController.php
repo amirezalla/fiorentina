@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Http;
+use Botble\Media\RvMedia;
 
 
 
@@ -91,9 +92,40 @@ class PlayerController extends BaseController
                 Storage::disk('wasabi')->delete($player->image);
             }
 
-            // Store the new image
-            $imagePath = $request->file('image')->store('players', 'wasabi');
-            $player->image = $imagePath;
+            $file=$request->file('image');
+            if ($file->isValid()) {
+                // Check file extension and reject if it is .webp.
+                $ext = strtolower($file->getClientOriginalExtension());
+                if ($ext === 'webp') {
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['image' => "Una o più immagini caricate hanno un'estensione .webp, che non è accettabile."]);
+                }
+
+                // Generate a unique filename.
+                $filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
+
+                // Read and optionally resize the image.
+                $imageResized = ImageManager::gd()->read($file);
+                if ($request->width && $request->height) {
+                    $imageResized = $imageResized->resize($request->width, $request->height);
+                }
+                $imageResized = $imageResized->encode();
+
+                // Save the processed image to a temporary path.
+                $tempPath = sys_get_temp_dir() . '/' . $filename;
+                file_put_contents($tempPath, $imageResized);
+
+                // Upload the image via RvMedia.
+                $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'players/');
+                unlink($tempPath);
+
+                // Create an associated AdImage record.
+                // Laravel automatically sets 'ad_id' from the relationship.
+                $player->update([
+                    'image' => $uploadResult['data']->url,
+                ]);
+            }
         }
 
         // Update the player record
