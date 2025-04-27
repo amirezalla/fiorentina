@@ -1,4 +1,5 @@
 @php
+    use Illuminate\Support\Str;
     use App\Http\Controllers\MatchLineupsController;
     use App\Models\PlayerStats;
     $formationInitiali = collect();
@@ -38,6 +39,35 @@
 
 @endphp
 
+@inject('playerRepo', \App\Models\Player)
+@php
+
+    function lineupImgSrc(object $flashPlayer, string $team, $playerRepo): ?string
+    {
+        // 1️⃣ Fiorentina: try the local DB first
+        if ($team === 'fiorentina') {
+            $dbPlayer = $playerRepo
+                ->where('short_name', $flashPlayer->short_name) // or player_id, flashscore_id, …
+                ->first();
+
+            if ($dbPlayer && $dbPlayer->image) {
+                // Same “https:// …” vs Wasabi logic you already use elsewhere
+                return Str::startsWith($dbPlayer->image, 'https://')
+                    ? $dbPlayer->image
+                    : $dbPlayer->wasabiImage($dbPlayer->name);
+            }
+        }
+
+        // 2️⃣ Anything not found above → keep the image that came with the API
+        if ($flashPlayer->player_image) {
+            return $flashPlayer->player_image;
+        }
+
+        // 3️⃣ Nothing at all
+        return null;
+    }
+@endphp
+
 
 <div class="row">
     <div class="football-pitch">
@@ -68,8 +98,11 @@
                         <div class="col text-center">
                             <div class="player-container">
                                 <div class="player-lineup">
-                                    <img class="player-lineup-img" src="{{ $player->player_image }}"
-                                        alt="{{ $player->player_full_name }}" width="50">
+                                    @php $imgSrc = lineupImgSrc($player, $team, $playerRepo)@endphp
+                                    @if ($imgSrc)
+                                        <img src="{{ $imgSrc }}" width="50" height="50"
+                                            alt="{{ $player->player_full_name }}">
+                                    @endif
                                     <div class="rating"
                                         @if ($player->player_rating >= 7.0) style='background-color: #1dc231;'
                                     @elseif ($player->player_rating <= 6.1)
@@ -99,8 +132,11 @@
                         <td style="text-align:left">
 
                             @if ($panchinaPlayer->player_image)
-                                <img src="{{ $panchinaPlayer->player_image }}"
-                                    alt="{{ $panchinaPlayer->player_full_name }}" width="50" class="mr-20">
+                                @php $imgSrc = lineupImgSrc($panchinaPlayer, $team, $playerRepo) @endphp
+                                @if ($imgSrc)
+                                    <img src="{{ $imgSrc }}" width="50" class="mr-20"
+                                        alt="{{ $panchinaPlayer->player_full_name }}">
+                                @endif
                             @else
                                 <svg style="width:50px" class="_icon_1483j_4 _image_1b9ls_29"
                                     data-testid="wcl-icon-placeholder-man" viewBox="0 0 20 20" fill="currentColor">
