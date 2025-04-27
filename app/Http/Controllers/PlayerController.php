@@ -75,7 +75,9 @@ class PlayerController extends BaseController
             file_put_contents($tempPath, $imageResized);
 
             // Upload the image via RvMedia.
-            $uploadResult = RvMedia::uploadFromPath($tempPath, 0, 'players/');
+            $rvMedia = app(\Botble\Media\RvMedia::class);
+
+$uploadResult = $rvMedia->uploadFromPath($tempPath, 0, 'players');
             unlink($tempPath);
 
             // Create an associated AdImage record.
@@ -148,8 +150,9 @@ class PlayerController extends BaseController
                 file_put_contents($tempPath, $imageResized);
 
                 // Upload the image via RvMedia.
-                $uploadResult = RvMedia::uploadFromPath($tempPath, 0, 'players/');
-                unlink($tempPath);
+                $rvMedia = app(\Botble\Media\RvMedia::class);
+
+                $uploadResult = $rvMedia->uploadFromPath($tempPath, 0, 'players');                unlink($tempPath);
 
                 // Create an associated AdImage record.
                 // Laravel automatically sets 'ad_id' from the relationship.
