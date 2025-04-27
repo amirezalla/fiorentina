@@ -1,4 +1,15 @@
 @extends(BaseHelper::getAdminMasterLayoutTemplate())
+@php
+
+    use Illuminate\Support\Str;
+
+    // decide the URL (or null if no image at all)
+    $imgSrc = match (true) {
+        blank($player->image) => null, // case 3
+        Str::startsWith($player->image, 'https://') => $player->getImageUrl($player->name), // case 1
+        default => $player->wasabiImage($player->name), // case 2
+    };
+@endphp
 
 @section('content')
     <form action="{{ route('players.update', $player->id) }}" method="POST" enctype="multipart/form-data">

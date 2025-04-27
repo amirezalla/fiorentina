@@ -25,14 +25,22 @@
             </thead>
             <tbody>
                 @foreach ($players as $player)
+                    @php
+                        $imgSrc = match (true) {
+                            blank($player->image) => null, // nothing stored
+                            Str::startsWith($player->image, 'https://') => $player->getImageUrl(
+                                $player->name,
+                            ), // full URL
+                            default => $player->wasabiImage($player->name), // Wasabi key
+                        };
+                    @endphp
                     <tr>
                         <td class="align-middle">{{ $player->id }}</td>
                         <td class="align-middle">{{ $player->name }}</td>
                         <td class="align-middle">
-                            <img src="{{ Str::startsWith($player->image, 'https://')
-                                ? $player->getImageUrl($player->name) // absolute URL already stored
-                                : $player->wasabiImage($player->name) }} // build Wasabi link otherwise }}"
-                                width="50" height="50" alt="{{ $player->name }}" />
+                            @if ($imgSrc)
+                                <img src="{{ $imgSrc }}" width="50" height="50" alt="{{ $player->name }}">
+                            @endif
 
                             {{--                    @if ($player->getImageUrl()) --}}
                             {{--                            <img src="{{ $player->getImageUrl() }}" width="140" alt="{{ $player->title }}"> --}}
