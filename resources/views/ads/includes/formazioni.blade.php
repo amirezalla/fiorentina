@@ -39,7 +39,8 @@
 
 @endphp
 
-@inject('playerRepo', \App\Models\Player)
+@inject('playerRepo', 'App\\Models\\Player')
+
 @php
 
     function lineupImgSrc(object $flashPlayer, string $team, $playerRepo): ?string
