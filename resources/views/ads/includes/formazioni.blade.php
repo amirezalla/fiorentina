@@ -48,7 +48,7 @@
             // 1️⃣ Fiorentina: try the local DB first
             if ($team === 'fiorentina') {
                 $dbPlayer = $playerRepo
-                    ->where('name', $flashPlayer->short_name) // or player_id, flashscore_id, …
+                    ->where('name', 'like', $flashPlayer->short_name) // or player_id, flashscore_id, …
                     ->first();
 
                 if ($dbPlayer && $dbPlayer->image) {
