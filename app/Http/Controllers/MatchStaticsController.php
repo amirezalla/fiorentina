@@ -20,37 +20,41 @@ class MatchStaticsController extends Controller
                 "x-rapidapi-key" => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb'
             ])->get($url);        
             // Assuming the response returns the data in the format provided
-            $data = $response->json()['DATA'];
+            if(isset($response->json()['DATA'])){
+                $data = $response->json()['DATA'];
 
-            // Loop through each stage and save the statistics
-            foreach ($data as $stage) {
-                $stageName = $stage['STAGE_NAME'];
-
-                foreach ($stage['GROUPS'] as $group) {
-                    $groupLabel = $group['GROUP_LABEL'];
-
-                    foreach ($group['ITEMS'] as $item) {
-                        MatchStatics::updateOrCreate(
-                            [
-                                'match_id' => $matchId,
-                                'stage_name' => $stageName,
-                                'group_label' => $groupLabel,
-                                'incident_name' => $item['INCIDENT_NAME']
-                            ],
-                            [
-                                'value_home' => $item['VALUE_HOME'],
-                                'value_away' => $item['VALUE_AWAY']
-                            ]
-                        );
+                // Loop through each stage and save the statistics
+                foreach ($data as $stage) {
+                    $stageName = $stage['STAGE_NAME'];
+    
+                    foreach ($stage['GROUPS'] as $group) {
+                        $groupLabel = $group['GROUP_LABEL'];
+    
+                        foreach ($group['ITEMS'] as $item) {
+                            MatchStatics::updateOrCreate(
+                                [
+                                    'match_id' => $matchId,
+                                    'stage_name' => $stageName,
+                                    'group_label' => $groupLabel,
+                                    'incident_name' => $item['INCIDENT_NAME']
+                                ],
+                                [
+                                    'value_home' => $item['VALUE_HOME'],
+                                    'value_away' => $item['VALUE_AWAY']
+                                ]
+                            );
+                        }
                     }
                 }
+    
             }
-
-        }
-        
+            else{
+                return response()->json(['error' => 'No data found for this match'], 404);
+            }
 
         return response()->json(['success' => 'Match statistics saved successfully!']);
     }
+}
 
     /**
      * Re-fetch or refresh logic, then rewrite stats JSON in Wasabi
