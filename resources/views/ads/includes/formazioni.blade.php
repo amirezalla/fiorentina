@@ -102,8 +102,7 @@
                                 <div class="player-lineup">
                                     @php $imgSrc = lineupImgSrc($player, $team, $playerRepo)@endphp
                                     @if ($imgSrc)
-                                        <img src="{{ $imgSrc }}" width="50" height="50"
-                                            alt="{{ $player->player_full_name }}">
+                                        <img src="{{ $imgSrc }}" alt="{{ $player->player_full_name }}">
                                     @endif
                                     <div class="rating"
                                         @if ($player->player_rating >= 7.0) style='background-color: #1dc231;'
