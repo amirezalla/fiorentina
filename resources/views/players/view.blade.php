@@ -1,5 +1,7 @@
 @extends(BaseHelper::getAdminMasterLayoutTemplate())
 
+@php(use Illuminate\Support\Str;)
+
 @section('content')
 
     <div class="w-100">
@@ -24,10 +26,10 @@
                         <td class="align-middle">{{ $player->id }}</td>
                         <td class="align-middle">{{ $player->name }}</td>
                         <td class="align-middle">
-                            @if ($player->getImageUrl($player->name))
-                                <img src="{{ $player->wasabiImage($player->name) }}" width="50" height="50"
-                                    alt="{{ $player->name }}">
-                            @endif
+                            <img src="{{ Str::startsWith($player->image, 'https://')
+                                ? $player->getImageUrl($player->name) // absolute URL already stored
+                                : $player->wasabiImage($player->name); // build Wasabi link otherwise }}"
+                                width="50" height="50" alt="{{ $player->name }}" />
 
                             {{--                    @if ($player->getImageUrl()) --}}
                             {{--                            <img src="{{ $player->getImageUrl() }}" width="140" alt="{{ $player->title }}"> --}}

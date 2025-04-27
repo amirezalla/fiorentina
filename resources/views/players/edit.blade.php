@@ -48,9 +48,16 @@
                                 <input type="file" class="form-control" id="imageUpload" name="image" accept="image/*">
                                 <div class="row mx-0 mt-3">
                                     <div class="col-12">
-                                        @if($player->getImageUrl($player->name))
-                                            <img src="{{ $player->getImageUrl($player->name) }}" class="image-preview"   width="50" height="50" alt="{{ $player->name }}">
-                                        @endif
+                                        @php(use Illuminate\Support\Str;)
+                                        <img
+                                        src="{{ Str::startsWith($player->image, 'https://')
+                                                ? $player->getImageUrl($player->name)   // absolute URL already stored
+                                                : $player->wasabiImage($player->name)   // build Wasabi link otherwise
+                                            }}"
+                                        width="50"
+                                        height="50"
+                                        alt="{{ $player->name }}"
+                                    />
 {{--                                        @if($player->getImageUrl())--}}
 {{--                                            <img src="{{ $player->getImageUrl() }}" class="image-preview" alt="{{ $player->name }}" style="max-width: 200px;">--}}
 {{--                                        @endif--}}
