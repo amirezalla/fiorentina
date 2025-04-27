@@ -75,7 +75,7 @@ class PlayerController extends BaseController
             file_put_contents($tempPath, $imageResized);
 
             // Upload the image via RvMedia.
-            $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'players/');
+            $uploadResult = RvMedia::uploadFromPath($tempPath, 0, 'players/');
             unlink($tempPath);
 
             // Create an associated AdImage record.
@@ -148,7 +148,7 @@ class PlayerController extends BaseController
                 file_put_contents($tempPath, $imageResized);
 
                 // Upload the image via RvMedia.
-                $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'players/');
+                $uploadResult = RvMedia::uploadFromPath($tempPath, 0, 'players/');
                 unlink($tempPath);
 
                 // Create an associated AdImage record.
