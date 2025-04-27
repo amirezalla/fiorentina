@@ -136,7 +136,7 @@
                             @if ($panchinaPlayer->player_image)
                                 @php $imgSrc = lineupImgSrc($panchinaPlayer, $team, $playerRepo) @endphp
                                 @if ($imgSrc)
-                                    <img src="{{ $imgSrc }}" width="50" class="mr-20"
+                                    <img src="{{ $imgSrc }}" class="mr-20"
                                         alt="{{ $panchinaPlayer->player_full_name }}">
                                 @endif
                             @else
@@ -184,7 +184,7 @@
 
                             @if ($Allenatore->Allenatore)
                                 <img src="{{ $panchinaPlayer->player_image }}"
-                                    alt="{{ $panchinaPlayer->player_full_name }}" width="50" class="mr-20">
+                                    alt="{{ $panchinaPlayer->player_full_name }}" class="mr-20">
                             @else
                                 <svg style="width:50px" class="_icon_1483j_4 _image_1b9ls_29"
                                     data-testid="wcl-icon-placeholder-man" viewBox="0 0 20 20" fill="currentColor">
