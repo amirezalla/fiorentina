@@ -1,7 +1,10 @@
 @extends(BaseHelper::getAdminMasterLayoutTemplate())
 
-@php(use Illuminate\Support\Str;)
+@php
 
+    use Illuminate\Support\Str;
+
+@endphp
 @section('content')
 
     <div class="w-100">
