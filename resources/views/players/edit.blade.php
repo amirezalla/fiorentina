@@ -66,10 +66,10 @@
                                 <div class="row mx-0 mt-3">
                                     <div class="col-12">
 
-                                        <img src="{{ Str::startsWith($player->image, 'https://')
-                                            ? $player->getImageUrl($player->name) // absolute URL already stored
-                                            : $player->wasabiImage($player->name) }} // build Wasabi link otherwise }}"
-                                            width="50" height="50" alt="{{ $player->name }}" />
+                                        @if ($imgSrc)
+                                            <img src="{{ $imgSrc }}" width="50" height="50"
+                                                alt="{{ $player->name }}">
+                                        @endif
                                         {{--                                        @if ($player->getImageUrl()) --}}
                                         {{--                                            <img src="{{ $player->getImageUrl() }}" class="image-preview" alt="{{ $player->name }}" style="max-width: 200px;"> --}}
                                         {{--                                        @endif --}}
