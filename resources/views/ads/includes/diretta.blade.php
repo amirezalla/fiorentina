@@ -144,40 +144,19 @@
                 </li>
             </ul>
 
-            <div class="tab-content" id="teamtabContent">
+            {{-- ads/includes/formazioni-tabs.blade.php --}}
 
-                <!-- Home tab content -->
-                <div class="tab-pane fade @if ($isHomeFiorentina) show active @endif" id="home"
-                    role="tabpanel" aria-labelledby="home-tab">
-                    @if ($isHomeFiorentina)
-                        @include('ads.includes.formazioni', [
-                            'groupedLineups' => $fiorentinaLineups,
-                            'team' => 'fiorentina',
-                        ])
-                    @else
-                        @include('ads.includes.formazioni', [
-                            'groupedLineups' => $anotherTeamLineups,
-                            'team' => 'another',
-                        ])
-                    @endif
-                </div>
+            {{-- first paint – identical to what you have now --}}
 
-                <!-- Away tab content -->
-                <div class="tab-pane fade @if ($isAwayFiorentina) show active @endif" id="away"
-                    role="tabpanel" aria-labelledby="away-tab">
-                    @if ($isAwayFiorentina)
-                        @include('ads.includes.formazioni', [
-                            'groupedLineups' => $fiorentinaLineups,
-                            'team' => 'fiorentina',
-                        ])
-                    @else
-                        @include('ads.includes.formazioni', [
-                            'groupedLineups' => $anotherTeamLineups,
-                            'team' => 'another',
-                        ])
-                    @endif
-                </div>
-            </div>
+            @include('ads.includes.formazioni-tabs', [
+                'isHomeFiorentina' => $isHomeFiorentina,
+                'isAwayFiorentina' => $isAwayFiorentina,
+                'fiorentinaLineups' => $fiorentinaLineups,
+                'anotherTeamLineups' => $anotherTeamLineups,
+                'match' => $match,
+            ])
+
+
 
         </div>
         <div class="tab-pane fade" id="riassunto" role="tabpanel" aria-labelledby="riassunto-tab">
@@ -192,8 +171,8 @@
             ])
         </div>
 
-        <div class="tab-pane @if ($match->status == 'LIVE') show active @endif fade" id="commento"
-            role="tabpanel" aria-labelledby="commento-tab">
+        <div class="tab-pane @if ($match->status == 'LIVE') show active @endif fade" id="commento" role="tabpanel"
+            aria-labelledby="commento-tab">
 
             @include('ads.includes.livecommentary', ['match_id', $matchId]);
 
@@ -227,6 +206,32 @@
                     })
                     .catch(err => console.error(err));
             }, 10000);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('teamtabContent');
+            const endpoint = "{{ route('match.lineup-block', $match) }}";
+            const TEN_MIN = 600_000; // 10 min
+
+            setInterval(() => {
+                // remember which tab is active so we can keep it open
+                const activeTabId = container.querySelector('.tab-pane.show.active')?.id ?? 'home';
+
+                axios.get(endpoint).then(({
+                    data
+                }) => {
+                    container.innerHTML = data;
+
+                    // restore the user’s tab if possible
+                    const newActive = container.querySelector('#' + activeTabId);
+                    if (newActive) {
+                        newActive.classList.add('show', 'active');
+                        // Also toggle the nav-link if you use Bootstrap tabs
+                        const nav = document.querySelector(`[data-bs-target="#${activeTabId}"]`);
+                        nav?.classList.add('active');
+                    }
+                }).catch(console.error);
+            }, 1000);
         });
     </script>
 @else
