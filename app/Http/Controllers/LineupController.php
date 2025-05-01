@@ -11,7 +11,8 @@ class LineupController extends Controller
 {
     public function __invoke(Calendario $match)
     {
-        $lineups = MatchLineups::where('match_id', $matchId)
+
+        $lineups = MatchLineups::where('match_id', $match->match_id)
         ->get()
         ->map(function ($row) {
             // clone the API field into the camel/snake version Blade expects
