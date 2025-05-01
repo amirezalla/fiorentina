@@ -25,12 +25,19 @@ class LineupController extends Controller
             'Another Initial Lineup',
         ]);
 
-        $html = view('ads.includes.formazioni-tabs', [
-                    'isHomeFiorentina' => $match->isHomeFiorentina(), // whatever helper you already have
-                    'isAwayFiorentina' => $match->isAwayFiorentina(),
-                    'fiorentinaLineups' => $fiorentina,
-                    'anotherTeamLineups' => $another,
-                ])->render();
+        $home = json_decode($match->home_team, true);   // ['name', 'id', 'slug', ...]
+$away = json_decode($match->away_team, true);
+
+$isHomeFiorentina = strcasecmp($home['name'], 'Fiorentina') === 0;
+$isAwayFiorentina = strcasecmp($away['name'], 'Fiorentina') === 0;
+
+return view('ads.includes.formazioni-tabs', [
+    'isHomeFiorentina'   => $isHomeFiorentina,
+    'isAwayFiorentina'   => $isAwayFiorentina,
+    'fiorentinaLineups'  => $fiorentina,
+    'anotherTeamLineups' => $another,
+]);
+
 
         return response($html);
     }
