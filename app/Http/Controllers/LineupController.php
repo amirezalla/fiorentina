@@ -38,7 +38,5 @@ return view('ads.includes.formazioni-tabs', [
     'anotherTeamLineups' => $another,
 ]);
 
-
-        return response($html);
     }
 }
