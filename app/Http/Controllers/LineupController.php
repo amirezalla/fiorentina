@@ -11,43 +11,53 @@ class LineupController extends Controller
 {
     public function __invoke(Calendario $match)
     {
+        /* ----------------------------------------------------------
+         | 1. Pull rows and give the API column a nicer alias
+         |-----------------------------------------------------------*/
+        $lineups = MatchLineups::select('*', DB::raw('FORMATION_NAME as formation_name'))
+                    ->where('match_id', $match->match_id)
+                    ->get();
 
-        $lineups = MatchLineups::where('match_id', $match->match_id)
-        ->get()
-        ->map(function ($row) {
-            // clone the API field into the camel/snake version Blade expects
-            $row->formation_name = $row->FORMATION_NAME;
-            return $row;
-        });
-
-
+        /* ----------------------------------------------------------
+         | 2. Group the collections the way Blade expects
+         |    (case-insensitive compare to avoid surprises)
+         |-----------------------------------------------------------*/
         $fiorentinaLineups = $lineups
-        ->filter(fn ($l) => in_array($l->formation_name, [
-            'Fiorentina Subs', 'Fiorentina Coach', 'Fiorentina Initial Lineup',
-        ]))
-        ->groupBy('formation_name');
-    
-    $anotherTeamLineups = $lineups
-        ->filter(fn ($l) => in_array($l->formation_name, [
-            'Another Subs', 'Another Coach', 'Another Initial Lineup',
-        ]))
-        ->groupBy('formation_name');
+            ->filter(fn ($l) =>
+                in_array(strtolower($l->formation_name), [
+                    'fiorentina subs',
+                    'fiorentina coach',
+                    'fiorentina initial lineup',
+                ]))
+            ->groupBy('formation_name');
 
-        $home = json_decode($match->home_team, true);   // ['name', 'id', 'slug', ...]
-$away = json_decode($match->away_team, true);
+        $anotherTeamLineups = $lineups
+            ->filter(fn ($l) =>
+                in_array(strtolower($l->formation_name), [
+                    'another subs',
+                    'another coach',
+                    'another initial lineup',
+                ]))
+            ->groupBy('formation_name');
 
-dd($lineups,$fiorentinaLineups);
+        /* ----------------------------------------------------------
+         | 3. Same helper booleans you already use
+         |-----------------------------------------------------------*/
+        $home = json_decode($match->home_team, true);
+        $away = json_decode($match->away_team, true);
 
+        $isHomeFiorentina = strcasecmp($home['name'], 'Fiorentina') === 0;
+        $isAwayFiorentina = strcasecmp($away['name'], 'Fiorentina') === 0;
 
-$isHomeFiorentina = strcasecmp($home['name'], 'Fiorentina') === 0;
-$isAwayFiorentina = strcasecmp($away['name'], 'Fiorentina') === 0;
-
-return view('ads.includes.formazioni-tabs', [
-    'isHomeFiorentina'   => $isHomeFiorentina,
-    'isAwayFiorentina'   => $isAwayFiorentina,
-    'fiorentinaLineups'  => $fiorentinaLineups,
-    'anotherTeamLineups' => $anotherTeamLineups,
-]);
-
+        /* ----------------------------------------------------------
+         | 4. Return the partial your JS swaps in
+         |-----------------------------------------------------------*/
+        return view('ads.includes.formazioni-tabs', [
+            'isHomeFiorentina'   => $isHomeFiorentina,
+            'isAwayFiorentina'   => $isAwayFiorentina,
+            'fiorentinaLineups'  => $fiorentinaLineups,
+            'anotherTeamLineups' => $anotherTeamLineups,
+            'match'              => $match,
+        ])->render();
     }
 }
