@@ -226,7 +226,7 @@
                         scoreNode.textContent = `${data.home} - ${data.away}`;
                     })
                     .catch(err => console.error(err));
-            }, 30000);
+            }, 10000);
         });
     </script>
 @else
