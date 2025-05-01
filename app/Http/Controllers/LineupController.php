@@ -9,8 +9,13 @@ class LineupController extends Controller
 {
     public function __invoke(Calendario $match)
     {
-        $raw   = json_decode($match->lineups ?? '[]');
-        $all   = collect($raw)->groupBy('FORMATION_NAME');
+        $lineups = MatchLineups::where('match_id', $matchId)
+        ->get()
+        ->map(function ($row) {
+            // clone the API field into the camel/snake version Blade expects
+            $row->formation_name = $row->FORMATION_NAME;
+            return $row;
+        });
 
         $fiorentinaLineups = $lineups
         ->filter(fn ($l) => in_array($l->formation_name, [
