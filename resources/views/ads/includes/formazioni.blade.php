@@ -26,6 +26,7 @@
     $initial = $lineups->get($keys['initial'], collect());
     $bench = $lineups->get($keys['subs'], collect());
     $coaches = $lineups->get($keys['coach'], collect());
+    dd($team, $initial, $bench);
 
     /* ---------------------------------------------------------
        2.  Bail out early if no starting XI
