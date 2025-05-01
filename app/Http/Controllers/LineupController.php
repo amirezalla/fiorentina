@@ -19,7 +19,7 @@ class LineupController extends Controller
             $row->formation_name = $row->FORMATION_NAME;
             return $row;
         });
-        dd($lineups);
+
 
         $fiorentinaLineups = $lineups
         ->filter(fn ($l) => in_array($l->formation_name, [
@@ -36,7 +36,7 @@ class LineupController extends Controller
         $home = json_decode($match->home_team, true);   // ['name', 'id', 'slug', ...]
 $away = json_decode($match->away_team, true);
 
-
+dd($lineups,$fiorentinaLineups);
 
 
 $isHomeFiorentina = strcasecmp($home['name'], 'Fiorentina') === 0;
