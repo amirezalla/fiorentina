@@ -41,6 +41,7 @@ class Kernel extends ConsoleKernel
     })->everyTwoMinutes();
 
     $schedule->call(function () {
+        Log::debug('Running lineup sync task');
         $ids = Calendario::where('status', 'LIVE')   // only before / during match
                          ->pluck('match_id');
         foreach ($ids as $id) {
