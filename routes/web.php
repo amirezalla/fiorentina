@@ -54,6 +54,8 @@ Route::post('/match/{matchId}/refresh-summary', [MatchSummaryController::class, 
      ->name('match.getStatsHtml');
      Route::get('/match/{match}/score', App\Http\Controllers\ScoreController::class)
      ->name('match.score');   // → /match/123/score
+     Route::get('/match/{match}/lineup-block', App\Http\Controllers\LineupController::class)
+     ->name('match.lineup-block');
 
 
 
