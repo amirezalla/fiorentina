@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Calendario;
 use Illuminate\Support\Collection;
 use App\Models\MatchLineups;
+use Illuminate\Support\Facades\DB;
+
 
 
 class LineupController extends Controller
