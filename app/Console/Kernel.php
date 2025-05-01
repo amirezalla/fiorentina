@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
     })->everyTwoMinutes();
 
     $schedule->call(function () {
-        $ids = Calendario::whereIn('status', ['NS','LIVE'])   // only before / during match
+        $ids = Calendario::whereIn('status', 'LIVE')   // only before / during match
                          ->pluck('match_id');
         foreach ($ids as $id) {
             Artisan::queue('lineup:sync', ['matchId' => $id]);
