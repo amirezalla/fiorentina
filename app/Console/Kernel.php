@@ -30,6 +30,17 @@ class Kernel extends ConsoleKernel
             })->everyMinute();
 
 
+                // Sync every live match in one go, every two minutes
+    $schedule->call(function () {
+        Log::debug('Running score sync task');
+        $liveIds = Calendario::where('status', 'LIVE')->pluck('match_id');
+
+        foreach ($liveIds as $id) {
+            Artisan::queue('score:sync', ['matchId' => $id]);
+        }
+    })->everyTwoMinutes();
+
+
 
                 /*
     |──────────────────────────────────────────────────────────

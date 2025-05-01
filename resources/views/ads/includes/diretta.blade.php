@@ -83,10 +83,14 @@
                 <img src="{{ $homeTeam['logo'] }}" alt="{{ $homeTeam['name'] }}">
                 <span>{{ $homeTeam['name'] }}</span>
             </div>
-            <div class="match-score">
-                <h6>{{ date('d.m.Y H:i', strtotime($match->match_date)) }}</h6>
-                <div>{{ $score['home'] }} - {{ $score['away'] }}</div>
+            <div id="score-{{ $match->id }}" class="match-score">
+                <h6 id="match-date-{{ $match->id }}">
+                    {{ date('d.m.Y H:i', strtotime($match->match_date)) }}
+                </h6>
 
+                <div id="live-score-{{ $match->id }}">
+                    {{ $score['home'] }} - {{ $score['away'] }}
+                </div>
             </div>
             <div class="team away-team">
                 <img src="{{ $awayTeam['logo'] }}" alt="{{ $awayTeam['name'] }}">
@@ -207,5 +211,23 @@
     {{-- Diretta History blade --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const endpoint = "{{ route('match.score', $match) }}";
+            const scoreNode = document.getElementById('live-score-{{ $match->id }}');
+
+            // poll every 30 s (adjust as you like)
+            setInterval(() => {
+                axios.get(endpoint)
+                    .then(({
+                        data
+                    }) => {
+                        scoreNode.textContent = `${data.home} - ${data.away}`;
+                    })
+                    .catch(err => console.error(err));
+            }, 30000);
+        });
+    </script>
 @else
 @endif
