@@ -4,7 +4,6 @@
     <div class="tab-pane fade @if ($isHomeFiorentina) show active @endif" id="home" role="tabpanel"
         aria-labelledby="home-tab">
 
-        @dd($fiorentinaLineups, $anotherTeamLineups)
         @if ($isHomeFiorentina)
             @include('ads.includes.formazioni', [
                 'groupedLineups' => $fiorentinaLineups,
