@@ -39,33 +39,30 @@ class SyncCommentary extends Command
         /* ─── 2. Insert / update DB without touching admin-edited rows ─── */
         foreach ($apiRows as $row) {
             if (empty($row['COMMENT_TIME']) && empty($row['COMMENT_TEXT'])) continue;
-
+        
+            // Normalise the two flags (null → 0) so the key is consistent
+            $flagBold      = $row['COMMENT_IS_BOLD']      ?? 0;
+            $flagImportant = $row['COMMENT_IS_IMPORTANT'] ?? 0;
+        
+            // Key that makes a commentary UNIQUE for your rules
             $key = [
                 'match_id'      => $matchId,
                 'comment_time'  => $row['COMMENT_TIME']  ?? null,
                 'comment_class' => $row['COMMENT_CLASS'] ?? null,
-                'comment_text'  => $row['COMMENT_TEXT']  ?? null,
+                'is_bold'       => $flagBold,
+                'is_important'  => $flagImportant,
             ];
-
-            // skip if an admin has already edited this minute
+        
+            // Skip rows that an admin has already modified
             $edited = MatchCommentary::where($key)
                       ->whereColumn('updated_at', '!=', 'created_at')
                       ->exists();
             if ($edited) continue;
-
-            $existing = MatchCommentary::where($key)->first();
-
-            if ($existing) {
-                $existing->update([
-                    'is_bold'      => $row['COMMENT_IS_BOLD']      ?? $existing->is_bold,
-                    'is_important' => $row['COMMENT_IS_IMPORTANT'] ?? $existing->is_important,
-                ]);
-            } else {
-                MatchCommentary::create(array_merge($key, [
-                    'is_bold'      => $row['COMMENT_IS_BOLD']      ?? 0,
-                    'is_important' => $row['COMMENT_IS_IMPORTANT'] ?? 0,
-                ]));
-            }
+        
+            // Update existing row (text may have changed) or create a new one
+            MatchCommentary::updateOrCreate($key, [
+                'comment_text' => $row['COMMENT_TEXT'] ?? null,
+            ]);
         }
 
         /* ─── 3. Dump the fresh commentary to Wasabi ─── */
