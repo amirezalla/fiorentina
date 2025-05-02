@@ -64,12 +64,31 @@ class SyncCommentary extends Command
                 'comment_text' => $row['COMMENT_TEXT'] ?? null,
             ]);
         }
+        DB::statement("
+    DELETE t1 FROM match_commentaries t1
+    JOIN match_commentaries t2
+      ON  t1.match_id      = t2.match_id
+      AND t1.comment_time  = t2.comment_time
+      AND COALESCE(t1.comment_class,'')  = COALESCE(t2.comment_class,'')
+      AND t1.is_bold       = t2.is_bold
+      AND t1.is_important  = t2.is_important
+      AND t1.id            > t2.id    -- keep the first (lowest id) row
+");
 
         /* ─── 3. Dump the fresh commentary to Wasabi ─── */
-        $json = MatchCommentary::where('match_id', $matchId)
-                ->orderByDesc('id')
-                ->get()
-                ->toJson();
+        $minuteExpr = "
+        CAST(SUBSTRING_INDEX(comment_time, '+', 1) AS UNSIGNED) +
+        IF(LOCATE('+', comment_time) > 0,
+           CAST(REPLACE(SUBSTRING_INDEX(comment_time, '+', -1), \"'\", '') AS UNSIGNED),
+           0)
+    ";
+    
+    // pull newest‑to‑oldest so clients can just read top‑down
+    $json = MatchCommentary::where('match_id', $matchId)
+            ->orderByRaw("$minuteExpr DESC")
+            ->orderBy('id', 'DESC')        // tie‑breaker
+            ->get()
+            ->toJson(JSON_UNESCAPED_UNICODE);
 
         Log::info($json);
         Storage::disk('wasabi')->put("commentary/commentary_{$matchId}.json", $json, 'public');
