@@ -83,10 +83,10 @@ class SyncCommentary extends Command
            0)
     ";
     
+    
     // pull newest‑to‑oldest so clients can just read top‑down
     $json = MatchCommentary::where('match_id', $matchId)
             ->orderByRaw("$minuteExpr DESC")
-            ->orderBy('id', 'DESC')        // tie‑breaker
             ->get()
             ->toJson(JSON_UNESCAPED_UNICODE);
 
