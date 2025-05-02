@@ -54,10 +54,10 @@ class SyncCommentary extends Command
             ];
         
             // Skip rows that an admin has already modified
-            $edited = MatchCommentary::where($key)
-                      ->whereColumn('updated_at', '!=', 'created_at')
-                      ->exists();
-            if ($edited) continue;
+            // $edited = MatchCommentary::where($key)
+            //           ->whereColumn('updated_at', '!=', 'created_at')
+            //           ->exists();
+            // if ($edited) continue;
         
             // Update existing row (text may have changed) or create a new one
             MatchCommentary::updateOrCreate($key, [
