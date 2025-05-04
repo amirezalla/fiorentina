@@ -19,6 +19,7 @@ class MatchCommentaryController extends Controller
 
     public function fetchLatestCommentaries($matchId): JsonResponse
     {
+        $this->importFromApi($matchId); // Fetch from API and store in DB
         $path = "commentary/commentary_{$matchId}.json";
     
         if (!Storage::disk('wasabi')->exists($path)) {
@@ -41,7 +42,7 @@ class MatchCommentaryController extends Controller
             'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
             'x-rapidapi-key'  => $apiKey,
         ])->get($url);
-
+            dd($resp->json()); // Debugging line
         $apiData = $resp->json()['DATA'] ?? [];
         if (!$apiData) {
             return;
