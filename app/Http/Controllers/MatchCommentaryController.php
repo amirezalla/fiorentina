@@ -19,7 +19,6 @@ class MatchCommentaryController extends Controller
 
     public function fetchLatestCommentaries($matchId): JsonResponse
     {
-        $this->importFromApi($matchId); // Fetch from API and store in DB
         $path = "commentary/commentary_{$matchId}.json";
     
         if (!Storage::disk('wasabi')->exists($path)) {
