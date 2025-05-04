@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
                 Log::info('Running commentary sync task.');
                 $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
                 foreach ($liveMatches as $matchId) {
-                    Artisan::queue('commentary:sync', ['matchId' => $matchId]);
+                    Artisan::queue('commentary:sync', ['matchId' => 'SdXESlvB']);
                 }
             })->everyMinute();
 
