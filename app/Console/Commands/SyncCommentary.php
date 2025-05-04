@@ -22,6 +22,8 @@ class SyncCommentary extends Command
 
         $url = "https://flashlive-sports.p.rapidapi.com/v1/events/commentary"
              . "?locale=it_IT&event_id={$matchId}";
+             Log::info($url);
+             Log::info($matchId);
 
         $resp     = Http::withHeaders([
                         'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
