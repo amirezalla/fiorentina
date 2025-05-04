@@ -231,7 +231,7 @@
                         nav?.classList.add('active');
                     }
                 }).catch(console.error);
-            }, 1000);
+            }, 60000000);
         });
     </script>
 @else
