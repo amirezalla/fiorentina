@@ -23,10 +23,10 @@ class Kernel extends ConsoleKernel
 
             $schedule->call(function () {
                 Log::info('Running commentary sync task.');
-                $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
-                foreach ($liveMatches as $matchId) {
+                // $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
+                // foreach ($liveMatches as $matchId) {
                     Artisan::queue('commentary:sync', ['matchId' => 'SdXESlvB']);
-                }
+                // }
             })->everyMinute();
 
 
