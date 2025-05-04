@@ -83,7 +83,7 @@ class Kernel extends ConsoleKernel
         }
     })->everyTenMinutes();    
             
-            $schedule->command('matches:start-scheduled')->everyTwoMinutes();
+            // $schedule->command('matches:start-scheduled')->everyTwoMinutes();
 
     }
 
