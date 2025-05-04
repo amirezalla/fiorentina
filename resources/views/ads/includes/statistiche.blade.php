@@ -52,7 +52,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const matchId = "{{ $matchId }}";
-        const wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
+        const wsUrl = "wss://websocket-1030861031399.europe-west1.run.app";
         let ws;
 
         // 1) Function to fetch the partial HTML

@@ -17,7 +17,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var matchId = "{{ $matchId }}";
-        var wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
+        var wsUrl = "wss://websocket-1030861031399.europe-west1.run.app";
 
         function fetchCommentaries() {
             fetch('/match/' + matchId + '/commentaries')

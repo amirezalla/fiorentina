@@ -127,7 +127,7 @@
         // CONFIG
         // ------------------------------------------------------------------
         const matchId = '{{ $matchId }}'; // injected from Blade
-        const wsUrl = "wss://weboscket-laviola-341264949013.europe-west1.run.app";
+        const wsUrl = "wss://websocket-1030861031399.europe-west1.run.app";
         const csrfToken = '{{ csrf_token() }}';
 
         const messagesUl = document.getElementById('messages-list');
