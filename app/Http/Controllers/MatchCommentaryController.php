@@ -43,9 +43,9 @@ class MatchCommentaryController extends Controller
         $mb = $toMinute($b['comment_time'] ?? '0');
 
         if ($ma !== $mb) {            // primary: minute asc
-            return $ma <=> $mb;
+            return $mb <=> $ma;
         }
-        return ($a['id'] ?? 0) <=> ($b['id'] ?? 0);   // secondary: id asc
+        return ($b['id'] ?? 0) <=> ($a['id'] ?? 0);   // secondary: id asc
     });
 
     return response()->json($entries);
