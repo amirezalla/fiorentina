@@ -96,7 +96,8 @@ class PostTable extends TableAbstract
                         $hasKeywords = \DB::table('meta_boxes')
                             ->where('reference_id',  $post->id)
                             ->where('reference_type', \Botble\Blog\Models\Post::class)
-                            ->where('meta_key',           'vig_seo_keywords')
+                            ->where('meta_key', 'vig_seo_keywords')
+                            ->where('meta_value', '[{"keywords":[""]}]')
                             ->exists();
             
                         // 2) Still has the default seo_meta string
