@@ -93,7 +93,7 @@ class PostTable extends TableAbstract
                         $post = $column->getItem();
             
                         // 1) Does NOT have vig_seo_keywords in the meta table
-                        $hasKeywords = \DB::table('meta')
+                        $hasKeywords = \DB::table('meta_boxes')
                             ->where('reference_id',  $post->id)
                             ->where('reference_type', \Botble\Blog\Models\Post::class)
                             ->where('key',           'vig_seo_keywords')
