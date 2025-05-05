@@ -18,40 +18,39 @@ class MatchCommentaryController extends Controller
 {
 
     public function fetchLatestCommentaries(string $matchId): JsonResponse
-    {
-        $path = "commentary/commentary_{$matchId}.json";
-    
-        if (! Storage::disk('wasabi')->exists($path)) {
-            return response()->json([], 404);
-        }
-    
-        $entries = json_decode(Storage::disk('wasabi')->get($path), true) ?? [];
-    
-        /* ─────────────────────────────────────────────
-         | helper → "45+2'" ➜ 45.02   ·  "41'" ➜ 41.00
-         * ───────────────────────────────────────────*/
-        $toMinute = static function (string $raw): float {
-            $raw = trim($raw, "'");              // remove trailing apostrophe
-            if (str_contains($raw, '+')) {
-                [$m, $extra] = explode('+', $raw, 2);
-                return (float) $m + ((float) $extra) / 100;  // 45+1 → 45.01
-            }
-            return (float) $raw;
-        };
-    
-        /* sort: newest first (bigger minute first, then bigger id) */
-        usort($entries, function ($a, $b) use ($toMinute) {
-            $ma = $toMinute($a['comment_time'] ?? '');
-            $mb = $toMinute($b['comment_time'] ?? '');
-    
-            if ($ma !== $mb) {
-                return $ma <=> $mb ? -1 : 1;     // descending minute
-            }
-            return ($b['id'] ?? 0) <=> ($a['id'] ?? 0);  // descending id
-        });
-    
-        return response()->json($entries);
+{
+    $path = "commentary/commentary_{$matchId}.json";
+
+    if (! Storage::disk('wasabi')->exists($path)) {
+        return response()->json([], 404);
     }
+
+    $entries = json_decode(Storage::disk('wasabi')->get($path), true) ?? [];
+
+    /* ───── helper: "45+3'" ➜ 45.03 ,  "41'" ➜ 41.00 ───── */
+    $toMinute = static function (string $raw): float {
+        $raw = trim($raw, "'");                 // drop the trailing apostrophe
+        if (str_contains($raw, '+')) {
+            [$m, $extra] = explode('+', $raw, 2);
+            return (float) $m + ((float) $extra) / 100;   // 45+3 → 45.03
+        }
+        return (float) $raw;                    // simple minute
+    };
+
+    /* ───── sort: oldest first ───── */
+    usort($entries, function ($a, $b) use ($toMinute) {
+        $ma = $toMinute($a['comment_time'] ?? '0');
+        $mb = $toMinute($b['comment_time'] ?? '0');
+
+        if ($ma !== $mb) {            // primary: minute asc
+            return $ma <=> $mb;
+        }
+        return ($a['id'] ?? 0) <=> ($b['id'] ?? 0);   // secondary: id asc
+    });
+
+    return response()->json($entries);
+}  
+
     private function importFromApi( $matchId): void
     {
         $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
