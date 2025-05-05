@@ -59,7 +59,6 @@
                     <th>Weight</th>
                     <th>Status</th>
                     <!-- New columns -->
-                    <th>Impressions</th>
                     <th>
                         Impr.
                         @if ($tf != 'all')
@@ -72,6 +71,8 @@
                             <span class="text-muted small">({{ $tf == 'today' ? '1' : $tf }} d)</span>
                         @endif
                     </th>
+                    <!-- Actions col -->
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
