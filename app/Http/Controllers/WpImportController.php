@@ -434,8 +434,9 @@ private function category($primaryCategoryId,$post_id){
     public function generateSEO(Request $request)
     {
         try {
-            $postId=556308;
-            
+            if($request->has('post_id')){
+                $postId = $request->input('post_id');
+            }
             // Retrieve the post
             $post = DB::table('posts')->where('id', $postId)->first();
     
@@ -553,10 +554,10 @@ $prompt = "Generate SEO metadata for the following post:
                     ],
                 ]);
     
-            return response()->json([
+            return redirect()->back()->with([
                 'message' => 'SEO metadata generated and saved successfully.',
                 'seo_content' => $seoContent,
-            ], 200);
+            ]);
     
         } catch (\Exception $e) {
             return response()->json([

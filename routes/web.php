@@ -133,7 +133,8 @@ Route::post('/store-commentary', [DirettaController::class, 'storeCommentary'])-
 
 Route::get('/import-users-wp', [WpImportController::class, 'users']);
 Route::get('/import-comment-post', [WpImportController::class, 'importComment']);
-Route::get('/generate-seo', [WpImportController::class, 'generateSEO']);
+Route::get('/generate-seo', [WpImportController::class, 'generateSEO'])
+     ->name('generate-seo');
 
 Route::get('/delete-today-posts', [WpImportController::class, 'deleteTodayImportedPosts']);
 
