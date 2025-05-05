@@ -209,6 +209,20 @@ class Ad extends BaseModel
     }
 
 
+    public function getRedirectUrl(): ?string
+{
+    if (!$this->urls) return null;
+
+    $urls = json_decode($this->urls, true);
+    $count = count($urls);
+
+    if ($count === 0) return null;
+
+    // uses the same $index logic you already have
+    $index = $this->display_count % $count;
+    return $urls[$index] ?? null;
+}
+
     public static function addAdsToContent($content)
     {
         /* ─────────────────────────────────────────────────────────────
