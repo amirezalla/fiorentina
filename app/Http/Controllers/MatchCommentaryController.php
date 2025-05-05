@@ -17,16 +17,32 @@ use Illuminate\Http\JsonResponse; // ✅ CORRECT
 class MatchCommentaryController extends Controller
 {
 
-    public function fetchLatestCommentaries($matchId): JsonResponse
+    public function fetchLatestCommentaries(string $matchId): JsonResponse
     {
         $path = "commentary/commentary_{$matchId}.json";
     
-        if (!Storage::disk('wasabi')->exists($path)) {
+        if (! Storage::disk('wasabi')->exists($path)) {
             return response()->json([], 404);
         }
     
-        $content = Storage::disk('wasabi')->get($path);
-        $json = json_decode($content, true);
+        $json   = json_decode(Storage::disk('wasabi')->get($path), true) ?? [];
+    
+        /* -----------------------------------------------------------
+         | sort:  primary → comment_time (DESC)
+         |        secondary → id (DESC)
+         * ----------------------------------------------------------*/
+        usort($json, function ($a, $b) {
+            $t1 = $a['comment_time'] ?? '';
+            $t2 = $b['comment_time'] ?? '';
+    
+            // compare times first (newest first)
+            if ($t1 !== $t2) {
+                return $t1 < $t2 ? 1 : -1;
+            }
+    
+            // fall‑back: compare id if times equal (newest first)
+            return ($a['id'] ?? 0) < ($b['id'] ?? 0) ? 1 : -1;
+        });
     
         return response()->json($json);
     }
