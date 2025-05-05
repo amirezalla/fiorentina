@@ -65,16 +65,10 @@
 
                             <!-- Image Upload Section -->
                             <div class="row mt-3 mb-3" id="imageUploadSection">
-                                <input type="file" class="form-control mb-1" id="imageUpload" name="images[]" multiple
+                                <input type="file" class="form-control mb-2" id="imageUpload" name="images[]" multiple
                                     accept="image/*">
 
-                                <!-- container that will receive a matching URL field
-                                                 for every selected image -->
-                                <div id="urlFields" class="mt-2"></div>
-
-                                <div class="row mx-0 mt-3">
-                                    <div class="col-12 mt-3" id="previewContainer"></div>
-                                </div>
+                                <div id="previewWrapper" class="d-flex flex-column gap-3"></div>
                             </div>
 
                             <!-- Image Name Section for Google Ad Manager -->
@@ -219,42 +213,71 @@
             }
         });
 
-        // Add change event listener to the file input for multiple image previews.
-        const fileInput = document.getElementById('imageUpload');
-        const preview = document.getElementById('previewContainer');
-        const urlFieldWrapper = document.getElementById('urlFields');
+        (function() {
+            const fileInput = document.getElementById('imageUpload');
+            const previewWrapper = document.getElementById('previewWrapper');
 
-        fileInput.addEventListener('change', e => {
-            preview.innerHTML = '';
-            urlFieldWrapper.innerHTML = '';
+            /* keep a mutable copy of chosen files */
+            let filesData = [];
 
-            [...e.target.files].forEach((file, idx) => {
-                // ---------- preview ----------
-                const reader = new FileReader();
-                reader.onload = evt => {
-                    const img = document.createElement('img');
-                    img.src = evt.target.result;
-                    img.classList.add('img-fluid', 'mb-2', 'me-2');
-                    img.style.maxWidth = '120px';
-                    preview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-
-                // ---------- matching url field ----------
-                const div = document.createElement('div');
-                div.className = 'input-group mb-2';
-
-                div.innerHTML = `
-                <span class="input-group-text">URL ${idx+1}</span>
-                <input type="url"
-                       class="form-control"
-                       name="urls[]"
-                       placeholder="https://example.com"
-                       required>
-            `;
-                urlFieldWrapper.appendChild(div);
+            fileInput.addEventListener('change', e => {
+                filesData = [...e.target.files]; // reset
+                renderPreviews();
             });
-        });
+
+            /* ---------- helper: refresh the <input type="file"> with filesData ---------- */
+            function syncFileInput() {
+                const dt = new DataTransfer();
+                filesData.forEach(f => dt.items.add(f));
+                fileInput.files = dt.files;
+            }
+
+            /* ---------- helper: (re)build the preview list ---------- */
+            function renderPreviews() {
+                previewWrapper.innerHTML = '';
+
+                filesData.forEach((file, idx) => {
+                    /* container */
+                    const card = document.createElement('div');
+                    card.className = 'border rounded p-2 position-relative';
+
+                    /*  remove button  */
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'btn-close position-absolute top-0 end-0 m-2';
+                    removeBtn.title = 'Remove';
+                    removeBtn.onclick = () => {
+                        filesData.splice(idx, 1);
+                        renderPreviews();
+                        syncFileInput();
+                    };
+                    card.appendChild(removeBtn);
+
+                    /* image preview (natural size) */
+                    const img = document.createElement('img');
+                    img.className = 'd-block mb-2';
+                    img.style.maxWidth = '100%'; // respect natural width but don’t overflow column
+                    img.style.height = 'auto';
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    card.appendChild(img);
+
+                    /* url input */
+                    const urlInput = document.createElement('input');
+                    urlInput.type = 'url';
+                    urlInput.name = `urls[${idx}]`;
+                    urlInput.placeholder = 'https://example.com';
+                    urlInput.required = true;
+                    urlInput.className = 'form-control';
+                    card.appendChild(urlInput);
+
+                    previewWrapper.appendChild(card);
+                });
+            }
+        })();
 
         // Initialize CodeMirror on the "code" textarea if it exists.
         if (document.getElementById("code")) {

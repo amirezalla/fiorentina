@@ -160,7 +160,7 @@ class AdController extends BaseController
     
         /* ─────────────── 4. TYPE 2 (Google / AMP) ─────────────── */
         elseif ($ad->type == Ad::TYPE_GOOGLE_ADS) {
-            $ad->image = $request->image;   // as before
+            $ad->amp = $request->amp;   // as before
             $ad->save();
         }
     
