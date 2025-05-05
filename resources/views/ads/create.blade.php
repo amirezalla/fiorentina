@@ -65,16 +65,15 @@
 
                             <!-- Image Upload Section -->
                             <div class="row mt-3 mb-3" id="imageUploadSection">
-                                <!-- Display error message for image upload if exists -->
-
                                 <input type="file" class="form-control mb-1" id="imageUpload" name="images[]" multiple
                                     accept="image/*">
-                                <input type="text" class="form-control" name="url" id="url"
-                                    placeholder="https://laviola.it" value="{{ old('url') }}">
+
+                                <!-- container that will receive a matching URL field
+                                                 for every selected image -->
+                                <div id="urlFields" class="mt-2"></div>
+
                                 <div class="row mx-0 mt-3">
-                                    <div class="col-12 mt-3" id="previewContainer">
-                                        <!-- Previews will appear here -->
-                                    </div>
+                                    <div class="col-12 mt-3" id="previewContainer"></div>
                                 </div>
                             </div>
 
@@ -110,13 +109,13 @@
                                         <input type="number" class="form-control" id="height" name="height"
                                             value="{{ old('height') ?? ($ad_height ?? null) }}">
                                     </div>
-                                    <div class="form-check mt-3">
+                                    {{-- <div class="form-check mt-3">
                                         <input class="form-check-input" type="checkbox" id="advads-wrapper-add-sizes"
                                             name="advanced_ad[output][add_wrapper_sizes]" value="true"
                                             @if (old('advanced_ad.output.add_wrapper_sizes')) checked @endif>
                                         <label class="form-check-label" for="advads-wrapper-add-sizes">Prenota questo
                                             spazio</label>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -221,25 +220,40 @@
         });
 
         // Add change event listener to the file input for multiple image previews.
-        document.getElementById('imageUpload').addEventListener('change', function(e) {
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = ''; // Clear any previous previews
+        const fileInput = document.getElementById('imageUpload');
+        const preview = document.getElementById('previewContainer');
+        const urlFieldWrapper = document.getElementById('urlFields');
 
-            const files = e.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const img = document.createElement('img');
-                        img.src = event.target.result;
-                        img.alt = 'Image Preview';
-                        img.classList.add('image-preview', 'img-fluid', 'mb-2');
-                        previewContainer.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
+        fileInput.addEventListener('change', e => {
+            preview.innerHTML = '';
+            urlFieldWrapper.innerHTML = '';
+
+            [...e.target.files].forEach((file, idx) => {
+                // ---------- preview ----------
+                const reader = new FileReader();
+                reader.onload = evt => {
+                    const img = document.createElement('img');
+                    img.src = evt.target.result;
+                    img.classList.add('img-fluid', 'mb-2', 'me-2');
+                    img.style.maxWidth = '120px';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+
+                // ---------- matching url field ----------
+                const div = document.createElement('div');
+                div.className = 'input-group mb-2';
+
+                div.innerHTML = `
+                <span class="input-group-text">URL ${idx+1}</span>
+                <input type="url"
+                       class="form-control"
+                       name="urls[]"
+                       placeholder="https://example.com"
+                       required>
+            `;
+                urlFieldWrapper.appendChild(div);
+            });
         });
 
         // Initialize CodeMirror on the "code" textarea if it exists.

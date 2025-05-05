@@ -70,110 +70,112 @@ class AdController extends BaseController
     }
 
     public function store(Request $request)
-{
-    // Validate the incoming request data including start_date and expiry_date.
-    $validated = $request->validate([
-        'post_title'  => 'required|string|max:255',
-        'width'       => 'nullable|numeric|min:0',
-        'height'      => 'nullable|numeric|min:0',
-        'weight'      => 'required|numeric|min:1',
-        'type'        => ['required', Rule::in(array_keys(Ad::TYPES))],
-        'group'       => ['required', Rule::in(array_keys(Ad::GROUPS))],
-        'start_date'  => 'nullable|date',
-        'expiry_date' => 'nullable|date',
-    ]);
-
-    $advertisement = new Ad();
-    $advertisement->title   = $validated['post_title'];
-    $advertisement->group   = $request->group;
-    $advertisement->weight  = $request->weight;
-    $advertisement->type    = $request->type;
-    $advertisement->width   = $request->width;
-    $advertisement->height  = $request->height;
-    $advertisement->url     = $request->url;
-    $advertisement->amp     = $request->amp;
-    $advertisement->start_date  = $request->start_date;
-    $advertisement->expiry_date = $request->expiry_date;
-
-    // Set status: if start_date is provided and it's not today, mark as pending (0); otherwise, active (1)
-    if ($request->start_date && $request->start_date != date('Y-m-d')) {
-        $advertisement->status = 0; // pending
-    } else {
-        $advertisement->status = 1; // active
-    }
-
-    // For image-based ads (type 1)
-    if ($advertisement->type == 1) {
-        // Save the advertisement to get an ID.
-        $advertisement->save();
-
-        if ($request->hasFile('images')) {
-            $files = $request->file('images');
-
-            foreach ($files as $file) {
+    {
+        /* ─────────────── 1. validation ─────────────── */
+        $validated = $request->validate([
+            'post_title'        => 'required|string|max:255',
+            'width'             => 'nullable|numeric|min:0',
+            'height'            => 'nullable|numeric|min:0',
+            'weight'            => 'required|numeric|min:1',
+            'type'              => ['required', Rule::in(array_keys(Ad::TYPES))],
+            'group'             => ['required', Rule::in(array_keys(Ad::GROUPS))],
+            'start_date'        => 'nullable|date',
+            'expiry_date'       => 'nullable|date',
+            'images'            => 'nullable|array',
+            'images.*'          => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
+            'urls'              => 'nullable|array',
+            'urls.*'            => 'nullable|url|max:255',
+        ]);
+    
+        /* ─────────────── 2. create the Ad shell ─────────────── */
+        $ad = new Ad();
+        $ad->title        = $validated['post_title'];
+        $ad->group        = $validated['group'];
+        $ad->weight       = $validated['weight'];
+        $ad->type         = $validated['type'];
+        $ad->width        = $validated['width']  ?? null;
+        $ad->height       = $validated['height'] ?? null;
+        $ad->amp          = $request->amp;
+        $ad->start_date   = $validated['start_date']  ?? date('Y-m-d');
+        $ad->expiry_date  = $validated['expiry_date'] ?? null;
+        /* status */
+        $ad->status = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
+    
+        /* ─────────────── 3. handle TYPE 1 (images) ─────────────── */
+        if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
+    
+            // Persist now so we have an id for the relationship
+            $ad->save();
+    
+            $files   = $request->file('images', []);
+            $targets = $request->input('urls', []);
+    
+            if (count($files) !== count($targets)) {
+                return back()
+                       ->withInput()
+                       ->withErrors(['urls' => 'Devi fornire un URL per ogni immagine caricata.']);
+            }
+    
+            $storedUrls = [];   // will be saved in `ads.urls`
+    
+            foreach ($files as $idx => $file) {
                 if ($file->isValid()) {
-                    // Check file extension and reject if it is .webp.
+    
+                    /* 3‑a  block .webp */
                     $ext = strtolower($file->getClientOriginalExtension());
                     if ($ext === 'webp') {
-                        return redirect()->back()
-                            ->withInput()
-                            ->withErrors(['image' => "Una o più immagini caricate hanno un'estensione .webp, che non è accettabile."]);
+                        return back()
+                               ->withInput()
+                               ->withErrors(['images' => "Le immagini .webp non sono consentite."]);
                     }
-
-                    // Generate a unique filename.
-                    $filename = Str::random(32) . time() . "." . $file->getClientOriginalExtension();
-
-                    // Read and optionally resize the image.
-                    $imageResized = ImageManager::gd()->read($file);
-                    if ($request->width && $request->height) {
-                        $imageResized = $imageResized->resize($request->width, $request->height);
+    
+                    /* 3‑b  process + upload */
+                    $filename = Str::random(32) . time() . ".$ext";
+    
+                    $img = ImageManager::gd()->read($file);
+                    if ($ad->width && $ad->height) {
+                        $img = $img->resize($ad->width, $ad->height);
                     }
-                    $imageResized = $imageResized->encode();
-
-                    // Save the processed image to a temporary path.
-                    $tempPath = sys_get_temp_dir() . '/' . $filename;
-                    file_put_contents($tempPath, $imageResized);
-
-                    // Upload the image via RvMedia.
-                    $uploadResult = $this->rvMedia->uploadFromPath($tempPath, 0, 'ads-images/');
+                    $tempPath = sys_get_temp_dir() . "/$filename";
+                    $img->encode()->save($tempPath);
+    
+                    $uploaded = $this->rvMedia
+                                     ->uploadFromPath($tempPath, 0, 'ads-images/');
                     unlink($tempPath);
-
-                    // Create an associated AdImage record.
-                    // Laravel automatically sets 'ad_id' from the relationship.
-                    $advertisement->images()->create([
-                        'image_url' => $uploadResult['data']->url,
+    
+                    /* 3‑c  save child row */
+                    $ad->images()->create([
+                        'image_url' => $uploaded['data']->url,
                     ]);
+    
+                    /* 3‑d  keep redirect url in same order */
+                    $storedUrls[] = $targets[$idx] ?? '';
                 }
             }
+    
+            /* 3‑e  save the ordered url list in JSON column */
+            $ad->urls = json_encode($storedUrls);
+            $ad->save();   // update only
         }
-    } else {
-        // For Google Ad Manager or other ad types (type 2)
-        $advertisement->image = $request->image;
-        $advertisement->save();
-    }
-
-    try {
-        // (If not already saved, ensure the advertisement is saved.)
-        if (!$advertisement->exists) {
-            $advertisement->save();
+    
+        /* ─────────────── 4. TYPE 2 (Google / AMP) ─────────────── */
+        elseif ($ad->type == Ad::TYPE_GOOGLE_ADS) {
+            $ad->image = $request->image;   // as before
+            $ad->save();
         }
-
-        // If start_date is set in the future, dispatch a job to activate the ad on that day.
-        if ($advertisement->start_date && $advertisement->start_date != date('Y-m-d')) {
-            $startDate = \Carbon\Carbon::parse($advertisement->start_date);
-            $delay = $startDate->diffInSeconds(\Carbon\Carbon::now());
+    
+        /* ─────────────── 5. schedule future activation ─────────────── */
+        if ($ad->start_date !== date('Y-m-d')) {
+            $delay = \Carbon\Carbon::parse($ad->start_date)
+                                   ->diffInSeconds(now());
             if ($delay > 0) {
-                dispatch(new \App\Jobs\ActivateAdJob($advertisement))
-                    ->delay($delay);
+                dispatch(new \App\Jobs\ActivateAdJob($ad))->delay($delay);
             }
         }
-
-        return redirect()->route('ads.index')->with('success', 'Advertisement created successfully!');
-    } catch (\Exception $e) {
-        \Log::error('Failed to save advertisement: ' . $e->getMessage());
-        return redirect()->back()->withErrors('Failed to save advertisement. Please try again.');
+    
+        return redirect()->route('ads.index')
+                         ->with('success', 'Advertisement created successfully!');
     }
-}
 
 public function groupsIndex()
 {
