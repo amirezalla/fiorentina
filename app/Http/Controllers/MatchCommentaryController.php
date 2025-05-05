@@ -25,28 +25,33 @@ class MatchCommentaryController extends Controller
             return response()->json([], 404);
         }
     
-        $json   = json_decode(Storage::disk('wasabi')->get($path), true) ?? [];
+        $entries = json_decode(Storage::disk('wasabi')->get($path), true) ?? [];
     
-        /* -----------------------------------------------------------
-         | sort:  primary → comment_time (DESC)
-         |        secondary → id (DESC)
-         * ----------------------------------------------------------*/
-        usort($json, function ($a, $b) {
-            $t1 = $a['comment_time'] ?? '';
-            $t2 = $b['comment_time'] ?? '';
-    
-            // compare times first (newest first)
-            if ($t1 !== $t2) {
-                return $t1 < $t2 ? 1 : -1;
+        /* ─────────────────────────────────────────────
+         | helper → "45+2'" ➜ 45.02   ·  "41'" ➜ 41.00
+         * ───────────────────────────────────────────*/
+        $toMinute = static function (string $raw): float {
+            $raw = trim($raw, "'");              // remove trailing apostrophe
+            if (str_contains($raw, '+')) {
+                [$m, $extra] = explode('+', $raw, 2);
+                return (float) $m + ((float) $extra) / 100;  // 45+1 → 45.01
             }
+            return (float) $raw;
+        };
     
-            // fall‑back: compare id if times equal (newest first)
-            return ($a['id'] ?? 0) < ($b['id'] ?? 0) ? 1 : -1;
+        /* sort: newest first (bigger minute first, then bigger id) */
+        usort($entries, function ($a, $b) use ($toMinute) {
+            $ma = $toMinute($a['comment_time'] ?? '');
+            $mb = $toMinute($b['comment_time'] ?? '');
+    
+            if ($ma !== $mb) {
+                return $ma <=> $mb ? -1 : 1;     // descending minute
+            }
+            return ($b['id'] ?? 0) <=> ($a['id'] ?? 0);  // descending id
         });
     
-        return response()->json($json);
+        return response()->json($entries);
     }
-
     private function importFromApi( $matchId): void
     {
         $apiKey = '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb';
