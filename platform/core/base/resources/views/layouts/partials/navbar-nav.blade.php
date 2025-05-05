@@ -85,4 +85,14 @@
             <span class="nav-link-title  text-truncate">Gestione delle dirette</span>
         </a>
     </li>
+
+
+    <li class="nav-item ">
+        <a href="{{ route('chat-settings.index') }}" class="nav-link  nav-priority-3000" id="chat-settings"
+            data-bs-auto-close="false" role="button" aria-expanded="false" title="chat">
+            <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fa fa-message"></i></span>
+            <span class="nav-link-title  text-truncate">Impostazioni della chat</span>
+        </a>
+    </li>
+
 </ul>
