@@ -1,5 +1,9 @@
 @extends(BaseHelper::getAdminMasterLayoutTemplate())
+@php
 
+    use Illuminate\Support\Facades\Storage;
+
+@endphp
 @section('content')
     <form action="{{ route('ads.update', $ad->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -41,7 +45,8 @@
 
                             @foreach ($ad->images as $index => $image)
                                 <div class="border rounded p-2 mt-2">
-                                    <img src="{{ $image->image_url }}" style="max-width: 100%; height: auto" class="mb-2">
+                                    <img src="{{ Storage::disk('wasabi')->temporaryUrl($image->image_url, now()->addMinutes(15)) }}"
+                                        style="max-width: 100%; height: auto" class="mb-2">
                                     <input type="url" name="urls[]" class="form-control"
                                         placeholder="https://example.com" value="{{ $urls[$index] ?? '' }}">
                                 </div>
