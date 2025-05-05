@@ -4893,8 +4893,12 @@ header>.container,
 }
 
 .ck-content.amir h3 {
-    font-family: 'titillium web', sans-serif !important;
-    color: #444 !important;
+    font-family: 'Titillium Web', sans-serif !important;
+    color: #222 !important;
+    font-weight: 700;
+    letter-spacing: -0.1rem;
+    line-height: 100%;
+    font-size: 2.1rem;
 }
 
 .ck-content.amir p {
