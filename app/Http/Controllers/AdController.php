@@ -240,57 +240,92 @@ public function groupsIndex()
     }
 
     public function update(Request $request, Ad $ad)
-    {
-        // Validate the incoming request data
-        $validated = $request->validate([
-            'post_title' => 'required|string|max:255',
-            'width'      => 'nullable|numeric|min:0',
-            'height'     => 'nullable|numeric|min:0',
-            'weight'     => 'required|numeric|min:1',
-            'type'       => ['required', Rule::in(array_keys(Ad::TYPES))],
-            'group'      => ['required', Rule::in(array_keys(Ad::GROUPS))],
-        ]);
+{
+    $validated = $request->validate([
+        'post_title' => 'required|string|max:255',
+        'width'      => 'nullable|numeric|min:0',
+        'height'     => 'nullable|numeric|min:0',
+        'weight'     => 'required|numeric|min:1',
+        'type'       => ['required', Rule::in(array_keys(Ad::TYPES))],
+        'group'      => ['required', Rule::in(array_keys(Ad::GROUPS))],
+        'start_date' => 'nullable|date',
+        'expiry_date'=> 'nullable|date',
+        'images'     => 'nullable|array',
+        'images.*'   => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
+        'urls'       => 'nullable|array',
+        'urls.*'     => 'nullable|url|max:255',
+    ]);
 
-        $status = $request->status == '1' ? 1 : 0;
+    $ad->title       = $validated['post_title'];
+    $ad->group       = $validated['group'];
+    $ad->type        = $validated['type'];
+    $ad->weight      = $validated['weight'];
+    $ad->width       = $validated['width'] ?? null;
+    $ad->height      = $validated['height'] ?? null;
+    $ad->amp         = $request->amp;
+    $ad->start_date  = $validated['start_date'] ?? date('Y-m-d');
+    $ad->expiry_date = $validated['expiry_date'] ?? null;
+    $ad->status      = $request->status == '1' ? 1 : 0;
 
-        $data = [
-            'title'  => $request->post_title,
-            'group'  => $request->group,
-            'type'   => $request->type,
-            'width'  => $request->width,
-            'height' => $request->height,
-            'url'    => $request->url,
-            'weight' => $request->weight,
-            'amp'    => $request->amp ?? null,
-            'status' => $status,
-        ];
+    $ad->save();
 
-        if ($data['type'] == 1) {
-            if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                $filename     = Str::random(32) . time() . "." . $request->file('image')->getClientOriginalExtension();
-                $imageResized = ImageManager::gd()->read($request->image);
+    if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
+        $files   = $request->file('images', []);
+        $targets = $request->input('urls', []);
 
-                if ($request->width && $request->height) {
-                    $imageResized = $imageResized->resize($request->width, $request->height);
-                }
-                $imageResized = $imageResized->encode();
-                $path = "ads-images/" . $filename;
-                Storage::disk('public')->put($path, $imageResized);
-                $data['image'] = $path;
-            }
-        } else {
-            $data['image'] = $request->image;
+        if (count($files) !== count($targets)) {
+            return back()
+                ->withInput()
+                ->withErrors(['urls' => 'Devi fornire un URL per ogni immagine caricata.']);
         }
 
-        try {
-            $ad->update($data);
-            $ad->refresh();
-            return redirect()->route('ads.index')->with('success', 'Advertisement updated successfully!');
-        } catch (\Exception $e) {
-            Log::error('Failed to save advertisement: ' . $e->getMessage());
-            return redirect()->back()->withErrors('Failed to save advertisement. Please try again.');
+        $storedUrls = [];
+
+        // Remove old images if needed:
+        $ad->images()->delete();
+
+        foreach ($files as $idx => $file) {
+            if ($file->isValid()) {
+                $ext = strtolower($file->getClientOriginalExtension());
+                if ($ext === 'webp') {
+                    return back()->withInput()->withErrors(['images' => 'Le immagini .webp non sono consentite.']);
+                }
+
+                $filename = Str::random(32) . time() . ".$ext";
+                $img = ImageManager::gd()->read($file);
+                if ($ad->width && $ad->height) {
+                    $img = $img->resize($ad->width, $ad->height);
+                }
+                $tempPath = sys_get_temp_dir() . "/$filename";
+                $img->encode()->save($tempPath);
+
+                $uploaded = $this->rvMedia
+                                 ->uploadFromPath($tempPath, 0, 'ads-images/');
+                unlink($tempPath);
+
+                $ad->images()->create([
+                    'image_url' => $uploaded['data']->url,
+                ]);
+
+                $storedUrls[] = $targets[$idx] ?? '';
+            }
+        }
+
+        $ad->urls = json_encode($storedUrls);
+        $ad->save();
+    }
+
+    // Schedule activation if needed
+    if ($ad->start_date !== date('Y-m-d')) {
+        $delay = \Carbon\Carbon::parse($ad->start_date)->diffInSeconds(now());
+        if ($delay > 0) {
+            dispatch(new \App\Jobs\ActivateAdJob($ad))->delay($delay);
         }
     }
+
+    return redirect()->route('ads.index')->with('success', 'Advertisement updated successfully!');
+}
+
 
     public function destroy(Ad $ad)
     {
