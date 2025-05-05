@@ -30,38 +30,66 @@ class AdController extends BaseController
         return parent::breadcrumb()->add("Advertisements");
     }
     public function index(Request $request)
-    {
-        $this->pageTitle("Ads List");
-    
-        $ads = Ad::query()
-            // 1) add the sums for impressions & clicks:
-            ->withSum('adStatistics as total_impressions', 'impressions')
-            ->withSum('adStatistics as total_clicks', 'clicks')
-            
-            // 2) apply the existing filters
-            ->where(function ($q) use ($request) {
-                $q->when(
-                    $request->filled('group') && in_array($request->group, array_keys(Ad::GROUPS)),
-                    fn($q) => $q->where('group', $request->group)
-                )
-                ->when(
-                    $request->filled('q'),
-                    fn($q) => $q->where('title', 'LIKE', '%' . $request->q . '%')
-                )
-                ->when(
-                    $request->filled('status') && in_array(intval($request->status), [1, 2]),
-                    function ($q) use ($request) {
-                        $request->status == 1
-                            ? $q->where('status', 1)
-                            : $q->where('status', 0);
-                    }
-                );
-            })
-            ->latest()
-            ->paginate(20);
-    
-        return view('ads.view', compact('ads'));
-    }
+{
+    $this->pageTitle('Ads List');
+
+    /* -----------------------------------------------------------------
+     | 1.  Resolve the selected time‑frame into a date window
+     * ----------------------------------------------------------------*/
+    $range = match ($request->input('tf')) {
+        'today' => [now()->toDateString(), now()->toDateString()],
+        '7'     => [now()->subDays(6)->toDateString(),  now()->toDateString()],
+        '30'    => [now()->subDays(29)->toDateString(), now()->toDateString()],
+        '90'    => [now()->subDays(89)->toDateString(), now()->toDateString()],
+        default => null,   // “all time”
+    };
+
+    /* -----------------------------------------------------------------
+     | 2.  Build the query
+     * ----------------------------------------------------------------*/
+    $ads = Ad::query()
+
+        /* ---- 2‑a  add the sums for impressions & clicks ------------ */
+        ->when($range,
+            /* windowed sums (selected tf) */
+            fn($q) => $q->withSum(
+                        ['adStatistics as total_impressions' => fn($s)
+                            => $s->whereBetween('date', $range)], 'impressions')
+                        ->withSum(
+                        ['adStatistics as total_clicks' => fn($s)
+                            => $s->whereBetween('date', $range)], 'clicks'),
+            /* fallback: all‑time sums */
+            fn($q) => $q->withSum('adStatistics as total_impressions', 'impressions')
+                        ->withSum('adStatistics as total_clicks',       'clicks')
+        )
+
+        /* ---- 2‑b  existing filters -------------------------------- */
+        ->where(function ($q) use ($request) {
+            $q->when(
+                $request->filled('group') && in_array($request->group, array_keys(Ad::GROUPS)),
+                fn($q) => $q->where('group', $request->group)
+            )->when(
+                $request->filled('q'),
+                fn($q) => $q->where('title', 'LIKE', '%' . $request->q . '%')
+            )->when(
+                $request->filled('status') && in_array((int) $request->status, [1, 2]),
+                fn($q)   => $q->where('status', $request->status == 1 ? 1 : 0)
+            );
+        })
+
+        ->latest()
+        ->paginate(20)
+        ->withQueryString();   // keep the tf key during pagination
+
+    /* -----------------------------------------------------------------
+     | 3.  Render view – also pass the tf key so the <select> keeps state
+     * ----------------------------------------------------------------*/
+    return view('ads.view', [
+        'ads' => $ads,
+        'tf'  => $request->input('tf', 'all'),
+    ]);
+}
+
 
     public function create()
     {
