@@ -81,6 +81,43 @@ class PostTable extends TableAbstract
                 ]);
             }
             $this->addColumns([
+                FormattedColumn::make('seo_warning')
+                    ->title('')                       // no header
+                    ->orderable(false)
+                    ->searchable(false)
+                    ->width(0)                        // keeps the header line tiny
+                    ->getValueUsing(function () {     // nothing to index / sort
+                        return '';                    // leave empty for export / CSV
+                    })
+                    ->renderUsing(function (FormattedColumn $column) {
+                        $post = $column->getItem();
+            
+                        // 1) Does NOT have vig_seo_keywords in the meta table
+                        $hasKeywords = \DB::table('meta')
+                            ->where('reference_id',  $post->id)
+                            ->where('reference_type', \Botble\Blog\Models\Post::class)
+                            ->where('key',           'vig_seo_keywords')
+                            ->exists();
+            
+                        // 2) Still has the default seo_meta string
+                        $hasOnlyDefaultSeoMeta = $post->seo_meta === '[{"index":"index"}]';
+            
+                        if ($hasKeywords || ! $hasOnlyDefaultSeoMeta) {
+                            return '';                // nothing to show
+                        }
+            
+                        $url = route('generate-seo', ['post_id' => $post->id]);
+            
+                        // A full‑width “row” that spans the table
+                        return '
+                            <div class="alert alert-warning mb-0" style="width:100%">
+                                Questo articolo non ha impostazioni SEO generate automaticamente né manualmente.<br>
+                                <a href="'.$url.'">Clicca qui per generarle con l’AI</a>
+                            </div>
+                        ';
+                    })
+            ]);
+            $this->addColumns([
                     ImageColumn::make(),
                 NameColumn::make()->route('posts.edit'),
                 FormattedColumn::make('categories_name')
