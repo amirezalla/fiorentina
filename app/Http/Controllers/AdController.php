@@ -298,14 +298,20 @@ public function groupsIndex()
         return redirect()->route('ads.index')->with('success', 'Ad deleted successfully.');
     }
 
-    public function trackClick($id)
+    public function trackClick(int $id)
     {
         $ad = Ad::findOrFail($id);
-        // increment clicks for the given ad
+    
+        // 1. add +1 to today’s click counter
         AdStatistic::trackClick($ad->id);
-
-        // redirect to the ad’s URL
-        return redirect()->to($ad->url);
+    
+        // 2. pick the right redirect
+        //    – uses getRedirectUrl() you already placed in the model
+        //    – falls back to the legacy single‑url column if needed
+        $target = $ad->getRedirectUrl() ?: $ad->url ?: '/';
+    
+        // 3. send the user on her way
+        return redirect()->away($target);
     }
 
 
