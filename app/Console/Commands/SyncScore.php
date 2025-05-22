@@ -15,7 +15,8 @@ class SyncScore extends Command
 
     public function handle(): int
     {
-        $matchId = $this->argument('matchId');
+        try{
+$matchId = $this->argument('matchId');
 
         // ───── 1. Find the match row so we know the team-ids to query  ─────
         $row = Calendario::where('match_id', $matchId)->first();
@@ -25,10 +26,11 @@ class SyncScore extends Command
             return Command::FAILURE;
         }
 
-        // You may name these columns differently (edit if needed)
+        // Extract team IDs from JSON fields
+        $homeTeamData = json_decode($row->home_team, true);
+
         $teamIds = array_filter([
-            $row->home_team_id  ?? null,
-            $row->away_team_id  ?? null,
+            $homeTeamData['id'] ?? null,
         ]);
 
         if (empty($teamIds)) {
@@ -81,7 +83,6 @@ class SyncScore extends Command
         $payload = [
             'status' => $stageType,        // e.g. LIVE, FINISHED, etc.
             'score'  => json_encode(['home' => $homeScore, 'away' => $awayScore]),
-            'minute' => $minute,
         ];
 
         // Force DB status to FINISHED when the API says so
@@ -95,5 +96,11 @@ class SyncScore extends Command
         $this->info("{$matchId}: {$homeScore}-{$awayScore} ({$payload['status']})");
 
         return Command::SUCCESS;
+
+        } catch (\Exception $e) {
+            Log::error('Error syncing score: '.$e->getMessage());
+            return Command::FAILURE;
+        }
+        
     }
 }

@@ -22,22 +22,22 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping();
 
 
-            $schedule->call(function () {
-                Log::info('Running commentary sync task.');
-                $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
-                foreach ($liveMatches as $matchId) {
-                    Artisan::queue('commentary:sync', ['matchId' => $matchId]);
-                }
-            })->everyMinute();
+            // $schedule->call(function () {
+            //     Log::info('Running commentary sync task.');
+            //     $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
+            //     foreach ($liveMatches as $matchId) {
+            //         Artisan::queue('commentary:sync', ['matchId' => $matchId]);
+            //     }
+            // })->everyMinute();
 
 
-            $schedule->call(function () {
-                Log::info('Running commentary sync task.');
-                $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
-                foreach ($liveMatches as $matchId) {
-                    Artisan::queue('commentary:sync', ['matchId' => $matchId]);
-                }
-            })->everyMinute();
+            // $schedule->call(function () {
+            //     Log::info('Running commentary sync task.');
+            //     $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
+            //     foreach ($liveMatches as $matchId) {
+            //         Artisan::queue('commentary:sync', ['matchId' => $matchId]);
+            //     }
+            // })->everyMinute();
 
 
                 // Sync every live match in one go, every two minutes
@@ -50,14 +50,14 @@ class Kernel extends ConsoleKernel
         }
     })->everyMinute();
 
-    $schedule->call(function () {
-        Log::debug('Running lineup sync task');
-        $ids = Calendario::where('status', 'LIVE')   // only before / during match
-                         ->pluck('match_id');
-        foreach ($ids as $id) {
-            Artisan::queue('lineup:sync', ['matchId' => $id]);
-        }
-    })->everyMinute();
+    // $schedule->call(function () {
+    //     Log::debug('Running lineup sync task');
+    //     $ids = Calendario::where('status', 'LIVE')   // only before / during match
+    //                      ->pluck('match_id');
+    //     foreach ($ids as $id) {
+    //         Artisan::queue('lineup:sync', ['matchId' => $id]);
+    //     }
+    // })->everyMinute();
     
 
 
@@ -68,15 +68,15 @@ class Kernel extends ConsoleKernel
     |    (run each minute but dispatch the job with +30 s delay)
     |──────────────────────────────────────────────────────────
     */
-    $schedule->call(function () {
-        Log::info('⏱  summary sync (+30 s delay)');
-        $liveMatches = Calendario::where('status', 'LIVE')->pluck('match_id');
+    // $schedule->call(function () {
+    //     Log::info('⏱  summary sync (+30 s delay)');
+    //     $liveMatches = Calendario::where('status', 'LIVE')->pluck('match_id');
 
-        foreach ($liveMatches as $matchId) {
-            Artisan::queue('summary:sync', ['matchId' => $matchId])
-                   ->delay(now()->addSeconds(30));   // 90-second cadence
-        }
-    })->everyMinute();
+    //     foreach ($liveMatches as $matchId) {
+    //         Artisan::queue('summary:sync', ['matchId' => $matchId])
+    //                ->delay(now()->addSeconds(30));   // 90-second cadence
+    //     }
+    // })->everyMinute();
 
 
     /*
@@ -84,16 +84,16 @@ class Kernel extends ConsoleKernel
     | 3. STATISTICS → every 10 minutes
     |──────────────────────────────────────────────────────────
     */
-    $schedule->call(function () {
-        Log::info('⏱  stats sync');
-        $liveMatches = Calendario::where('status', 'LIVE')->pluck('match_id');
+    // $schedule->call(function () {
+    //     Log::info('⏱  stats sync');
+    //     $liveMatches = Calendario::where('status', 'LIVE')->pluck('match_id');
 
-        foreach ($liveMatches as $matchId) {
-            Artisan::queue('stats:sync', ['matchId' => $matchId]);
-        }
-    })->everyTenMinutes();    
+    //     foreach ($liveMatches as $matchId) {
+    //         Artisan::queue('stats:sync', ['matchId' => $matchId]);
+    //     }
+    // })->everyTenMinutes();    
             
-            $schedule->command('matches:start-scheduled')->everyTwoMinutes();
+    //         $schedule->command('matches:start-scheduled')->everyTwoMinutes();
 
     }
 
