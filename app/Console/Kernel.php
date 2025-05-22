@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+
         $schedule->command('queue:work --timeout=60 --tries=1 --once')
             ->everyMinute()
             ->withoutOverlapping();
@@ -23,10 +24,19 @@ class Kernel extends ConsoleKernel
 
             $schedule->call(function () {
                 Log::info('Running commentary sync task.');
-                // $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
-                // foreach ($liveMatches as $matchId) {
-                    Artisan::queue('commentary:sync', ['matchId' => 'SdXESlvB']);
-                // }
+                $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
+                foreach ($liveMatches as $matchId) {
+                    Artisan::queue('commentary:sync', ['matchId' => $matchId]);
+                }
+            })->everyMinute();
+
+
+            $schedule->call(function () {
+                Log::info('Running commentary sync task.');
+                $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
+                foreach ($liveMatches as $matchId) {
+                    Artisan::queue('commentary:sync', ['matchId' => $matchId]);
+                }
             })->everyMinute();
 
 
@@ -38,7 +48,7 @@ class Kernel extends ConsoleKernel
         foreach ($liveIds as $id) {
             Artisan::queue('score:sync', ['matchId' => $id]);
         }
-    })->everyTwoMinutes();
+    })->everyMinute();
 
     $schedule->call(function () {
         Log::debug('Running lineup sync task');
@@ -83,7 +93,7 @@ class Kernel extends ConsoleKernel
         }
     })->everyTenMinutes();    
             
-            // $schedule->command('matches:start-scheduled')->everyTwoMinutes();
+            $schedule->command('matches:start-scheduled')->everyTwoMinutes();
 
     }
 
