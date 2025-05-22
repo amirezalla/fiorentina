@@ -22,19 +22,11 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping();
 
 
-            $schedule->call(function () {
-                Log::info('Running commentary sync task.');
-                $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
-                foreach ($liveMatches as $matchId) {
-                    Artisan::queue('commentary:sync', ['matchId' => $matchId]);
-                }
-            })->everyMinute();
-
 
             $schedule->call(function () {
-                Log::info('Running commentary sync task.');
                 $liveMatches = Calendario::where('status','LIVE')->pluck('match_id');
                 foreach ($liveMatches as $matchId) {
+                    Log::info('Running commentary sync task.'.$id);
                     Artisan::queue('commentary:sync', ['matchId' => $matchId]);
                 }
             })->everyMinute();
@@ -42,19 +34,21 @@ class Kernel extends ConsoleKernel
 
                 // Sync every live match in one go, every two minutes
     $schedule->call(function () {
-        Log::debug('Running score sync task');
         $liveIds = Calendario::where('status', 'LIVE')->pluck('match_id');
 
         foreach ($liveIds as $id) {
+            Log::debug('Running score sync task'.$id);
+
             Artisan::queue('score:sync', ['matchId' => $id]);
         }
     })->everyMinute();
 
     $schedule->call(function () {
-        Log::debug('Running lineup sync task');
         $ids = Calendario::where('status', 'LIVE')   // only before / during match
                          ->pluck('match_id');
         foreach ($ids as $id) {
+            Log::debug('Running lineup sync task'.$id);
+
             Artisan::queue('lineup:sync', ['matchId' => $id]);
         }
     })->everyMinute();
