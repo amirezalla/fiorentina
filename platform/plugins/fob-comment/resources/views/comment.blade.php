@@ -339,13 +339,13 @@
         listUrl: {{ Js::from(route('fob-comment.public.comments.index', isset($model) ? ['reference_type' => $model::class, 'reference_id' => $model->id] : url()->current())) }},
     };
 </script>
-<div class="mt-5 fob-comment-form-section">
+<div class=" fob-comment-form-section">
     <div class="d-none d-md-block">
         @include('ads.includes.adsrecentp3')
     </div>
 
 
-    <h4 class="fob-comment-title fob-comment-form-title">
+    <h4 class="fob-comment-title mt-5 fob-comment-form-title">
         {{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
