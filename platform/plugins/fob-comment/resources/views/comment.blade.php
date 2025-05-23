@@ -343,13 +343,13 @@
 
 
 
-    <h4 class="fob-comment-title mt-5 fob-comment-form-title">
+    <h4 class="fob-comment-title fob-comment-form-title">
         {{ trans('plugins/fob-comment::comment.front.form.title') }}
     </h4>
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
-    <div class="d-none d-md-block">
+    <div class="mt-5 d-none d-md-block">
         @include('ads.includes.adsrecentp3')
     </div>
 </div>
