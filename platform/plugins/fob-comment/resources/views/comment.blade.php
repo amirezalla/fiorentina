@@ -339,6 +339,19 @@
         listUrl: {{ Js::from(route('fob-comment.public.comments.index', isset($model) ? ['reference_type' => $model::class, 'reference_id' => $model->id] : url()->current())) }},
     };
 </script>
+<div class="fob-comment-form-section">
+    <div class="d-none d-md-block">
+        @include('ads.includes.adsrecentp3')
+    </div>
+
+
+    <h4 class="fob-comment-title fob-comment-form-title">
+        {{ trans('plugins/fob-comment::comment.front.form.title') }}
+    </h4>
+    <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
+
+    {!! CommentForm::createWithReference($model)->renderForm() !!}
+</div>
 <div class="fob-comment-list-section" style="display: none">
     <div class="d-flex justify-content-between align-items-center border-bottom text-dark mb-3">
         <div class="d-flex align-items-left">
@@ -368,19 +381,7 @@
     <div class="fob-comment-list-wrapper"></div>
 </div>
 
-<div class="fob-comment-form-section">
-    <div class="d-none d-md-block">
-        @include('ads.includes.adsrecentp3')
-    </div>
 
-
-    <h4 class="fob-comment-title fob-comment-form-title">
-        {{ trans('plugins/fob-comment::comment.front.form.title') }}
-    </h4>
-    <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
-
-    {!! CommentForm::createWithReference($model)->renderForm() !!}
-</div>
 
 <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
 <script>
