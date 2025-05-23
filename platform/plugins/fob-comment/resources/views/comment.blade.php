@@ -340,9 +340,7 @@
     };
 </script>
 <div class=" fob-comment-form-section">
-    <div class="d-none d-md-block">
-        @include('ads.includes.adsrecentp3')
-    </div>
+
 
 
     <h4 class="fob-comment-title mt-5 fob-comment-form-title">
@@ -351,6 +349,9 @@
     <p class="fob-comment-form-note">{{ trans('plugins/fob-comment::comment.front.form.description') }}</p>
 
     {!! CommentForm::createWithReference($model)->renderForm() !!}
+    <div class="d-none d-md-block">
+        @include('ads.includes.adsrecentp3')
+    </div>
 </div>
 <div class="fob-comment-list-section" style="display: none">
     <div class="d-flex justify-content-between align-items-center border-bottom text-dark mb-3">
