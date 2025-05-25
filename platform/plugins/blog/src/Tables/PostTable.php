@@ -104,7 +104,7 @@ class PostTable extends TableAbstract
                         $hasOnlyDefaultSeoMeta = $post->seo_meta === '[{"index":"index"}]';
             
                         if ($hasKeywords || ! $hasOnlyDefaultSeoMeta) {
-                            return '';                // nothing to show
+                            return 'amir';                // nothing to show
                         }
             
                         $url = route('generate-seo', ['post_id' => $post->id]);
