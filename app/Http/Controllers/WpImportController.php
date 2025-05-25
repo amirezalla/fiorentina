@@ -566,7 +566,11 @@ $prompt = "Generate SEO metadata for the following post:
     $keywords       = $jsonData['keywords'] ?? [];
     $metaDescription = $jsonData['meta_description'] ?? '';
 
-    
+    DB::table('meta_boxes')
+    ->where('reference_id',   $postId)
+    ->where('reference_type', 'Botble\Blog\Models\Post')
+    ->whereIn('meta_key', ['seo_meta', 'vig_seo_keywords'])
+    ->delete();
 
                 // Save SEO data to the `meta_boxes` table
                 DB::table('meta_boxes')->insert([
