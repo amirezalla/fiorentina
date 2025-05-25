@@ -40,6 +40,11 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WpImportController;
 use App\Http\Controllers\AssetController;
 
+use Botble\Blog\Models\Post;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Response;
+
+
 
 
     Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
@@ -142,6 +147,49 @@ Route::get('/import-posts', [WpImportController::class, 'importPostsWithoutMeta'
 Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
+
+
+Route::get('/feed', function () {
+    $posts = Post::where('status', 'PUBLISHED')->latest()->take(10)->get();
+
+    $xml = new \SimpleXMLElement(
+        '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"/>'
+    );
+    $xml->addAttribute('xmlns:content', 'http://purl.org/rss/1.0/modules/content/');
+    $xml->addAttribute('xmlns:dc',      'http://purl.org/dc/elements/1.1/');
+    $xml->addAttribute('xmlns:atom',    'http://www.w3.org/2005/Atom');
+    $channel = $xml->addChild('channel');
+    $channel->addChild('title',        'LaViola.it');
+    $channel->addChild('link',         url('/'));
+    $channel->addChild('description',  'Il sito dei tifosi viola');
+    $channel->addChild('language',     'it-IT');
+    $channel->addChild('lastBuildDate', Carbon::now('Europe/Rome')->toRfc822String());
+
+    foreach ($posts as $post) {
+        $item = $channel->addChild('item');
+        $item->addChild('title',  htmlspecialchars($post->name));
+        $item->addChild('link',   $post->url);
+        $item->addChild('guid',   $post->url)->addAttribute('isPermaLink', 'false');
+        $item->addChild('pubDate', Carbon::parse($post->created_at)->toRfc822String());
+        $item->addChild('description')
+             ->addCData($post->description);          // helper below
+        $item->addChild('content:encoded', null, 'http://purl.org/rss/1.0/modules/content/')
+             ->addCData($post->content);
+
+        $creator = $item->addChild('dc:creator', null, 'http://purl.org/dc/elements/1.1/');
+        $creator[0] = $post->author?->name ?? 'Redazione LaViola.it';
+
+        foreach ($post->categories as $cat) {
+            $item->addChild('category', htmlspecialchars($cat->name));
+        }
+        foreach ($post->tags as $tag) {
+            $item->addChild('category', htmlspecialchars($tag->name));
+        }
+    }
+
+    return Response::make($xml->asXML(), 200, ['Content-Type' => 'application/rss+xml']);
+});
+
 
 
 
