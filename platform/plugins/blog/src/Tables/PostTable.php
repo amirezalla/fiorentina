@@ -80,56 +80,62 @@ class PostTable extends TableAbstract
                     DeleteAction::make()->route('posts.soft-delete'),
                 ]);
             }
-            $this->addColumns([
+$this->addColumns([
     FormattedColumn::make('seo_warning')
-        ->title('')                 // no table-header text
+        ->title('')
         ->orderable(false)
         ->searchable(false)
-        ->width(0)                  // keeps the header row tiny
-        ->getValueUsing(fn () => '') // leave export/CSV cells empty
+        ->width(0)
+        ->getValueUsing(fn () => '')   // keep CSV/Excel export empty
         ->renderUsing(function (FormattedColumn $column) {
 
             $post = $column->getItem();
 
-            // ───────────────────────────────
-            // 1) Look for non-empty keywords
-            // ───────────────────────────────
+            /* ───────────────────────────────
+             * 1) KEYWORDS PRESENT?
+             *    meta_value example:
+             *    [{"keywords":["Giovanni","Napoli"]}]
+             *    or                  [""]          ← should count as empty
+             * ─────────────────────────────── */
             $keywordsMeta = \DB::table('meta_boxes')
                 ->where('reference_id',   $post->id)
                 ->where('reference_type', \Botble\Blog\Models\Post::class)
                 ->where('meta_key',       'vig_seo_keywords')
-                ->value('meta_value');          // returns NULL if row doesn’t exist
+                ->value('meta_value');                 // null if row absent
 
             $hasKeywords = false;
             if ($keywordsMeta) {
-                /**  meta_value is something like:
-                 *   [{"keywords":["seo","blog"]}]
-                 */
                 $decoded = json_decode($keywordsMeta, true) ?? [];
                 $hasKeywords = collect($decoded)
                     ->pluck('keywords')
                     ->flatten()
-                    ->filter(fn ($k) => trim($k) !== '')   // drop empty strings
+                    ->filter(fn ($k) => trim($k) !== '')     // keep only real words
                     ->isNotEmpty();
             }
 
-            // ───────────────────────────────
-            // 2) Check whether seo_meta is   ONLY the default string
-            // ───────────────────────────────
-            $hasOnlyDefaultSeoMeta = $post->seo_meta === '[{"index":"index"}]';
+            /* ───────────────────────────────
+             * 2) CUSTOM SEO META PRESENT?
+             *    we consider it “custom” as soon as
+             *    seo_title OR seo_description is non-empty
+             * ─────────────────────────────── */
+            $decodedSeoMeta = json_decode($post->seo_meta, true) ?? [];
+            $hasCustomSeoMeta = collect($decodedSeoMeta)
+                ->contains(function ($item) {
+                    return (!empty($item['seo_title']) || !empty($item['seo_description']));
+                });
 
-            // ───────────────────────────────
-            // 3) If we already have *either* keywords
-            //    or custom seo_meta → nothing to show
-            // ───────────────────────────────
-            if ($hasKeywords || ! $hasOnlyDefaultSeoMeta) {
-                return '';                     // keep the cell empty
+            /* ───────────────────────────────
+             * 3) IF EITHER piece exists
+             *    → leave the cell empty
+             *    OTHERWISE   → show warning
+             * ─────────────────────────────── */
+            if ($hasKeywords || $hasCustomSeoMeta) {
+                return '';      // nothing to render in the table cell
             }
 
-            // ───────────────────────────────
-            // 4) Otherwise we’re missing both
-            //    → display the yellow warning
-            // ───────────────────────────────
+            /* ───────────────────────────────
+             * 4) MISSING BOTH → render alert
+             * ─────────────────────────────── */
             $url = route('generate-seo', ['post_id' => $post->id]);
 
             return '
@@ -140,6 +146,7 @@ class PostTable extends TableAbstract
             ';
         })
 ]);
+
 
             $this->addColumns([
                     ImageColumn::make(),
