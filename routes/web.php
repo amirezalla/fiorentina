@@ -43,9 +43,16 @@ use App\Http\Controllers\AssetController;
 use Botble\Blog\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
+use SimpleXMLElement;
+use DOMDocument;
 
 
-
+function addCData(SimpleXMLElement $node, string $text): void
+{
+    $domNode = dom_import_simplexml($node);
+    $owner   = $domNode->ownerDocument ?: $domNode;
+    $domNode->appendChild($owner->createCDATASection($text));
+}
 
     Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
     
@@ -150,35 +157,62 @@ Route::get('/import-categories', [WpImportController::class, 'importCategories']
 
 
 Route::get('/feed', function () {
-    $posts = Post::where('status', 'PUBLISHED')->latest()->take(10)->get();
 
-    $xml = new \SimpleXMLElement(
+    $posts = Post::where('status', 'PUBLISHED')
+        ->latest('created_at')
+        ->take(30)
+        ->get();
+
+    // -------------------------------------------------
+    // Build the RSS skeleton
+    // -------------------------------------------------
+    $xml = new SimpleXMLElement(
         '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"/>'
     );
     $xml->addAttribute('xmlns:content', 'http://purl.org/rss/1.0/modules/content/');
     $xml->addAttribute('xmlns:dc',      'http://purl.org/dc/elements/1.1/');
     $xml->addAttribute('xmlns:atom',    'http://www.w3.org/2005/Atom');
     $channel = $xml->addChild('channel');
-    $channel->addChild('title',        'LaViola.it');
-    $channel->addChild('link',         url('/'));
-    $channel->addChild('description',  'Il sito dei tifosi viola');
-    $channel->addChild('language',     'it-IT');
-    $channel->addChild('lastBuildDate', Carbon::now('Europe/Rome')->toRfc822String());
 
+    $channel->addChild('title',       'LaViola.it');
+    $channel->addChild('link',        url('/'));
+    $channel->addChild('description', 'Il sito dei tifosi viola');
+    $channel->addChild('language',    'it-IT');
+    $channel->addChild('lastBuildDate',
+        Carbon::now('Europe/Rome')->toRfc822String());
+
+    // -------------------------------------------------
+    // Fill <item> nodes
+    // -------------------------------------------------
     foreach ($posts as $post) {
         $item = $channel->addChild('item');
+
         $item->addChild('title',  htmlspecialchars($post->name));
         $item->addChild('link',   $post->url);
         $item->addChild('guid',   $post->url)->addAttribute('isPermaLink', 'false');
-        $item->addChild('pubDate', Carbon::parse($post->created_at)->toRfc822String());
-        $item->addChild('description')
-             ->addCData($post->description);          // helper below
-        $item->addChild('content:encoded', null, 'http://purl.org/rss/1.0/modules/content/')
-             ->addCData($post->content);
+        $item->addChild('pubDate',
+            Carbon::parse($post->created_at)->toRfc822String());
 
-        $creator = $item->addChild('dc:creator', null, 'http://purl.org/dc/elements/1.1/');
-        $creator[0] = $post->author?->name ?? 'Redazione LaViola.it';
+        // <description>
+        addCData($item->addChild('description'), $post->description);
 
+        // <content:encoded>
+        $content = $item->addChild(
+            'content:encoded',
+            null,
+            'http://purl.org/rss/1.0/modules/content/'
+        );
+        addCData($content, $post->content);
+
+        // <dc:creator>
+        $creator = $item->addChild(
+            'dc:creator',
+            null,
+            'http://purl.org/dc/elements/1.1/'
+        );
+        addCData($creator, $post->author?->name ?? 'Redazione LaViola.it');
+
+        // Categories (combine post categories & tags)
         foreach ($post->categories as $cat) {
             $item->addChild('category', htmlspecialchars($cat->name));
         }
@@ -187,10 +221,12 @@ Route::get('/feed', function () {
         }
     }
 
-    return Response::make($xml->asXML(), 200, ['Content-Type' => 'application/rss+xml']);
+    return Response::make(
+        $xml->asXML(),
+        200,
+        ['Content-Type' => 'application/rss+xml; charset=UTF-8']
+    );
 });
-
-
 
 
 Route::get('/optimize-gifs', function () {
