@@ -443,20 +443,54 @@ private function category($primaryCategoryId,$post_id){
             if (!$post) {
                 return response()->json(['message' => 'Post not found.'], 404);
             }
+// ---------------------------------------------------
+// 1)  Pull the two meta-boxes (if they exist)
+// ---------------------------------------------------
+$seoMetaJson      = DB::table('meta_boxes')
+    ->where('reference_id',   $postId)
+    ->where('reference_type', 'Botble\Blog\Models\Post')
+    ->where('meta_key',       'seo_meta')
+    ->value('meta_value');        // → null if row missing
 
-        // Check if meta boxes already exist for this post
-        $exists = DB::table('meta_boxes')
-        ->where('reference_id', $postId)
-        ->where('reference_type', 'Botble\Blog\Models\Post')
-        ->where(function ($query) {
-            $query->where('meta_key', 'seo_meta')
-                  ->orWhere('meta_key', 'vig_seo_keywords');
-        })
-        ->exists();
+$keywordsMetaJson = DB::table('meta_boxes')
+    ->where('reference_id',   $postId)
+    ->where('reference_type', 'Botble\Blog\Models\Post')
+    ->where('meta_key',       'vig_seo_keywords')
+    ->value('meta_value');        // → null if row missing
 
-        if ($exists) {
-        return response()->json(['message' => 'SEO metadata already exists for this post.'], 200);
-        }
+// ---------------------------------------------------
+// 2)  Decode & inspect
+//     a) SEO meta is “custom” if ANY block has
+//        seo_title OR seo_description filled in.
+//     b) Keywords are “present” if there is at least
+//        one non-empty keyword.
+// ---------------------------------------------------
+$hasCustomSeoMeta = false;
+if ($seoMetaJson) {
+    $seoBlocks = json_decode($seoMetaJson, true) ?? [];
+    $hasCustomSeoMeta = collect($seoBlocks)->contains(function ($b) {
+        return !empty($b['seo_title']) || !empty($b['seo_description']);
+    });
+}
+
+$hasKeywords = false;
+if ($keywordsMetaJson) {
+    $kwBlocks = json_decode($keywordsMetaJson, true) ?? [];
+    $hasKeywords = collect($kwBlocks)
+        ->pluck('keywords')->flatten()
+        ->filter(fn ($k) => trim($k) !== '')
+        ->isNotEmpty();
+}
+
+// ---------------------------------------------------
+// 3)  Stop only if *real* SEO is already there
+// ---------------------------------------------------
+if ($hasCustomSeoMeta || $hasKeywords) {
+    return response()->json(
+        ['message' => 'SEO metadata already exists for this post.'],
+        200
+    );
+}
 
             // Generate SEO content using ChatGPT API
 
@@ -555,7 +589,7 @@ $prompt = "Generate SEO metadata for the following post:
                 ]);
     
             return redirect()->back()->with([
-                'message' => 'SEO metadata generated and saved successfully.',
+                'message' => 'SEO metadata generated and saved successfully. for : ' . $post->name,
                 'seo_content' => $seoContent,
             ]);
     
