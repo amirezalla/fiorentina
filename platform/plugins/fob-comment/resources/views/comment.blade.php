@@ -342,6 +342,7 @@
 <div class=" fob-comment-form-section">
 
 
+    <span id="commenti"></span>
 
     <h4 class="fob-comment-title fob-comment-form-title">
         {{ trans('plugins/fob-comment::comment.front.form.title') }}

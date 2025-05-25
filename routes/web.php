@@ -47,11 +47,14 @@ use SimpleXMLElement;
 use DOMDocument;
 
 
+/** CDATA helper */
 function addCData(SimpleXMLElement $node, string $text): void
 {
     $domNode = dom_import_simplexml($node);
     $owner   = $domNode->ownerDocument ?: $domNode;
-    $domNode->appendChild($owner->createCDATASection($text));
+    $domNode->appendChild(
+        $owner->createCDATASection($text)
+    );
 }
 
     Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
@@ -155,48 +158,106 @@ Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
-
 Route::get('/feed', function () {
 
-    $posts = Post::where('status', 'PUBLISHED')
-        ->latest('created_at')
-        ->take(30)
-        ->get();
+    /* -------------------------------------------------
+     *  CONFIG
+     * ------------------------------------------------- */
+    $siteUrl      = config('app.url');               // https://www.laviola.it
+    $feedUrl      = $siteUrl . '/feed';
+    $siteName     = 'LaViola.it';
+    $siteDesc     = 'Il sito dei tifosi viola';
+    $logo32       = $siteUrl . '/wp-frntn/uploads/2024/04/cropped-IMG_3178-1-2-32x32.jpg';
+    $posts        = Post::where('status', 'PUBLISHED')
+                        ->latest('created_at')
+                        ->take(30)                  // WordPress default
+                        ->get();
 
-    // -------------------------------------------------
-    // Build the RSS skeleton
-    // -------------------------------------------------
+    /* -------------------------------------------------
+     *  ROOT  <rss>
+     * ------------------------------------------------- */
     $xml = new SimpleXMLElement(
         '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"/>'
     );
+
+    // Namespaces WordPress adds
     $xml->addAttribute('xmlns:content', 'http://purl.org/rss/1.0/modules/content/');
+    $xml->addAttribute('xmlns:wfw',     'http://wellformedweb.org/CommentAPI/');
     $xml->addAttribute('xmlns:dc',      'http://purl.org/dc/elements/1.1/');
     $xml->addAttribute('xmlns:atom',    'http://www.w3.org/2005/Atom');
+    $xml->addAttribute('xmlns:sy',      'http://purl.org/rss/1.0/modules/syndication/');
+    $xml->addAttribute('xmlns:slash',   'http://purl.org/rss/1.0/modules/slash/');
+
+    /* -------------------------------------------------
+     *  <channel> metadata
+     * ------------------------------------------------- */
     $channel = $xml->addChild('channel');
+    $channel->addChild('title',        $siteName);
+    $atom = $channel->addChild('atom:link', null, 'http://www.w3.org/2005/Atom');
+    $atom->addAttribute('href', $feedUrl);
+    $atom->addAttribute('rel',  'self');
+    $atom->addAttribute('type', 'application/rss+xml');
 
-    $channel->addChild('title',       'LaViola.it');
-    $channel->addChild('link',        url('/'));
-    $channel->addChild('description', 'Il sito dei tifosi viola');
-    $channel->addChild('language',    'it-IT');
+    $channel->addChild('link',        $siteUrl);
+    $channel->addChild('description', $siteDesc);
     $channel->addChild('lastBuildDate',
-        Carbon::now('Europe/Rome')->toRfc822String());
+        Carbon::parse($posts->first()?->created_at ?? now())
+              ->setTimezone('Europe/Rome')
+              ->toRfc822String()
+    );
+    $channel->addChild('language',    'it-IT');
 
-    // -------------------------------------------------
-    // Fill <item> nodes
-    // -------------------------------------------------
+    $channel->addChild('sy:updatePeriod',    'hourly', 'http://purl.org/rss/1.0/modules/syndication/');
+    $channel->addChild('sy:updateFrequency', '1',      'http://purl.org/rss/1.0/modules/syndication/');
+
+    /* <image> block */
+    $img = $channel->addChild('image');
+    $img->addChild('url',   $logo32);
+    $img->addChild('title', $siteName);
+    $img->addChild('link',  $siteUrl);
+    $img->addChild('width',  32);
+    $img->addChild('height', 32);
+
+    /* -------------------------------------------------
+     *  Each <item>
+     * ------------------------------------------------- */
     foreach ($posts as $post) {
         $item = $channel->addChild('item');
 
-        $item->addChild('title',  htmlspecialchars($post->name));
-        $item->addChild('link',   $post->url);
-        $item->addChild('guid',   $post->url)->addAttribute('isPermaLink', 'false');
-        $item->addChild('pubDate',
-            Carbon::parse($post->created_at)->toRfc822String());
+        $item->addChild('title', htmlspecialchars($post->name));
+        $item->addChild('link',  $post->url);
 
-        // <description>
+        /* comments URL */
+        $item->addChild('comments', $post->url . '#respond');
+
+        $item->addChild('pubDate',
+            Carbon::parse($post->created_at)
+                  ->setTimezone('UTC')
+                  ->toRfc822String()
+        );
+
+        /* <dc:creator> */
+        addCData(
+            $item->addChild('dc:creator', null, 'http://purl.org/dc/elements/1.1/'),
+            $post->author?->name ?? 'Redazione LaViola.it'
+        );
+
+        /* Categories */
+        foreach ($post->categories as $cat) {
+            addCData($item->addChild('category'), $cat->name);
+        }
+        foreach ($post->tags as $tag) {
+            addCData($item->addChild('category'), $tag->name);
+        }
+
+        /* GUID */
+        $guid = $item->addChild('guid', $post->url);
+        $guid->addAttribute('isPermaLink', 'false');
+
+        /* Description (excerpt) */
         addCData($item->addChild('description'), $post->description);
 
-        // <content:encoded>
+        /* content:encoded (full HTML) */
         $content = $item->addChild(
             'content:encoded',
             null,
@@ -204,30 +265,30 @@ Route::get('/feed', function () {
         );
         addCData($content, $post->content);
 
-        // <dc:creator>
-        $creator = $item->addChild(
-            'dc:creator',
-            null,
-            'http://purl.org/dc/elements/1.1/'
+        /* wfw:commentRss */
+        $item->addChild(
+            'wfw:commentRss',
+            $post->url . '/feed/',
+            'http://wellformedweb.org/CommentAPI/'
         );
-        addCData($creator, $post->author?->name ?? 'Redazione LaViola.it');
 
-        // Categories (combine post categories & tags)
-        foreach ($post->categories as $cat) {
-            $item->addChild('category', htmlspecialchars($cat->name));
-        }
-        foreach ($post->tags as $tag) {
-            $item->addChild('category', htmlspecialchars($tag->name));
-        }
+        /* slash:comments (count) */
+        $item->addChild(
+            'slash:comments',
+            (string)($post->comments_count ?? 0),
+            'http://purl.org/rss/1.0/modules/slash/'
+        );
     }
 
+    /* -------------------------------------------------
+     *  Output
+     * ------------------------------------------------- */
     return Response::make(
         $xml->asXML(),
         200,
         ['Content-Type' => 'application/rss+xml; charset=UTF-8']
     );
 });
-
 
 Route::get('/optimize-gifs', function () {
     $command = new OptimizeGifs;
