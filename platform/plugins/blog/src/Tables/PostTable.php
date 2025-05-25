@@ -81,43 +81,66 @@ class PostTable extends TableAbstract
                 ]);
             }
             $this->addColumns([
-                FormattedColumn::make('seo_warning')
-                    ->title('')                       // no header
-                    ->orderable(false)
-                    ->searchable(false)
-                    ->width(0)                        // keeps the header line tiny
-                    ->getValueUsing(function () {     // nothing to index / sort
-                        return '';                    // leave empty for export / CSV
-                    })
-                    ->renderUsing(function (FormattedColumn $column) {
-                        $post = $column->getItem();
-            
-                        // 1) Does NOT have vig_seo_keywords in the meta table
-                        $hasKeywords = \DB::table('meta_boxes')
-                            ->where('reference_id',  $post->id)
-                            ->where('reference_type', \Botble\Blog\Models\Post::class)
-                            ->where('meta_key', 'vig_seo_keywords')
-                            ->whereRaw("JSON_LENGTH(JSON_EXTRACT(meta_value, '$[0].keywords')) > 0")
-                            ->exists();
-            
-                        // 2) Still has the default seo_meta string
-                        $hasOnlyDefaultSeoMeta = $post->seo_meta === '[{"index":"index"}]';
-            
-                        if ($hasKeywords || ! $hasOnlyDefaultSeoMeta) {
-                            return 'amir';                // nothing to show
-                        }
-            
-                        $url = route('generate-seo', ['post_id' => $post->id]);
-            
-                        // A full‑width “row” that spans the table
-                        return '
-                            <div class="alert alert-warning mb-0" style="width:100%">
-                                Questo articolo non ha impostazioni SEO generate automaticamente né manualmente.<br>
-                                <a href="'.$url.'">Clicca qui per generarle con l’AI</a>
-                            </div>
-                        ';
-                    })
-            ]);
+    FormattedColumn::make('seo_warning')
+        ->title('')                 // no table-header text
+        ->orderable(false)
+        ->searchable(false)
+        ->width(0)                  // keeps the header row tiny
+        ->getValueUsing(fn () => '') // leave export/CSV cells empty
+        ->renderUsing(function (FormattedColumn $column) {
+
+            $post = $column->getItem();
+
+            // ───────────────────────────────
+            // 1) Look for non-empty keywords
+            // ───────────────────────────────
+            $keywordsMeta = \DB::table('meta_boxes')
+                ->where('reference_id',   $post->id)
+                ->where('reference_type', \Botble\Blog\Models\Post::class)
+                ->where('meta_key',       'vig_seo_keywords')
+                ->value('meta_value');          // returns NULL if row doesn’t exist
+
+            $hasKeywords = false;
+            if ($keywordsMeta) {
+                /**  meta_value is something like:
+                 *   [{"keywords":["seo","blog"]}]
+                 */
+                $decoded = json_decode($keywordsMeta, true) ?? [];
+                $hasKeywords = collect($decoded)
+                    ->pluck('keywords')
+                    ->flatten()
+                    ->filter(fn ($k) => trim($k) !== '')   // drop empty strings
+                    ->isNotEmpty();
+            }
+
+            // ───────────────────────────────
+            // 2) Check whether seo_meta is   ONLY the default string
+            // ───────────────────────────────
+            $hasOnlyDefaultSeoMeta = $post->seo_meta === '[{"index":"index"}]';
+
+            // ───────────────────────────────
+            // 3) If we already have *either* keywords
+            //    or custom seo_meta → nothing to show
+            // ───────────────────────────────
+            if ($hasKeywords || ! $hasOnlyDefaultSeoMeta) {
+                return '';                     // keep the cell empty
+            }
+
+            // ───────────────────────────────
+            // 4) Otherwise we’re missing both
+            //    → display the yellow warning
+            // ───────────────────────────────
+            $url = route('generate-seo', ['post_id' => $post->id]);
+
+            return '
+                <div class="alert alert-warning mb-0" style="width:100%">
+                    Questo articolo non ha impostazioni SEO generate automaticamente né manualmente.<br>
+                    <a href="'.$url.'">Clicca qui per generarle con l’AI</a>
+                </div>
+            ';
+        })
+]);
+
             $this->addColumns([
                     ImageColumn::make(),
                 NameColumn::make()->route('posts.edit'),
