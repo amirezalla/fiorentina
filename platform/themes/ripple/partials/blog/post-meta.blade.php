@@ -26,7 +26,7 @@
                 <a href="#" class="social-btn twitter"><i class="fab fa-twitter"></i></a>
                 <a href="#" class="social-btn pinterest"><i class="fab fa-pinterest-p"></i></a>
                 <a href="#" class="social-btn email"><i class="fas fa-envelope"></i></a>
-                <a href="#commenti" class="social-btn comment-btn"><i class="fas fa-comment"></i></a>
+                <a href="#comments" class="social-btn comment-btn"><i class="fas fa-comment"></i></a>
             </div>
         </div>
     </div>
