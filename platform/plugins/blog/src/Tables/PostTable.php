@@ -130,7 +130,7 @@ $this->addColumns([
              *    OTHERWISE   → show warning
              * ─────────────────────────────── */
             if ($hasKeywords || $hasCustomSeoMeta) {
-                return '';      // nothing to render in the table cell
+                return '<i class="fa-solid fa-circle-check text-success" title="SEO OK"></i>';
             }
 
             /* ───────────────────────────────
@@ -138,12 +138,10 @@ $this->addColumns([
              * ─────────────────────────────── */
             $url = route('generate-seo', ['post_id' => $post->id]);
 
-            return '
-                <div class="alert alert-warning mb-0" style="width:100%">
-                    Questo articolo non ha impostazioni SEO generate automaticamente né manualmente.<br>
-                    <a href="'.$url.'">Clicca qui per generarle con l’AI</a>
-                </div>
-            ';
+            $url = route('generate-seo', ['post_id' => $post->id]);
+            return '<a href="'.$url.'" title="Genera SEO con l’AI">
+                        <i class="fa-solid fa-circle-exclamation text-warning"></i>
+                    </a>';
         })
 ]);
 
