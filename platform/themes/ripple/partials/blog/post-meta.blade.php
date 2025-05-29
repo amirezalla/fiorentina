@@ -82,7 +82,7 @@
         <div>
 
 
-            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:775px;height:475px;']) }}
+            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:100vh;']) }}
         </div>
     </div>
 
