@@ -103,3 +103,67 @@
     </div>
 
 </div>
+
+<script>
+    (function() {
+        /** -----------------------------------------------------------
+         * 1)  The CSS you asked for (with !important flags intact)
+         * ----------------------------------------------------------- */
+        const css = `
+        .ad-amp-wrapper,
+        .ad-amp-wrapper amp-img,
+        .ad-amp-wrapper amp-ad {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        iframe.i-amphtml-fill-content {
+            width: 100vh !important;
+        }
+
+        amp-img.img_ad.i-amphtml-element.i-amphtml-layout-fixed.i-amphtml-layout-size-defined.i-amphtml-built.i-amphtml-layout {
+            width: 100vw !important;
+        }
+
+        #google_image_div {
+            width: 100vw !important;
+        }
+    `;
+
+        /** -----------------------------------------------------------
+         * 2)  Inject <style> once
+         * ----------------------------------------------------------- */
+        function injectStyle() {
+            if (document.getElementById('amp-fix-style')) return; // avoid duplicates
+            const s = document.createElement('style');
+            s.id = 'amp-fix-style';
+            s.type = 'text/css';
+            s.appendChild(document.createTextNode(css));
+            document.head.appendChild(s);
+        }
+
+        /** -----------------------------------------------------------
+         * 3)  Run when DOM is ready …
+         * ----------------------------------------------------------- */
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', injectStyle);
+        } else {
+            injectStyle();
+        }
+
+        /** -----------------------------------------------------------
+         * 4)  …and again if AMP dynamically adds new nodes
+         *     (MutationObserver will fire once, then disconnect)
+         * ----------------------------------------------------------- */
+        const observer = new MutationObserver((mutations, obs) => {
+            // If any newly added node matches our selectors, styles are already in <head>,
+            // so nothing else to do—but keep observer lightweight and stop after first run.
+            obs.disconnect();
+        });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    })();
+</script>
