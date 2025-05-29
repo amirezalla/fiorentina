@@ -5884,7 +5884,9 @@ header>.container {
     max-width: 100%;
     height: auto;
 }
-
+iframe.i-amphtml-fill-content{
+    width: 100vh !important;
+}
 amp-img.img_ad.i-amphtml-element.i-amphtml-layout-fixed.i-amphtml-layout-size-defined.i-amphtml-built.i-amphtml-layout {
     width: 100vw !important;
 }
