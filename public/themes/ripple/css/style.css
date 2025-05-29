@@ -5884,3 +5884,7 @@ header>.container {
     max-width: 100%;
     height: auto;
 }
+
+amp-img.img_ad.i-amphtml-element.i-amphtml-layout-fixed.i-amphtml-layout-size-defined.i-amphtml-built.i-amphtml-layout {
+    width: 100vw !important;
+}
