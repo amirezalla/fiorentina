@@ -22,13 +22,50 @@
         </div>
         <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom: 14px">
             <div class="social-buttons">
-                <a href="#" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-btn twitter"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-btn pinterest"><i class="fab fa-pinterest-p"></i></a>
-                <a href="#" class="social-btn email"><i class="fas fa-envelope"></i></a>
-                <a href="#comments" class="social-btn comment-btn"><i class="fas fa-comment"></i></a>
+                {{-- Facebook --}}
+                <a class="social-btn facebook"
+                    href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}"
+                    target="_blank" rel="noopener" aria-label="Condividi su Facebook">
+                    <img src="{{ asset('storage/Facebook_logo.png') }}" alt="Facebook" width="22" height="22">
+                </a>
+
+                {{-- X (Twitter) --}}
+                <a class="social-btn x"
+                    href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($post->name) }}"
+                    target="_blank" rel="noopener" aria-label="Condividi su X">
+                    <img src="{{ asset('storage/X_logo.png') }}" alt="X" width="22" height="22">
+                </a>
+
+                {{-- WhatsApp --}}
+                <a class="social-btn whatsapp"
+                    href="https://api.whatsapp.com/send?text={{ urlencode($post->name . ' ' . request()->fullUrl()) }}"
+                    target="_blank" rel="noopener" aria-label="Condividi su WhatsApp">
+                    <img src="{{ asset('storage/WA_logo.png') }}" alt="WhatsApp" width="22" height="22">
+                </a>
+
+                {{-- Threads --}}
+                <a class="social-btn threads"
+                    href="https://www.threads.net/intent/post?text={{ urlencode($post->name . ' ' . request()->fullUrl()) }}"
+                    target="_blank" rel="noopener" aria-label="Condividi su Threads">
+                    <img src="{{ asset('storage/Threads_logo.png') }}" alt="Threads" width="22" height="22">
+                </a>
+
+                <!-- Messenger -->
+                <a class="social-btn messenger" href=`mailto:?subject={{ rawurlencode($post->name) }}
+                    &body={{ rawurlencode("Ho trovato questo articolo interessante e ho pensato di condividerlo con voi. Dategli un'occhiata: " . request()->fullUrl()) }}`
+                    aria-label="Invia via e-mail">
+                    <i class="fas fa-envelope">
+                        <img src="" alt="">
+                </a>
+
+                <!-- Comments -->
+                <a href="#comments" class="social-btn comment-btn" aria-label="Vai ai commenti">
+                    <i class="fas fa-comment"></i>
+                </a>
+
             </div>
         </div>
+
     </div>
 
 
