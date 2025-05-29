@@ -54,8 +54,7 @@
                 <a class="social-btn messenger" href=`mailto:?subject={{ rawurlencode($post->name) }}
                     &body={{ rawurlencode("Ho trovato questo articolo interessante e ho pensato di condividerlo con voi. Dategli un'occhiata: " . request()->fullUrl()) }}`
                     aria-label="Invia via e-mail">
-                    <i class="fas fa-envelope">
-                        <img src="" alt="">
+                    <i class="fas fa-envelope"></i>
                 </a>
 
                 <!-- Comments -->
