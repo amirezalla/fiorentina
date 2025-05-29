@@ -78,13 +78,24 @@
 
 
 
-    <div class="col-lg-12 d-flex justify-content-center img-in-post mb-3 mt-3">
-        <div>
+    {{-- Main featured image --}}
+    <div class="row mx-0"> {{-- add a proper .row --}}
+        <div class="col-12 p-0 d-flex justify-content-center img-in-post mb-3 mt-3">
 
+            {{ RvMedia::image(
+                $post->image,
+                $post->name,
+                'featured',
+                attributes: [
+                    'loading' => 'lazy',
+                    'class' => 'img-fluid w-100', // responsive & full column width
+                    // remove the old width:100vh
+                ],
+            ) }}
 
-            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy', 'style' => 'width:100vh;']) }}
         </div>
     </div>
+
 
     @include('ads.includes.dblog-title')
     <div class="d-block d-md-none col-12 text-center">

@@ -17,9 +17,13 @@
             </div>
         </div>
     @else
-        {{-- For type=2 (Google Ad Manager or custom HTML), no impression is tracked here --}}
-        <div class="row justify-content-left mx-0">
-            {!! $ad->amp !!}
+        {{-- For type = 2 (Google Ad Manager / custom HTML) --}}
+        <div class="row mx-0">
+            <div class="col-12 p-0">
+                <div class="ad-amp-wrapper w-100">
+                    {!! $ad->amp !!}
+                </div>
+            </div>
         </div>
     @endif
 @endif

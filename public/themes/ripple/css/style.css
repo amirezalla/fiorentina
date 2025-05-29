@@ -5876,3 +5876,11 @@ header>.container {
 .social-btn:hover {
     opacity: .75;
 }
+
+.ad-amp-wrapper,
+.ad-amp-wrapper amp-img,
+.ad-amp-wrapper amp-ad {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto;
+}
