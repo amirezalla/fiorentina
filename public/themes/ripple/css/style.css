@@ -5889,10 +5889,6 @@ iframe.i-amphtml-fill-content {
     width: 100vh !important;
 }
 
-amp-img.img_ad.i-amphtml-element.i-amphtml-layout-fixed.i-amphtml-layout-size-defined.i-amphtml-built.i-amphtml-layout {
-    width: 100vw !important;
-}
-
-#google_image_div {
+amp-img {
     width: 100vw !important;
 }
