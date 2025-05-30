@@ -152,18 +152,6 @@
             injectStyle();
         }
 
-        /** -----------------------------------------------------------
-         * 4)  …and again if AMP dynamically adds new nodes
-         *     (MutationObserver will fire once, then disconnect)
-         * ----------------------------------------------------------- */
-        const observer = new MutationObserver((mutations, obs) => {
-            // If any newly added node matches our selectors, styles are already in <head>,
-            // so nothing else to do—but keep observer lightweight and stop after first run.
-            obs.disconnect();
-        });
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+
     })();
 </script>
