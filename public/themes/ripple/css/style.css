@@ -5895,5 +5895,5 @@ amp-img {
 }
 
 .background-ad-post .linkofit {
-    scale: none;
+    scale: none !important;
 }
