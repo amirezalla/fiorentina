@@ -25,8 +25,10 @@
 @endif
 
 <section class="section pt-50 pb-100">
-    @include('ads.includes.background-page')
+    <div class="background-ad-post">
 
+        @include('ads.includes.background-page')
+    </div>
     <div class="container" style="position: relative;margin-top: -66px;">
         <div class="row row col-11 bg-white mx-auto">
 
