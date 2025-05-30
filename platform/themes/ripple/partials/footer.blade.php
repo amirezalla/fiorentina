@@ -1,5 +1,5 @@
 </div>
-<footer class="page-footer pt-50">
+<footer class="page-footer">
     <div class="container">
         <div class="row">
             <div class="col-12 col-md-3 mx-auto mb-3">
