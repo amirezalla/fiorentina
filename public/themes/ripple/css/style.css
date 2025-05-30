@@ -4273,8 +4273,11 @@ body,
 }
 
 .post__horizontal .post__title a {
-    color: white;
-    font-weight: 900;
+    color: #111111;
+    line-height: 1.1;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02rem;
 }
 
 .post__horizontal .post__meta .post__created-at,
