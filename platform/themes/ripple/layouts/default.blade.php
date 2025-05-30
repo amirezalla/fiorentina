@@ -5,6 +5,10 @@
 
 
 @if (Theme::get('isArticle'))
+    <div class="background-ad-post">
+
+        @include('ads.includes.background-page')
+    </div>
     <div class="container mb-3">
         <div class="col-11 row justify-content-center mx-auto" style="padding: 0">
             <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px;padding-left:0">
@@ -25,10 +29,7 @@
 @endif
 
 <section class="section pt-50 pb-100">
-    <div class="background-ad-post">
 
-        @include('ads.includes.background-page')
-    </div>
     <div class="container" style="position: relative;margin-top: -66px;">
         <div class="row row col-11 bg-white mx-auto">
 

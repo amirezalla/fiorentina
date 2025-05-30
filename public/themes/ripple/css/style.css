@@ -5893,3 +5893,7 @@ iframe.i-amphtml-fill-content {
 amp-img {
     width: 100vw !important;
 }
+
+.background-ad-post .linkofit {
+    scale: none;
+}
