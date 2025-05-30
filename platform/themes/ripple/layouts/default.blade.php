@@ -6,7 +6,7 @@
 
 @if (Theme::get('isArticle'))
     <div class="container mb-3">
-        <div class="row justify-content-center" style="padding: 0">
+        <div class="col-11 row justify-content-center mx-auto" style="padding: 0">
             <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px;padding-left:0">
                 <div class="col-12">
                     @include('ads.includes.SIZE_468X60_TOP_SX')
@@ -29,8 +29,8 @@
         {!! BaseHelper::clean(Theme::get('has-ads-background')) !!}
     @endif
 
-    <div class="container bg-white" style="margin-top: -66px;">
-        <div class="row">
+    <div class="container" style="margin-top: -66px;">
+        <div class="row row col-11 bg-white mx-auto">
 
             <div class="col-lg-8">
                 <div class="page-content">
