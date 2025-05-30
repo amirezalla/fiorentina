@@ -1,7 +1,7 @@
 @if ($video && $video_files->count())
-    <div class="">
+    <div class="mb-30">
         <div class="row mx-0 p-0">
-            <div class="col-12 mx-auto">
+            <div class="col-12 mx-auto p-0">
                 <div class="d-block w-full">
                     <a class="d-block w-100" @if ($video_file_urls->count()) href="{{ $video_file_urls[0] }}" @endif
                         target="_blank">
