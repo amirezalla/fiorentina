@@ -44,7 +44,7 @@
                             <div class="row">
                                 @php
                                     $minMainPostsLimit = intval(5);
-                                    $mainPostsLimit = intval(40);
+                                    $mainPostsLimit = intval(15);
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
@@ -397,13 +397,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        const BATCH = parseInt('{{ setting('main_posts_limit', 20) }}'); // how many cards per load
-        const MAX_VISIBLE = document.querySelectorAll('.post-item').length; // total available
-        let visible = parseInt('{{ $minMainPostsLimit }}'); // start value
+        /* 1️⃣  HOW MANY CARDS PER LOAD  */
+        const BATCH = {{ $minMainPostsLimit }}; // 5 – same as your first chunk
+        const MAX_VISIBLE = document.querySelectorAll('.post-item').length;
+        let visible = {{ $minMainPostsLimit }}; // initial = 5
 
-        // Reveal the first batch immediately
+        /* ---------- show first 5 immediately ---------- */
         showUpTo(visible);
-
         // Fallback button (optional – will hide itself once everything is loaded)
         const btn = document.getElementById('load-more');
         if (btn) {
