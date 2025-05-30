@@ -1,6 +1,14 @@
 @php
     use App\Models\PollOne;
     use Carbon\Carbon;
+    use Botble\Blog\Models\Post;
+
+    $posts = Post::with(['author', 'categories'])
+        ->where('status', 'published')
+        ->where('is_featured', true)
+        ->orderBy('created_at', 'desc')
+        ->take(40)
+        ->get();
 
     $poll = null;
     $poll = PollOne::with('options')->where('active', true)->latest()->first();
@@ -15,7 +23,6 @@
     }
 @endphp
 
-<div></div>
 
 <div class="d-block d-md-none col-12 text-center">
     @include('ads.includes.MOBILE_HOME_HERO_25')
