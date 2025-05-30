@@ -103,3 +103,39 @@
     </div>
 
 </div>
+
+<script>
+    (function() {
+        /** -----------------------------------------------------------
+         * 1)  The CSS you asked for (with !important flags intact)
+         * ----------------------------------------------------------- */
+        const css = `
+        #google_image_div {
+            width: 100vw !important;
+        }
+    `;
+
+        /** -----------------------------------------------------------
+         * 2)  Inject <style> once
+         * ----------------------------------------------------------- */
+        function injectStyle() {
+            if (document.getElementById('amp-fix-style')) return; // avoid duplicates
+            const s = document.createElement('style');
+            s.id = 'amp-fix-style';
+            s.type = 'text/css';
+            s.appendChild(document.createTextNode(css));
+            document.head.appendChild(s);
+        }
+
+        /** -----------------------------------------------------------
+         * 3)  Run when DOM is ready …
+         * ----------------------------------------------------------- */
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', injectStyle);
+        } else {
+            injectStyle();
+        }
+
+
+    })();
+</script>
