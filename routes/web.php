@@ -43,8 +43,7 @@ use App\Http\Controllers\AssetController;
 use Botble\Blog\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
-use SimpleXMLElement;
-use DOMDocument;
+
 
 
 /** CDATA helper */
