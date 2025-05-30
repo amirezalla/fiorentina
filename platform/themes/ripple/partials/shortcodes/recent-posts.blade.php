@@ -45,7 +45,8 @@
                             <div class="row">
                                 @php
                                     $minMainPostsLimit = intval(setting('min_main_posts_limit'));
-                                    $mainPostsLimit = intval(setting('main_posts_limit', 12));
+                                    // $mainPostsLimit = intval(setting('main_posts_limit', 12));
+                                    $mainPostsLimit = intval(40);
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
@@ -178,35 +179,7 @@
                                         @endif
                                     @endforeach
 
-                                    <!-- Load More Button -->
-                                    @if ($postsCount > $minMainPostsLimit)
-                                        <div style="text-align: center;">
-                                            <button id="load-more"
-                                                style="
-                                                    background: #fff;
-                                                    border: 2px solid #aaa;
-                                                    border-radius: 3px;
-                                                    display: inline-block;
-                                                    font-size: .8rem;
-                                                    font-weight: 600;
-                                                    letter-spacing: .02em;
-                                                    line-height: 1;
-                                                    margin-top: 20px;
-                                                    margin-bottom: 20px;
-                                                    padding: 15px 0;
-                                                    text-align: center;
-                                                    text-transform: uppercase;
-                                                    width: 88.4%;
-                                                    cursor: pointer;
-                                                    color: #441274; /* Violet text color */
-                                                    transition: border-color 0.3s ease;
-                                                "
-                                                onmouseover="this.style.borderColor='#441274';"
-                                                onmouseout="this.style.borderColor='#aaa';">
-                                                ALTRE NOTIZIE
-                                            </button>
-                                        </div>
-                                    @endif
+
                                 </div>
                             </div>
                         </div>
@@ -425,52 +398,55 @@
 @include('ads.includes.adsense', ['adClient' => 'ca-pub-6741446998584415'])
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const loadMoreButton = document.getElementById('load-more');
-        let visiblePosts = parseInt('{{ setting('min_main_posts_limit') }}');
-        const mainPostsLimit = parseInt('{{ setting('main_posts_limit', 20) }}');
-        const minMainPostsLimit = parseInt('{{ setting('min_main_posts_limit') }}');
+    document.addEventListener('DOMContentLoaded', () => {
 
-        if (loadMoreButton) {
-            loadMoreButton.addEventListener('click', function() {
-                const allPosts = document.querySelectorAll('.post-item');
-                //const tenthPlace = document.querySelector('.tenth-place');
+        const BATCH = parseInt('{{ setting('main_posts_limit', 20) }}'); // how many cards per load
+        const MAX_VISIBLE = document.querySelectorAll('.post-item').length; // total available
+        let visible = parseInt('{{ $minMainPostsLimit }}'); // start value
 
-                if (loadMoreButton.innerText === 'ALTRE NOTIZIE') {
-                    // Expand posts up to mainPostsLimit
-                    visiblePosts = Math.min(visiblePosts + mainPostsLimit, allPosts.length);
+        // Reveal the first batch immediately
+        showUpTo(visible);
 
-                    allPosts.forEach((post, index) => {
-                        if (index < visiblePosts) {
-                            post.style.display = 'flex';
-                        }
-                    });
+        // Fallback button (optional – will hide itself once everything is loaded)
+        const btn = document.getElementById('load-more');
+        if (btn) {
+            btn.addEventListener('click', manualLoad);
+        }
 
-                    // Set .tenth-place display to block
-                    //if (tenthPlace) {
-                    //    tenthPlace.style.display = 'block';
-                    //}
+        // Auto-load on scroll using an IntersectionObserver
+        const sentinel = document.createElement('div');
+        sentinel.id = 'auto-load-sentinel';
+        document.querySelector('.post-group__content .row').appendChild(sentinel);
 
-                    if (visiblePosts >= allPosts.length) {
-                        loadMoreButton.innerText = 'MOSTRA MENO';
-                    }
-                } else {
-                    // Collapse posts back to minMainPostsLimit
-                    visiblePosts = minMainPostsLimit;
+        const io = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) loadNextBatch();
+        }, {
+            rootMargin: '200px'
+        }); // trigger a bit before reaching the bottom
+        io.observe(sentinel);
 
-                    allPosts.forEach((post, index) => {
-                        post.style.display = index < visiblePosts ? 'flex' : 'none';
-                    });
 
-                    // Set .tenth-place display to none
-                    //if (tenthPlace) {
-                    //    tenthPlace.style.display = 'none';
-                    //}
-
-                    loadMoreButton.innerText = 'ALTRE NOTIZIE';
-                }
+        /* ---------- helpers ---------- */
+        function showUpTo(limit) {
+            document.querySelectorAll('.post-item').forEach((el, i) => {
+                el.style.display = (i < limit) ? 'flex' : 'none';
             });
         }
+
+        function loadNextBatch() {
+            if (visible >= MAX_VISIBLE) return;
+            visible = Math.min(visible + BATCH, MAX_VISIBLE);
+            showUpTo(visible);
+
+            if (visible >= MAX_VISIBLE && btn) {
+                btn.style.display = 'none'; // hide button when done
+            }
+        }
+
+        function manualLoad() {
+            loadNextBatch();
+        }
+
     });
 </script>
 <script>
