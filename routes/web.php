@@ -47,7 +47,7 @@ use Illuminate\Support\Facades\Response;
 
 
 /** CDATA helper */
-function addCData(SimpleXMLElement $node, string $text): void
+function addCData(\SimpleXMLElement $node, string $text): void
 {
     $domNode = dom_import_simplexml($node);
     $owner   = $domNode->ownerDocument ?: $domNode;
@@ -175,7 +175,7 @@ Route::get('/feed', function () {
     /* -------------------------------------------------
      *  ROOT  <rss>
      * ------------------------------------------------- */
-    $xml = new SimpleXMLElement(
+    $xml = new \SimpleXMLElement(
         '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"/>'
     );
 
