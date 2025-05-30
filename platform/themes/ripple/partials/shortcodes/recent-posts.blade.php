@@ -6,7 +6,7 @@
     $posts = Post::with(['author', 'categories'])
         ->where('status', 'published')
         ->where('is_featured', true)
-        ->orderBy('created_at', 'desc')
+        ->orderBy('created_at', 'asc')
         ->take(40)
         ->get();
 
@@ -186,35 +186,7 @@
                                         @endif
                                     @endforeach
 
-                                    <!-- Load More Button -->
-                                    @if ($postsCount > $minMainPostsLimit)
-                                        <div style="text-align: center;">
-                                            <button id="load-more"
-                                                style="
-                                                    background: #fff;
-                                                    border: 2px solid #aaa;
-                                                    border-radius: 3px;
-                                                    display: inline-block;
-                                                    font-size: .8rem;
-                                                    font-weight: 600;
-                                                    letter-spacing: .02em;
-                                                    line-height: 1;
-                                                    margin-top: 20px;
-                                                    margin-bottom: 20px;
-                                                    padding: 15px 0;
-                                                    text-align: center;
-                                                    text-transform: uppercase;
-                                                    width: 88.4%;
-                                                    cursor: pointer;
-                                                    color: #441274; /* Violet text color */
-                                                    transition: border-color 0.3s ease;
-                                                "
-                                                onmouseover="this.style.borderColor='#441274';"
-                                                onmouseout="this.style.borderColor='#aaa';">
-                                                ALTRE NOTIZIE
-                                            </button>
-                                        </div>
-                                    @endif
+
                                 </div>
                             </div>
                         </div>
