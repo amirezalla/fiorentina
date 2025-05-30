@@ -397,51 +397,77 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        /* 1️⃣  HOW MANY CARDS PER LOAD  */
-        const BATCH = {{ $minMainPostsLimit }}; // 5 – same as your first chunk
-        const MAX_VISIBLE = document.querySelectorAll('.post-item').length;
-        let visible = {{ $minMainPostsLimit }}; // initial = 5
+        /* ---------- settings ---------- */
+        const BATCH = {{ $minMainPostsLimit }}; // 5
+        const MAX = document.querySelectorAll('.post-item').length;
+        let visible = {{ $minMainPostsLimit }}; // start with 5
 
-        /* ---------- show first 5 immediately ---------- */
-        showUpTo(visible);
-        // Fallback button (optional – will hide itself once everything is loaded)
-        const btn = document.getElementById('load-more');
-        if (btn) {
-            btn.addEventListener('click', manualLoad);
-        }
-
-        // Auto-load on scroll using an IntersectionObserver
-        const sentinel = document.createElement('div');
-        sentinel.id = 'auto-load-sentinel';
-        document.querySelector('.post-group__content .row').appendChild(sentinel);
-
-        const io = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) loadNextBatch();
-        }, {
-            rootMargin: '200px'
-        }); // trigger a bit before reaching the bottom
-        io.observe(sentinel);
-
-
-        /* ---------- helpers ---------- */
+        /* ---------- helper to toggle visibility ---------- */
         function showUpTo(limit) {
             document.querySelectorAll('.post-item').forEach((el, i) => {
                 el.style.display = (i < limit) ? 'flex' : 'none';
             });
         }
 
-        function loadNextBatch() {
-            if (visible >= MAX_VISIBLE) return;
-            visible = Math.min(visible + BATCH, MAX_VISIBLE);
-            showUpTo(visible);
+        /* ---------- first render ---------- */
+        showUpTo(visible);
 
-            if (visible >= MAX_VISIBLE && btn) {
-                btn.style.display = 'none'; // hide button when done
+        /* ---------- loading banner ---------- */
+        const loading = document.createElement('div');
+        loading.id = 'batch-loading';
+        loading.textContent = 'Caricamento dei prossimi articoli…';
+        Object.assign(loading.style, {
+            display: 'none',
+            textAlign: 'center',
+            padding: '12px 0',
+            fontWeight: '600',
+            color: '#8424e3'
+        });
+
+        /* ---------- sentinel right after the list ---------- */
+        const row = document.querySelector('.post-group__content .row');
+        const sentinel = document.createElement('div');
+        sentinel.id = 'auto-load-sentinel';
+        row.append(loading, sentinel); // banner first, sentinel last
+
+        /* ---------- intersection observer ---------- */
+        const io = new IntersectionObserver(entries => {
+            if (!entries[0].isIntersecting) return;
+            if (visible >= MAX) return;
+
+            // show "loading…" banner, then reveal batch after delay
+            loading.style.display = 'block';
+            setTimeout(() => {
+                loadNextBatch();
+            }, 800); // ≈0.8 s feel-good pause
+        }, {
+            rootMargin: '200px'
+        });
+        io.observe(sentinel);
+
+        /* ---------- batch loader ---------- */
+        function loadNextBatch() {
+            visible = Math.min(visible + BATCH, MAX);
+            showUpTo(visible);
+            loading.style.display = 'none';
+
+            if (visible >= MAX) { // done – stop observing
+                io.disconnect();
             }
         }
 
-        function manualLoad() {
-            loadNextBatch();
+        /* ---------- optional manual button still works ---------- */
+        const btn = document.getElementById('load-more');
+        if (btn) {
+            btn.addEventListener('click', loadNextBatch);
+            // hide the button once everything is visible
+            const mo = new MutationObserver(() => {
+                if (visible >= MAX) btn.style.display = 'none';
+            });
+            mo.observe(loading, {
+                attributes: true,
+                attributeFilter: ['style']
+            });
         }
 
     });
