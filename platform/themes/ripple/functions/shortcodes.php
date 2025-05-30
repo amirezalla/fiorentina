@@ -286,7 +286,7 @@ app('events')->listen(RouteMatched::class, function () {
             __('Recent posts'),
             __('Recent posts'),
             function (ShortcodeCompiler $shortcode) {
-                $posts = get_latest_posts(intval(setting('main_posts_limit', 8)), [], ['slugable']);
+                $posts = get_latest_posts(intval(50), [], ['slugable']);
                 $postsCount = get_list_post_count();
 
                 if ($posts->isEmpty()) {

@@ -44,7 +44,7 @@
                             <div class="row">
                                 @php
                                     $minMainPostsLimit = intval(5);
-                                    $mainPostsLimit = intval(15);
+                                    $mainPostsLimit = intval(50);
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
