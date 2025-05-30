@@ -48,7 +48,6 @@
                                     // $mainPostsLimit = intval(setting('main_posts_limit', 12));
                                     $mainPostsLimit = intval(40);
                                 @endphp
-                                @dd($posts)
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
                                         <article class="post post__vertical post__vertical--single post-item"
