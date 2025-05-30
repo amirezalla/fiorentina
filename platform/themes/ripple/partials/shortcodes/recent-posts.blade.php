@@ -1,14 +1,6 @@
 @php
     use App\Models\PollOne;
     use Carbon\Carbon;
-    use Botble\Blog\Models\Post;
-
-    $posts = Post::with(['author', 'categories'])
-        ->where('status', 'published')
-        ->where('is_featured', true)
-        ->orderBy('created_at', 'asc')
-        ->take(40)
-        ->get();
 
     $poll = null;
     $poll = PollOne::with('options')->where('active', true)->latest()->first();
@@ -185,7 +177,6 @@
                                             </div>
                                         @endif
                                     @endforeach
-
 
                                 </div>
                             </div>
