@@ -103,33 +103,3 @@
     </div>
 
 </div>
-<script>
-    (function() {
-        const css = `
-    .ad-amp-wrapper,
-    .ad-amp-wrapper amp-img,
-    .ad-amp-wrapper amp-ad,
-    .ad-amp-wrapper iframe.i-amphtml-fill-content,
-    #google_image_div {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: auto !important;
-    }
-  `;
-
-        function addStyle() {
-            if (document.getElementById('amp-fix-style')) return;
-            const s = document.createElement('style');
-            s.id = 'amp-fix-style';
-            s.textContent = css;
-            document.head.appendChild(s);
-        }
-
-        // Wait for DOM; AMP runtime normally loads long before 'load'
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', addStyle);
-        } else {
-            addStyle();
-        }
-    })();
-</script>
