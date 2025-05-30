@@ -25,9 +25,7 @@
 @endif
 
 <section class="section pt-50 pb-100">
-    @if (Theme::get('has-ads-background'))
-        {!! BaseHelper::clean(Theme::get('has-ads-background')) !!}
-    @endif
+    @include('ads.includes.background-page')
 
     <div class="container" style="margin-top: -66px;">
         <div class="row row col-11 bg-white mx-auto">
