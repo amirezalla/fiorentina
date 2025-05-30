@@ -43,8 +43,7 @@
                         <div class="post-group__content">
                             <div class="row">
                                 @php
-                                    $minMainPostsLimit = intval(setting('min_main_posts_limit'));
-                                    // $mainPostsLimit = intval(setting('main_posts_limit', 12));
+                                    $minMainPostsLimit = intval(5);
                                     $mainPostsLimit = intval(40);
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">
