@@ -1166,10 +1166,12 @@ p:empty {
 }
 
 .post__horizontal .post__content p {
-    color: #666;
-    font-size: 13px;
-    letter-spacing: .05em;
-    line-height: 1.5em
+    color: #555555;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    letter-spacing: -0.02rem;
+    font-family: 'Titillium Web', sans-serif !important;
+    font-weight: 400;
 }
 
 .post__horizontal .post__content p:after {
