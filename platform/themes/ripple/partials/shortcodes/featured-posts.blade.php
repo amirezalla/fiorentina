@@ -118,7 +118,19 @@
                                 <div class="post-group__left full-width">
                                     <article class="post post__inside post__inside--feature h-100">
                                         <div class="post__thumbnail h-100">
-                                            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'eager']) }}
+                                            {{ RvMedia::image(
+                                                $post->image,
+                                                $post->name,
+                                                'featured',
+                                                attributes: [
+                                                    'loading' => 'eager', // resta “eager”
+                                                    'fetchpriority' => 'high', // Chrome  priority hints
+                                                    'decoding' => 'async', // non blocca main-thread
+                                                    'width' => 565, // dimensioni vere…
+                                                    'height' => 375, // …per CLS ≈ 0
+                                                ],
+                                            ) }}
+
                                             <a class="post__overlay" href="{{ $post->url }}"
                                                 title="{{ $post->name }}"></a>
                                         </div>
