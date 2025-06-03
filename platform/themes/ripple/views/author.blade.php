@@ -30,7 +30,4 @@
     @endforelse
 
     {{-- Botble’s pagination partial --}}
-    {{-- <div class="mt-40">
-        {!! $posts->withQueryString()->links(Theme::getThemeNamespace('partials.pagination')) !!}
-    </div> --}}
 @endsection
