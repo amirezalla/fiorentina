@@ -4,17 +4,14 @@
     {{-- Header section mimicking the screenshot --}}
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
-        <img src="{{ Theme::asset()->url('images/viola-it-round.svg') }}" alt="{{ $user->name }}" width="160"
+        <img src="{{ Theme::asset()->url('images/viola-it-round.svg') }}" alt="{{ $user->first_name }}" width="160"
             class="mb-30">
-        <h1 class="display-5 font-weight-bold">{{ $user->name }}</h1>
+        <h1 class="display-5 font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</h1>
 
-        @if ($user->description)
-            <p class="text-muted mt-3">{{ $user->description }}</p>
-        @endif
     </div>
 
     <h2 class="section-title mb-40">
-        {{ __('Notizie di') }} {{ $user->name }}
+        {{ __('Notizie di') }} {{ $user->first_name }} {{ $user->last_name }}
     </h2>
 
     {{-- Post loop --}}
