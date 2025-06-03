@@ -2,7 +2,7 @@
     use Carbon\Carbon;
     use FriendsOfBotble\Comment\Models\Comment;
     use Illuminate\Support\Facades\DB;
-    use App\Models\Post;
+    use Botble\Blog\Models\Post;
 
     // --- recupero post ----------------------------------------------------
     $heroOrders = [4, 5, 6, 7];
