@@ -152,7 +152,7 @@
                 return $posts;
             });
         @endphp
-
+        @dd($heroPosts, $lastRecentPosts)
 
 
         <div class="container">
