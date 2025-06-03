@@ -12,11 +12,14 @@
             $img = RvMedia::image($user->avatar->url, $user->first_name, 'thumbnail');
         @endphp
         <div class="container">
-            <div class="col-3">
-                {{ $img }} </div>
-            <div class="col-9">
-                <h1 class="display-5 font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</h1>
+            <div class="row">
+                <div class="col-3">
+                    {{ $img }} </div>
+                <div class="col-9">
+                    <h1 class="display-5 font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</h1>
+                </div>
             </div>
+
         </div>
 
 
