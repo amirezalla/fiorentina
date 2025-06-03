@@ -15,6 +15,7 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\MatchCommentaryController;
 use App\Http\Controllers\MatchStaticsController;
 use App\Http\Controllers\MatchSummaryController;
+use App\Controllers\AuthorController;
 
 use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
@@ -397,6 +398,12 @@ Route::post  ('/bulk-restore', [ChatController::class, 'bulkRestore'])
 ->name('chat.bulkRestore');
     });
 
+
+Route::group(['middleware' => ['web']], function () {
+    //  /author/john_doe   ←  username comes from the users table
+    Route::get('author/{user:username}', [AuthorController::class, 'show'])
+         ->name('public.author');
+});
 
 
 
