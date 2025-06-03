@@ -1,7 +1,7 @@
-@section('content')
     {{-- everything here replaces {!! Theme::content() !!} --}}
     {{-- Header section mimicking the screenshot --}}
-    akbar aqa befarma
+    @php Theme::set('section-name', $user->first_name) @endphp
+
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
         <img src="{{ Theme::asset()->url('images/viola-it-round.svg') }}" alt="{{ $user->first_name }}" width="160"
@@ -25,4 +25,3 @@
     @endforelse
 
     {{-- Botble’s pagination partial --}}
-@endsection
