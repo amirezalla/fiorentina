@@ -78,251 +78,261 @@
             </div>
         </div>
 
-{{-- --------------  BEGIN: HERO + BLACK-BOX  (cached 5 h) -------------- --}}
-@php
-    use Illuminate\Support\Facades\Cache;
-    use Illuminate\Support\Facades\DB;
-    use Carbon\Carbon;
-    use FriendsOfBotble\Comment\Models\Comment;
-    use App\Models\Post;
+        @php
+            use Illuminate\Support\Facades\Cache;
+            use Illuminate\Support\Facades\DB;
+            use Carbon\Carbon;
+            use FriendsOfBotble\Comment\Models\Comment;
+            use App\Models\Post;
 
-    setlocale(LC_TIME, 'it_IT.UTF-8');
-    Carbon::setLocale('it');
+            setlocale(LC_TIME, 'it_IT.UTF-8');
+            Carbon::setLocale('it');
 
-    /*  ========== HERO (ordini 1-3) ==========
-        salvato per 18 000 s = 5 h          */
-    $heroPosts = Cache::remember('home.heroPosts', 18_000, function () {
-        $orders = [1, 2, 3];
+            /*  ========== HERO (ordini 1-3) ==========
+ salvato per 18 000 s = 5 h          */
+            $heroPosts = Cache::remember('home.heroPosts', 18_000, function () {
+                $orders = [1, 2, 3];
 
-        if (Post::whereIn('hero_order', $orders)->exists()) {
-            $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
-                       ->whereIn('hero_order', $orders)
-                       ->groupBy('hero_order');
+                if (Post::whereIn('hero_order', $orders)->exists()) {
+                    $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                        ->whereIn('hero_order', $orders)
+                        ->groupBy('hero_order');
 
-            $posts = Post::with('categories:id,name')
-                         ->joinSub($sub, 'latest', fn($j) =>
-                             $j->on('posts.hero_order', '=', 'latest.hero_order')
-                               ->on('posts.updated_at', '=', 'latest.max_updated'))
-                         ->orderBy('posts.hero_order')
-                         ->get();
-        } else {
-            $posts = Post::with('categories:id,name')
-                         ->latest('created_at')
-                         ->take(3)
-                         ->get();
-        }
+                    $posts = Post::with('categories:id,name')
+                        ->joinSub(
+                            $sub,
+                            'latest',
+                            fn($j) => $j
+                                ->on('posts.hero_order', '=', 'latest.hero_order')
+                                ->on('posts.updated_at', '=', 'latest.max_updated'),
+                        )
+                        ->orderBy('posts.hero_order')
+                        ->get();
+                } else {
+                    $posts = Post::with('categories:id,name')->latest('created_at')->take(3)->get();
+                }
 
-        /*  pre-calcolo dati che usavamo dentro il loop
-            (niente più query ripetitive né Carbon in ciclo) */
-        foreach ($posts as $p) {
-            $p->comments_count = Comment::where('reference_id', $p->id)->count();
-            $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
-        }
+                /*  pre-calcolo dati che usavamo dentro il loop
+            (niente più query ripetitive né Carbon in ciclo)
+*/
+                foreach ($posts as $p) {
+                    $p->comments_count = Comment::where('reference_id', $p->id)->count();
+                    $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
+                }
 
-        return $posts;
-    });
+                return $posts;
+            });
 
-    /*  ========== BLACK-BOX (ordini 4-7) ==========
-        salvato per 18 000 s = 5 h               */
-    $lastRecentPosts = Cache::remember('home.lastRecentPosts', 18_000, function () {
-        $orders = [4, 5, 6, 7];
+            /*  ========== BLACK-BOX (ordini 4-7) ==========
+ salvato per 18 000 s = 5 h               */
+            $lastRecentPosts = Cache::remember('home.lastRecentPosts', 18_000, function () {
+                $orders = [4, 5, 6, 7];
 
-        if (Post::whereIn('hero_order', $orders)->exists()) {
-            $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
-                       ->whereIn('hero_order', $orders)
-                       ->groupBy('hero_order');
+                if (Post::whereIn('hero_order', $orders)->exists()) {
+                    $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                        ->whereIn('hero_order', $orders)
+                        ->groupBy('hero_order');
 
-            $posts = Post::with('categories:id,name')
-                         ->joinSub($sub, 'latest', fn($j) =>
-                             $j->on('posts.hero_order', '=', 'latest.hero_order')
-                               ->on('posts.updated_at', '=', 'latest.max_updated'))
-                         ->orderBy('posts.hero_order')
-                         ->get();
-        } else {
-            $posts = Post::with('categories:id,name')
-                         ->latest('created_at')
-                         ->skip(3)->take(4)
-                         ->get();
-        }
+                    $posts = Post::with('categories:id,name')
+                        ->joinSub(
+                            $sub,
+                            'latest',
+                            fn($j) => $j
+                                ->on('posts.hero_order', '=', 'latest.hero_order')
+                                ->on('posts.updated_at', '=', 'latest.max_updated'),
+                        )
+                        ->orderBy('posts.hero_order')
+                        ->get();
+                } else {
+                    $posts = Post::with('categories:id,name')->latest('created_at')->skip(3)->take(4)->get();
+                }
 
-        foreach ($posts as $p) {
-            $p->comments_count = Comment::where('reference_id', $p->id)->count();
-            $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
-        }
+                foreach ($posts as $p) {
+                    $p->comments_count = Comment::where('reference_id', $p->id)->count();
+                    $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
+                }
 
-        return $posts;
-    });
-@endphp
-
-
-
-<div class="container">
-  <div class="row">
-    {{-- ------------------------  COLONNA HERO  ------------------------ --}}
-    <div class="col-12 col-lg-9 p-0 m-0">
-      <div class="post-group post-group--hero h-100">
-        @foreach ($heroPosts as $post)
-          @if ($loop->first)
-            {{-- CARD HERO GRANDE (LCP) --}}
-            <div class="post-group__left full-width">
-              <article class="post post__inside post__inside--feature h-100">
-                <div class="post__thumbnail h-100">
-                  {{ RvMedia::image(
-                      $post->image,
-                      $post->name,
-                      'featured',
-                      attributes: [
-                          'loading'       => 'eager',
-                          'fetchpriority' => 'high',
-                          'decoding'      => 'async',
-                          'width'         => 565,
-                          'height'        => 375,
-                      ]) }}
-                  <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
-                </div>
-
-                {{-- header --}}
-                <header class="post__header">
-                  <div class="d-flex">
-                    @if ($post->categories->count())
-                      <span class="post-group__left-purple-badge mb-2">
-                        {{ $post->categories->first()->name }}
-                      </span>
-                    @endif
-
-                    @if ($post->in_aggiornamento)
-                      <span class="post-group__left-red-badge mb-2 ml-2">
-                        <span class="pulse-circle"></span> In Aggiornamento
-                      </span>
-                    @endif
-                  </div>
-
-                  <h3 class="post__title">
-                    <a id="post-title-first" href="{{ $post->url }}">{{ $post->name }}</a>
-                  </h3>
-
-                  <p class="post-desc-first d-none d-md-block" style="margin:3px 0 0;">
-                    {{ $post->description }}
-                  </p>
-
-                  <span class="text-dark mt-2 d-block">
-                    <span class="fw-bold author-post" style="color:#ffffff">
-                      {{ $post->author->first_name }} {{ $post->author->last_name }}
-                    </span> /
-                    <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
-                      <i class="fa fa-comment"></i>
-                      {{ $post->comments_count ?: 'Commenta' }}
-                    </a>
-                    <span class="created_at" style="color:#ffffff"> /
-                      {{ $post->formatted_date }}
-                    </span>
-                  </span>
-                </header>
-              </article>
-            </div>
-
-            {{-- colonna destra della hero  --}}
-            <div class="post-group__right d-flex flex-column half-width">
-          @else
-            {{-- CARD HERO PICCOLA --}}
-            <div class="post-group__item w-100 flex-grow-1">
-              <article class="post post__inside post__inside--feature post__inside--feature-small h-100">
-                <div class="post__thumbnail h-100">
-                  {{ RvMedia::image(
-                      $post->image,
-                      $post->name,
-                      'medium',
-                      attributes: [
-                          'loading'  => 'lazy',  {{-- ora è lazy  --}}
-                          'decoding' => 'async',
-                          'width'    => 375,
-                          'height'   => 250,
-                      ]) }}
-                  <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
-                </div>
-
-                {{-- header --}}
-                <header class="post__header">
-                  <div class="d-flex">
-                    @if ($post->categories->count())
-                      <span class="fz-14px post-group__left-purple-badge">
-                        {{ $post->categories->first()->name }}
-                      </span>
-                    @endif
-                    @if ($post->in_aggiornamento)
-                      <span class="post-group__left-red-badge mb-2 ml-2">
-                        <i class="fa fa-spinner text-white"></i> In Aggiornamento
-                      </span>
-                    @endif
-                  </div>
-
-                  <h3 class="post__title">
-                    <a href="{{ $post->url }}">{{ $post->name }}</a>
-                  </h3>
-
-                  <span class="text-dark mt-2 d-block" style="font-size:small;">
-                    <span class="fw-bold author-post" style="color:#ffffff">
-                      {{ $post->author->first_name }} {{ $post->author->last_name }}
-                    </span> /
-                    <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
-                      <i class="fa fa-comment"></i>
-                      {{ $post->comments_count ?: 'Commenta' }}
-                    </a>
-                    <span class="created_at" style="color:#ffffff"> /
-                      {{ $post->formatted_date }}
-                    </span>
-                  </span>
-                </header>
-              </article>
-            </div>
-
-            @if ($loop->last)</div>@endif
-          @endif
-        @endforeach
-      </div>
-    </div>
+                return $posts;
+            });
+        @endphp
 
 
 
-    {{-- -----------------------  COLONNA BLACK-BOX  ---------------------- --}}
-    <div class="col-12 col-lg-3 mx-0 px-0">
-      <div class="black-box px-3 py-3">
-        <div class="d-flex flex-column justify-content-around h-100">
-          @foreach ($lastRecentPosts as $post)
-            <article class="w-100 @unless($loop->last) mb-3 @endunless">
-              <header class="post__last4">
-                @if ($post->categories->count())
-                  <div class="d-flex mb-1">
-                    <span class="post__last4-badge">
-                      {{ $post->categories->first()->name }}
-                    </span>
-                  </div>
-                @endif
+        <div class="container">
+            <div class="row">
+                {{-- ------------------------  COLONNA HERO  ------------------------ --}}
+                <div class="col-12 col-lg-9 p-0 m-0">
+                    <div class="post-group post-group--hero h-100">
+                        @foreach ($heroPosts as $post)
+                            @if ($loop->first)
+                                {{-- CARD HERO GRANDE (LCP) --}}
+                                <div class="post-group__left full-width">
+                                    <article class="post post__inside post__inside--feature h-100">
+                                        <div class="post__thumbnail h-100">
+                                            {{ RvMedia::image(
+                                                $post->image,
+                                                $post->name,
+                                                'featured',
+                                                attributes: [
+                                                    'loading' => 'eager',
+                                                    'fetchpriority' => 'high',
+                                                    'decoding' => 'async',
+                                                    'width' => 565,
+                                                    'height' => 375,
+                                                ],
+                                            ) }}
+                                            <a class="post__overlay" href="{{ $post->url }}"
+                                                title="{{ $post->name }}"></a>
+                                        </div>
 
-                <a class="post__last4-text" href="{{ $post->url }}">{{ $post->name }}</a>
+                                        {{-- header --}}
+                                        <header class="post__header">
+                                            <div class="d-flex">
+                                                @if ($post->categories->count())
+                                                    <span class="post-group__left-purple-badge mb-2">
+                                                        {{ $post->categories->first()->name }}
+                                                    </span>
+                                                @endif
 
-                <span class="text-dark mt-2 d-block" style="font-size:x-small;">
-                  <span class="fw-bold author-post" style="color:#ffffff">
-                    {{ $post->author->first_name }} {{ $post->author->last_name }}
-                  </span> /
-                  <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
-                    <i class="fa fa-comment"></i>
-                    {{ $post->comments_count ?: 'Commenta' }}
-                  </a>
-                  <span class="created_at" style="color:#ffffff"> /
-                    {{ $post->formatted_date }}
-                  </span>
-                </span>
-              </header>
-            </article>
-          @endforeach
-        </div>
-      </div>
-    </div>
-  </div>
+                                                @if ($post->in_aggiornamento)
+                                                    <span class="post-group__left-red-badge mb-2 ml-2">
+                                                        <span class="pulse-circle"></span> In Aggiornamento
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <h3 class="post__title">
+                                                <a id="post-title-first"
+                                                    href="{{ $post->url }}">{{ $post->name }}</a>
+                                            </h3>
+
+                                            <p class="post-desc-first d-none d-md-block" style="margin:3px 0 0;">
+                                                {{ $post->description }}
+                                            </p>
+
+                                            <span class="text-dark mt-2 d-block">
+                                                <span class="fw-bold author-post" style="color:#ffffff">
+                                                    {{ $post->author->first_name }} {{ $post->author->last_name }}
+                                                </span> /
+                                                <a class="fw-bold" href="{{ $post->url }}#comments"
+                                                    style="color:#ffffff">
+                                                    <i class="fa fa-comment"></i>
+                                                    {{ $post->comments_count ?: 'Commenta' }}
+                                                </a>
+                                                <span class="created_at" style="color:#ffffff"> /
+                                                    {{ $post->formatted_date }}
+                                                </span>
+                                            </span>
+                                        </header>
+                                    </article>
+                                </div>
+
+                                {{-- colonna destra della hero  --}}
+                                <div class="post-group__right d-flex flex-column half-width">
+                                @else
+                                    {{-- CARD HERO PICCOLA --}}
+                                    <div class="post-group__item w-100 flex-grow-1">
+                                        <article
+                                            class="post post__inside post__inside--feature post__inside--feature-small h-100">
+                                            <div class="post__thumbnail h-100">
+                                                {{ RvMedia::image(
+                                                    $post->image,
+                                                    $post->name,
+                                                    'medium',
+                                                    attributes: [
+                                                        'loading' => 'lazy',
+                                                        'decoding' => 'async',
+                                                        'width' => 375,
+                                                        'height' => 250,
+                                                    ],
+                                                ) }}
+                                                <a class="post__overlay" href="{{ $post->url }}"
+                                                    title="{{ $post->name }}"></a>
+                                            </div>
+
+                                            {{-- header --}}
+                                            <header class="post__header">
+                                                <div class="d-flex">
+                                                    @if ($post->categories->count())
+                                                        <span class="fz-14px post-group__left-purple-badge">
+                                                            {{ $post->categories->first()->name }}
+                                                        </span>
+                                                    @endif
+                                                    @if ($post->in_aggiornamento)
+                                                        <span class="post-group__left-red-badge mb-2 ml-2">
+                                                            <i class="fa fa-spinner text-white"></i> In Aggiornamento
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                <h3 class="post__title">
+                                                    <a href="{{ $post->url }}">{{ $post->name }}</a>
+                                                </h3>
+
+                                                <span class="text-dark mt-2 d-block" style="font-size:small;">
+                                                    <span class="fw-bold author-post" style="color:#ffffff">
+                                                        {{ $post->author->first_name }} {{ $post->author->last_name }}
+                                                    </span> /
+                                                    <a class="fw-bold" href="{{ $post->url }}#comments"
+                                                        style="color:#ffffff">
+                                                        <i class="fa fa-comment"></i>
+                                                        {{ $post->comments_count ?: 'Commenta' }}
+                                                    </a>
+                                                    <span class="created_at" style="color:#ffffff"> /
+                                                        {{ $post->formatted_date }}
+                                                    </span>
+                                                </span>
+                                            </header>
+                                        </article>
+                                    </div>
+
+                                    @if ($loop->last)
+                                </div>
+                            @endif
+                        @endif
+@endforeach
 </div>
-{{-- --------------  END: HERO + BLACK-BOX  -------------- --}}
+</div>
 
+
+
+{{-- -----------------------  COLONNA BLACK-BOX  ---------------------- --}}
+<div class="col-12 col-lg-3 mx-0 px-0">
+    <div class="black-box px-3 py-3">
+        <div class="d-flex flex-column justify-content-around h-100">
+            @foreach ($lastRecentPosts as $post)
+                <article class="w-100 @unless ($loop->last) mb-3 @endunless">
+                    <header class="post__last4">
+                        @if ($post->categories->count())
+                            <div class="d-flex mb-1">
+                                <span class="post__last4-badge">
+                                    {{ $post->categories->first()->name }}
+                                </span>
+                            </div>
+                        @endif
+
+                        <a class="post__last4-text" href="{{ $post->url }}">{{ $post->name }}</a>
+
+                        <span class="text-dark mt-2 d-block" style="font-size:x-small;">
+                            <span class="fw-bold author-post" style="color:#ffffff">
+                                {{ $post->author->first_name }} {{ $post->author->last_name }}
+                            </span> /
+                            <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
+                                <i class="fa fa-comment"></i>
+                                {{ $post->comments_count ?: 'Commenta' }}
+                            </a>
+                            <span class="created_at" style="color:#ffffff"> /
+                                {{ $post->formatted_date }}
+                            </span>
+                        </span>
+                    </header>
+                </article>
+            @endforeach
+        </div>
+    </div>
+</div>
+</div>
+</div>
 </div>
 
 
