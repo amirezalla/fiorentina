@@ -118,7 +118,7 @@
                                 <div class="post-group__left full-width">
                                     <article class="post post__inside post__inside--feature h-100">
                                         <div class="post__thumbnail h-100">
-                                            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'eager']) }}
+                                            {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'lazy']) }}
                                             <a class="post__overlay" href="{{ $post->url }}"
                                                 title="{{ $post->name }}"></a>
                                         </div>
@@ -175,7 +175,7 @@
                                         <article
                                             class="post post__inside post__inside--feature post__inside--feature-small h-100">
                                             <div class="post__thumbnail h-100">
-                                                {{ RvMedia::image($post->image, $post->name, 'medium', attributes: ['loading' => 'eager']) }}
+                                                {{ RvMedia::image($post->image, $post->name, 'medium', attributes: ['loading' => 'lazy']) }}
                                                 <a class="post__overlay" href="{{ $post->url }}"
                                                     title="{{ $post->name }}"></a>
                                             </div>
