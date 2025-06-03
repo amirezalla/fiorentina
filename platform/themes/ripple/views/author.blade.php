@@ -10,7 +10,6 @@
         {{-- circular logo – swap the file if you have a different one --}}
         @php
             $img = RvMedia::image($user->avatar->url, $user->first_name, 'thumbnail');
-            dd($img);
         @endphp
         <div class="container">
             <div class="col-3">
