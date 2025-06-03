@@ -15,7 +15,7 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\MatchCommentaryController;
 use App\Http\Controllers\MatchStaticsController;
 use App\Http\Controllers\MatchSummaryController;
-use App\Controllers\AuthorController;
+use App\Http\Controllers\AuthorController;
 
 use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
