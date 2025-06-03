@@ -1,5 +1,3 @@
-@extends(Theme::layout()) {{-- uses layout/default.blade.php --}}
-
 @section('content')
     {{-- everything here replaces {!! Theme::content() !!} --}}
 
