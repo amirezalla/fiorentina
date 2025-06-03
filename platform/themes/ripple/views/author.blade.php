@@ -1,6 +1,7 @@
 @section('content')
     {{-- everything here replaces {!! Theme::content() !!} --}}
     {{-- Header section mimicking the screenshot --}}
+    akbar aqa befarma
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
         <img src="{{ Theme::asset()->url('images/viola-it-round.svg') }}" alt="{{ $user->first_name }}" width="160"
