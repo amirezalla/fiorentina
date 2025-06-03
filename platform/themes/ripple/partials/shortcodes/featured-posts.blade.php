@@ -78,168 +78,94 @@
             </div>
         </div>
 
+        {{-- ======================  HERO  ====================== --}}
+        @php
+            // 1. carica i post da mostrare
+            $heroOrders = [1, 2, 3];
+            $heroPosts = Post::with('categories:id,name')
+                ->when(
+                    Post::whereIn('hero_order', $heroOrders)->exists(),
+                    function ($q) use ($heroOrders) {
+                        $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                            ->whereIn('hero_order', $heroOrders)
+                            ->groupBy('hero_order');
+                        $q->joinSub(
+                            $sub,
+                            'latest',
+                            fn($j) => $j
+                                ->on('posts.hero_order', '=', 'latest.hero_order')
+                                ->on('posts.updated_at', '=', 'latest.max_updated'),
+                        )->orderBy('posts.hero_order');
+                    },
+                    fn($q) => $q->orderByDesc('created_at')->take(3),
+                )
+                ->get();
+        @endphp
+
+        {{-- 2. hint critici nel <head> –  stampati UNA sola volta --}}
+        @once
+            @push('head')
+                <link rel="dns-prefetch" href="//laviola.s3.eu-south-1.wasabisys.com">
+                <link rel="preconnect" href="https://laviola.s3.eu-south-1.wasabisys.com" crossorigin>
+                <link rel="preload" as="image"
+                    href="{{ RvMedia::getImageUrl(optional($heroPosts->first())->image, 'featured') }}"
+                    imagesrcset="{{ RvMedia::getImageUrl(optional($heroPosts->first())->image, 'featured') }} 565w,
+                           {{ RvMedia::getImageUrl(optional($heroPosts->first())->image, 'medium') }} 375w"
+                    imagesizes="(min-width:768px) 565px,100vw" fetchpriority="high" crossorigin="anonymous">
+            @endpush
+        @endonce
+
         <div class="container">
             <div class="row">
-                <!-- Main content column (col-9) -->
+                {{-- COLONNA PRINCIPALE -------------------------------------------------- --}}
                 <div class="col-12 col-lg-9 p-0 m-0">
                     <div class="post-group post-group--hero h-100">
-                        @php
-                            $heroOrders = [1, 2, 3];
-
-                            // Check if there are any posts with hero_order in [1, 2, 3]
-                            $heroPostsCount = Post::whereIn('hero_order', $heroOrders)->count();
-
-                            if ($heroPostsCount > 0) {
-                                // Build a subquery that gets the latest updated_at for each hero_order value
-                                $subquery = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
-                                    ->whereIn('hero_order', $heroOrders)
-                                    ->groupBy('hero_order');
-
-                                // Join the subquery to get only the most recently updated post for each hero_order value
-                                $heroPosts = Post::with('categories:id,name')
-                                    ->joinSub($subquery, 'latest', function ($join) {
-                                        $join
-                                            ->on('posts.hero_order', '=', 'latest.hero_order')
-                                            ->on('posts.updated_at', '=', 'latest.max_updated');
-                                    })
-                                    ->orderBy('posts.hero_order')
-                                    ->get();
-                            } else {
-                                // Fallback: if no posts have hero_order set for 1, 2, or 3,
-                                // get the last 3 posts (ordered by created_at descending)
-                                $heroPosts = Post::with('categories:id,name')
-                                    ->orderBy('created_at', 'desc')
-                                    ->take(3)
-                                    ->get();
-                            }
-                        @endphp
                         @foreach ($heroPosts as $post)
                             @if ($loop->first)
+                                {{--  >>> LCP  ---------------------------------------------------- --}}
                                 <div class="post-group__left full-width">
                                     <article class="post post__inside post__inside--feature h-100">
                                         <div class="post__thumbnail h-100">
-                                            @push('head')
-                                                <link rel="preload" as="image"
-                                                    href="{{ RvMedia::getImageUrl($post->image, 'featured') }}"
-                                                    fetchpriority="high" {{-- Chrome priority hints --}}
-                                                    imagesrcset="
-            {{ RvMedia::getImageUrl($post->image, 'featured') }} 565w"
-                                                    imagesizes="(min-width: 768px) 565px, 100vw">
-                                            @endpush
                                             {{ RvMedia::image(
                                                 $post->image,
                                                 $post->name,
                                                 'featured',
                                                 attributes: [
-                                                    'loading' => 'eager', // LCP = eager
-                                                    'fetchpriority' => 'high', // ribadisce la priorità
-                                                    'decoding' => 'async', // non blocca il main-thread
-                                                    'width' => 565, // sostituisci con le dimensioni reali…
-                                                    'height' => 375, // …della thumb “featured”
+                                                    'loading' => 'eager',
+                                                    'fetchpriority' => 'high',
+                                                    'decoding' => 'async',
+                                                    'crossorigin' => 'anonymous',
+                                                    'width' => 565,
+                                                    'height' => 375,
                                                 ],
                                             ) }}
-
                                             <a class="post__overlay" href="{{ $post->url }}"
                                                 title="{{ $post->name }}"></a>
                                         </div>
-                                        <header class="post__header">
-                                            <div class="d-flex">
-                                                @if ($post->categories->count())
-                                                    <span
-                                                        class="post-group__left-purple-badge mb-2">{{ $post->categories->first()->name }}</span>
-                                                @endif
-                                                @if ($post->in_aggiornamento)
-                                                    <span class="post-group__left-red-badge mb-2 ml-2"><span
-                                                            class="pulse-circle"></span> In Aggiornamento
-                                                    </span>
-                                                @endif
-                                            </div>
-
-                                            <h3 class="post__title">
-                                                <a id="post-title-first"
-                                                    href="{{ $post->url }}">{{ $post->name }}</a>
-
-                                            </h3>
-                                            <p class="post-desc-first d-none d-md-block" style="margin: 3px 0 0;">
-                                                {{ $post->description }}</p>
-                                            <span class=" text-dark mt-2 d-block">
-                                                @php
-                                                    $date = Carbon::parse($post->published_at);
-                                                    setlocale(LC_TIME, 'it_IT.UTF-8');
-                                                    Carbon::setLocale('it');
-                                                    $date->locale('it');
-                                                    $formattedDate = $date->translatedFormat('d M H:i');
-                                                    $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
-                                                        'reference_id',
-                                                        $post->id,
-                                                    )->count();
-                                                @endphp
-                                                <span class=" fw-bold author-post" style="color:#ffffff">
-                                                    {{ $post->author->first_name }}
-                                                    {{ $post->author->last_name }}</span> /
-                                                <a class="fw-bold" href="{{ $post->url }}#comments"
-                                                    style="color:#ffffff">
-                                                    <i class="fa fa-comment" aria-hidden="true"></i>
-                                                    {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
-                                                </a>
-                                                <span class="created_at " style="color: rgb(255, 255, 255);"> /
-                                                    {{ $formattedDate }}
-                                                </span>
-                                            </span>
-                                        </header>
+                                        @include('partials.post-meta-large', ['post' => $post])
                                     </article>
                                 </div>
                                 <div class="post-group__right d-flex flex-column half-width">
                                 @else
+                                    {{--  >>> card secondarie  ---------------------------------------- --}}
                                     <div class="post-group__item w-100 flex-grow-1">
-                                        <article
-                                            class="post post__inside post__inside--feature post__inside--feature-small h-100">
+                                        <article class="post post__inside post__inside--feature-small h-100">
                                             <div class="post__thumbnail h-100">
-                                                {{ RvMedia::image($post->image, $post->name, 'medium', attributes: ['loading' => 'eager']) }}
+                                                {{ RvMedia::image(
+                                                    $post->image,
+                                                    $post->name,
+                                                    'medium',
+                                                    attributes: [
+                                                        'loading' => 'lazy', // ⚠️ ora è lazy
+                                                        'decoding' => 'async',
+                                                        'width' => 375,
+                                                        'height' => 250,
+                                                    ],
+                                                ) }}
                                                 <a class="post__overlay" href="{{ $post->url }}"
                                                     title="{{ $post->name }}"></a>
                                             </div>
-                                            <header class="post__header">
-                                                <div class="d-flex">
-                                                    @if ($post->categories->count())
-                                                        <span
-                                                            class="fz-14px post-group__left-purple-badge">{{ $post->categories->first()->name }}</span>
-                                                    @endif
-                                                    @if ($post->in_aggiornamento)
-                                                        <span class="post-group__left-red-badge mb-2 ml-2"><i
-                                                                class="fa fa-spinner text-white"></i> In Aggiornamento
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                <h3 class="post__title">
-                                                    <a href="{{ $post->url }}">{{ $post->name }}</a>
-                                                </h3>
-                                                <span class=" text-dark mt-2 d-block" style="font-size: small;">
-                                                    @php
-                                                        $date = Carbon::parse($post->published_at);
-                                                        setlocale(LC_TIME, 'it_IT.UTF-8');
-                                                        Carbon::setLocale('it');
-                                                        $date->locale('it');
-                                                        $formattedDate = $date->translatedFormat('d M H:i');
-                                                        $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
-                                                            'reference_id',
-                                                            $post->id,
-                                                        )->count();
-                                                    @endphp
-                                                    <span class=" fw-bold author-post" style="color:#ffffff">
-                                                        {{ $post->author->first_name }}
-                                                        {{ $post->author->last_name }}</span> /
-                                                    <a class="fw-bold" href="{{ $post->url }}#comments"
-                                                        style="color:#ffffff">
-                                                        <i class="fa fa-comment" aria-hidden="true"></i>
-                                                        {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
-                                                    </a>
-                                                    <span class="created_at "
-                                                        style="color: rgb(255, 255, 255); font-size: small;">
-                                                        / {{ $formattedDate }}
-                                                    </span>
-                                                </span>
-                                            </header>
+                                            @include('partials.post-meta-small', ['post' => $post])
                                         </article>
                                     </div>
                                     @if ($loop->last)
@@ -250,79 +176,13 @@
 </div>
 </div>
 
-<!-- Black box column (col-3) similar to the image -->
+{{-- COLONNA NERA -------------------------------------------------------- --}}
 <div class="col-12 col-lg-3 mx-0 px-0">
-    @php
-
-        $heroOrders = [4, 5, 6, 7];
-
-        // Check if there are any posts with hero_order set to one of the given values.
-        $heroPostsCount = Post::whereIn('hero_order', $heroOrders)->count();
-
-        if ($heroPostsCount > 0) {
-            // Get, for each hero_order value, the latest post (by updated_at)
-            $subquery = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
-                ->whereIn('hero_order', $heroOrders)
-                ->groupBy('hero_order');
-
-            $lastRecentPosts = Post::with('categories:id,name')
-                ->joinSub($subquery, 'latest', function ($join) {
-                    $join
-                        ->on('posts.hero_order', '=', 'latest.hero_order')
-                        ->on('posts.updated_at', '=', 'latest.max_updated');
-                })
-                ->orderBy('posts.hero_order')
-                ->get();
-        } else {
-            // Fallback: If no posts have hero_order set, skip the most recent 3 posts
-            // and get the next 4 posts ordered by created_at descending.
-            $lastRecentPosts = Post::with('categories:id,name')->orderBy('created_at', 'desc')->skip(3)->take(4)->get();
-        }
-    @endphp
-    <div class="black-box px-3 py-3">
-        <div class="d-flex flex-column justify-content-around h-100">
-            @foreach ($lastRecentPosts as $post)
-                <article class="w-100 @unless ($loop->last) mb-3 @endunless">
-                    <header class="post__last4">
-                        @if ($post->categories->count())
-                            <div class="d-flex mb-1">
-                                <span class="post__last4-badge">
-                                    {{ $post->categories->first()->name }}</span>
-                            </div>
-                        @endif
-                        <a class="post__last4-text" href="{{ $post->url }}">{{ $post->name }}</a>
-                        <span class=" text-dark mt-2 d-block" style="font-size: x-small">
-                            @php
-                                $date = Carbon::parse($post->published_at);
-                                setlocale(LC_TIME, 'it_IT.UTF-8');
-                                Carbon::setLocale('it');
-                                $date->locale('it');
-                                $formattedDate = $date->translatedFormat('d M H:i');
-
-                                $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
-                                    'reference_id',
-                                    $post->id,
-                                )->count();
-                            @endphp
-                            <span class=" fw-bold author-post" style="color:#ffffff">
-                                {{ $post->author->first_name }}
-                                {{ $post->author->last_name }}</span> /
-                            <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
-                                <i class="fa fa-comment" aria-hidden="true"></i>
-                                {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
-                            </a>
-                            <span class="created_at " style="color: rgb(255, 255, 255); display:inline-block">
-                                / {{ $formattedDate }}
-                            </span>
-                        </span>
-                    </header>
-                </article>
-            @endforeach
-        </div>
-    </div>
+    @include('partials.black-box') {{-- la tua logica dei post 4-7 resta invariata --}}
 </div>
 </div>
 </div>
+
 </div>
 
 
