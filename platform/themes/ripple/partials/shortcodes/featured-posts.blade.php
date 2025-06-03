@@ -81,76 +81,140 @@
         </div>
 
         @php
-
             setlocale(LC_TIME, 'it_IT.UTF-8');
             Carbon::setLocale('it');
 
-            /*  ========== HERO (ordini 1-3) ==========
- salvato per 18 000 s = 5 h          */
-            $heroPosts = Cache::remember('home.heroPosts', 18_000, function () {
-                $orders = [1, 2, 3];
+            // HERO POSTS
+            if (Cache::has('home.heroPosts')) {
+                $heroPosts = Cache::get('home.heroPosts');
+                if ($heroPosts->isEmpty()) {
+                    $heroPosts = Cache::remember('home.heroPosts', 18_000, function () {
+                        $orders = [1, 2, 3];
 
-                if (Post::whereIn('hero_order', $orders)->exists()) {
-                    $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
-                        ->whereIn('hero_order', $orders)
-                        ->groupBy('hero_order');
+                        if (Post::whereIn('hero_order', $orders)->exists()) {
+                            $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                                ->whereIn('hero_order', $orders)
+                                ->groupBy('hero_order');
 
-                    $posts = Post::with('categories:id,name')
-                        ->joinSub(
-                            $sub,
-                            'latest',
-                            fn($j) => $j
-                                ->on('posts.hero_order', '=', 'latest.hero_order')
-                                ->on('posts.updated_at', '=', 'latest.max_updated'),
-                        )
-                        ->orderBy('posts.hero_order')
-                        ->get();
-                } else {
-                    $posts = Post::with('categories:id,name')->latest('created_at')->take(3)->get();
+                            $posts = Post::with('categories:id,name')
+                                ->joinSub(
+                                    $sub,
+                                    'latest',
+                                    fn($j) => $j
+                                        ->on('posts.hero_order', '=', 'latest.hero_order')
+                                        ->on('posts.updated_at', '=', 'latest.max_updated'),
+                                )
+                                ->orderBy('posts.hero_order')
+                                ->get();
+                        } else {
+                            $posts = Post::with('categories:id,name')->latest('created_at')->take(3)->get();
+                        }
+
+                        foreach ($posts as $p) {
+                            $p->comments_count = Comment::where('reference_id', $p->id)->count();
+                            $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
+                        }
+
+                        return $posts;
+                    });
                 }
+            } else {
+                $heroPosts = Cache::remember('home.heroPosts', 18_000, function () {
+                    $orders = [1, 2, 3];
 
-                /*  pre-calcolo dati che usavamo dentro il loop
-            (niente più query ripetitive né Carbon in ciclo)
-*/
-                foreach ($posts as $p) {
-                    $p->comments_count = Comment::where('reference_id', $p->id)->count();
-                    $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
+                    if (Post::whereIn('hero_order', $orders)->exists()) {
+                        $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                            ->whereIn('hero_order', $orders)
+                            ->groupBy('hero_order');
+
+                        $posts = Post::with('categories:id,name')
+                            ->joinSub(
+                                $sub,
+                                'latest',
+                                fn($j) => $j
+                                    ->on('posts.hero_order', '=', 'latest.hero_order')
+                                    ->on('posts.updated_at', '=', 'latest.max_updated'),
+                            )
+                            ->orderBy('posts.hero_order')
+                            ->get();
+                    } else {
+                        $posts = Post::with('categories:id,name')->latest('created_at')->take(3)->get();
+                    }
+
+                    foreach ($posts as $p) {
+                        $p->comments_count = Comment::where('reference_id', $p->id)->count();
+                        $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
+                    }
+
+                    return $posts;
+                });
+            }
+
+            // LAST RECENT POSTS
+            if (Cache::has('home.lastRecentPosts')) {
+                $lastRecentPosts = Cache::get('home.lastRecentPosts');
+                if ($lastRecentPosts->isEmpty()) {
+                    $lastRecentPosts = Cache::remember('home.lastRecentPosts', 18_000, function () {
+                        $orders = [4, 5, 6, 7];
+
+                        if (Post::whereIn('hero_order', $orders)->exists()) {
+                            $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                                ->whereIn('hero_order', $orders)
+                                ->groupBy('hero_order');
+
+                            $posts = Post::with('categories:id,name')
+                                ->joinSub(
+                                    $sub,
+                                    'latest',
+                                    fn($j) => $j
+                                        ->on('posts.hero_order', '=', 'latest.hero_order')
+                                        ->on('posts.updated_at', '=', 'latest.max_updated'),
+                                )
+                                ->orderBy('posts.hero_order')
+                                ->get();
+                        } else {
+                            $posts = Post::with('categories:id,name')->latest('created_at')->skip(3)->take(4)->get();
+                        }
+
+                        foreach ($posts as $p) {
+                            $p->comments_count = Comment::where('reference_id', $p->id)->count();
+                            $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
+                        }
+
+                        return $posts;
+                    });
                 }
+            } else {
+                $lastRecentPosts = Cache::remember('home.lastRecentPosts', 18_000, function () {
+                    $orders = [4, 5, 6, 7];
 
-                return $posts;
-            });
+                    if (Post::whereIn('hero_order', $orders)->exists()) {
+                        $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                            ->whereIn('hero_order', $orders)
+                            ->groupBy('hero_order');
 
-            /*  ========== BLACK-BOX (ordini 4-7) ==========
- salvato per 18 000 s = 5 h               */
-            $lastRecentPosts = Cache::remember('home.lastRecentPosts', 18_000, function () {
-                $orders = [4, 5, 6, 7];
+                        $posts = Post::with('categories:id,name')
+                            ->joinSub(
+                                $sub,
+                                'latest',
+                                fn($j) => $j
+                                    ->on('posts.hero_order', '=', 'latest.hero_order')
+                                    ->on('posts.updated_at', '=', 'latest.max_updated'),
+                            )
+                            ->orderBy('posts.hero_order')
+                            ->get();
+                    } else {
+                        $posts = Post::with('categories:id,name')->latest('created_at')->skip(3)->take(4)->get();
+                    }
 
-                if (Post::whereIn('hero_order', $orders)->exists()) {
-                    $sub = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
-                        ->whereIn('hero_order', $orders)
-                        ->groupBy('hero_order');
+                    foreach ($posts as $p) {
+                        $p->comments_count = Comment::where('reference_id', $p->id)->count();
+                        $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
+                    }
 
-                    $posts = Post::with('categories:id,name')
-                        ->joinSub(
-                            $sub,
-                            'latest',
-                            fn($j) => $j
-                                ->on('posts.hero_order', '=', 'latest.hero_order')
-                                ->on('posts.updated_at', '=', 'latest.max_updated'),
-                        )
-                        ->orderBy('posts.hero_order')
-                        ->get();
-                } else {
-                    $posts = Post::with('categories:id,name')->latest('created_at')->skip(3)->take(4)->get();
-                }
-
-                foreach ($posts as $p) {
-                    $p->comments_count = Comment::where('reference_id', $p->id)->count();
-                    $p->formatted_date = Carbon::parse($p->published_at)->translatedFormat('d M H:i');
-                }
-
-                return $posts;
-            });
+                    return $posts;
+                });
+            }
         @endphp
         @dd($heroPosts, $lastRecentPosts)
 
