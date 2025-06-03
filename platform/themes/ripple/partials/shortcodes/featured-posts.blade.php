@@ -2,7 +2,6 @@
     use Illuminate\Support\Facades\DB;
     use Botble\Blog\Models\Post;
     use Carbon\Carbon;
-    use Illuminate\Support\Facades\Cache;
 @endphp
 @if ($posts->isNotEmpty())
 
@@ -85,80 +84,34 @@
                 <div class="col-12 col-lg-9 p-0 m-0">
                     <div class="post-group post-group--hero h-100">
                         @php
+                            $heroOrders = [1, 2, 3];
 
-                            /* ----------------------------------------------------------
-     | 1. Recupero collezioni con cache per 5 h – solo su “/”
-     |---------------------------------------------------------- */
-                            $isHome = request()->is('/');
+                            // Check if there are any posts with hero_order in [1, 2, 3]
+                            $heroPostsCount = Post::whereIn('hero_order', $heroOrders)->count();
 
-                            $heroPosts = Cache::remember('home.heroPosts', 18_000, function () use ($isHome) {
-                                if (!$isHome) {
-                                    return collect(); // non serve su altre pagine
-                                }
+                            if ($heroPostsCount > 0) {
+                                // Build a subquery that gets the latest updated_at for each hero_order value
+                                $subquery = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                                    ->whereIn('hero_order', $heroOrders)
+                                    ->groupBy('hero_order');
 
-                                $orders = [1, 2, 3];
-
-                                if (\App\Models\Post::whereIn('hero_order', $orders)->exists()) {
-                                    $sub = \App\Models\Post::select(
-                                        'hero_order',
-                                        \DB::raw('MAX(updated_at) as max_updated'),
-                                    )
-                                        ->whereIn('hero_order', $orders)
-                                        ->groupBy('hero_order');
-
-                                    return \App\Models\Post::with('categories:id,name')
-                                        ->joinSub($sub, 'latest', function ($j) {
-                                            $j->on('posts.hero_order', '=', 'latest.hero_order')->on(
-                                                'posts.updated_at',
-                                                '=',
-                                                'latest.max_updated',
-                                            );
-                                        })
-                                        ->orderBy('posts.hero_order')
-                                        ->get();
-                                }
-
-                                return \App\Models\Post::with('categories:id,name')
-                                    ->latest('created_at')
+                                // Join the subquery to get only the most recently updated post for each hero_order value
+                                $heroPosts = Post::with('categories:id,name')
+                                    ->joinSub($subquery, 'latest', function ($join) {
+                                        $join
+                                            ->on('posts.hero_order', '=', 'latest.hero_order')
+                                            ->on('posts.updated_at', '=', 'latest.max_updated');
+                                    })
+                                    ->orderBy('posts.hero_order')
+                                    ->get();
+                            } else {
+                                // Fallback: if no posts have hero_order set for 1, 2, or 3,
+                                // get the last 3 posts (ordered by created_at descending)
+                                $heroPosts = Post::with('categories:id,name')
+                                    ->orderBy('created_at', 'desc')
                                     ->take(3)
                                     ->get();
-                            });
-
-                            $lastRecentPosts = Cache::remember('home.lastRecentPosts', 18_000, function () use (
-                                $isHome,
-                            ) {
-                                if (!$isHome) {
-                                    return collect();
-                                }
-
-                                $orders = [4, 5, 6, 7];
-
-                                if (\App\Models\Post::whereIn('hero_order', $orders)->exists()) {
-                                    $sub = \App\Models\Post::select(
-                                        'hero_order',
-                                        \DB::raw('MAX(updated_at) as max_updated'),
-                                    )
-                                        ->whereIn('hero_order', $orders)
-                                        ->groupBy('hero_order');
-
-                                    return \App\Models\Post::with('categories:id,name')
-                                        ->joinSub($sub, 'latest', function ($j) {
-                                            $j->on('posts.hero_order', '=', 'latest.hero_order')->on(
-                                                'posts.updated_at',
-                                                '=',
-                                                'latest.max_updated',
-                                            );
-                                        })
-                                        ->orderBy('posts.hero_order')
-                                        ->get();
-                                }
-
-                                return \App\Models\Post::with('categories:id,name')
-                                    ->latest('created_at')
-                                    ->skip(3)
-                                    ->take(4)
-                                    ->get();
-                            });
+                            }
                         @endphp
                         @foreach ($heroPosts as $post)
                             @if ($loop->first)
@@ -290,7 +243,33 @@
 
 <!-- Black box column (col-3) similar to the image -->
 <div class="col-12 col-lg-3 mx-0 px-0">
+    @php
 
+        $heroOrders = [4, 5, 6, 7];
+
+        // Check if there are any posts with hero_order set to one of the given values.
+        $heroPostsCount = Post::whereIn('hero_order', $heroOrders)->count();
+
+        if ($heroPostsCount > 0) {
+            // Get, for each hero_order value, the latest post (by updated_at)
+            $subquery = Post::select('hero_order', DB::raw('MAX(updated_at) as max_updated'))
+                ->whereIn('hero_order', $heroOrders)
+                ->groupBy('hero_order');
+
+            $lastRecentPosts = Post::with('categories:id,name')
+                ->joinSub($subquery, 'latest', function ($join) {
+                    $join
+                        ->on('posts.hero_order', '=', 'latest.hero_order')
+                        ->on('posts.updated_at', '=', 'latest.max_updated');
+                })
+                ->orderBy('posts.hero_order')
+                ->get();
+        } else {
+            // Fallback: If no posts have hero_order set, skip the most recent 3 posts
+            // and get the next 4 posts ordered by created_at descending.
+            $lastRecentPosts = Post::with('categories:id,name')->orderBy('created_at', 'desc')->skip(3)->take(4)->get();
+        }
+    @endphp
     <div class="black-box px-3 py-3">
         <div class="d-flex flex-column justify-content-around h-100">
             @foreach ($lastRecentPosts as $post)
