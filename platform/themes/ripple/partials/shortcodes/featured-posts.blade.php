@@ -123,8 +123,7 @@
                                                     href="{{ RvMedia::getImageUrl($post->image, 'featured') }}"
                                                     fetchpriority="high" {{-- Chrome priority hints --}}
                                                     imagesrcset="
-            {{ RvMedia::getImageUrl($post->image, 'featured') }} 565w,
-            {{ RvMedia::getImageUrl($post->image, 'medium') }}   375w"
+            {{ RvMedia::getImageUrl($post->image, 'featured') }} 565w"
                                                     imagesizes="(min-width: 768px) 565px, 100vw">
                                             @endpush
                                             {{ RvMedia::image(
