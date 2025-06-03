@@ -9,11 +9,11 @@
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
         @php
-            $img = RvMedia::image($user->avatar->id, $user->first_name, 'thumbnail');
+            $img = RvMedia::image($user->avatar->url, $user->first_name, 'thumbnail');
         @endphp
         <div class="container">
             <div class="col-3">
-                <img src=" {{ $img }} " alt="{{ $user->first_name }}" width="160" class="mb-30">
+                <img src="{{ $img }}" alt="{{ $user->first_name }}" width="160" class="mb-30">
             </div>
             <div class="col-9">
                 <h1 class="display-5 font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</h1>
