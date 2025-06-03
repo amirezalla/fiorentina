@@ -1,4 +1,4 @@
-@extends(Theme::getLayout('default')) {{-- uses layout/default.blade.php --}}
+@extends(Theme::getThemeName()) {{-- uses layout/default.blade.php --}}
 
 @section('content')
     {{-- everything here replaces {!! Theme::content() !!} --}}
