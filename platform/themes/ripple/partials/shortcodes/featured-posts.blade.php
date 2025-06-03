@@ -2,6 +2,8 @@
     use Illuminate\Support\Facades\DB;
     use Botble\Blog\Models\Post;
     use Carbon\Carbon;
+    use Illuminate\Support\Facades\Cache;
+    use FriendsOfBotble\Comment\Models\Comment;
 @endphp
 @if ($posts->isNotEmpty())
 
@@ -79,11 +81,6 @@
         </div>
 
         @php
-            use Illuminate\Support\Facades\Cache;
-            use Illuminate\Support\Facades\DB;
-            use Carbon\Carbon;
-            use FriendsOfBotble\Comment\Models\Comment;
-            use App\Models\Post;
 
             setlocale(LC_TIME, 'it_IT.UTF-8');
             Carbon::setLocale('it');
