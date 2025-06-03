@@ -1,6 +1,6 @@
 @section('content')
     {{-- everything here replaces {!! Theme::content() !!} --}}
-
+    @dd($user)
     {{-- Header section mimicking the screenshot --}}
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
