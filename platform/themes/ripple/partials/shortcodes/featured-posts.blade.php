@@ -118,16 +118,25 @@
                                 <div class="post-group__left full-width">
                                     <article class="post post__inside post__inside--feature h-100">
                                         <div class="post__thumbnail h-100">
+                                            @push('head')
+                                                <link rel="preload" as="image"
+                                                    href="{{ RvMedia::getImageUrl($post->image, 'featured') }}"
+                                                    fetchpriority="high" {{-- Chrome priority hints --}}
+                                                    imagesrcset="
+            {{ RvMedia::getImageUrl($post->image, 'featured') }} 565w,
+            {{ RvMedia::getImageUrl($post->image, 'medium') }}   375w"
+                                                    imagesizes="(min-width: 768px) 565px, 100vw">
+                                            @endpush
                                             {{ RvMedia::image(
                                                 $post->image,
                                                 $post->name,
                                                 'featured',
                                                 attributes: [
-                                                    'loading' => 'eager', // resta “eager”
-                                                    'fetchpriority' => 'high', // Chrome  priority hints
-                                                    'decoding' => 'async', // non blocca main-thread
-                                                    'width' => 565, // dimensioni vere…
-                                                    'height' => 375, // …per CLS ≈ 0
+                                                    'loading' => 'eager', // LCP = eager
+                                                    'fetchpriority' => 'high', // ribadisce la priorità
+                                                    'decoding' => 'async', // non blocca il main-thread
+                                                    'width' => 565, // sostituisci con le dimensioni reali…
+                                                    'height' => 375, // …della thumb “featured”
                                                 ],
                                             ) }}
 
