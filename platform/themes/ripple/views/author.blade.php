@@ -14,8 +14,7 @@
         @endphp
         <div class="container">
             <div class="col-3">
-                <img src="{{ $img }}" alt="{{ $user->first_name }}" width="160" class="mb-30">
-            </div>
+                {{ $img }} </div>
             <div class="col-9">
                 <h1 class="display-5 font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</h1>
             </div>
