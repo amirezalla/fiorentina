@@ -991,9 +991,10 @@ p:empty {
 
 .post__inside--feature .post__title a {
     color: #fff;
-    font-size: 26px;
+    font-size: 2rem;
     font-weight: 700;
-    letter-spacing: .05em;
+    letter-spacing: -.04em;
+    line-height: 1.1;
     text-transform: uppercase
 }
 
@@ -4276,6 +4277,14 @@ body,
     color: #111111;
     line-height: 1.1;
     font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02rem;
+}
+
+.category-page .post__title a {
+    color: #111111;
+    line-height: 1.1;
+    font-size: 1.3rem;
     font-weight: 700;
     letter-spacing: -0.02rem;
 }

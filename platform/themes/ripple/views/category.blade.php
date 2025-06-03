@@ -25,9 +25,9 @@
                         @endif
                     </div>
 
-                    <h3 class="post__title">
+                    <h2 class="post__title">
                         <a id="post-title-first" href="{{ $post->url }}">{{ $post->name }}</a>
-                    </h3>
+                    </h2>
 
                     <p class="post-desc-first d-none d-md-block my-2">
                         {{ $post->description }}
@@ -61,7 +61,7 @@
         @endif
 
         {{-- STANDARD HORIZONTAL CARD (unchanged) --}}
-        <article class="post post__horizontal mb-40 clearfix">
+        <article class="post post__horizontal category-page mb-40 clearfix">
             <div class="post__thumbnail">
                 {{ RvMedia::image($post->image, $post->name, 'thumbnail') }}
                 <a href="{{ $post->url }}" title="{{ $post->name }}" class="post__overlay"></a>
