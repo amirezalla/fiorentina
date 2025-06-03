@@ -9,7 +9,7 @@
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
         @php
-            $img = RvMedia::getImageUrl($user->avatar, $user->first_name, 'thumbnail');
+            $img = RvMedia::image($user->avatar, $user->first_name, 'thumbnail');
         @endphp
         <div class="container">
             <div class="col-3">
