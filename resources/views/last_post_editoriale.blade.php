@@ -20,7 +20,7 @@
         <div class="editoriale-item-content p-2">
             <div class="w-full d-block">
                 <a href="{{ $last_post->url }}" title="{{ $last_post->name }}" class="d-block w-100">
-                    {{ RvMedia::image($last_post->image, $last_post->name, 'medium') }}
+                    {{ RvMedia::image($last_post->image, $last_post->name, 'medium', ['loading' => 'lazy']) }}
                 </a>
 
                 {{-- The new line in gray: "editoriali / X ore fa" --}}
