@@ -3,11 +3,11 @@
     {!! Theme::partial('breadcrumbs') !!}
 @endif
 
+@include('ads.includes.background-page')
 
 @if (Theme::get('isArticle'))
     <div class="background-ad-post">
 
-        @include('ads.includes.background-page')
     </div>
     <div class="container mb-3">
         <div class="col-11 row justify-content-center mx-auto" style="padding: 0">
