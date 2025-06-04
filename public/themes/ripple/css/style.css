@@ -5911,3 +5911,25 @@ amp-img {
 .background-ad-post .linkofit {
     scale: none !important;
 }
+
+#mvp-author-top-left img {
+    border: 8px solid #ddd;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    line-height: 0;
+    margin-top: -8px;
+}
+
+#mvp-author-top-left .col-9 {
+    align-content: space-evenly;
+
+}
+
+#mvp-author-top-left .col-9 h1 {
+    color: #555;
+    font-size: 3.3rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 15px;
+    width: 100%;
+}
