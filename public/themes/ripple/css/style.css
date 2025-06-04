@@ -5932,4 +5932,18 @@ amp-img {
     line-height: 1;
     margin-bottom: 15px;
     width: 100%;
+    font-family: 'Roboto', sans-serif !important;
+}
+
+span.mvp-sec-head {
+    border-bottom: 1px solid #8424e3;
+}
+
+h4.mvp-sec-head {
+    border-bottom: 1px solid #ddd;
+    float: left;
+    margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+    font-family: 'Titillium Web', sans-serif !important;
 }

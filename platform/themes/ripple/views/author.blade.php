@@ -28,9 +28,11 @@
 
     </div>
 
-    <h2 class="section-title mb-40">
-        {{ __('Notizie di') }} {{ $user->first_name }} {{ $user->last_name }}
-    </h2>
+    <h4 class="section-title mb-40 mvp-sec-head">
+        <span class="mvp-sec-head">
+            
+        </span>{{ __('Notizie di') }} {{ $user->first_name }} {{ $user->last_name }}
+    </h4>
 
     {{-- Post loop --}}
     @forelse ($posts as $post)
