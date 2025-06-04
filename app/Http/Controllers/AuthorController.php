@@ -24,7 +24,7 @@ class AuthorController extends BaseController
         $posts = $postRepo->getModel()
                           ->where('author_id', $user->id)
                           ->where('status', BaseStatusEnum::PUBLISHED)
-                          ->latest();
+                          ->all();
 
 
 
