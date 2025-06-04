@@ -28,10 +28,10 @@
 
     </div>
 
-    <h4 class="section-title mb-40 mvp-sec-head">
+    <h4 class="section-title mb-40 mvp-sec-head mt-5">
         <span class="mvp-sec-head">
-            
-        </span>{{ __('Notizie di') }} {{ $user->first_name }} {{ $user->last_name }}
+            {{ __('Notizie di') }} {{ $user->first_name }} {{ $user->last_name }}
+        </span>
     </h4>
 
     {{-- Post loop --}}
