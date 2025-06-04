@@ -43,7 +43,7 @@
                         <div class="post-group__content">
                             <div class="row">
                                 @php
-                                    $minMainPostsLimit = intval(5);
+                                    $minMainPostsLimit = intval(10);
                                     $mainPostsLimit = intval(50);
                                 @endphp
                                 <div class="col-md-12 col-sm-12 col-12">

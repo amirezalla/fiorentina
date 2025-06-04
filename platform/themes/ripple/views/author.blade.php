@@ -37,7 +37,7 @@
 
     {{-- Post loop --}}
     @php
-        $minMainPostsLimit = intval(5);
+        $minMainPostsLimit = intval(10);
         $mainPostsLimit = intval(50);
     @endphp
     <div class="row">
