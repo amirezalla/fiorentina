@@ -13,7 +13,10 @@
                 {!! BaseHelper::renderIcon('ti ti-clock') !!} {{ $formattedDate }}
             </span>
             @if ($post->author->avatar->url)
-                <img class="post-author" src="{{ $post->author->avatar->url }}" alt="$post->author->avatar->url">
+                @php
+                    $img = RvMedia::image($user->avatar->url, $user->first_name, 'thumbnail');
+                @endphp
+                {{ $img }}
             @else
                 <span class="post-author " style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}
             @endif
