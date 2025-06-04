@@ -6,6 +6,9 @@
     @endphp
     @php Theme::set('section-name', $user->first_name) @endphp
 
+    @push('header')
+        <title>{{ $user->first_name . ' ' . $user->last_name . ', Autore presso ' . setting('site_title') }}</title>
+    @endpush
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
         @php
@@ -59,7 +62,8 @@
                                             'loading' => 'lazy',
                                         ],
                                     ) }}
-                                    <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
+                                    <a class="post__overlay" href="{{ $post->url }}"
+                                        title="{{ $post->name }}"></a>
                                 </div>
 
                                 <!-- Content (Title and Description) on the right -->
