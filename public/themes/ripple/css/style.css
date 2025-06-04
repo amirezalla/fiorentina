@@ -1381,7 +1381,8 @@ p:empty {
 }
 
 .post__vertical--single .post__thumbnail {
-    position: relative
+    position: relative;
+    max-height: 180px !important;
 }
 
 .post__vertical--single .post__content-wrap {
@@ -5949,7 +5950,7 @@ span.mvp-sec-head {
 h4.mvp-sec-head {
     border-bottom: 1px solid #ddd;
     float: left;
-    margin-bottom: 20px;
+    margin-bottom: -20px;
     position: relative;
     width: 100%;
     font-family: 'Titillium Web', sans-serif !important;
