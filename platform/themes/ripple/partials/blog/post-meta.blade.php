@@ -14,7 +14,9 @@
             </span>
             @if ($post->author->avatar->url)
                 @php
-                    $img = RvMedia::image($post->author->avatar->url, $post->author->first_name, 'thumbnail');
+                    $img = RvMedia::image($post->author->avatar->url, $post->author->first_name, 'thumbnail', [
+                        'style' => 'border-radius:50%;width:25px;height:25px;',
+                    ]);
                 @endphp
 
                 {{ $img }}
