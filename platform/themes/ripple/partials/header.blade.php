@@ -27,6 +27,7 @@
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
     @php(Theme::set('headerMeta', Theme::partial('header-meta')))
     {!! Theme::header() !!}
+    <title>{{ Theme::getTitle() }}</title>
 </head>
 
 <body {!! Theme::bodyAttributes() !!}>

@@ -24,13 +24,17 @@ class AuthorController extends BaseController
         $posts = $postRepo->getModel()
                           ->where('author_id', $user->id)
                           ->where('status', BaseStatusEnum::PUBLISHED)
-                          ->get();
+                          ->latest()
+                          ->paginate(50);
 
-
+        // basic meta + breadcrumb
+        Theme::breadcrumb()
+             ->add(__('Home'), route('public.index'))
+             ->add($user->first_name . ' ' . $user->last_name, route('public.author', $user->id));
 
     SeoHelper::setTitle($user->full_name);
         SeoHelper::setDescription(__('Author page for :name', ['name' => $user->full_name]));
-        // Theme::pageTitle($user->first_name . ' '.$user->last_name .', Autore presso ' . setting('site_title'));
+        Theme::setTitle($user->first_name . ' '.$user->last_name .', Autore presso ' . setting('site_title'));
 
         return Theme::scope('author', compact('user', 'posts'))->render();
     }
