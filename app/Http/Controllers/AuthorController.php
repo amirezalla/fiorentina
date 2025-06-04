@@ -30,8 +30,7 @@ class AuthorController extends BaseController
              ->add(__('Home'), route('public.index'))
              ->add($user->first_name . ' ' . $user->last_name, route('public.author', $user->id));
 
-            $this->pageTitle('STO CAZZO DI AUTORE');
-        // Theme::pageTitle($user->first_name . ' '.$user->last_name .', Autore presso ' . setting('site_title'));
+        Theme::setTitle('STO CAZZO DI AUTORE');
 
         return Theme::scope('author', compact('user', 'posts'))->render();
     }
