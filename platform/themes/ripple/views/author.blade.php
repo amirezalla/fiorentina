@@ -6,9 +6,9 @@
     @endphp
     @php Theme::set('section-name', $user->first_name) @endphp
 
-    @push('header')
-        <title>{{ $user->first_name . ' ' . $user->last_name . ', Autore presso ' . setting('site_title') }}</title>
-    @endpush
+
+    <title>{{ $user->first_name . ' ' . $user->last_name . ', Autore presso ' . setting('site_title') }}</title>
+
     <div class="text-center py-60">
         {{-- circular logo – swap the file if you have a different one --}}
         @php
