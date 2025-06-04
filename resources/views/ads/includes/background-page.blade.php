@@ -19,7 +19,7 @@
     <div class="fixed-ad-container justify-content-center">
         <div class="w-100 d-flex justify-content-center">
             <div class="position-absolute">
-                <a href="" class="d-flex w-100 linkofit" style="{{ Request::is('/') ? 'scale-[1.13]' : '' }}">
+                <a href="" class="d-flex w-100 linkofit" style="{{ Request::is('/') ? 'scale:1.13' : '' }}">
                     <img src="{{ $ad->getOptimizedImageUrlAttribute() }}" alt="{{ $ad->title }}" class="w-full d-block">
                 </a>
             </div>
