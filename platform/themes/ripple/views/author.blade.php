@@ -35,7 +35,7 @@
     </h4>
 
     {{-- Post loop --}}
-    @forelse ($posts as $post)
+    @forelse ($posts as $index => $post)
         <article class="post post__vertical post__vertical--single post-item"
             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
             <!-- Image on the left -->
