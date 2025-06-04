@@ -60,8 +60,7 @@
                                             'loading' => 'lazy',
                                         ],
                                     ) }}
-                                    <a class="post__overlay" href="{{ $post->url }}"
-                                        title="{{ $post->name }}"></a>
+                                    <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
                                 </div>
 
                                 <!-- Content (Title and Description) on the right -->
@@ -149,3 +148,81 @@
 
 
     {{-- Botble’s pagination partial --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* ---------- settings ---------- */
+            const BATCH = {{ $minMainPostsLimit }}; // 5
+            const MAX = document.querySelectorAll('.post-item').length;
+            let visible = {{ $minMainPostsLimit }}; // start with 5
+
+            /* ---------- helper to toggle visibility ---------- */
+            function showUpTo(limit) {
+                document.querySelectorAll('.post-item').forEach((el, i) => {
+                    el.style.display = (i < limit) ? 'flex' : 'none';
+                });
+            }
+
+            /* ---------- first render ---------- */
+            showUpTo(visible);
+
+            /* ---------- loading banner ---------- */
+            const loading = document.createElement('div');
+            loading.id = 'batch-loading';
+            loading.textContent = 'Caricamento dei prossimi articoli…';
+            Object.assign(loading.style, {
+                display: 'none',
+                textAlign: 'center',
+                padding: '12px 0',
+                fontWeight: '600',
+                color: '#8424e3'
+            });
+
+            /* ---------- sentinel right after the list ---------- */
+            const row = document.querySelector('.post-group__content .row');
+            const sentinel = document.createElement('div');
+            sentinel.id = 'auto-load-sentinel';
+            row.append(loading, sentinel); // banner first, sentinel last
+
+            /* ---------- intersection observer ---------- */
+            const io = new IntersectionObserver(entries => {
+                if (!entries[0].isIntersecting) return;
+                if (visible >= MAX) return;
+
+                // show "loading…" banner, then reveal batch after delay
+                loading.style.display = 'block';
+                setTimeout(() => {
+                    loadNextBatch();
+                }, 800); // ≈0.8 s feel-good pause
+            }, {
+                rootMargin: '200px'
+            });
+            io.observe(sentinel);
+
+            /* ---------- batch loader ---------- */
+            function loadNextBatch() {
+                visible = Math.min(visible + BATCH, MAX);
+                showUpTo(visible);
+                loading.style.display = 'none';
+
+                if (visible >= MAX) { // done – stop observing
+                    io.disconnect();
+                }
+            }
+
+            /* ---------- optional manual button still works ---------- */
+            const btn = document.getElementById('load-more');
+            if (btn) {
+                btn.addEventListener('click', loadNextBatch);
+                // hide the button once everything is visible
+                const mo = new MutationObserver(() => {
+                    if (visible >= MAX) btn.style.display = 'none';
+                });
+                mo.observe(loading, {
+                    attributes: true,
+                    attributeFilter: ['style']
+                });
+            }
+
+        });
+    </script>
