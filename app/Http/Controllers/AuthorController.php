@@ -7,6 +7,7 @@ use Botble\Blog\Repositories\Interfaces\PostInterface;
 use Botble\ACL\Models\User;
 use Botble\Base\Enums\BaseStatusEnum;
 use Theme;
+use Botble\Base\Supports\Breadcrumb;
 
 class AuthorController extends BaseController
 {
