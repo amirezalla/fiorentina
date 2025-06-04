@@ -24,6 +24,7 @@ class AuthorController extends BaseController
              ->add(__('Home'), route('public.index'))
              ->add($user->name);
 
+            $this->pageTitle($user->first_name . ' ' . $user->last_name . ', Autore presso ' . setting('site_title'));
         Theme::setTitle($user->first_name . ' '.$user->last_name .', Autore presso ' . setting('site_title'));
 
         return Theme::scope('author', compact('user', 'posts'))->render();
