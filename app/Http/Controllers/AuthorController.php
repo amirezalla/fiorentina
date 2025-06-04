@@ -8,6 +8,8 @@ use Botble\ACL\Models\User;
 use Botble\Base\Enums\BaseStatusEnum;
 use Theme;
 use Botble\Base\Supports\Breadcrumb;
+use Botble\SeoHelper\Facades\SeoHelper;
+
 
 class AuthorController extends BaseController
 {
@@ -30,7 +32,9 @@ class AuthorController extends BaseController
              ->add(__('Home'), route('public.index'))
              ->add($user->first_name . ' ' . $user->last_name, route('public.author', $user->id));
 
-        Theme::setTitle('STO CAZZO DI AUTORE');
+    SeoHelper::setTitle($user->full_name);
+        SeoHelper::setDescription(__('Author page for :name', ['name' => $user->full_name]));
+        // Theme::pageTitle($user->first_name . ' '.$user->last_name .', Autore presso ' . setting('site_title'));
 
         return Theme::scope('author', compact('user', 'posts'))->render();
     }

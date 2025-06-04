@@ -4,7 +4,6 @@
         use Botble\Media\Models\MediaFile;
 
     @endphp
-    @php Theme::set('section-name', $user->first_name) @endphp
 
 
 
@@ -61,8 +60,7 @@
                                             'loading' => 'lazy',
                                         ],
                                     ) }}
-                                    <a class="post__overlay" href="{{ $post->url }}"
-                                        title="{{ $post->name }}"></a>
+                                    <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
                                 </div>
 
                                 <!-- Content (Title and Description) on the right -->
