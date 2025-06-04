@@ -24,13 +24,9 @@ class AuthorController extends BaseController
         $posts = $postRepo->getModel()
                           ->where('author_id', $user->id)
                           ->where('status', BaseStatusEnum::PUBLISHED)
-                          ->latest()
-                          ->paginate(12);
+                          ->latest();
 
-        // basic meta + breadcrumb
-        Theme::breadcrumb()
-             ->add(__('Home'), route('public.index'))
-             ->add($user->first_name . ' ' . $user->last_name, route('public.author', $user->id));
+
 
     SeoHelper::setTitle($user->full_name);
         SeoHelper::setDescription(__('Author page for :name', ['name' => $user->full_name]));
