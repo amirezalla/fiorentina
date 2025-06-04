@@ -135,6 +135,48 @@
                                     </div>
 
                             </article>
+                            <!-- Optional ads -->
+                            @if ($index == 0)
+                                <div class="d-none d-md-block">
+                                    @include('ads.includes.adsrecentp1')
+
+                                </div>
+                                <div class="d-block d-md-none col-12 mb-4 text-center">
+                                    @include('ads.includes.MOBILE_POSIZIONE_1')
+                                </div>
+                            @endif
+                            @if ($index == 2)
+                                <div class="d-none d-md-block">
+                                    @include('ads.includes.adsrecentp2')
+                                </div>
+
+                                <div class="d-block d-md-none col-12 mb-4 text-center">
+                                    @include('ads.includes.MOBILE_POSIZIONE_2')
+                                </div>
+                            @endif
+                            @if ($index == 5)
+                                <div class="d-none d-md-block">
+                                    @include('ads.includes.adsrecentp3')
+                                </div>
+
+                                <div class="d-block d-md-none col-12 mb-4 text-center">
+                                    @include('ads.includes.MOBILE_POSIZIONE_3')
+                                </div>
+                            @endif
+                            @if ($index == 7)
+                                <div class="d-none d-md-block">
+                                    @include('ads.includes.adsrecentp2')
+                                </div>
+                            @endif
+                            @if ($index == 10)
+                                <div class="tenth-place">
+                                    @include('ads.includes.adsrecentp1')
+
+                                </div>
+                                <div class="d-block d-md-none col-12 mb-4 text-center">
+                                    @include('ads.includes.MOBILE_POSIZIONE_5')
+                                </div>
+                            @endif
                         @empty
                             <p class="text-center text-muted">
                                 {{ __('Nessun articolo pubblicato al momento.') }}
