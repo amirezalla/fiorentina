@@ -79,8 +79,9 @@
 @endif
 
 <div class="row">
-
-    @include('ads.includes.dblog-author')
+    <div class="d-none d-md-block">
+        @include('ads.includes.dblog-author')
+    </div>
 
 
 
@@ -102,8 +103,10 @@
         </div>
     </div>
 
+    <div class="d-none d-md-block">
+        @include('ads.includes.dblog-title')
 
-    @include('ads.includes.dblog-title')
+    </div>
     <div class="d-block d-md-none col-12 text-center">
         @include('ads.includes.MOBILE_DOPO_FOTO_26')
     </div>
