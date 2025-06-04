@@ -5955,3 +5955,7 @@ h4.mvp-sec-head {
     width: 100%;
     font-family: 'Titillium Web', sans-serif !important;
 }
+
+.post__vertical--single .post__thumbnail img {
+    max-height: 170px;
+}
