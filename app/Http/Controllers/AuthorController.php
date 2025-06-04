@@ -8,7 +8,9 @@ use Botble\ACL\Models\User;
 use Botble\Base\Enums\BaseStatusEnum;
 use Theme;
 use Botble\Base\Supports\Breadcrumb;
+use Botble\Page\Models\Page;
 use Botble\SeoHelper\Facades\SeoHelper;
+use Botble\SeoHelper\SeoOpenGraph;
 
 
 class AuthorController extends BaseController
@@ -31,11 +33,13 @@ class AuthorController extends BaseController
         Theme::breadcrumb()
              ->add(__('Home'), route('public.index'))
              ->add($user->first_name . ' ' . $user->last_name, route('public.author', $user->id));
-
-    SeoHelper::setTitle($user->full_name);
+$meta = new SeoOpenGraph();
+    SeoHelper::setTitle($user->first_name. ' ' . $user->last_name . ', Autore presso ' . setting('site_title'));
         SeoHelper::setDescription(__('Author page for :name', ['name' => $user->full_name]));
         Theme::setTitle($user->first_name . ' '.$user->last_name .', Autore presso ' . setting('site_title'));
+            $meta->setTitle($user->first_name. ' ' . $user->last_name . ', Autore presso ' . setting('site_title'));
 
+        
         return Theme::scope('author', compact('user', 'posts'))->render();
     }
 }
