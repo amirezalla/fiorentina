@@ -5942,6 +5942,8 @@ amp-img {
 
 span.mvp-sec-head {
     border-bottom: 1px solid #8424e3;
+    font-weight: 700;
+    margin-bottom: -20px;
 }
 
 h4.mvp-sec-head {
