@@ -10,6 +10,11 @@ use Theme;
 
 class AuthorController extends BaseController
 {
+        protected function breadcrumb(): Breadcrumb
+    {
+        return parent::breadcrumb()
+            ->add("Author");
+    }
     public function show(User $user, PostInterface $postRepo)
     {
         // All published posts by this author
@@ -22,7 +27,7 @@ class AuthorController extends BaseController
         // basic meta + breadcrumb
         Theme::breadcrumb()
              ->add(__('Home'), route('public.index'))
-             ->add($user->name);
+             ->add($user->first_name . ' ' . $user->last_name, route('public.author', $user->id));
 
             $this->pageTitle($user->first_name . ' ' . $user->last_name . ', Autore presso ' . setting('site_title'));
         Theme::setTitle($user->first_name . ' '.$user->last_name .', Autore presso ' . setting('site_title'));
