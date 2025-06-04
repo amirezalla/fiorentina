@@ -14,8 +14,9 @@
             </span>
             @if ($post->author->avatar->url)
                 @php
-                    $img = RvMedia::image($user->avatar->url, $user->first_name, 'thumbnail');
+                    $img = RvMedia::image($post->author->avatar->url, $user->first_name, 'thumbnail');
                 @endphp
+
                 {{ $img }}
             @else
                 <span class="post-author " style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}
