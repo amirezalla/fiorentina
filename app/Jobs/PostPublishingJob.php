@@ -28,7 +28,7 @@ class PostPublishingJob implements ShouldQueue
     public function handle(): void
     {
         $post = Post::query()->where('status','!=',"published")->first();
-        if ($post && $this->published_at->eq($post->published_at)) {
+        if ($post ) {
             $post->update([
                 'status' => "published",
             ]);
