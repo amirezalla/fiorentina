@@ -127,9 +127,9 @@
                                                                 $post->id,
                                                             )->count();
                                                         @endphp
-                                                        Di <span class=" fw-bold author-post"
-                                                            style="color:#8424e3">{{ $post->author->first_name }}
-                                                            {{ $post->author->last_name }}</span> /
+                                                        Di <span class=" fw-bold author-post" style="color:#8424e3"><a
+                                                                href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                                                                {{ $post->author->last_name }}</a></span> /
                                                         <a class="fw-bold" href="{{ $post->url }}#comments"
                                                             style="color:#8424e3">
                                                             <i class="fa fa-comment" aria-hidden="true"></i>
