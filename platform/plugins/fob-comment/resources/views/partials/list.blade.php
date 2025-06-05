@@ -96,86 +96,87 @@
             <div class="d-none d-md-block">
                 @include('ads.includes.adsrecentp4')
             </div>
-            @endcomponentFirst
-            <div id="comment-{{ $comment->getKey() }}" class="fob-comment-item">
-                <div class="fob-comment-item-inner">
-                    @if ($comment->website)
-                        <div class="fob-comment-item-img-container">
-                            <a href="{{ $comment->website }}" class="fob-comment-item-img" target="_blank">
-                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
-                            </a>
+        @endif
+        @endcomponentFirst
+        <div id="comment-{{ $comment->getKey() }}" class="fob-comment-item">
+            <div class="fob-comment-item-inner">
+                @if ($comment->website)
+                    <div class="fob-comment-item-img-container">
+                        <a href="{{ $comment->website }}" class="fob-comment-item-img" target="_blank">
+                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
+                        </a>
+                    </div>
+                @else
+                    <div class="fob-comment-item-img-container">
+                        <div class="fob-comment-item-img">
+                            <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
                         </div>
-                    @else
-                        <div class="fob-comment-item-img-container">
-                            <div class="fob-comment-item-img">
-                                <img src="{{ $comment->avatar_url }}" alt="{{ $comment->name }}">
-                            </div>
-                        </div>
-                    @endif
-                    <div class="fob-comment-item-content">
-                        <div class="fob-comment-item-footer">
-                            <div class="fob-comment-item-info">
-                                @if (\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
-                                    <span class="fob-comment-item-admin-badge">
-                                        {{ trans('plugins/fob-comment::comment.front.admin_badge') }}
-                                    </span>
-                                @endif
-                                @if ($comment->website)
-                                    <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
-                                        <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                    </a>
-                                @else
+                    </div>
+                @endif
+                <div class="fob-comment-item-content">
+                    <div class="fob-comment-item-footer">
+                        <div class="fob-comment-item-info">
+                            @if (\FriendsOfBotble\Comment\Support\CommentHelper::isDisplayAdminBadge() && $comment->is_admin)
+                                <span class="fob-comment-item-admin-badge">
+                                    {{ trans('plugins/fob-comment::comment.front.admin_badge') }}
+                                </span>
+                            @endif
+                            @if ($comment->website)
+                                <a href="{{ $comment->website }}" class="fob-comment-item-author" target="_blank">
                                     <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
-                                @endif
-                            </div>
-                            <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
+                                </a>
+                            @else
+                                <h4 class="fob-comment-item-author">{{ $comment->name }}</h4>
+                            @endif
                         </div>
-                        <div class="fob-comment-item-content-inside">
-                            <div class="fob-comment-item-body">
+                        <span class="fob-comment-item-date">{{ $comment->created_at->diffForHumans() }}</span>
+                    </div>
+                    <div class="fob-comment-item-content-inside">
+                        <div class="fob-comment-item-body">
 
-                                @if ($comment->is_admin)
-                                    {!! BaseHelper::clean($comment->formatted_content) !!}
-                                @else
-                                    <p>{{ $comment->formatted_content }}</p>
-                                @endif
-                                @if (!$comment->is_approved)
-                                    <em class="fob-comment-item-pending">
-                                        {{ trans('plugins/fob-comment::comment.front.list.waiting_for_approval_message') }}
-                                    </em>
-                                @endif
-                                @if ($comment->is_approved)
-                                    <a href="{{ route('fob-comment.public.comments.reply', $comment) }}"
-                                        class="fob-comment-item-reply" data-comment-id="{{ $comment->getKey() }}"
-                                        data-reply-to="{{ $replyLabel = trans('plugins/fob-comment::comment.front.list.reply_to', ['name' => $comment->name]) }}"
-                                        data-cancel-reply="{{ trans('plugins/fob-comment::comment.front.list.cancel_reply') }}"
-                                        aria-label="{{ $replyLabel }}"><i class="fa fa-reply"
-                                            style="margin-right: 5px; font-size: 14px;"></i>
-                                        {{ trans('plugins/fob-comment::comment.front.list.reply') }}
-                                    </a>
-                                @endif
-                                <button class="fob-comment-item-like-btn js-fob-comment-item-like-dislike-btn"
-                                    data-action="{{ route('fob-comment.public.comments.like', $comment->id) }}">
-                                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                    <span>{{ number_format($comment->likes_count) }}</span>
-                                </button>
-                                <button class="fob-comment-item-dislike-btn js-fob-comment-item-like-dislike-btn"
-                                    data-action="{{ route('fob-comment.public.comments.dislike', $comment->id) }}">
-                                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                                    <span>{{ number_format($comment->dislikes_count) }}</span>
-                                </button>
-                            </div>
+                            @if ($comment->is_admin)
+                                {!! BaseHelper::clean($comment->formatted_content) !!}
+                            @else
+                                <p>{{ $comment->formatted_content }}</p>
+                            @endif
+                            @if (!$comment->is_approved)
+                                <em class="fob-comment-item-pending">
+                                    {{ trans('plugins/fob-comment::comment.front.list.waiting_for_approval_message') }}
+                                </em>
+                            @endif
+                            @if ($comment->is_approved)
+                                <a href="{{ route('fob-comment.public.comments.reply', $comment) }}"
+                                    class="fob-comment-item-reply" data-comment-id="{{ $comment->getKey() }}"
+                                    data-reply-to="{{ $replyLabel = trans('plugins/fob-comment::comment.front.list.reply_to', ['name' => $comment->name]) }}"
+                                    data-cancel-reply="{{ trans('plugins/fob-comment::comment.front.list.cancel_reply') }}"
+                                    aria-label="{{ $replyLabel }}"><i class="fa fa-reply"
+                                        style="margin-right: 5px; font-size: 14px;"></i>
+                                    {{ trans('plugins/fob-comment::comment.front.list.reply') }}
+                                </a>
+                            @endif
+                            <button class="fob-comment-item-like-btn js-fob-comment-item-like-dislike-btn"
+                                data-action="{{ route('fob-comment.public.comments.like', $comment->id) }}">
+                                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                <span>{{ number_format($comment->likes_count) }}</span>
+                            </button>
+                            <button class="fob-comment-item-dislike-btn js-fob-comment-item-like-dislike-btn"
+                                data-action="{{ route('fob-comment.public.comments.dislike', $comment->id) }}">
+                                <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                                <span>{{ number_format($comment->dislikes_count) }}</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                @if ($comment->replies->count())
-                    @include('plugins/fob-comment::partials.list', [
-                        'comments' => $comment->replies,
-                        'currentIndent' => $currentIndent + 1,
-                    ])
-                @endif
             </div>
-        @endforeach
+
+            @if ($comment->replies->count())
+                @include('plugins/fob-comment::partials.list', [
+                    'comments' => $comment->replies,
+                    'currentIndent' => $currentIndent + 1,
+                ])
+            @endif
+        </div>
+    @endforeach
 </div>
 
 @if ($comments instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator && $comments->hasPages())
