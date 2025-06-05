@@ -5963,3 +5963,7 @@ h4.mvp-sec-head {
 .form-label {
     color: black;
 }
+
+.post-group--hero .author-post a {
+    color: white !important;
+}
