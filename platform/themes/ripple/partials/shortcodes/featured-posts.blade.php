@@ -383,7 +383,9 @@
 
 
 {{-- -----------------------  COLONNA BLACK-BOX  ---------------------- --}}
-<div class="col-12 col-lg-3 mx-0 px-0">
+<div class="col-12 col-lg-3 mx-0 px-0 d-none d-md-block">
+
+
     <div class="black-box px-3 py-3">
         <div class="d-flex flex-column justify-content-around h-100">
             @foreach ($lastRecentPosts as $post)
@@ -401,7 +403,8 @@
 
                         <span class="text-dark mt-2 d-block" style="font-size:x-small;">
                             <span class="fw-bold author-post" style="color:#ffffff">
-                                <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                                <a style="color:#ffffff"
+                                    href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                     {{ $post->author->last_name }}</a>
                             </span> /
                             <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
