@@ -92,7 +92,7 @@
 <div class="fob-comment-list">
     @foreach ($comments as $index => $comment)
         @continue(!$comment->is_approved && $comment->ip_address !== request()->ip())
-        @if ($index == 2)
+        @if ($index == 3)
             <div class="d-none d-md-block">
                 @include('ads.includes.adsrecentp4')
             </div>
