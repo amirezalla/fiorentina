@@ -23,7 +23,8 @@
             @else
                 <span class="post-author " style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}
             @endif
-            <span class="author-name">{{ $post->author->name }}</span>
+            <span class="author-name"><a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                    {{ $post->author->last_name }}</a></span>
 
         </div>
         <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom:14px">

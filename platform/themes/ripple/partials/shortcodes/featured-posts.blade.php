@@ -296,7 +296,8 @@
 
                                             <span class="text-dark mt-2 d-block">
                                                 <span class="fw-bold author-post" style="color:#ffffff">
-                                                    {{ $post->author->first_name }} {{ $post->author->last_name }}
+                                                    <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                                                        {{ $post->author->last_name }}</a>
                                                 </span> /
                                                 <a class="fw-bold" href="{{ $post->url }}#comments"
                                                     style="color:#ffffff">
@@ -355,7 +356,8 @@
 
                                                 <span class="text-dark mt-2 d-block" style="font-size:small;">
                                                     <span class="fw-bold author-post" style="color:#ffffff">
-                                                        {{ $post->author->first_name }} {{ $post->author->last_name }}
+                                                        <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                                                            {{ $post->author->last_name }}</a>
                                                     </span> /
                                                     <a class="fw-bold" href="{{ $post->url }}#comments"
                                                         style="color:#ffffff">
@@ -399,7 +401,8 @@
 
                         <span class="text-dark mt-2 d-block" style="font-size:x-small;">
                             <span class="fw-bold author-post" style="color:#ffffff">
-                                {{ $post->author->first_name }} {{ $post->author->last_name }}
+                                <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                                    {{ $post->author->last_name }}</a>
                             </span> /
                             <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
                                 <i class="fa fa-comment"></i>

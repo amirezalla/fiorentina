@@ -45,7 +45,8 @@
                         @endphp
 
                         <span class="fw-bold author-post text-white">
-                            {{ $post->author->first_name }} {{ $post->author->last_name }}
+                            <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                                {{ $post->author->last_name }}</a>
                         </span>
                         /
                         <a class="fw-bold" href="{{ $post->url }}#comments" style="color:#ffffff">
