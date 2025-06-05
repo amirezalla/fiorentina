@@ -88,7 +88,7 @@ class Ad extends BaseModel
         self::SIZE_230X90_SX => "SIZE_230X90_SX",
         self::SIZE_300X250_B1 => "SIZE_300X250_B1",
         self::SIZE_300X250_C1 => "SIZE_300X250_C1",
-        self::SIZE_300X250_TOP => "SIZE_300X250_TOP",
+        self::SIZE_300X250_TOP => "350X250 top sidebar",
         self::SIZE_468X60_TOP_DX => "468X60 DESTRA",
         self::SIZE_468X60_TOP_SX => "468X60 SINISTRA",
         self::GRUPPO_POPUP_MOBILE => "GRUPPO_POPUP_MOBILE",
