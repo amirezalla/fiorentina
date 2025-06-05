@@ -97,7 +97,6 @@
                 @include('ads.includes.adsrecentp4')
             </div>
         @endif
-        @endcomponentFirst
         <div id="comment-{{ $comment->getKey() }}" class="fob-comment-item">
             <div class="fob-comment-item-inner">
                 @if ($comment->website)
