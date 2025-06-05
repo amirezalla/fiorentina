@@ -27,8 +27,8 @@
                     {{ $post->author->last_name }}</a></span>
 
         </div>
-        <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom:14px">
-            <div class="social-buttons">
+        <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom:14px;">
+            <div class="social-buttons" style="display: content;">
 
                 {{-- Facebook – PNG already contains its own blue circle --}}
                 <a class="social-btn facebook"
