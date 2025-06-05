@@ -52,24 +52,46 @@
                             <input type="file" id="imageUpload" name="images[]" accept="image/*" multiple
                                 class="form-control mb-2">
 
-                            {{-- previews – existing + new --}}
+                            {{-- put this just before the preview loop --}}
+                            @php
+                                /**
+                                 * $ad->images  → regular Collection (0‒n rows in images table)
+                                 * $ad->image   → fallback single string column used by very old records
+                                 */
+                                $existingImages = collect($ad->images ?? []);
+
+                                // if there’s no relation but the old column is filled, wrap it
+                                if ($existingImages->isEmpty() && !empty($ad->image)) {
+                                    $existingImages = collect([
+                                        (object) [
+                                            'id' => null, // no DB row – just a placeholder
+                                            'image_url' => $ad->image,
+                                        ],
+                                    ]);
+                                }
+                            @endphp
+
                             <div id="previewWrapper" class="d-flex flex-column gap-3">
-                                {{-- EXISTING IMAGES --}}
-                                @foreach ($ad->images as $i => $img)
+                                @forelse ($existingImages as $i => $img)
                                     <div class="existing-img border rounded p-2 position-relative"
                                         data-id="{{ $img->id }}">
                                         <button type="button"
                                             class="btn-close position-absolute top-0 end-0 m-2 remove-btn"
                                             title="Remove"></button>
 
-                                        <img src="{{ Storage::disk('wasabi')->temporaryUrl($img->image_url, now()->addMinutes(15)) }}"
+                                        <img src="{{ Storage::disk('wasabi')->temporaryUrl($img->image_url, now()->addMinutes(15)) ?:
+                                            Storage::disk('wasabi')->url($img->image_url) }}"
                                             style="max-width:100%;height:auto" class="d-block mb-2">
 
-                                        <input type="url" class="form-control" name="urls_existing[{{ $img->id }}]"
+                                        <input type="url" class="form-control"
+                                            name="urls_existing[{{ $img->id ?? 'single' }}]"
                                             placeholder="https://example.com" value="{{ $urls[$i] ?? '' }}">
                                     </div>
-                                @endforeach
-                            </div> {{-- /previewWrapper --}}
+                                @empty
+                                    <p class="text-muted">Nessuna immagine salvata per questo annuncio.</p>
+                                @endforelse
+                            </div>
+
                         </div>
 
                         {{-- AMP FIELD (visible only for type 2) --}}
