@@ -75,6 +75,7 @@ class StandingController extends Controller
             'status' => 'SCHEDULED'
         ]);
 
+        dd($response->json());
         $matches = $response->json()['matches'];
 
         // Check if there is at least one match and only process the first one
