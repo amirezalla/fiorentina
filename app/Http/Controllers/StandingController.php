@@ -70,7 +70,7 @@ class StandingController extends Controller
         $latestUpdate = Matches::where('status', 'TIMED')->latest('updated_at')->first();
         if (!$latestUpdate || $latestUpdate->updated_at <= Carbon::now()->subHours(20)) {
         $response = Http::withHeaders([
-            'X-Auth-Token' => 'e1ef65752c2b42c2b8002bccec730215'
+            'X-Auth-Token' => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb'
         ])->get('https://api.football-data.org/v4/teams/99/matches', [
             'status' => 'SCHEDULED'
         ]);
