@@ -34,7 +34,7 @@
                 <a class="social-btn facebook"
                     href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}"
                     target="_blank" rel="noopener" aria-label="Condividi su Facebook">
-                    <i class="fa fa-facebook"></i>
+                    <img src="{{ asset('storage/Facbook_logo.png') }}" alt="Facebook">
                 </a>
 
                 {{-- X (Twitter) – black logo, grey background --}}
