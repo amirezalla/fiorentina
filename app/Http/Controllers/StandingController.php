@@ -159,6 +159,9 @@ public static function fetchScheduledMatches(): string
             'competition'  => $competitionImage,        // logo URL
             'group'        => $tournamentName,
             'match_date'   => $matchDate,
+                    'stage'        => $event['STAGE']
+                         ?? $event['STAGE_TYPE']   // falls back to "SCHEDULED"
+                         ?? 'Unknown',
             'status'       => $event['STAGE_TYPE']      ?? 'SCHEDULED',
 
             // JSON blobs in the exact format your front-end expects
