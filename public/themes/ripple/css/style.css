@@ -1542,8 +1542,8 @@ p:empty {
 }
 
 .post--single .post__meta span {
-    color: var(--color-1st);
-    margin-right: 15px
+    color: slategray;
+
 }
 
 .post--single .post__meta span svg {
