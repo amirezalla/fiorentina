@@ -9,7 +9,7 @@
 @if ($post->author->name)
     <div class="row">
         <div class="col-lg-7" style="padding-top:6px">
-            <span>Di</span>
+
 
             @if ($post->author->avatar->url)
                 @php
@@ -21,7 +21,8 @@
             @else
                 <span class="post-author " style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}
             @endif
-            <span class="author-name"><a style="font-size:medium;padding-left: 5px"
+            <span>Di</span>
+            <span class="author-name"><a style="font-size:medium;padding-left: 5px;color:#8424e3"
                     href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                     {{ $post->author->last_name }}</a></span> <span>{{ $formattedDate }}</span>
 
