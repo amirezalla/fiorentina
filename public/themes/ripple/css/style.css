@@ -1547,6 +1547,7 @@ p:empty {
 
 }
 
+
 .post--single .post__meta span svg {
     margin-right: 5px
 }
@@ -1620,6 +1621,14 @@ p:empty {
 }
 
 @media screen and (max-width:767px) {
+    .created_inner {
+        margin-left: 42px;
+    }
+
+    .mobile-p-0 {
+        padding: 0 !important;
+    }
+
     .post--single .post__relate-group {
         margin-bottom: 30px
     }

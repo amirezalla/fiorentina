@@ -24,7 +24,7 @@
             <span style="margin-left:5px">Di</span>
             <span class="author-name"><a style="font-size:medium;padding-left: 2px;color:#8424e3;font-weight:700;"
                     href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
-                    {{ $post->author->last_name }}</a></span> <span>{{ $formattedDate }}</span>
+                    {{ $post->author->last_name }}</a></span> <span class="created_inner">{{ $formattedDate }}</span>
 
         </div>
         <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom:14px;">

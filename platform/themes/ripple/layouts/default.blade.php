@@ -30,8 +30,8 @@
 
 <section class="section pt-50 pb-100">
 
-    <div class="container" style="position: relative;margin-top: -66px;">
-        <div class="row row col-11 bg-white mx-auto">
+    <div class="container mobile-p-0" style="position: relative;margin-top: -66px;">
+        <div class="row row col-lg-11 bg-white mx-auto">
 
             <div class="col-lg-8">
                 <div class="page-content">
