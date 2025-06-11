@@ -1543,6 +1543,7 @@ p:empty {
 
 .post--single .post__meta span {
     color: slategray;
+    font-weight: 600;
 
 }
 
