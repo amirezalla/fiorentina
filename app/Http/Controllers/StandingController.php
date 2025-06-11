@@ -65,8 +65,6 @@ class StandingController extends Controller
     }
     
 
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
 
 public static function fetchScheduledMatches()
 {
