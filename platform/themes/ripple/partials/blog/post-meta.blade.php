@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-lg-7" style="padding-top:6px">
             <span class="created_at " style="color: gray;">
-                {!! BaseHelper::renderIcon('ti ti-clock ') !!} {{ $formattedDate }}
+                {!! BaseHelper::renderIcon('ti ti-clock') !!} {{ $formattedDate }}
             </span>
             @if ($post->author->avatar->url)
                 @php
