@@ -15,7 +15,7 @@
             @if ($post->author->avatar->url)
                 @php
                     $img = RvMedia::image($post->author->avatar->url, $post->author->first_name, 'thumbnail', true, [
-                        'style' => 'border-radius:50%;width:25px;height:25px;',
+                        'style' => 'border-radius:50%;width:38px;height:38px;',
                     ]);
                 @endphp
 
