@@ -68,36 +68,38 @@ class StandingController extends Controller
 
 public static function fetchScheduledMatches(): string
 {
-    // Skip if we already refreshed within 20 h
+    /*------------------------------------------------------------
+    | 0. Avoid needless refreshes
+    ------------------------------------------------------------*/
     $latest = Matches::where('status', 'SCHEDULED')
-        ->latest('updated_at')
-        ->first();
+                     ->latest('updated_at')
+                     ->first();
 
     if ($latest && $latest->updated_at > now()->subHours(20)) {
         return 'No update needed.';
     }
 
-    /* --------------------------------------------------------------------- */
-    /* 1. Call Flashscore (RapidAPI)                                         */
-    /* --------------------------------------------------------------------- */
+    /*------------------------------------------------------------
+    | 1. Call Flashscore (RapidAPI)
+    ------------------------------------------------------------*/
     $url = 'https://flashlive-sports.p.rapidapi.com/v1/teams/fixtures'
          . '?locale=it_IT&sport_id=1&team_id=Q3A3IbXH';
 
-    $res = Http::withHeaders([
+    $response = Http::withHeaders([
         'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
         'x-rapidapi-key'  => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb',
     ])->get($url);
 
-    if (!$res->successful()) {
-        return 'Flashscore API error → ' . $res->status();
+    if (!$response->successful()) {
+        return 'Flashscore API error → ' . $response->status();
     }
 
-    $body = $res->json();
+    $body = $response->json();
 
-    /* --------------------------------------------------------------------- */
-    /* 2. Find first SCHEDULED event + remember its tournament container     */
-    /* --------------------------------------------------------------------- */
-    $event      = null;
+    /*------------------------------------------------------------
+    | 2. Grab the first SCHEDULED event
+    ------------------------------------------------------------*/
+    $event = null;
     $tournament = null;
 
     foreach ($body['DATA'] ?? [] as $t) {
@@ -111,78 +113,91 @@ public static function fetchScheduledMatches(): string
     }
 
     if (!$event) {
-        return 'No upcoming fixtures from the API.';
+        return 'No upcoming fixtures found.';
     }
 
-    /* --------------------------------------------------------------------- */
-    /* 3. Map Flashscore → DB columns                                        */
-    /* --------------------------------------------------------------------- */
+    /*------------------------------------------------------------
+    | 3. Helper → convert base-62 Flashscore ID → BIGINT
+    ------------------------------------------------------------*/
+    $eventIdString = $event['EVENT_ID'];                 // e.g. "b9qfUwrR"
+    $matchId       = self::base62ToInt($eventIdString);  // 130859194663097
 
-    // Date/time → "Y-m-d H:i:s" in app timezone
+    /*------------------------------------------------------------
+    | 4. Prepare data that respects the DB schema
+    ------------------------------------------------------------*/
     $matchDate = Carbon::createFromTimestampUTC($event['START_UTIME'])
-        ->setTimezone('Europe/Rome')           // tweak to your app tz
-        ->format('Y-m-d H:i:s');
+                       ->setTimezone('Europe/Rome')
+                       ->format('Y-m-d H:i:s');
 
-    // Tournament bits
-    $competitionImage = $tournament['TOURNAMENT_IMAGE'] ?? null;      // logo URL
-    $tournamentName   = $tournament['SHORT_NAME']       ?? null;      // e.g. "Amichevoli per Club"
+    // tournament / group info
+    $competitionLogo = $tournament['TOURNAMENT_IMAGE'] ?? null;
+    $groupName       = $tournament['SHORT_NAME']       ?? null;
 
-    // Team helpers
+    // team blobs in your front-end’s exact format
     $mkTeam = function (string $side) use ($event): array {
-        $upper = strtoupper($side);   // HOME → HOME_NAME etc.
-
-        // participant id array sometimes contains just one element
+        $upper = strtoupper($side);
         $pid   = $event["{$side}_PARTICIPANT_IDS"][0] ?? null;
 
         return [
             'id'        => $pid,
-            'name'      => $event["{$upper}_NAME"]        ?? null,
-            'shortname' => $event["SHORTNAME_{$upper}"]    ?? null,
-            'slug'      => $event["{$side}_SLUG"]          ?? null,
-            'logo'      => $event["{$upper}_IMAGES"][0]
-                          ?? $event["{$upper}_IMAGE"]
-                          ?? null,
+            'name'      => $event["{$upper}_NAME"]      ?? null,
+            'shortname' => $event["SHORTNAME_{$upper}"] ?? null,
+            'slug'      => $event["{$side}_SLUG"]       ?? null,
+            'logo'      => $event["{$upper}_IMAGES"][0] ?? null,
         ];
     };
 
     $home = $mkTeam('HOME');
     $away = $mkTeam('AWAY');
 
-    /* --------------------------------------------------------------------- */
-    /* 4. Upsert                                                             */
-    /* --------------------------------------------------------------------- */
-    Matches::updateOrCreate(
-    ['match_id' => (string) $event['EVENT_ID']],   // explicit cast
-        [
-            'venue'        => $event['VENUE_NAME']      ?? null,
-            'matchday'     => $event['ROUND']           ?? 'Unknown',
-            'competition'  => $competitionImage,        // logo URL
-            'group'        => $tournamentName,
-            'match_date'   => $matchDate,
-                    'stage'        => $event['STAGE']
-                         ?? $event['STAGE_TYPE']   // falls back to "SCHEDULED"
-                         ?? 'Unknown',
-            'status'       => $event['STAGE_TYPE']      ?? 'SCHEDULED',
+    // matchday must be an INT (column is int(11) NOT NULL)
+    $matchday = is_numeric($event['ROUND'] ?? '') ? (int) $event['ROUND'] : 0;
 
-            // JSON blobs in the exact format your front-end expects
-            'home_team'    => json_encode($home,  JSON_UNESCAPED_SLASHES),
-            'away_team'    => json_encode($away,  JSON_UNESCAPED_SLASHES),
+    /*------------------------------------------------------------
+    | 5. Upsert
+    ------------------------------------------------------------*/
+    Matches::updateOrCreate(
+        ['match_id' => $matchId],   // BIGINT, unique
+        [
+            'venue'        => $event['VENUE_NAME'] ?? null,
+            'matchday'     => $matchday,
+            'stage'        => $event['STAGE']         ?? $event['STAGE_TYPE'],
+            'competition'  => $competitionLogo,       // varchar(191) NULL
+            'group'        => $groupName,             // varchar(191) NULL
+            'match_date'   => $matchDate,
+            'status'       => $event['STAGE_TYPE'],   // e.g. "SCHEDULED"
+
+            'home_team'    => json_encode($home, JSON_UNESCAPED_SLASHES),
+            'away_team'    => json_encode($away, JSON_UNESCAPED_SLASHES),
             'score'        => json_encode(['home' => 0, 'away' => 0]),
 
-            // everything else is null for a fixture that hasn’t started
+            // everything else NULL for a fixture
             'goals'         => null,
             'penalties'     => null,
             'bookings'      => null,
             'substitutions' => null,
             'odds'          => null,
             'referees'      => null,
-            'commentary_count' => null,
         ]
     );
 
-    return 'Fixture saved / updated successfully.';
+    return 'Fixture saved or updated successfully.';
 }
 
+/*--------------------------------------------------------------
+| Helper: base-62 to int (fits in PHP 64-bit)
+--------------------------------------------------------------*/
+protected static function base62ToInt(string $str): int
+{
+    $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $base  = strlen($chars);
+    $num   = 0;
+
+    for ($i = 0, $len = strlen($str); $i < $len; $i++) {
+        $num = $num * $base + strpos($chars, $str[$i]);
+    }
+    return $num;                  // <= 9.22e18 → fits BIGINT
+}
 
     public static function fetchFinishedMatches()
     {
