@@ -21,7 +21,7 @@
             @else
                 <span class="post-author " style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}
             @endif
-            <span>Di</span>
+            <span style="margin-left:5px">Di</span>
             <span class="author-name"><a style="font-size:medium;padding-left: 5px;color:#8424e3;font-weight:700;"
                     href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                     {{ $post->author->last_name }}</a></span> <span>{{ $formattedDate }}</span>
