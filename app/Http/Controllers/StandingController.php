@@ -65,49 +65,98 @@ class StandingController extends Controller
     }
     
 
-    public static function fetchScheduledMatches()
-    {
-        $latestUpdate = Matches::where('status', 'TIMED')->latest('updated_at')->first();
-        if (!$latestUpdate || $latestUpdate->updated_at <= Carbon::now()->subHours(20)) {
-        $response = Http::withHeaders([
-            'X-Auth-Token' => 'e1ef65752c2b42c2b8002bccec730215'
-        ])->get('https://api.football-data.org/v4/teams/99/matches', [
-            'status' => 'SCHEDULED'
-        ]);
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 
-        dd($response->json());
-        $matches = $response->json()['matches'];
+public static function fetchScheduledMatches()
+{
+    // Look for the most-recently refreshed “SCHEDULED” match
+    $latestUpdate = Matches::where('status', 'SCHEDULED')
+        ->latest('updated_at')
+        ->first();
 
-        // Check if there is at least one match and only process the first one
-        if (!empty($matches)) {
-            $match = $matches[0];  // Get the first match
-            $matchDate = Carbon::parse($match['utcDate'])->format('Y-m-d H:i:s');
-            Matches::updateOrCreate(
-                ['match_id' => $match['id']],
-                [
-                    'venue' => $match['venue'] ?? null,
-                    'matchday' => $match['matchday'],
-                    'stage' => $match['stage'],
-                    'group' => $match['group'] ?? null,
-                    'match_date' => $matchDate,  // Use the formatted date
-                    'status' => $match['status'],
-                    'home_team' => json_encode($match['homeTeam'] ?? []),
-                    'away_team' => json_encode($match['awayTeam'] ?? []),
-                    'score' => json_encode($match['score'] ?? []),
-                    'goals' => !empty($match['goals']) ? json_encode($match['goals']) : null,
-                    'penalties' => !empty($match['penalties']) ? json_encode($match['penalties']) : null,
-                    'bookings' => !empty($match['bookings']) ? json_encode($match['bookings']) : null,
-                    'substitutions' => !empty($match['substitutions']) ? json_encode($match['substitutions']) : null,
-                    'odds' => !empty($match['odds']) ? json_encode($match['odds']) : null,
-                    'referees' => !empty($match['referees']) ? json_encode($match['referees']) : null,
-                ]
-            );
-            return "First timed match updated successfully.";
-        }
-        }
-        return "No update needed or no matches found.";
-
+    if ($latestUpdate && $latestUpdate->updated_at > Carbon::now()->subHours(20)) {
+        return 'No update needed.';
     }
+
+    // --- 1. Call the new API -------------------------------------------------
+    $url = 'https://flashlive-sports.p.rapidapi.com/v1/teams/fixtures'
+         . '?locale=it_IT&sport_id=1&team_id=Q3A3IbXH';
+
+    $response = Http::withHeaders([
+        'x-rapidapi-host' => 'flashlive-sports.p.rapidapi.com',
+        'x-rapidapi-key'  => '1e9b76550emshc710802be81e3fcp1a0226jsn069e6c35a2bb',
+    ])->get($url);
+
+    if (!$response->successful()) {
+        return 'API request failed with status-code ' . $response->status();
+    }
+
+    $payload = $response->json();
+
+    // --- 2. Find the first “SCHEDULED” fixture --------------------------------
+    $firstEvent = null;
+
+    foreach ($payload['DATA'] ?? [] as $tournament) {
+        foreach ($tournament['EVENTS'] ?? [] as $event) {
+            // Flashscore flags upcoming matches with STAGE_TYPE = "SCHEDULED"
+            if (($event['STAGE_TYPE'] ?? '') === 'SCHEDULED') {
+                $firstEvent = $event;
+                break 2;      // exit both foreach loops
+            }
+        }
+    }
+
+    if (!$firstEvent) {
+        return 'No scheduled matches found.';
+    }
+
+    // --- 3. Normalise / map fields -------------------------------------------
+    $matchDate = Carbon::createFromTimestampUTC(
+        $firstEvent['START_UTIME'] ?? $firstEvent['START_TIME']
+    )
+    ->setTimezone('Europe/Rome')      // adjust to app timezone if needed
+    ->format('Y-m-d H:i:s');
+
+    // --- 4. Store / update the match -----------------------------------------
+    Matches::updateOrCreate(
+        ['match_id' => $firstEvent['EVENT_ID']],
+        [
+            'venue'       => $firstEvent['VENUE_NAME']    ?? null,
+            'matchday'    => $firstEvent['ROUND']         ?? null,
+            'stage'       => $firstEvent['STAGE']         ?? null,
+            'group'       => $firstEvent['GROUP_NAME']    ?? null,
+            'match_date'  => $matchDate,
+            'status'      => $firstEvent['STAGE_TYPE']    ?? 'SCHEDULED',
+
+            // Quick JSON blobs (adjust the shape to suit your front-end)
+            'home_team'   => json_encode([
+                'id'        => $firstEvent['HOME_EVENT_PARTICIPANT_ID'] ?? null,
+                'name'      => $firstEvent['HOME_NAME']                ?? null,
+                'shortName' => $firstEvent['SHORTNAME_HOME']           ?? null,
+                'images'    => $firstEvent['HOME_IMAGES']              ?? [],
+            ]),
+            'away_team'   => json_encode([
+                'id'        => $firstEvent['AWAY_EVENT_PARTICIPANT_ID'] ?? null,
+                'name'      => $firstEvent['AWAY_NAME']                ?? null,
+                'shortName' => $firstEvent['SHORTNAME_AWAY']           ?? null,
+                'images'    => $firstEvent['AWAY_IMAGES']              ?? [],
+            ]),
+
+            // The Flashscore fixture feed doesn’t include live stats yet
+            'score'        => null,
+            'goals'        => null,
+            'penalties'    => null,
+            'bookings'     => null,
+            'substitutions'=> null,
+            'odds'         => null,
+            'referees'     => null,
+        ]
+    );
+
+    return 'First scheduled match updated successfully.';
+}
+
 
     public static function fetchFinishedMatches()
     {
