@@ -152,7 +152,7 @@ public static function fetchScheduledMatches(): string
     /* 4. Upsert                                                             */
     /* --------------------------------------------------------------------- */
     Matches::updateOrCreate(
-        ['match_id' => $event['EVENT_ID']],           // <-- string PK
+    ['match_id' => (string) $event['EVENT_ID']],   // explicit cast
         [
             'venue'        => $event['VENUE_NAME']      ?? null,
             'matchday'     => $event['ROUND']           ?? 'Unknown',
