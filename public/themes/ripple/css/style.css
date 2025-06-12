@@ -1620,7 +1620,18 @@ p:empty {
     z-index: 10
 }
 
+.recent-posts-container .post__thumbnail {
+    flex: 1.5 !important;
+}
+
 @media screen and (max-width:767px) {
+
+
+
+    .recent-posts-container .post__thumbnail {
+        flex: 1.1 !important;
+    }
+
     .created_inner {
         margin-left: 42px;
     }
