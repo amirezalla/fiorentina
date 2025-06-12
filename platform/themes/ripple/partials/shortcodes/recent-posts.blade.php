@@ -53,9 +53,8 @@
                                             <!-- Image on the left -->
                                             <div class="post__thumbnail" style=" width: 48%;">
                                                 @php
-                                                    /** @var \Jenssegers\Agent\Agent $agent */
-                                                    $agent = app('agent');
-                                                    $size = $agent->isMobile() ? 'thumb' : 'medium';
+                                                    // Choose the rendition only once per request
+                                                    $size = request_is_mobile() ? 'thumb' : 'medium';
                                                 @endphp
 
                                                 {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
