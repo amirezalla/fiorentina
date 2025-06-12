@@ -1655,6 +1655,10 @@ p:empty {
     font-size: 1.15rem;
 }
 
+.recent-posts-container .post__content-wrap {
+    margin-bottom: 0 !important;
+}
+
 .recent-posts-container .post__vertical .post__content-wrap {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
@@ -1680,7 +1684,7 @@ p:empty {
     left: 0;
     right: auto
 }
-}
+
 
 .post--related:after {
     clear: both;
