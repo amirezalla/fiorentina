@@ -136,7 +136,7 @@
                                                             href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                             {{ $post->author->last_name }}</a> /
                                                         <a class="fw-bold" href="{{ $post->url }}#comments"
-                                                            style="color:#8424e3">
+                                                            style="color:#8424e3;font-size:0.75rem !important;">
                                                             <i class="fa fa-comment" aria-hidden="true"></i>
                                                             {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                         </a>
