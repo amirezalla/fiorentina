@@ -53,8 +53,15 @@
                                             <!-- Image on the left -->
                                             <div class="post__thumbnail" style=" width: 48%;">
                                                 @php
-                                                    // Choose the rendition only once per request
-                                                    $size = request_is_mobile() ? 'thumb' : 'medium';
+                                                    $ua = request()->header('User-Agent', '');
+
+                                                    // very small UA test – good enough for phone / tablet vs desktop
+                                                    $isMobile = preg_match(
+                                                        '/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i',
+                                                        $ua,
+                                                    );
+
+                                                    $size = $isMobile ? 'thumb' : 'medium';
                                                 @endphp
 
                                                 {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
