@@ -64,7 +64,7 @@
                                                     $size = $isMobile ? 'thumb' : 'medium';
                                                 @endphp
 
-                                                {!! RvMedia::image($post->image, $post->name, 'thumb', attributes: ['loading' => 'lazy']) !!}
+                                                {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
                                                 <a class="post__overlay" href="{{ $post->url }}"
                                                     title="{{ $post->name }}"></a>
                                             </div>
@@ -132,11 +132,11 @@
                                                                 $post->id,
                                                             )->count();
                                                         @endphp
-                                                        Di <a
+                                                        Di <a style="color: #8424e3;font-weight: 700;"
                                                             href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                             {{ $post->author->last_name }}</a> /
                                                         <a class="fw-bold" href="{{ $post->url }}#comments"
-                                                            style="color:#8424e3;font-size:0.75rem !important;">
+                                                            style="color:#8424e3;font-size:0.9rem !important;">
                                                             <i class="fa fa-comment" aria-hidden="true"></i>
                                                             {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
                                                         </a>
