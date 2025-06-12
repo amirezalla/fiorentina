@@ -4408,7 +4408,7 @@ body,
     -webkit-justify-content: center;
     -ms-flex-pack: center;
     justify-content: center;
-    margin: 0.75rem;
+    margin: 0.75rem 0 0.75rem 0;
     gap: 0.5rem;
 }
 
