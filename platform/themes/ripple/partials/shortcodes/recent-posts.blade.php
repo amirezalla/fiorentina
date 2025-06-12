@@ -52,14 +52,13 @@
                                             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
                                             <!-- Image on the left -->
                                             <div class="post__thumbnail" style=" width: 48%;">
-                                                {{ RvMedia::image(
-                                                    $post->image,
-                                                    $post->name,
-                                                    'thumb',
-                                                    attributes: [
-                                                        'loading' => 'lazy',
-                                                    ],
-                                                ) }}
+                                                @php
+                                                    /** @var \Jenssegers\Agent\Agent $agent */
+                                                    $agent = app('agent');
+                                                    $size = $agent->isMobile() ? 'thumb' : 'medium';
+                                                @endphp
+
+                                                {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
                                                 <a class="post__overlay" href="{{ $post->url }}"
                                                     title="{{ $post->name }}"></a>
                                             </div>
