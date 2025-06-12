@@ -37,7 +37,7 @@
             </div>
         </div>
 
-        <div class="container mb-3 " style="padding: 0">
+        <div class="container mb-3 d-none d-md-block " style="padding: 0">
             <div class="row align-items-center upcoming-match">
                 <!-- Match Date, Time, and Venue -->
                 <div class="col-md-3">
