@@ -354,12 +354,12 @@
                                                     <a href="{{ $post->url }}">{{ $post->name }}</a>
                                                 </h3>
 
-                                                <span class="text-dark mt-2 d-block post-desc" style="font-size:small;">
-                                                    <span class="fw-bold author-post" style="color:#ffffff">
+                                                <span class="text-dark mt-2 d-block post-desc" style="">
+                                                    <span class=" author-post" style="color:#ffffff">
                                                         <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                             {{ $post->author->last_name }}</a>
                                                     </span> /
-                                                    <a class="fw-bold" href="{{ $post->url }}#comments"
+                                                    <a class="" href="{{ $post->url }}#comments"
                                                         style="color:#ffffff">
                                                         <i class="fa fa-comment"></i>
                                                         {{ $post->comments_count ?: 'Commenta' }}
