@@ -1632,59 +1632,61 @@ p:empty {
         letter-spacing: 0.08rem !important;
     }
 
+    .fw-bold {
+        font-size: 0.75rem !important;
+    }
+
+    .recent-posts-container .post__thumbnail::after {
+        content: "";
+        width: 15px;
+        height: 15px;
+        background: white;
+        position: absolute;
+        top: 50%;
+        z-index: 100;
+        right: -7px;
+        transform: rotate(45deg);
+    }
+
+
+    .recent-posts-container .post__thumbnail {
+        flex: 0.8 !important;
+    }
+
+    .recent-posts-container .post__title a {
+        font-size: 1.15rem;
+    }
+
+    .recent-posts-container .post__content-wrap {
+        margin-bottom: 0 !important;
+    }
+
+    .recent-posts-container .post__vertical .post__content-wrap {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    .created_inner {
+        margin-left: 42px;
+    }
+
+    .mobile-p-0 {
+        padding: 0 !important;
+    }
+
+    .post--single .post__relate-group {
+        margin-bottom: 30px
+    }
+
+    .post--single .post__relate-group.post__relate-group--right {
+        text-align: left
+    }
+
+    .post--single .post__relate-group.post__relate-group--right .relate__title:after {
+        left: 0;
+        right: auto
+    }
 }
-
-.recent-posts-container .post__thumbnail::after {
-    content: "";
-    width: 15px;
-    height: 15px;
-    background: white;
-    position: absolute;
-    top: 50%;
-    z-index: 100;
-    right: -7px;
-    transform: rotate(45deg);
-}
-
-
-.recent-posts-container .post__thumbnail {
-    flex: 0.8 !important;
-}
-
-.recent-posts-container .post__title a {
-    font-size: 1.15rem;
-}
-
-.recent-posts-container .post__content-wrap {
-    margin-bottom: 0 !important;
-}
-
-.recent-posts-container .post__vertical .post__content-wrap {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-.created_inner {
-    margin-left: 42px;
-}
-
-.mobile-p-0 {
-    padding: 0 !important;
-}
-
-.post--single .post__relate-group {
-    margin-bottom: 30px
-}
-
-.post--single .post__relate-group.post__relate-group--right {
-    text-align: left
-}
-
-.post--single .post__relate-group.post__relate-group--right .relate__title:after {
-    left: 0;
-    right: auto
-}
-
 
 .post--related:after {
     clear: both;
