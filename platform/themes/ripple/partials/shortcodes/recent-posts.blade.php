@@ -90,7 +90,7 @@
                                                                 ->translatedFormat('d M H:i');
                                                         }
                                                     @endphp
-                                                    <div class="text-dark mb-1">
+                                                    <div class="text-dark mb-1 post-desc">
 
                                                         @php
                                                             $categoryName = $post->categories->count()
