@@ -5144,9 +5144,6 @@ header>.container,
 
     }
 
-    .post__vertical--single .post__thumbnail {
-        height: 120px !important;
-    }
 
     .post__vertical--single .author-post {
         font-size: smaller !important;
