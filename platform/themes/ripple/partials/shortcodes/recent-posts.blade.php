@@ -55,7 +55,7 @@
                                                 {{ RvMedia::image(
                                                     $post->image,
                                                     $post->name,
-                                                    '_thumbnail',
+                                                    'thumbnail',
                                                     attributes: [
                                                         'loading' => 'lazy',
                                                     ],
