@@ -5565,13 +5565,38 @@ header>.container,
 }
 
 .upcoming-match-sidebar {
+
     margin-top: 20px;
     padding: 25px 40px;
-    background-color: #8a2be270 !important
+    background-image: url(/storage/stade1.jpg);
+    background-size: auto;
+    background-repeat: round;
 }
 
+.z-1 {
+    z-index: 1;
+}
+
+.row.align-items-center.upcoming-match.upcoming-match-sidebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: rgb(127 77 221 / 37%);
+    pointer-events: none;
+}
+
+.upcoming-match-sidebar #countdown {
+    background: #8d3cc7;
+}
+
+
 .upcoming-match-sidebar p {
-    color: #000;
+    color: #fff;
+}
+
+.upcoming-match-sidebar h5 {
+    color: #fff;
 }
 
 .ad-top-sidebar .container .row {

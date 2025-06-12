@@ -211,13 +211,13 @@
                             @endif
                             <div class="row align-items-center upcoming-match upcoming-match-sidebar">
                                 <!-- Match Date, Time, and Venue -->
-                                <div class="col-md-12 text-center">
+                                <div class="col-md-12 text-center z-1">
                                     <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm'), " \t\r\n\f\v") }}
                                     </p>
                                 </div>
 
                                 <!-- Team Logos and Names -->
-                                <div class="col-md-12 text-center">
+                                <div class="col-md-12 text-center z-1">
                                     <div class="row">
                                         <div class="col-6">
                                             <img src="{{ $home_team['logo'] }}" alt="{{ $home_team['name'] }} Crest"
@@ -233,7 +233,7 @@
                                 </div>
 
                                 <!-- Ticket Buttons -->
-                                <div class="col-md-12 text-center mt-2">
+                                <div class="col-md-12 text-center mt-2 z-1">
                                     @if ($match->status == 'LIVE')
                                         <a href="/diretta?match_id={{ $match->match_id }}"
                                             class="btn-comment-submit text-white">VAI ALLA
