@@ -294,7 +294,7 @@
                                                 {{ $post->description }}
                                             </p>
 
-                                            <span class="text-dark mt-2 d-block">
+                                            <span class="text-dark mt-2 d-block post-desc">
                                                 <span class="fw-bold author-post" style="color:#ffffff">
                                                     <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                         {{ $post->author->last_name }}</a>
@@ -354,7 +354,7 @@
                                                     <a href="{{ $post->url }}">{{ $post->name }}</a>
                                                 </h3>
 
-                                                <span class="text-dark mt-2 d-block" style="font-size:small;">
+                                                <span class="text-dark mt-2 d-block post-desc" style="font-size:small;">
                                                     <span class="fw-bold author-post" style="color:#ffffff">
                                                         <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                             {{ $post->author->last_name }}</a>

@@ -5128,7 +5128,15 @@ header>.container,
     }
 
     .post-group__left .post__title a {
-        font-size: large !important;
+        font-size: 2.1rem !important;
+    }
+
+    .post-group__left .post-desc span a {
+        font-size: 0.75rem !important;
+    }
+
+    .post-group__left .post-desc a {
+        font-size: 0.85rem !important;
     }
 
     header>.container {
