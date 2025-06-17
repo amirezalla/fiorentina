@@ -4,9 +4,6 @@
 
     use Botble\Blog\Models\Post;
     use Illuminate\Support\Facades\DB;
-
-    use Carbon\Carbon;
-
     $poll = null;
 
     $since = Carbon::now()->subDays(600);
