@@ -356,6 +356,11 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mt-30 ad-top-sidebar">
+                            @include('ads.includes.SIZE_300X250_C1')
+                        </div>
+
                         <section>
                             @if ($poll->position == 'top')
                                 @include('polls.includes.poll-sidebar', $poll)
@@ -515,10 +520,6 @@
                         @include('polls.includes.poll-sidebar', $poll)
                     @endif
                     @include('videos.includes.adsvideo', ['foo' => 'bar'])
-
-                    <div class="row mt-30 ad-top-sidebar">
-                        @include('ads.includes.SIZE_300X250_C1')
-                    </div>
 
                     @if ($poll->position == 'end')
                         @include('polls.includes.poll-sidebar', $poll)
