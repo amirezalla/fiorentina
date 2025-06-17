@@ -2,6 +2,7 @@
     use Botble\Blog\Models\Post;
     use Illuminate\Support\Facades\DB;
     use App\Models\Poll;
+    use Carbon\Carbon;
 
     $poll = null;
     /*$poll = Poll::with('options')->where('active', true)->latest()->first();
@@ -14,7 +15,7 @@
             $option->percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100) : 0;
         }
     }*/
-    $since = Carbon::now()->subDays(5);
+    $since = Carbon::now()->subDays(600);
 
     $mostReadPosts = Post::where('created_at', '>=', $since)
         ->orderByDesc('view') // la colonna nel DB è “view”
