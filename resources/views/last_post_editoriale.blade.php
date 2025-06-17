@@ -33,7 +33,7 @@
                 {{-- The new line in gray: "editoriali / X ore fa" --}}
                 <span style="color: gray;display:block;margin-top:10px;font-weight: 700;font-family: 'Titillium Web';">
 
-                    Editoriale / {{ $timeText }}
+                    <a href="/editoriali"> Editoriale </a> / {{ $timeText }}
                 </span>
 
                 <a href="{{ $last_post->url }}" title="{{ $last_post->name }}"
