@@ -1,4 +1,4 @@
-<div class="container my-4">
+<div class=" my-4">
     <div class="card shadow-sm">
         <div class="card-header">
             <h2 class="card-title mb-0">{{ $poll->question }}</h2>
