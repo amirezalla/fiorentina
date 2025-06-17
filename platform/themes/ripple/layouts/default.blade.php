@@ -28,7 +28,7 @@
     </div>
 @endif
 
-<section class="section pt-50 pb-100">
+<section class="section pt-50 pb-50">
 
     <div class="container mobile-p-0" style="position: relative;margin-top: -66px;">
         <div class="row row col-lg-11 bg-white mx-auto pb-50">

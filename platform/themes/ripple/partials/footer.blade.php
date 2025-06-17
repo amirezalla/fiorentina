@@ -42,7 +42,7 @@
                 </li>
             </ul>
 
-            <div class="col-12">
+            <div class="col-12 footer__text">
                 <p class="mb-1 text-center">Pubblicazione iscritta nel registro della stampa del Tribunale di Firenze
                     con il n. 5050/01 del 27 apr 2001. Partita IVA 06783020966.</p>
                 <p class="mb-1 text-center">Direttore responsabile: Niccolò Misul.</p>
