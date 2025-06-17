@@ -4441,7 +4441,9 @@ body,
 .footer__option a svg {
     width: 20px;
     height: 20px;
-    color: #888888;
+    color: #f5f5f5;
+    -webkit-transition: all 200ms;
+    transition: all 200ms;
 }
 
 .footer__option a:hover svg {
