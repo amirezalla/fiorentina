@@ -14,6 +14,8 @@
             $option->percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100) : 0;
         }
     }*/
+    $since = Carbon::now()->subDays(5);
+
     $mostReadPosts = Post::where('created_at', '>=', $since)
         ->orderByDesc('view') // la colonna nel DB è “view”
         ->limit(5)
