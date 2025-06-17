@@ -8,17 +8,40 @@
                 </a>
             </div>
             <ul class="footer__options">
+                {{-- Facebook --}}
                 <li class="footer__option">
-                    <a href="" class="flex">
-                        {!! BaseHelper::renderIcon('ti ti-home') !!}
+                    <a href="https://www.facebook.com/laviola.it" class="flex" aria-label="Facebook" target="_blank"
+                        rel="noopener">
+                        {!! BaseHelper::renderIcon('ti ti-brand-facebook') !!}
                     </a>
                 </li>
+
+                {{-- X / Twitter --}}
                 <li class="footer__option">
-                    <a href="" class="flex">
-                        {!! BaseHelper::renderIcon('ti ti-home') !!}
+                    <a href="https://twitter.com/laviola_it" class="flex" aria-label="X (Twitter)" target="_blank"
+                        rel="noopener">
+                        {{-- Su Tabler Icons ≥ v2 il glifo è “brand-x”; se usi una versione precedente, cambia in “brand-twitter” --}}
+                        {!! BaseHelper::renderIcon('ti ti-brand-x') !!}
+                    </a>
+                </li>
+
+                {{-- Instagram --}}
+                <li class="footer__option">
+                    <a href="https://www.instagram.com/laviola_it" class="flex" aria-label="Instagram" target="_blank"
+                        rel="noopener">
+                        {!! BaseHelper::renderIcon('ti ti-brand-instagram') !!}
+                    </a>
+                </li>
+
+                {{-- YouTube --}}
+                <li class="footer__option">
+                    <a href="https://www.youtube.com/channel/UC0LrzClScAKjQHizcA1IWkw" class="flex"
+                        aria-label="YouTube" target="_blank" rel="noopener">
+                        {!! BaseHelper::renderIcon('ti ti-brand-youtube') !!}
                     </a>
                 </li>
             </ul>
+
             <div class="col-12">
                 <p class="mb-1 text-center">Pubblicazione iscritta nel registro della stampa del Tribunale di Firenze
                     con il n. 5050/01 del 27 apr 2001. Partita IVA 06783020966.</p>
