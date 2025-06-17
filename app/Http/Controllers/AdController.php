@@ -182,7 +182,7 @@ class AdController extends BaseController
             }
     
             /* 3‑e  save the ordered url list in JSON column */
-            $ad->urls = json_encode($storedUrls);
+            $ad->url = json_encode($storedUrls);
             $ad->save();   // update only
         }
     
