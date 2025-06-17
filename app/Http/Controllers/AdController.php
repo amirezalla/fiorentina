@@ -311,7 +311,7 @@ public function groupsIndex()
             }
         }
 
-        $ad->urls = json_encode($storedUrls);
+        $ad->url = json_encode($storedUrls);
         $ad->save();
     }
 
