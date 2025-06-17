@@ -66,8 +66,9 @@
                 </a>
 
                 {{-- Comments --}}
-                <a href="#comments" class="social-btn comment-btn" aria-label="Vai ai commenti">
-                    <i class="fas fa-comment"></i>
+                <a href="#comments" class="social-btn comment-btn" aria-label="Vai ai commenti"
+                    style="background: none; border:2px solid #212529bf">
+                    <i class="fas fa-comment text-muted" style="filter: none"></i>
                 </a>
 
             </div>
