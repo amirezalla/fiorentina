@@ -14,26 +14,36 @@
             $option->percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100) : 0;
         }
     }*/
-    $recentPosts = Post::orderBy('created_at', 'desc')->limit(5)->get();
+    $mostReadPosts = Post::where('created_at', '>=', $since)
+        ->orderByDesc('view') // la colonna nel DB è “view”
+        ->limit(5)
+        ->get();
 
-    $mostCommentedPosts = DB::select("
-    SELECT posts.*
-    FROM posts
-    JOIN (
-        SELECT reference_id, COUNT(reference_id) as comment_count
-        FROM fob_comments
-        WHERE reference_type = 'Botble\\\\Blog\\\\Models\\\\Post'
-        GROUP BY reference_id
-        ORDER BY comment_count DESC
-        LIMIT 5
-    ) as most_commented
-    ON posts.id = most_commented.reference_id;
-");
-
-    // If you need to convert the result into a collection of Post models, you can do this:
-    $mostCommentedPosts = collect($mostCommentedPosts)->map(function ($post) {
-        return (new \Botble\Blog\Models\Post())->newFromBuilder($post);
-    });
+    /**
+     * 2. PIÙ COMMENTATI (recenti + commenti)
+     *    – stessa finestra temporale
+     *    – conta solo i commenti di tipo Post negli ultimi 30 giorni
+     *    – ordina per quel conteggio in modo decrescente
+     *
+     * NB: se nel modello Post hai già un rapporto `comments()`
+     *     puoi usare withCount(); in caso contrario la sub-query qui sotto
+     *     funziona senza modificare il modello.
+     */
+    $mostCommentedPosts = Post::where('posts.created_at', '>=', $since)
+        ->leftJoinSub(
+            DB::table('fob_comments')
+                ->selectRaw('reference_id, COUNT(*) as recent_comment_count')
+                ->where('reference_type', Post::class)
+                ->where('created_at', '>=', $since)
+                ->groupBy('reference_id'),
+            'recent_comments',
+            'posts.id',
+            '=',
+            'recent_comments.reference_id',
+        )
+        ->orderByDesc('recent_comment_count')
+        ->limit(5)
+        ->get();
 @endphp
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -46,7 +56,7 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts" role="tab"
                     aria-controls="recent-posts" aria-selected="true">
-                    I PIÙ RECENTI
+                    I PIÙ LETTI
                 </a>
             </li>
             <li class="nav-item" role="presentation">
@@ -61,7 +71,7 @@
             <div class="tab-pane fade show active" id="recent-posts" role="tabpanel" aria-labelledby="recent-posts-tab">
                 <div class="widget__content">
                     <ul>
-                        @foreach ($recentPosts as $post)
+                        @foreach ($mostReadPosts as $post)
                             <li>
                                 <article class="post post__widget d-flex align-items-start"
                                     style="margin-bottom: 10px;">
