@@ -18,7 +18,7 @@
     $since = Carbon::now()->subDays(600);
 
     $mostReadPosts = Post::where('created_at', '>=', $since)
-        ->orderByDesc('view') // la colonna nel DB è “view”
+        ->orderByDesc('views') // la colonna nel DB è “view”
         ->limit(5)
         ->get();
 
