@@ -1,35 +1,22 @@
 /**
- * adblock-detect.js
+ * adblock-detect.js  –  Google-Ads guard
  * ------------------------------------------------------------
- * On this site Google Ads are inserted as <amp-img …>.
- * If, after 7 s, **no** such element is present we assume an
- * ad-blocker is hiding them (or the request was killed) and we
- * cover the page with an overlay that asks the visitor to pause
- * / whitelist the blocker and refresh.
+ * Google AdSense creatives are injected on this site as <amp-img …>.
+ * If, 7 seconds after window.onload, the DOM contains **zero**
+ * <amp-img> nodes we assume an ad-blocker (or tracking-protection)
+ * removed them and we lock the page behind an overlay.
  */
 
 (function () {
-    /* ──────────────────────────────────────────────────────────
-     * CONFIG
-     * ──────────────────────────────────────────────────────── */
-    const CHECK_DELAY = 7000; // ms – give the ads script time to run
+    /* ——————————————————————————————————————————————————— CONFIG */
+    const CHECK_DELAY = 7000;          // ms – wait 7 s after window.onload
 
-    /* ──────────────────────────────────────────────────────────
-     * DETECTION
-     * ──────────────────────────────────────────────────────── */
-    function googleAdsMissing() {
-        /* You can add / tweak domains if you serve ads via others */
-        const selector =
-            'amp-img[src*="googleads"],' +
-            'amp-img[src*="googlesyndication"],' +
-            'amp-img[src*="gdoubleclick"]';
-
-        return !document.querySelector(selector);
+    /* ———————————————————————————————————————————— DETECTION LOGIC */
+    function adsAreMissing() {
+        return document.getElementsByTagName('amp-img').length === 0;
     }
 
-    /* ──────────────────────────────────────────────────────────
-     * OVERLAY UI
-     * ──────────────────────────────────────────────────────── */
+    /* —————————————————————————————————————————————— OVERLAY UI */
     function showOverlay() {
         const overlay = document.createElement('div');
         overlay.id = 'adblock-overlay';
@@ -38,15 +25,15 @@
                 <h2>Please disable your ad&nbsp;blocker</h2>
                 <p>
                     Ads keep our content free.<br>
-                    Pause your blocker and refresh the page
-                    to continue reading.
+                    Pause or whitelist the blocker and refresh
+                    the page to continue reading.
                 </p>
                 <button id="adblock-refresh" type="button">
                     I’ve disabled it &nbsp;⟳
                 </button>
             </div>`;
 
-        /* Basic, dark overlay – tweak as desired */
+        /* minimal styling – customise as you wish */
         Object.assign(overlay.style, {
             position: 'fixed',
             inset: 0,
@@ -79,17 +66,15 @@
         });
         btn.addEventListener('click', () => location.reload());
 
-        /* Lock the page behind the overlay */
+        /* stop scrolling and show the overlay */
         document.body.style.overflow = 'hidden';
         document.body.appendChild(overlay);
     }
 
-    /* ──────────────────────────────────────────────────────────
-     * BOOT
-     * ──────────────────────────────────────────────────────── */
-    document.addEventListener('DOMContentLoaded', () => {
+    /* —————————————————————————————————————————————— BOOTSTRAP */
+    window.addEventListener('load', () => {
         setTimeout(() => {
-            if (googleAdsMissing()) showOverlay();
+            if (adsAreMissing()) showOverlay();
         }, CHECK_DELAY);
     });
 })();
