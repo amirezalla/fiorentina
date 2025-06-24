@@ -11,7 +11,7 @@
         name="viewport" />
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <script src="/adblock-detect.js"></script>
+    <script src="/jaqisharam.js"></script>
     <noscript>
         <style amp-boilerplate>
             body {
