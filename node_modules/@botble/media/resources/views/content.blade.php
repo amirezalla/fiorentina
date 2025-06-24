@@ -374,6 +374,7 @@
                     <div class="rv-media-description">
                         <div class="rv-media-name">
                             <p>{{ trans('core/media::media.nothing_is_selected') }}</p>
+                            
                         </div>
                     </div>
                 </div>

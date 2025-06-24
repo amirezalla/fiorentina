@@ -1,5 +1,7 @@
 @php
     use Carbon\Carbon;
+    use Illuminate\Support\Facades\DB;
+    use RvMedia\Facades\RvMedia;
     $date = Carbon::parse($post->published_at);
     $formattedDate = $date->locale('it')->translatedFormat('d F Y - H:i');
 @endphp
@@ -101,6 +103,10 @@
                     // remove the old width:100vh
                 ],
             ) }}
+
+            @dd($post->image->name, $post->image->alt)
+
+            {{-- Google AMP image ad --}}
 
         </div>
     </div>
