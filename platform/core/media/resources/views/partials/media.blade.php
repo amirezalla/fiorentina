@@ -32,13 +32,7 @@
 >
     <input type="hidden" name="image-box-target">
 
-    <x-core::form.text-input
-        :label="trans('core/media::media.url')"
-        type="url"
-        name="url"
-        placeholder="https://"
-        :required="true"
-    />
+
 
     <x-slot:footer>
         <x-core::button
