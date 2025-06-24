@@ -120,7 +120,8 @@
     padding: 10px !important;
     color: #393939 !important;
     margin-top: -16px !important;
-    border-radius: 0px 0px 10px 10px;">{{ $media->alt }}</span>
+    border-radius: 0px 0px 10px 10px;">
+                <i class="fa fa-info-circle" style="margin-right:5px"><i>{{ $media->alt }}</span>
         @endif
     </div>
 
