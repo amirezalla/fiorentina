@@ -115,7 +115,7 @@
 
         </div>
         @if ($media && $media->alt && $media->alt !== $media->name)
-            <span class="d-block text-muted">{{ $media->alt }}</span>
+            <span class="d-block text-muted fw-light mb-3 p-0">{{ $media->alt }}</span>
         @endif
     </div>
 
