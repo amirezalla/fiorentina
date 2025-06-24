@@ -111,15 +111,12 @@
 
 
 
-            {{-- 4️⃣ if alt is present and differs from name, show it under the image --}}
-            @if ($media && $media->alt && $media->alt !== $media->name)
-                <span class="d-block text-muted">{{ $media->alt }}</span>
-            @endif
 
-
-            {{-- Google AMP image ad --}}
 
         </div>
+        @if ($media && $media->alt && $media->alt !== $media->name)
+            <span class="d-block text-muted">{{ $media->alt }}</span>
+        @endif
     </div>
 
     <div class="d-none d-md-block">
