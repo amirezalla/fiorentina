@@ -79,7 +79,7 @@
 
         /* blocked — most ad-blockers abort the request or rewrite the URL */
         s.onerror = showOverlay;
-
+        console.log('AdBlock test script injected:', s.src);
         document.head.appendChild(s);
 
         /* fallback timer — catches cases where the request is stalled */
