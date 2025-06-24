@@ -115,8 +115,7 @@
                 $media = DB::table('media_files')->where('name', $rawName)->orWhere('name', $cleanName)->first();
             @endphp
 
-            {{-- your existing <img> tag – keep whatever helpers / sizes you use --}}
-            <img src="{{ RvMedia::getImageUrl($post->image, 'medium') }}" alt="{{ $media->alt ?? $post->name }}">
+
 
             {{-- 4️⃣ if alt is present and differs from name, show it under the image --}}
             @if ($media && $media->alt && $media->alt !== $media->name)
