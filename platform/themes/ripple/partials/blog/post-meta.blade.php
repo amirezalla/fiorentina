@@ -103,6 +103,7 @@
                 ],
             ) }}
 
+            @dd($post->image)
             @php
 
                 // 3️⃣ plain-DB lookup in media_files
