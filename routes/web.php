@@ -29,6 +29,9 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use Illuminate\Console\OutputStyle;
 use App\Console\Commands\OptimizeGifs;
 
+use Illuminate\Support\Facades\DB;
+
+
 
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\VoteController;
@@ -56,6 +59,15 @@ function addCData(\SimpleXMLElement $node, string $text): void
         $owner->createCDATASection($text)
     );
 }
+
+Route::post('/media/{id}/descrizione', function (int $id) {
+    DB::table('media_files')
+        ->where('id', $id)
+        ->update(['descrizione' => request('descrizione')]);
+
+    return response()->json(['saved' => true]);
+})->middleware('auth');        // keep whatever guards you already use
+
 
     Route::get('/match/{matchId}/commentaries', [MatchCommentaryController::class, 'fetchLatestCommentaries']);
     
