@@ -103,7 +103,7 @@
                 ],
             ) }}
 
-            @dd($post->image->name, $post->image->alt)
+            @dd($post->image)
 
             {{-- Google AMP image ad --}}
 
