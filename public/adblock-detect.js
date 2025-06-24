@@ -1,39 +1,65 @@
 /**
- * Very small ad-block detector
+ * adblock-detect.js
  * ------------------------------------------------------------
- * 1. Inserts a fake ad element (`<div class="adsbox">`)
- * 2. In most blockers that element gets hidden (height → 0)
- * 3. If hidden, show a full-page overlay that forces the user
- *    to pause / whitelist ad-block and refresh.
+ * Detects ad-blockers and, if one is active, covers the page
+ * with an overlay that asks the visitor to disable / whitelist
+ * and then refresh.
+ *
+ * How detection works
+ * -------------------
+ * 1. Inject a “bait” element whose class names look like ads.
+ * 2. Give it a real size (1 px × 1 px) so its offsetHeight
+ *    should be > 0 when not blocked.
+ * 3. If a blocker hides it (display:none / visibility:hidden /
+ *    removed from the flow / height=0) we consider ads blocked.
  */
+
 (function () {
-    // Helper that returns true when the fake ad is blocked
+    /**
+     * Returns `true` when an ad-blocker (or custom CSS) hides
+     * our bait element.
+     */
     function isAdBlocked() {
         const bait = document.createElement('div');
-        bait.className = 'adsbox';
-        bait.style.position = 'absolute';
-        bait.style.left = '-9999px';
+        bait.className = 'adsbox ad-banner ad-unit'; // common keywords
+        bait.style.cssText = `
+            position:absolute;
+            left:-9999px;
+            width:1px;
+            height:1px;
+            pointer-events:none;`;
+        bait.innerHTML = '&nbsp;';  // ensures measurable height
         document.body.appendChild(bait);
 
-        const blocked = bait.offsetHeight === 0;
+        const style = window.getComputedStyle(bait);
+        const blocked =
+            style.display === 'none' ||
+            style.visibility === 'hidden' ||
+            bait.offsetParent === null || // ancestor hidden
+            bait.offsetHeight === 0;
+
         document.body.removeChild(bait);
         return blocked;
     }
 
-    // Builds the overlay HTML & CSS on the fly
+    /**
+     * Builds and shows the full-page overlay.
+     */
     function showOverlay() {
         const overlay = document.createElement('div');
         overlay.id = 'adblock-overlay';
         overlay.innerHTML = `
             <div id="adblock-message">
                 <h2>Please disable your ad&nbsp;blocker</h2>
-                <p>Ads keep our content free.  
-                   Pause your blocker and refresh the page
-                   to continue reading.</p>
-                <button id="adblock-refresh" type="button">I’ve disabled it &nbsp;⟳</button>
-            </div>
-        `;
-        // Simple styling – tweak as you like
+                <p>
+                    Ads keep our content free.<br>
+                    Pause your blocker and refresh the page to continue reading.
+                </p>
+                <button id="adblock-refresh" type="button">
+                    I’ve disabled it &nbsp;⟳
+                </button>
+            </div>`;
+        /* Basic styling — tweak as needed */
         Object.assign(overlay.style, {
             position: 'fixed',
             inset: 0,
@@ -66,11 +92,12 @@
         });
         btn.addEventListener('click', () => location.reload());
 
-        document.body.style.overflow = 'hidden';   // stop scrolling
+        /* Lock scrolling and show */
+        document.body.style.overflow = 'hidden';
         document.body.appendChild(overlay);
     }
 
-    // Wait for DOM, then test
+    /* Run the check once the DOM is ready */
     document.addEventListener('DOMContentLoaded', () => {
         if (isAdBlocked()) showOverlay();
     });
