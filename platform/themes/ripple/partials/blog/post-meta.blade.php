@@ -115,7 +115,12 @@
 
         </div>
         @if ($media && $media->alt && $media->alt !== $media->name)
-            <span class="d-block text-muted fw-light mb-3 p-0">{{ $media->alt }}</span>
+            <span class="d-block text-muted fw-light mb-3 p-0"
+                style="    background: #dddddd;
+    padding: 10px !important;
+    color: #393939 !important;
+    margin-top: -16px !important;
+    border-radius: 0px 0px 10px 10px;">{{ $media->alt }}</span>
         @endif
     </div>
 
