@@ -1,50 +1,35 @@
 /**
  * adblock-detect.js
  * ------------------------------------------------------------
- * Detects ad-blockers and, if one is active, covers the page
- * with an overlay that asks the visitor to disable / whitelist
- * and then refresh.
- *
- * How detection works
- * -------------------
- * 1. Inject a “bait” element whose class names look like ads.
- * 2. Give it a real size (1 px × 1 px) so its offsetHeight
- *    should be > 0 when not blocked.
- * 3. If a blocker hides it (display:none / visibility:hidden /
- *    removed from the flow / height=0) we consider ads blocked.
+ * On this site Google Ads are inserted as <amp-img …>.
+ * If, after 7 s, **no** such element is present we assume an
+ * ad-blocker is hiding them (or the request was killed) and we
+ * cover the page with an overlay that asks the visitor to pause
+ * / whitelist the blocker and refresh.
  */
 
 (function () {
-    /**
-     * Returns `true` when an ad-blocker (or custom CSS) hides
-     * our bait element.
-     */
-    function isAdBlocked() {
-        const bait = document.createElement('div');
-        bait.className = 'adsbox ad-banner ad-unit'; // common keywords
-        bait.style.cssText = `
-            position:absolute;
-            left:-9999px;
-            width:1px;
-            height:1px;
-            pointer-events:none;`;
-        bait.innerHTML = '&nbsp;';  // ensures measurable height
-        document.body.appendChild(bait);
+    /* ──────────────────────────────────────────────────────────
+     * CONFIG
+     * ──────────────────────────────────────────────────────── */
+    const CHECK_DELAY = 7000; // ms – give the ads script time to run
 
-        const style = window.getComputedStyle(bait);
-        const blocked =
-            style.display === 'none' ||
-            style.visibility === 'hidden' ||
-            bait.offsetParent === null || // ancestor hidden
-            bait.offsetHeight === 0;
+    /* ──────────────────────────────────────────────────────────
+     * DETECTION
+     * ──────────────────────────────────────────────────────── */
+    function googleAdsMissing() {
+        /* You can add / tweak domains if you serve ads via others */
+        const selector =
+            'amp-img[src*="googleads"],' +
+            'amp-img[src*="googlesyndication"],' +
+            'amp-img[src*="gdoubleclick"]';
 
-        document.body.removeChild(bait);
-        return blocked;
+        return !document.querySelector(selector);
     }
 
-    /**
-     * Builds and shows the full-page overlay.
-     */
+    /* ──────────────────────────────────────────────────────────
+     * OVERLAY UI
+     * ──────────────────────────────────────────────────────── */
     function showOverlay() {
         const overlay = document.createElement('div');
         overlay.id = 'adblock-overlay';
@@ -53,13 +38,15 @@
                 <h2>Please disable your ad&nbsp;blocker</h2>
                 <p>
                     Ads keep our content free.<br>
-                    Pause your blocker and refresh the page to continue reading.
+                    Pause your blocker and refresh the page
+                    to continue reading.
                 </p>
                 <button id="adblock-refresh" type="button">
                     I’ve disabled it &nbsp;⟳
                 </button>
             </div>`;
-        /* Basic styling — tweak as needed */
+
+        /* Basic, dark overlay – tweak as desired */
         Object.assign(overlay.style, {
             position: 'fixed',
             inset: 0,
@@ -92,13 +79,17 @@
         });
         btn.addEventListener('click', () => location.reload());
 
-        /* Lock scrolling and show */
+        /* Lock the page behind the overlay */
         document.body.style.overflow = 'hidden';
         document.body.appendChild(overlay);
     }
 
-    /* Run the check once the DOM is ready */
+    /* ──────────────────────────────────────────────────────────
+     * BOOT
+     * ──────────────────────────────────────────────────────── */
     document.addEventListener('DOMContentLoaded', () => {
-        if (isAdBlocked()) showOverlay();
+        setTimeout(() => {
+            if (googleAdsMissing()) showOverlay();
+        }, CHECK_DELAY);
     });
 })();
