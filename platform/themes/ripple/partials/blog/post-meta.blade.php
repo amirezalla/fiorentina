@@ -107,7 +107,7 @@
 
                 // 3️⃣ plain-DB lookup in media_files
                 $media = DB::table('media_files')
-                    ->where('url', 'posts/' . $$post->image)
+                    ->where('url', 'posts/' . $post->image)
                     ->orWhere('name', $cleanName)
                     ->first();
             @endphp
