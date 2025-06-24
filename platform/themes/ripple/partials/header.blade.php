@@ -11,6 +11,8 @@
         name="viewport" />
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="/adblock-detect.js"></script>
+    <div class="adsbox"></div>
     <noscript>
         <style amp-boilerplate>
             body {
