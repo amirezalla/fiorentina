@@ -1,35 +1,35 @@
 /**
- * adblock-detect.js  –  network-level Google-Ads check
+ * adblock-detect.js  –  controllo AdSense a livello di rete
  * ------------------------------------------------------------
- * 1. Inject <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
- * 2.  - onload  →  ads allowed   →  do nothing
- *    - onerror →  request blocked → show overlay
- * 3. Fallback: after 7 s, if neither event fired, treat as blocked
+ * 1. Inietta <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+ * 2.  - onload  →  gli annunci sono consentiti   →  non fare nulla
+ *    - onerror →  richiesta bloccata            →  mostra overlay
+ * 3. Se entro 7 s non arriva né onload né onerror, considera bloccato
  */
 
 (function () {
-    /* ——————————————————————————————— CONFIG */
+    /* ——————————————————————————————— CONFIGURAZIONE */
     const TEST_URL = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-    const MAX_WAIT = 7000;                     // 7 seconds
-    let resolved = false;                    // has the test finished?
+    const MAX_WAIT = 7000;                    // 7 secondi
+    let resolved = false;                   // il test è terminato?
 
     /* ——————————————————————————————— OVERLAY */
     function showOverlay() {
-        if (resolved) return;                    // in case both timer & onerror race
+        if (resolved) return;                 // evita race tra timer e onerror
         resolved = true;
 
         const overlay = document.createElement('div');
         overlay.id = 'adblock-overlay';
         overlay.innerHTML = `
             <div id="adblock-message">
-                <h2>Please disable your ad&nbsp;blocker</h2>
+                <h2>Disattiva il tuo ad-blocker</h2>
                 <p>
-                    Ads keep our content free.<br>
-                    Pause / whitelist the blocker and refresh
-                    the page to continue reading.
+                    La pubblicità ci permette di offrirti i contenuti gratuitamente.<br>
+                    Metti in pausa o aggiungi il sito alla whitelist e ricarica la pagina
+                    per continuare a leggere.
                 </p>
                 <button id="adblock-refresh" type="button">
-                    I’ve disabled it &nbsp;⟳
+                    L’ho disattivato &nbsp;⟳
                 </button>
             </div>`;
         Object.assign(overlay.style, {
@@ -68,27 +68,26 @@
         document.body.appendChild(overlay);
     }
 
-    /* ——————————————————————————————— DETECTION */
+    /* ——————————————————————————————— TEST DI Rete */
     function runTest() {
         const s = document.createElement('script');
         s.src = TEST_URL;
         s.async = true;
 
-        /* success — AdSense script loaded */
-        s.onload = () => { resolved = true;  /* nothing to do */ };
+        /* Successo: script AdSense caricato */
+        s.onload = () => { resolved = true; /* niente overlay */ };
 
-        /* blocked — most ad-blockers abort the request or rewrite the URL */
+        /* Bloccato: onerror scatterà quasi sempre con un ad-block */
         s.onerror = showOverlay;
-        console.log('AdBlock test script injected:', s.src);
+
         document.head.appendChild(s);
 
-        /* fallback timer — catches cases where the request is stalled */
+        /* Timer di fallback */
         setTimeout(() => {
             if (!resolved) showOverlay();
         }, MAX_WAIT);
     }
 
-    /* ——————————————————————————————— BOOT */
-    // Wait for DOM; network can start earlier but this guarantees <head> exists.
+    /* ——————————————————————————————— AVVIO */
     document.addEventListener('DOMContentLoaded', runTest);
 })();
