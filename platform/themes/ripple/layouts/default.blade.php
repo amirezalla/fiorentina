@@ -3,8 +3,7 @@
     {!! Theme::partial('breadcrumbs') !!}
 @endif
 
-<script src="/resources/js/adblock-detect.js"></script>
-<div class="adsbox"></div>
+
 
 @include('ads.includes.background-page')
 
@@ -30,7 +29,8 @@
         </div>
     </div>
 @endif
-
+<script src="/resources/js/adblock-detect.js"></script>
+<div class="adsbox"></div>
 <section class="section pt-50 pb-50">
 
     <div class="container mobile-p-0" style="position: relative;margin-top: -66px;">
