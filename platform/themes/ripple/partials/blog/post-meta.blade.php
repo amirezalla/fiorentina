@@ -103,7 +103,26 @@
                 ],
             ) }}
 
-            @dd($post->image)
+            @php
+
+                // 1️⃣ get the name part of "something.jpg"
+                $rawName = pathinfo($post->image, PATHINFO_FILENAME);
+
+                // 2️⃣ strip a dimension suffix like "-400x240"
+                $cleanName = preg_replace('/-\d+x\d+$/', '', $rawName);
+
+                // 3️⃣ plain-DB lookup in media_files
+                $media = DB::table('media_files')->where('name', $rawName)->orWhere('name', $cleanName)->first();
+            @endphp
+
+            {{-- your existing <img> tag – keep whatever helpers / sizes you use --}}
+            <img src="{{ RvMedia::getImageUrl($post->image, 'medium') }}" alt="{{ $media->alt ?? $post->name }}">
+
+            {{-- 4️⃣ if alt is present and differs from name, show it under the image --}}
+            @if ($media && $media->alt && $media->alt !== $media->name)
+                <span class="d-block text-muted">{{ $media->alt }}</span>
+            @endif
+
 
             {{-- Google AMP image ad --}}
 
