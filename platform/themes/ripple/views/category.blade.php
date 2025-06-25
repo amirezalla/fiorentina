@@ -1,7 +1,7 @@
 @php Theme::set('section-name', $category->name) @endphp
 
 @if ($posts->isNotEmpty())
-    @foreach ($posts->loadMissing('author') as $post)
+    @foreach ($posts->loadMissing('author') as $index => $post)
         {{-- FEATURED BLOCK – only for the first post --}}
         @if ($loop->first)
             <article class="mb-4 post post__inside post__inside--feature h-100 text-center category-article">
