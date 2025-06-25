@@ -953,7 +953,7 @@ p:empty {
 .post__inside .post__header {
     bottom: 0;
     left: 0;
-    padding: 25px 30px;
+    padding: 25px 15px;
     position: absolute;
     width: 100%;
     z-index: 20
@@ -5139,7 +5139,7 @@ header>.container,
     }
 
     .post__inside--feature span {
-        font-size: small;
+        font-size: x-small !important;
     }
 
     .post__thumbnail {
@@ -5160,6 +5160,11 @@ header>.container,
     .post-group__left .post__title a {
         font-size: 2.1rem !important;
     }
+
+    .post-group__left .post__title #post-title-first {
+        font-size: 1.2rem !important;
+    }
+
 
     .post-group__left .post-desc span a {
         font-size: 0.75rem !important;
