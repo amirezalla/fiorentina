@@ -86,7 +86,7 @@
 @endif
 
 <div class="row">
-    @if (!isMobile)
+    @if (!$isMobile)
         @include('ads.includes.dblog-author')
     @endif
 
@@ -129,7 +129,7 @@
         @endif
     </div>
 
-    @if (!isMobile)
+    @if (!$isMobile)
         @include('ads.includes.dblog-title')
     @else
         @include('ads.includes.MOBILE_DOPO_FOTO_26')
