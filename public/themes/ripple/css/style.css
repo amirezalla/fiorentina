@@ -5023,6 +5023,15 @@ header>.container,
     }
 
 
+    .category-article.post__thumbnail {
+        flex: 0.8 !important;
+
+    }
+
+    .category-article .post__title a {
+        font-size: larger !important;
+
+    }
 
 
     .post__content-wrap {
