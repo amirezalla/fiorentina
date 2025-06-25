@@ -959,6 +959,8 @@ p:empty {
     z-index: 20
 }
 
+
+
 @media screen and (max-width:991px) {
     .post__inside {
         margin-bottom: 30px
@@ -1624,6 +1626,16 @@ p:empty {
 }
 
 @media screen and (max-width:767px) {
+
+    .category-article .post__inside .post__header {
+
+        padding: 25px 30px 10px 25px !important;
+
+    }
+
+    .category-article .post__inside--feature .post__title a {
+        font-size: 1rem;
+    }
 
     .recent-posts-container .post-desc span span,
     .recent-posts-container .post-desc .post__date {
