@@ -3,6 +3,10 @@
     use Illuminate\Support\Facades\DB;
     $date = Carbon::parse($post->published_at);
     $formattedDate = $date->locale('it')->translatedFormat('d F Y - H:i');
+    $ua = request()->header('User-Agent', '');
+
+    // very small UA test – good enough for phone / tablet vs desktop
+    $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
 @endphp
 
 
@@ -82,9 +86,9 @@
 @endif
 
 <div class="row">
-    <div class="d-none d-md-block">
+    @if (!isMobile)
         @include('ads.includes.dblog-author')
-    </div>
+    @endif
 
 
 
@@ -125,13 +129,12 @@
         @endif
     </div>
 
-    <div class="d-none d-md-block">
+    @if (!isMobile)
         @include('ads.includes.dblog-title')
-
-    </div>
-    <div class="d-block d-md-none col-12 text-center">
+    @else
         @include('ads.includes.MOBILE_DOPO_FOTO_26')
-    </div>
+    @endif
+
 
 </div>
 

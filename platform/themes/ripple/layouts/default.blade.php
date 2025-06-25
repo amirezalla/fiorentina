@@ -11,21 +11,28 @@
     <div class="background-ad-post">
 
     </div>
+    @php
+        $ua = request()->header('User-Agent', '');
+
+        // very small UA test – good enough for phone / tablet vs desktop
+        $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
+    @endphp
     <div class="container mb-3">
-        <div class="col-11 row justify-content-center mx-auto" style="padding: 0">
-            <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px;padding-left:0">
-                <div class="col-12">
-                    @include('ads.includes.SIZE_468X60_TOP_SX')
+        <div class="row justify-content-center" style="padding: 0">
+            @if (!$isMobile)
+                <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">
+                    <div class="col-12">
+                        @include('ads.includes.SIZE_468X60_TOP_SX')
+                    </div>
                 </div>
-            </div>
-            <div class="d-none d-md-block col-6 mx-auto" style="padding: 0">
-                <div class="col-12">
-                    @include('ads.includes.SIZE_468X60_TOP_DX')
+                <div class="d-none d-md-block col-6 mx-auto" style="padding: 0">
+                    <div class="col-12">
+                        @include('ads.includes.SIZE_468X60_TOP_DX')
+                    </div>
                 </div>
-            </div>
-            <div class="d-block d-md-none col-12 text-center p-0">
+            @else
                 @include('ads.includes.MOBILE_HOME_TOP_24')
-            </div>
+            @endif
         </div>
     </div>
 @endif
