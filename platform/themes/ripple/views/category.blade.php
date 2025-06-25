@@ -11,7 +11,7 @@
     @foreach ($posts->loadMissing('author') as $index => $post)
         {{-- FEATURED BLOCK – only for the first post --}}
         @if ($loop->first)
-            <article class="mb-4 post post__inside post__inside--feature h-100 text-center category-article">
+            <article class="mb-4 post post__inside post__inside--feature h-100 text-center category-article mt-3">
                 {{-- <- text-center keeps it tidy --}}
                 <div class="post__thumbnail h-100">
                     {{ RvMedia::image($post->image, $post->name, 'featured', attributes: ['loading' => 'eager']) }}
