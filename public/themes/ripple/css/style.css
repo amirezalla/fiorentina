@@ -1633,8 +1633,8 @@ p:empty {
 
     }
 
-    .category-article.post__inside--feature .post__title a {
-        font-size: 1rem;
+    .category-article.post__inside--feature .post__title #post-title-first {
+        font-size: 1rem !important;
     }
 
     .recent-posts-container .post-desc span span,
