@@ -573,7 +573,6 @@ p:empty {
     display: inline-block;
     float: right;
     height: 30px;
-    margin-top: 15px;
     overflow: hidden;
     position: relative;
     width: 30px
@@ -2276,7 +2275,9 @@ p:empty {
 }
 
 .page-header__right {
-    float: right
+    float: right;
+    padding-bottom: 15px !important;
+    padding-top: 15px !important;
 }
 
 .search-btn {
