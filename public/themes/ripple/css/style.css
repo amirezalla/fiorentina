@@ -1640,7 +1640,7 @@ p:empty {
     .recent-posts-container .post-desc span span,
     .recent-posts-container .post-desc .post__date {
         font-size: 0.75rem !important;
-        letter-spacing: 0.08rem !important;
+        letter-spacing: 0.0rem !important;
     }
 
     .fw-bold {
