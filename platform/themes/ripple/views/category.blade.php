@@ -1,5 +1,12 @@
 @php Theme::set('section-name', $category->name) @endphp
+@php
+    $minMainPostsLimit = intval(10);
+    $mainPostsLimit = intval(50);
+    $ua = request()->header('User-Agent', '');
 
+    // very small UA test – good enough for phone / tablet vs desktop
+    $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
+@endphp
 @if ($posts->isNotEmpty())
     @foreach ($posts->loadMissing('author') as $index => $post)
         {{-- FEATURED BLOCK – only for the first post --}}
