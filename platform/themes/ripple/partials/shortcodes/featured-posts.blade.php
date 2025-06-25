@@ -432,5 +432,7 @@
 
 
 </section>
-@include('ads.includes.adsHero')
+@if (!$isMobile)
+    @include('ads.includes.adsHero')
+@endif
 @endif
