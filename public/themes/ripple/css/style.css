@@ -1637,10 +1637,15 @@ p:empty {
         font-size: 1rem !important;
     }
 
+
     .recent-posts-container .post-desc span span,
     .recent-posts-container .post-desc .post__date {
         font-size: 0.75rem !important;
         letter-spacing: 0.0rem !important;
+    }
+
+    .post-group__left-red-badge span {
+        font-size: x-small !important;
     }
 
     .fw-bold {
