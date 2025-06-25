@@ -70,7 +70,7 @@
         @endif
 
         {{-- STANDARD HORIZONTAL CARD (unchanged) --}}
-        <article class="post post__vertical post__vertical--single post-item"
+        <article class="post post__vertical post__vertical--single post-item category-article"
             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
             <!-- Image on the left -->
             <div class="post__thumbnail" style=" width: 48%;">
