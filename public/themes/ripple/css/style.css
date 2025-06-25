@@ -5023,15 +5023,12 @@ header>.container,
     }
 
 
-    .category-article.post__thumbnail {
+    .category-article.post__vertical--single .post__thumbnail {
         flex: 0.8 !important;
 
     }
 
-    .category-article .post__title a {
-        font-size: larger !important;
 
-    }
 
 
     .post__content-wrap {
@@ -5094,6 +5091,11 @@ header>.container,
 
     .post__vertical .post__title a {
         font-size: 1rem !important;
+    }
+
+    .category-article .post__title a {
+        font-size: larger !important;
+
     }
 
     .post__content span {
