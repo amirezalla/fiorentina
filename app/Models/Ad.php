@@ -24,6 +24,7 @@ class Ad extends BaseModel
     const GROUP_POPUP_DESKTOP = 1;
     const GROUP_POPUP_MOBILE = 2;
     const GROUP_MAIN_PAGE = 3;
+    const GROUP_HERO = 45;
     const GROUP_BLOG_PAGE = 4;
     const GROUP_BACKGROUND_PAGE = 5;
     const GROUP_DBLOG_TITLE = 6;
@@ -72,6 +73,7 @@ class Ad extends BaseModel
         // self::GROUP_BLOG_PAGE => "DESKTOP blog page",
         self::GROUP_BACKGROUND_PAGE => "DESKTOP background page",
         self::GROUP_DBLOG_TITLE => "DESKTOP articolo title",
+        self::GROUP_HERO => "DESKTOP Hero",
         self::GROUP_DBLOG_AUTHOR => "DESKTOP articolo author",
         self::GROUP_DBLOG_P1 => "DESKTOP articolo P1",
         self::GROUP_DBLOG_P2 => "DESKTOP articolo P2",

@@ -132,6 +132,9 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('ads.includes.adsrecentp4', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_recentp4)->inRandomOrderByWeight()->first());
         });
+                view()->composer('ads.includes.adsHero', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_HERO)->inRandomOrderByWeight()->first());
+        });
         view()->composer('ads.includes.adsense', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::Google_adsense)->inRandomOrderByWeight()->first());
         });

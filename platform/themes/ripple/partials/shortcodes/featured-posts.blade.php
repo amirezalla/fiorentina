@@ -427,4 +427,5 @@
 
 
 </section>
+@include('ads.includes.adsHero')
 @endif
