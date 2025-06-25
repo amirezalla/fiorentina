@@ -10,7 +10,7 @@
         <div class="row justify-content-center mx-0">
             <div class="col-12 mx-auto p-0">
                 {{-- Link through your trackClick route so that a click is counted --}}
-                <a href="{{ route('ads.click', ['id' => $ad->id]) }}" class="d-block">
+                <a href="{{ route('ads.click', ['id' => $ad->id]) }}" class="d-block text-center">
                     <img src="{{ $ad->getDisplayImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
                         style=" height: auto;">
                 </a>
