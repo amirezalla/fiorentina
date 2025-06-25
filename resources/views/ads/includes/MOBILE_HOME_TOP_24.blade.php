@@ -12,7 +12,7 @@
                 {{-- Link through your trackClick route so that a click is counted --}}
                 <a href="{{ route('ads.click', ['id' => $ad->id]) }}" class="d-block">
                     <img src="{{ $ad->getDisplayImageUrl() }}" alt="{{ $ad->title }}" class="img-fluid"
-                        style="width: 100%; height: auto;">
+                        style=" height: auto;">
                 </a>
             </div>
         </div>
