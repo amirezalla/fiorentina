@@ -220,7 +220,7 @@
                                             {{ RvMedia::image(
                                                 $post->image,
                                                 $post->name,
-                                                'featured',
+                                            
                                                 attributes: [
                                                     'loading' => 'eager',
                                                     'fetchpriority' => 'high',
