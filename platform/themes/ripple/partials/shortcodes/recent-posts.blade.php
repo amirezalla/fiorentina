@@ -407,9 +407,7 @@
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_C1')
                     </div>
-                    <div class="row mt-30 ad-top-sidebar">
-                        @include('ads.includes.SIZE_300X250_B1')
-                    </div>
+
                     <div class="page-content">
                         <div class="post-group">
                             <div class="post-group__header" style="margin-bottom: 0 !important">
@@ -514,6 +512,9 @@
                         <span class="badge badge-danger"
                             style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
                         Serie B
+                    </div>
+                    <div class="row mt-30 ad-top-sidebar">
+                        @include('ads.includes.SIZE_300X250_B1')
                     </div>
                     @if ($poll->position == 'under_calendario')
                         @include('polls.includes.poll-sidebar', $poll)
