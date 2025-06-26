@@ -282,7 +282,7 @@
                                 </div>
                             </div>
                     </div>
-                    @if (!isMobile)
+                    @if (!$isMobile)
                         <div class="row mt-30 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_TOP')
                         </div>
@@ -405,7 +405,7 @@
                             </div>
                         </div>
                     </div>
-                    @if (!isMobile)
+                    @if (!$isMobile)
                         <div class="row mt-30 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_C1')
                         </div>
@@ -518,7 +518,7 @@
                             style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
                         Serie B
                     </div>
-                    @if (!isMobile)
+                    @if (!$isMobile)
                         <div class="row mt-30 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_B1')
                         </div>
