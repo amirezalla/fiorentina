@@ -237,129 +237,7 @@
                 @endphp
                 <div class="col-lg-4">
                     <div class="page-sidebar">
-                        <div class="widget widget__recent-post mt-4 mb-4">
-                            <ul class="nav nav-tabs" id="postTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="recent-posts-tab" data-toggle="tab"
-                                        href="#recent-posts" role="tab" aria-controls="recent-posts"
-                                        aria-selected="true">
-                                        I PIÙ LETTI
-                                    </a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="most-commented-tab" data-toggle="tab" href="#most-commented"
-                                        role="tab" aria-controls="most-commented" aria-selected="false">
-                                        <span style="color: #8424e3; margin-right: 4px;"><i
-                                                class="fas fa-bolt"></i></span>
-                                        I PIÙ COMMENTATI
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="postTabsContent">
-                                <div class="tab-pane fade show active" id="recent-posts" role="tabpanel"
-                                    aria-labelledby="recent-posts-tab">
-                                    <div class="widget__content">
-                                        <ul>
-                                            @foreach ($mostReadPosts as $post)
-                                                <li>
-                                                    <article class="post post__widget d-flex align-items-start"
-                                                        style="margin-bottom: 10px;">
-                                                        {{-- Thumbnail on the left, fixed width --}}
-                                                        <div class="post__thumbnail"
-                                                            style="width: 80px; flex-shrink: 0; margin-right: 10px;">
-                                                            {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                                            <a href="{{ $post->url }}" title="{{ $post->name }}"
-                                                                class="post__overlay"></a>
-                                                        </div>
 
-                                                        {{-- Text content on the right --}}
-                                                        <header class="post__header" style="flex: 1;">
-                                                            {{-- Optional: Category label in uppercase, if you want it above the title --}}
-                                                            @if ($post->categories->count())
-                                                                <span class="category-span">
-                                                                    {{ strtoupper($post->categories->first()->name) }}
-                                                                </span>
-                                                            @endif
-
-                                                            {{-- Post Title --}}
-                                                            <h4 class="post__title" style="margin: 0;">
-                                                                <a href="{{ $post->url }}"
-                                                                    title="{{ $post->name }}"
-                                                                    style="text-decoration: none; color: inherit;">
-                                                                    {{ $post->name }}
-                                                                </a>
-                                                            </h4>
-
-                                                            {{-- Date --}}
-                                                            <div class="post__meta date-span"
-                                                                style="font-size: 0.75rem; color: #999; margin-top: 2px;">
-                                                                <span class="post__created-at">
-                                                                    {{ Theme::formatDate($post->created_at) }}
-                                                                </span>
-                                                            </div>
-                                                        </header>
-                                                    </article>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="most-commented" role="tabpanel"
-                                    aria-labelledby="most-commented-tab">
-                                    <div class="widget__content">
-                                        <ul>
-                                            @foreach ($mostCommentedPosts as $post)
-                                                <li>
-                                                    <article class="post post__widget d-flex align-items-start"
-                                                        style="margin-bottom: 10px;">
-                                                        {{-- Thumbnail on the left, fixed width --}}
-                                                        <div class="post__thumbnail"
-                                                            style="width: 80px; flex-shrink: 0; margin-right: 10px;">
-                                                            {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                                            <a href="{{ $post->url }}"
-                                                                title="{{ $post->name }}"
-                                                                class="post__overlay"></a>
-                                                        </div>
-
-                                                        {{-- Text content on the right --}}
-                                                        <header class="post__header" style="flex: 1;">
-                                                            {{-- Optional: Category label in uppercase, if you want it above the title --}}
-                                                            @if ($post->categories->count())
-                                                                <span
-                                                                    style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
-                                                                    {{ strtoupper($post->categories->first()->name) }}
-                                                                </span>
-                                                            @endif
-
-                                                            {{-- Post Title --}}
-                                                            <h4 class="post__title" style="margin: 0;">
-                                                                <a href="{{ $post->url }}"
-                                                                    title="{{ $post->name }}"
-                                                                    style="text-decoration: none; color: inherit;">
-                                                                    {{ $post->name }}
-                                                                </a>
-                                                            </h4>
-
-                                                            {{-- Date --}}
-                                                            <div class="post__meta"
-                                                                style="font-size: 0.75rem; color: #999; margin-top: 2px;">
-                                                                <span class="post__created-at">
-                                                                    {{ Theme::formatDate($post->created_at) }}
-                                                                </span>
-                                                            </div>
-                                                        </header>
-                                                    </article>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-30 ad-top-sidebar">
-                            @include('ads.includes.SIZE_300X250_C1')
-                        </div>
 
                         <section>
                             @if ($poll->position == 'top')
@@ -408,6 +286,127 @@
                         @include('ads.includes.SIZE_300X250_TOP')
                     </div>
                     @include('last_post_editoriale')
+                    <div class="widget widget__recent-post mt-4 mb-4">
+                        <ul class="nav nav-tabs" id="postTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts"
+                                    role="tab" aria-controls="recent-posts" aria-selected="true">
+                                    I PIÙ LETTI
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="most-commented-tab" data-toggle="tab" href="#most-commented"
+                                    role="tab" aria-controls="most-commented" aria-selected="false">
+                                    <span style="color: #8424e3; margin-right: 4px;"><i
+                                            class="fas fa-bolt"></i></span>
+                                    I PIÙ COMMENTATI
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="postTabsContent">
+                            <div class="tab-pane fade show active" id="recent-posts" role="tabpanel"
+                                aria-labelledby="recent-posts-tab">
+                                <div class="widget__content">
+                                    <ul>
+                                        @foreach ($mostReadPosts as $post)
+                                            <li>
+                                                <article class="post post__widget d-flex align-items-start"
+                                                    style="margin-bottom: 10px;">
+                                                    {{-- Thumbnail on the left, fixed width --}}
+                                                    <div class="post__thumbnail"
+                                                        style="width: 80px; flex-shrink: 0; margin-right: 10px;">
+                                                        {{ RvMedia::image($post->image, $post->name, 'thumb') }}
+                                                        <a href="{{ $post->url }}" title="{{ $post->name }}"
+                                                            class="post__overlay"></a>
+                                                    </div>
+
+                                                    {{-- Text content on the right --}}
+                                                    <header class="post__header" style="flex: 1;">
+                                                        {{-- Optional: Category label in uppercase, if you want it above the title --}}
+                                                        @if ($post->categories->count())
+                                                            <span class="category-span">
+                                                                {{ strtoupper($post->categories->first()->name) }}
+                                                            </span>
+                                                        @endif
+
+                                                        {{-- Post Title --}}
+                                                        <h4 class="post__title" style="margin: 0;">
+                                                            <a href="{{ $post->url }}"
+                                                                title="{{ $post->name }}"
+                                                                style="text-decoration: none; color: inherit;">
+                                                                {{ $post->name }}
+                                                            </a>
+                                                        </h4>
+
+                                                        {{-- Date --}}
+                                                        <div class="post__meta date-span"
+                                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
+                                                            <span class="post__created-at">
+                                                                {{ Theme::formatDate($post->created_at) }}
+                                                            </span>
+                                                        </div>
+                                                    </header>
+                                                </article>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="most-commented" role="tabpanel"
+                                aria-labelledby="most-commented-tab">
+                                <div class="widget__content">
+                                    <ul>
+                                        @foreach ($mostCommentedPosts as $post)
+                                            <li>
+                                                <article class="post post__widget d-flex align-items-start"
+                                                    style="margin-bottom: 10px;">
+                                                    {{-- Thumbnail on the left, fixed width --}}
+                                                    <div class="post__thumbnail"
+                                                        style="width: 80px; flex-shrink: 0; margin-right: 10px;">
+                                                        {{ RvMedia::image($post->image, $post->name, 'thumb') }}
+                                                        <a href="{{ $post->url }}" title="{{ $post->name }}"
+                                                            class="post__overlay"></a>
+                                                    </div>
+
+                                                    {{-- Text content on the right --}}
+                                                    <header class="post__header" style="flex: 1;">
+                                                        {{-- Optional: Category label in uppercase, if you want it above the title --}}
+                                                        @if ($post->categories->count())
+                                                            <span
+                                                                style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
+                                                                {{ strtoupper($post->categories->first()->name) }}
+                                                            </span>
+                                                        @endif
+
+                                                        {{-- Post Title --}}
+                                                        <h4 class="post__title" style="margin: 0;">
+                                                            <a href="{{ $post->url }}"
+                                                                title="{{ $post->name }}"
+                                                                style="text-decoration: none; color: inherit;">
+                                                                {{ $post->name }}
+                                                            </a>
+                                                        </h4>
+
+                                                        {{-- Date --}}
+                                                        <div class="post__meta"
+                                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
+                                                            <span class="post__created-at">
+                                                                {{ Theme::formatDate($post->created_at) }}
+                                                            </span>
+                                                        </div>
+                                                    </header>
+                                                </article>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-30 ad-top-sidebar">
+                        @include('ads.includes.SIZE_300X250_C1')
+                    </div>
                     <div class="row mt-30 ad-top-sidebar">
                         @include('ads.includes.SIZE_300X250_B1')
                     </div>

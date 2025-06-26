@@ -43,6 +43,23 @@
                     {{-- The title of the post --}}
                     {{ $last_post->name }}
                 </a>
+                <span class=" text-dark mt-1 d-block"
+                    style="font-family: 'Titillium Web', sans-serif; font-weight: 600; font-size: 16px;color:#888">
+                    @php
+                        $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
+                            'reference_id',
+                            $post->id,
+                        )->count();
+                    @endphp
+                    Di <a style="color: #8424e3;font-weight: 700;"
+                        href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                        {{ $post->author->last_name }}</a> /
+                    <a class="fw-bold" href="{{ $post->url }}#comments"
+                        style="color:#8424e3;font-size:0.9rem !important;">
+                        <i class="fa fa-comment" aria-hidden="true"></i>
+                        {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
+                    </a>
+                </span>
             </div>
         </div>
     </div>
