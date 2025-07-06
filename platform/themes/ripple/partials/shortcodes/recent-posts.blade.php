@@ -54,7 +54,7 @@
 
 <section class="section recent-posts pt-20 pb-20"
     @if ($shortcode->background_color) style="background-color: {{ $shortcode->background_color }} !important;" @endif>
-    <div class="container bg-white pb-4">
+    <div class="container bg-white pb-4" style="max-width: 1200px">
         <div class="row">
             @php
                 $topSidebarContent = $withSidebar ? dynamic_sidebar('top_sidebar') : null;
