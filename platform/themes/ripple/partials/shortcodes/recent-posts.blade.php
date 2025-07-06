@@ -413,17 +413,6 @@
                         </div>
                     @endif
 
-                    <div class="page-content">
-                        <div class="post-group">
-                            <div class="post-group__header" style="margin-bottom: 0 !important">
-                                <h3 class="post-group__title" style="margin-bottom: 0 !important">CLASSIFICA
-                                    SERIE
-                                    A
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-
 
                     <div>
                         @php
@@ -440,7 +429,7 @@
                             font-weight: 900;
                         ">
                             <tr>
-                                <th style="border-right: 1px solid white;"></th>
+                                <th style="border-right: 1px solid white;font-weight:700">Classifica Serie A</th>
                                 <th style="border-right: 1px solid white;">PT</th>
                                 <th style="border-right: 1px solid white;">G</th>
                                 <th style="border-right: 1px solid white;">V</th>

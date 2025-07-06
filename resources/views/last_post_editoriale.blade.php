@@ -11,9 +11,9 @@
     @endphp
 
     <div class="w-full editoriale-item mt-30">
-        <div class="editoriale-item-head d-flex" style="border-bottom: 2px solid #ccc">
+        <div class="editoriale-item-head d-flex" style="border-bottom: 2px solid #ccc;margin-left:10px">
             <span class="editoriale-item-head-title px-1 text-dark heading-container"
-                style="border-bottom: 2px solid #8424e3;margin-bottom:-2px;">
+                style="border-bottom: 2px solid #8424e3;margin-bottom:-2px;font-weight: 700;">
                 {{-- The title of the section --}}
                 EDITORIALE
             </span>
