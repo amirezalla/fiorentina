@@ -4,7 +4,6 @@
     </div>
 
     <div class="card-body pt-3">
-        <p class="small text-muted mb-4">Totale voti: {{ $totalVotes }}</p>
 
         @foreach ($poll->options as $option)
             @php
@@ -19,6 +18,7 @@
                 <span class="fill" style="width: {{ $percentage }}%"></span>
             </button>
         @endforeach
+        <p class="small text-muted mt-2">Totale voti: {{ $totalVotes }}</p>
     </div>
 </div>
 <script>

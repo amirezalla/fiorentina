@@ -12,8 +12,7 @@
 
     <div class="w-full editoriale-item mt-30">
         <div class="editoriale-item-head d-flex">
-            <span class="editoriale-item-head-title px-1 text-dark"
-                style="border-bottom: 6px solid #441274;font-weight: 700;">
+            <span class="editoriale-item-head-title px-1 text-dark heading-container" style="">
                 EDITORIALE
             </span>
         </div>

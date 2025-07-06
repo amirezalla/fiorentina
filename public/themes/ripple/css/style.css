@@ -5900,7 +5900,7 @@ header>.container {
 .heading-container {
     /* Full-width gray border at the bottom */
     border-bottom: 2px solid #ccc;
-    margin-bottom: 1rem;
+
     /* Optional spacing below */
     position: relative;
     /* No extra padding so the heading sits close to the border */
