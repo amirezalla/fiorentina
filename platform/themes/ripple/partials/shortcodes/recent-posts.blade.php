@@ -285,12 +285,12 @@
                             </div>
                     </div>
                     @if (!$isMobile)
-                        <div class="row mt-30 ad-top-sidebar">
+                        <div class="row mt-2 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_TOP')
                         </div>
                     @endif
                     @include('last_post_editoriale')
-                    <div class="widget widget__recent-post mt-4 mb-4">
+                    <div class="widget widget__recent-post mt-2 mb-2">
                         <ul class="nav nav-tabs" id="postTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts"
@@ -408,7 +408,7 @@
                         </div>
                     </div>
                     @if (!$isMobile)
-                        <div class="row mt-30 ad-top-sidebar">
+                        <div class="row mt-2 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_C1')
                         </div>
                     @endif
@@ -420,7 +420,7 @@
                             $updateScheduledMessage = App\Http\Controllers\StandingController::fetchScheduledMatches();
                         @endphp
                     </div>
-                    <table class="table table-sm table-striped">
+                    <table class="table table-sm table-striped mt-2">
                         <thead
                             style="
                             background: blueviolet;
