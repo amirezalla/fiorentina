@@ -175,7 +175,7 @@
 
                                         <!-- Optional ads -->
                                         @if ($index == 0)
-                                            <div class="d-none d-md-block mb-4">
+                                            <div class="d-none d-md-block mb-2">
                                                 @include('ads.includes.adsrecentp1')
 
                                             </div>
@@ -184,7 +184,7 @@
                                             </div>
                                         @endif
                                         @if ($index == 2)
-                                            <div class="d-none d-md-block mb-4">
+                                            <div class="d-none d-md-block mb-2">
                                                 @include('ads.includes.adsrecentp2')
                                             </div>
 
@@ -193,7 +193,7 @@
                                             </div>
                                         @endif
                                         @if ($index == 5)
-                                            <div class="d-none d-md-block mb-4">
+                                            <div class="d-none d-md-block mb-2">
                                                 @include('ads.includes.adsrecentp3')
                                             </div>
 
@@ -202,12 +202,12 @@
                                             </div>
                                         @endif
                                         @if ($index == 7)
-                                            <div class="d-none d-md-block mb-4">
+                                            <div class="d-none d-md-block mb-2">
                                                 @include('ads.includes.adsrecentp2')
                                             </div>
                                         @endif
                                         @if ($index == 10)
-                                            <div class="tenth-place mb-4">
+                                            <div class="tenth-place mb-2">
                                                 @include('ads.includes.adsrecentp1')
 
                                             </div>
