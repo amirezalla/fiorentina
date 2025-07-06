@@ -1,5 +1,5 @@
 @if ($video && $video_files->count())
-    <div class="mt-2 mb-2">
+    <div class="mt-4 mb-4">
         <div class="row mx-0 p-0">
             <div class="col-12 mx-auto p-0">
                 <div class="d-block w-full">

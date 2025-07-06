@@ -175,7 +175,7 @@
 
                                         <!-- Optional ads -->
                                         @if ($index == 0)
-                                            <div class="d-none d-md-block mb-2">
+                                            <div class="d-none d-md-block mb-4">
                                                 @include('ads.includes.adsrecentp1')
 
                                             </div>
@@ -184,7 +184,7 @@
                                             </div>
                                         @endif
                                         @if ($index == 2)
-                                            <div class="d-none d-md-block mb-2">
+                                            <div class="d-none d-md-block mb-4">
                                                 @include('ads.includes.adsrecentp2')
                                             </div>
 
@@ -193,7 +193,7 @@
                                             </div>
                                         @endif
                                         @if ($index == 5)
-                                            <div class="d-none d-md-block mb-2">
+                                            <div class="d-none d-md-block mb-4">
                                                 @include('ads.includes.adsrecentp3')
                                             </div>
 
@@ -202,12 +202,12 @@
                                             </div>
                                         @endif
                                         @if ($index == 7)
-                                            <div class="d-none d-md-block mb-2">
+                                            <div class="d-none d-md-block mb-4">
                                                 @include('ads.includes.adsrecentp2')
                                             </div>
                                         @endif
                                         @if ($index == 10)
-                                            <div class="tenth-place mb-2">
+                                            <div class="tenth-place mb-4">
                                                 @include('ads.includes.adsrecentp1')
 
                                             </div>
@@ -245,7 +245,7 @@
                             @if ($poll->position == 'top')
                                 @include('polls.includes.poll-sidebar', $poll)
                             @endif
-                            <div class="mb-2 row align-items-center upcoming-match upcoming-match-sidebar">
+                            <div class="mb-4 row align-items-center upcoming-match upcoming-match-sidebar">
                                 <!-- Match Date, Time, and Venue -->
                                 <div class="col-md-12 text-center z-1">
                                     <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm'), " \t\r\n\f\v") }}
@@ -269,7 +269,7 @@
                                 </div>
 
                                 <!-- Ticket Buttons -->
-                                <div class="col-md-12 text-center mt-2 z-1">
+                                <div class="col-md-12 text-center mt-4 z-1">
                                     @if ($match->status == 'LIVE')
                                         <a href="/diretta?match_id={{ $match->match_id }}"
                                             class="btn-comment-submit text-white">VAI ALLA
@@ -285,12 +285,12 @@
                             </div>
                     </div>
                     @if (!$isMobile)
-                        <div class="row mt-2 ad-top-sidebar">
+                        <div class="row mt-4 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_TOP')
                         </div>
                     @endif
                     @include('last_post_editoriale')
-                    <div class="widget widget__recent-post mt-2 mb-2">
+                    <div class="widget widget__recent-post mt-4 mb-4">
                         <ul class="nav nav-tabs" id="postTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts"
@@ -408,7 +408,7 @@
                         </div>
                     </div>
                     @if (!$isMobile)
-                        <div class="row mt-2 mb-2 ad-top-sidebar">
+                        <div class="row mt-4 mb-4 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_C1')
                         </div>
                     @endif
@@ -420,7 +420,7 @@
                             $updateScheduledMessage = App\Http\Controllers\StandingController::fetchScheduledMatches();
                         @endphp
                     </div>
-                    <table class="table table-sm table-striped mt-2">
+                    <table class="table table-sm table-striped mt-4">
                         <thead
                             style="
                             background: blueviolet;
@@ -510,7 +510,7 @@
                         Serie B
                     </div>
                     @if (!$isMobile)
-                        <div class="row mt-2 ad-top-sidebar">
+                        <div class="row mt-4 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_B1')
                         </div>
                     @endif
