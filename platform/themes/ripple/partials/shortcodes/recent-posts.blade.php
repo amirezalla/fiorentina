@@ -82,7 +82,7 @@
                                 <div class="col-md-12 col-sm-12 col-12">
                                     @foreach ($posts as $index => $post)
                                         <article class="post post__vertical post__vertical--single post-item"
-                                            style="display: {{ $index < $minMainPostsLimit ? 'grid' : 'none' }}; align-items: center; margin-bottom: 5px;grid-template-columns: 2fr 3fr;">
+                                            style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
                                             <!-- Image on the left -->
                                             <div class="post__thumbnail" style=" width: 48%;">
                                                 @php
