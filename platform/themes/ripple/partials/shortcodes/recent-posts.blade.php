@@ -96,7 +96,8 @@
                                             </div>
 
                                             <!-- Content (Title and Description) on the right -->
-                                            <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px;">
+                                            <div class="post__content-wrap"
+                                                style="flex: 2.5; padding-left: 20px;margin-top:5%">
                                                 <header class="post__header">
                                                     @php
 
@@ -173,7 +174,7 @@
 
                                         <!-- Optional ads -->
                                         @if ($index == 0)
-                                            <div class="d-none d-md-block">
+                                            <div class="d-none d-md-block mb-4">
                                                 @include('ads.includes.adsrecentp1')
 
                                             </div>
@@ -191,7 +192,7 @@
                                             </div>
                                         @endif
                                         @if ($index == 5)
-                                            <div class="d-none d-md-block">
+                                            <div class="d-none d-md-block mb-4">
                                                 @include('ads.includes.adsrecentp3')
                                             </div>
 
@@ -200,12 +201,12 @@
                                             </div>
                                         @endif
                                         @if ($index == 7)
-                                            <div class="d-none d-md-block">
+                                            <div class="d-none d-md-block mb-4">
                                                 @include('ads.includes.adsrecentp2')
                                             </div>
                                         @endif
                                         @if ($index == 10)
-                                            <div class="tenth-place">
+                                            <div class="tenth-place mb-4">
                                                 @include('ads.includes.adsrecentp1')
 
                                             </div>
