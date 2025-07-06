@@ -152,14 +152,15 @@
                                                 <div class="post__content">
                                                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
                                                     <span class=" text-dark mt-1 d-block"
-                                                        style="font-family: 'Titillium Web', sans-serif; font-weight: 600; font-size: 16px;color:#888">
+                                                        style="font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 0.9rem;color:#888">
                                                         @php
                                                             $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
                                                                 'reference_id',
                                                                 $post->id,
                                                             )->count();
                                                         @endphp
-                                                        Di <a style="color: #8424e3;font-weight: 700;"
+                                                        Di <a
+                                                            style="color: #8424e3;font-weight: 400;font-size: 0.9rem !important;"
                                                             href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                             {{ $post->author->last_name }}</a> /
                                                         <a class="fw-bold" href="{{ $post->url }}#comments"
