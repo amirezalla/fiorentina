@@ -1,35 +1,24 @@
-<div class=" my-4">
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <h2 class="card-title mb-0">{{ $poll->question }}</h2>
-        </div>
-        <div class="card-body">
-            <p class="text-muted">Totale voti: {{ $totalVotes }}</p>
+<div class="poll-card card my-4 shadow-sm">
+    <div class="card-header bg-white border-0 pb-2">
+        <h6 class="m-0 fw-semibold text-uppercase">{{ $poll->question }}</h6>
+    </div>
 
-            <div id="options-container">
-                @foreach ($poll->options as $option)
-                    @php
-                        $percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100, 2) : 0;
-                    @endphp
-                    <div class="mb-3">
-                        <button
-                            class="btn btn-outline-primary vote-btn w-100 position-relative d-flex justify-content-between align-items-center"
-                            data-id="{{ $option->id }}" style="overflow: hidden;">
-                            {{-- "Filling" background using an absolutely positioned div --}}
-                            <div class="position-absolute top-0 start-0 h-100 bg-primary opacity-25"
-                                style="width: {{ $percentage }}%; z-index:1;">
-                            </div>
-                            <span class="mx-2" style="z-index:2;">{{ $option->option }}</span>
-                            <span class="mx-2" style="z-index:2;">{{ $percentage }}%</span>
-                        </button>
-                    </div>
-                @endforeach
-            </div>
+    <div class="card-body pt-3">
+        <p class="small text-muted mb-4">Totale voti: {{ $totalVotes }}</p>
 
-            <div id="results-container" class="mt-4 d-none">
-                {{-- We’ll dynamically update if you want more details here --}}
-            </div>
-        </div>
+        @foreach ($poll->options as $option)
+            @php
+                $percentage = $totalVotes > 0 ? round(($option->votes / $totalVotes) * 100) : 0;
+            @endphp
+
+            <!-- Only two extra spans; “fill” span is the bar -->
+            <button class="poll-option w-100 mb-3 position-relative" data-id="{{ $option->id }}"
+                {{ session('votedOption') ? 'disabled' : '' }}>
+                <span class="option-text">{{ $option->option }}</span>
+                <span class="option-perc fw-semibold">{{ $percentage }}%</span>
+                <span class="fill" style="width: {{ $percentage }}%"></span>
+            </button>
+        @endforeach
     </div>
 </div>
 <script>
