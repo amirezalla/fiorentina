@@ -4992,6 +4992,9 @@ header>.container,
 
 }
 
+.custom-8-6 { flex: 0 0 71.6%; max-width: 71.6%; }
+.custom-3-4 { flex: 0 0 28.4%; max-width: 28.4%; }
+
 .post--single .post__content {
     color: #444 !important;
 }
