@@ -1,4 +1,4 @@
-<div class="poll-card card my-4 shadow-sm">
+<div class="poll-card card my-4 shadow-sm" style="border-radius: 0 !important;">
     <div class="card-header bg-white border-0 pb-2">
         <h6 class="m-0 fw-semibold text-uppercase">{{ $poll->question }}</h6>
     </div>
