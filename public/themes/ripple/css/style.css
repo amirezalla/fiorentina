@@ -5904,6 +5904,9 @@ header>.container {
     margin-bottom: -2px;
     border-bottom: 2px solid #441274;
     line-height: 1.2;
+    font-size: 1.1rem;
+    padding-bottom: 2px;
+    font-weight: 600;
     /* Helps the text and border align more tightly */
 }
 
