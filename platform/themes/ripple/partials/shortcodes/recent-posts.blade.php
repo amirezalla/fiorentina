@@ -62,7 +62,7 @@
             @endphp
 
             <div @class([
-                'custom-8-6' => $topSidebarContent,
+                'col-lg-8' => $topSidebarContent,
                 'col-12' => !$topSidebarContent,
             ])>
                 <div class="page-content">
@@ -237,7 +237,7 @@
                     $away_team = json_decode($match->away_team, true);
 
                 @endphp
-                <div class="custom-3-4 col-md-4 col-sm-12 col-12">
+                <div class="col-lg-4">
                     <div class="page-sidebar">
 
 
