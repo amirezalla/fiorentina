@@ -206,7 +206,7 @@
         @endphp
 
 
-        <div class="container" style="max-width: 1200px;">
+        <div class="container" style="max-width: 1200px;padding-left:7px;">
             <div class="row">
                 {{-- ------------------------  COLONNA HERO  ------------------------ --}}
                 <div class="col-12 col-lg-9 p-0 m-0">
