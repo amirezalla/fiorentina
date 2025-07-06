@@ -6113,7 +6113,7 @@ h4.mvp-sec-head {
 
 .poll-card {
     border: 1px solid #e9e9ec;
-    border-radius: 12px;
+
     box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
     overflow: hidden;
 }
@@ -6127,7 +6127,7 @@ h4.mvp-sec-head {
 .poll-option {
     border: 1px solid #dcdde1;
     background: #fff;
-    border-radius: 8px;
+
     padding: .55rem .9rem;
     display: flex;
     justify-content: space-between;
