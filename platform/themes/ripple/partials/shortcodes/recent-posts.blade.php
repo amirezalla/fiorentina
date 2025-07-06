@@ -245,7 +245,7 @@
                             @if ($poll->position == 'top')
                                 @include('polls.includes.poll-sidebar', $poll)
                             @endif
-                            <div class="row align-items-center upcoming-match upcoming-match-sidebar">
+                            <div class="mb-2 row align-items-center upcoming-match upcoming-match-sidebar">
                                 <!-- Match Date, Time, and Venue -->
                                 <div class="col-md-12 text-center z-1">
                                     <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm'), " \t\r\n\f\v") }}
@@ -408,7 +408,7 @@
                         </div>
                     </div>
                     @if (!$isMobile)
-                        <div class="row mt-2 ad-top-sidebar">
+                        <div class="row mt-2 mb-2 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_C1')
                         </div>
                     @endif
@@ -510,7 +510,7 @@
                         Serie B
                     </div>
                     @if (!$isMobile)
-                        <div class="row mt-30 ad-top-sidebar">
+                        <div class="row mt-2 ad-top-sidebar">
                             @include('ads.includes.SIZE_300X250_B1')
                         </div>
                     @endif
