@@ -13,7 +13,7 @@
         {{-- TYPE SELECT ------------------------------------------------------ --}}
         <div class="mb-3">
             <label class="form-label fw-semibold">Tipo</label>
-            <select name="type" class="form-select">
+            <select name="type" class="form-select" id="widget-type">
                 <option value="live" {{ old('type', $widget->type) == 'live' ? 'selected' : '' }}>
                     Live
                 </option>
