@@ -260,6 +260,37 @@
                                     overflow: hidden;
                                 }
 
+                                #{{ $uniq }} .yt-header {
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+                                    padding: .4rem .75rem;
+                                    background: #4b2d7f;
+                                    color: #fff;
+                                    font-weight: 600;
+                                }
+
+                                #{{ $uniq }} .yt-header .yt-icon {
+                                    width: 20px;
+                                    height: 20px;
+                                    fill: #fff;
+                                    margin-right: .4rem;
+                                }
+
+                                #{{ $uniq }} .yt-header a {
+                                    color: #fff;
+                                    text-decoration: none;
+                                    font-size: .875rem;
+                                    padding: .2rem .6rem;
+                                    border: 1px solid #fff;
+                                    border-radius: 6px;
+                                    transition: background .2s;
+                                }
+
+                                #{{ $uniq }} .yt-header a:hover {
+                                    background: rgba(255, 255, 255, .15);
+                                }
+
                                 #{{ $uniq }} iframe {
                                     width: 100%;
                                     height: 200px;
@@ -303,6 +334,18 @@
                             </style>
 
                             <div id="{{ $uniq }}">
+                                <div class="yt-header">
+                                    <div class="d-flex align-items-center">
+                                        {{-- simple SVG play icon --}}
+                                        <svg class="yt-icon" viewBox="0 0 24 24">
+                                            <path
+                                                d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19 3.5 12 3.5 12 3.5s-7 0-9.4.6a3 3 0 0 0-2.1 2.1A31.7 31.7 0 0 0 0 12a31.7 31.7 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2.4.6 9.4.6 9.4.6s7 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.7 31.7 0 0 0 24 12a31.7 31.7 0 0 0-.5-5.8zM9.6 15.5V8.5l6 3.5-6 3.5z" />
+                                        </svg>
+                                        YouTube
+                                    </div>
+                                    <a href="https://www.youtube.com/@laviola_it" target="_blank"
+                                        rel="noopener">Seguici</a>
+                                </div>
                                 @if ($widget->type === 'live')
                                     <iframe
                                         src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?autoplay=0&rel=0"
