@@ -242,7 +242,7 @@
                         @php
                             $widget = \App\Models\YtWidget::first();
                             $playlistIds = collect($widget->playlist_urls)
-                                ->map(fn($u) => yt_id($u)) // turn URL → ID
+                                ->map(fn($u) => \App\Models\YtWidget::extractId($u)) 
                                 ->values();
                         @endphp
                         @if ($widget)
