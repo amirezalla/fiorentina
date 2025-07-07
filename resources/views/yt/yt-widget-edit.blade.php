@@ -31,7 +31,7 @@
 
         {{-- PLAYLIST URLS ---------------------------------------------------- --}}
         <div id="playlist-fields" class="mb-3 {{ old('type', $widget->type) == 'playlist' ? '' : 'd-none' }}">
-            <label class="form-label">URL video (uno per riga)</label>
+            <label class="form-label">URL video </label>
 
             <textarea name="playlist_urls[]" rows="5" class="form-control" placeholder="https://youtu.be/XXXXXXX">
 {{ old('playlist_urls') ? implode("\n", old('playlist_urls')) : implode("\n", $widget->playlist_urls ?? []) }}
