@@ -247,15 +247,16 @@
                                 $uniq = 'ytwidget-' . uniqid();
                             @endphp
                             <style>
-                                /* floating bottom-right */
+                                /* === desktop / ≥ 576 px (unchanged) === */
                                 #{{ $uniq }} {
                                     position: fixed;
                                     bottom: 20px;
                                     right: 20px;
                                     width: 340px;
-                                    z-index: 9999999999;
-                                    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+                                    /*   16 : 9 — 340 × 192 px   */
+                                    z-index: 9999;
                                     border-radius: 10px;
+                                    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
                                     overflow: hidden;
                                 }
 
@@ -266,8 +267,8 @@
                                 }
 
                                 #{{ $uniq }} .yt-controls {
-                                    margin-top: -7px;
                                     display: flex;
+                                    margin-top: -7px;
                                     justify-content: space-between;
                                     background: #4b2d7f;
                                 }
@@ -275,13 +276,29 @@
                                 #{{ $uniq }} .yt-controls button {
                                     flex: 1;
                                     color: #fff;
-                                    background: none;
                                     border: 0;
+                                    background: none;
                                     padding: .5rem;
                                 }
 
                                 #{{ $uniq }} .yt-controls button:hover {
                                     background: #37235c;
+                                }
+
+                                /* === phones / tablets (< 576 px) — stop floating === */
+                                @media (max-width: 575.98px) {
+                                    #{{ $uniq }} {
+                                        position: static;
+                                        /* back to normal flow  */
+                                        width: 100%;
+                                        /* full-width card      */
+                                        margin: 0 0 1rem;
+                                        /* bottom spacing       */
+                                        bottom: auto;
+                                        right: auto;
+                                        box-shadow: none;
+                                        /* optional: flatter    */
+                                    }
                                 }
                             </style>
 
