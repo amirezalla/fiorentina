@@ -241,6 +241,9 @@
                     <div class="page-sidebar">
                         @php
                             $widget = \App\Models\YtWidget::first();
+                            $playlistIds = collect($widget->playlist_urls)
+                                ->map(fn($u) => yt_id($u)) // turn URL → ID
+                                ->values();
                         @endphp
                         @if ($widget)
                             @php
@@ -302,319 +305,351 @@
                                 }
                             </style>
 
-                            <<div id="{{ $uniq }}">
+                            <div id="{{ $uniq }}">
                                 @if ($widget->type === 'live')
                                     <iframe
-                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?autoplay=0&rel=0"
+                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?rel=0"
                                         allowfullscreen></iframe>
                                 @else
-                                    <iframe id="{{ $uniq }}-frame"
-                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->playlist_urls[0] ?? '') }}?enablejsapi=1&rel=0"
-                                        allowfullscreen></iframe>
-
+                                    {{-- playlist ---------------------------------------------------- --}}
+                                    <iframe id="{{ $uniq }}-frame" allowfullscreen></iframe>
                                     <div class="yt-controls">
                                         <button id="prev-{{ $uniq }}">&#9664;</button>
                                         <button id="next-{{ $uniq }}">&#9654;</button>
                                     </div>
 
-                                    <script src="https://www.youtube.com/iframe_api"></script>
                                     <script>
-                                        let player, index = 0,
-                                            playlist = @json($widget->playlist_urls);
+                                        (function() {
+                                            /* -------- data from PHP -------- */
+                                            const ids = @json($playlistIds); // pure video-IDs
+                                            let index = 0;
+                                            const frame = '{{ $uniq }}-frame';
 
-                                        function onYouTubeIframeAPIReady() {
-                                            player = new YT.Player('{{ $uniq }}-frame');
-                                        }
-                                        document.getElementById('prev-{{ $uniq }}').onclick = () => step(-1);
-                                        document.getElementById('next-{{ $uniq }}').onclick = () => step(+1);
+                                            /* -------- attach click handlers -------- */
+                                            document.getElementById('prev-{{ $uniq }}')
+                                                .addEventListener('click', () => step(-1));
+                                            document.getElementById('next-{{ $uniq }}')
+                                                .addEventListener('click', () => step(+1));
 
-                                        function step(delta) {
-                                            if (!playlist.length) return;
-                                            index = (index + delta + playlist.length) % playlist.length;
-                                            player.loadVideoById(playlist[index]);
-                                        }
+                                            /* -------- load / rotate videos -------- */
+                                            let player;
+
+                                            function step(delta) {
+                                                if (!player || !ids.length) return;
+                                                index = (index + delta + ids.length) % ids.length;
+                                                player.loadVideoById(ids[index]);
+                                            }
+
+                                            /* -------- initialise YT Player safely -------- */
+                                            function boot() {
+                                                player = new YT.Player(frame, {
+                                                    videoId: ids[0] ?? '',
+                                                });
+                                            }
+
+                                            /* load API once, then run boot() for every widget */
+                                            if (window.YT && YT.Player) {
+                                                boot();
+                                            } else {
+                                                window._ytBoots = (window._ytBoots || []).concat(boot);
+                                                if (!window._ytApiAdded) {
+                                                    window._ytApiAdded = true;
+                                                    const s = document.createElement('script');
+                                                    s.src = 'https://www.youtube.com/iframe_api';
+                                                    document.head.appendChild(s);
+                                                    window.onYouTubeIframeAPIReady = () =>
+                                                        window._ytBoots.forEach(fn => fn());
+                                                }
+                                            }
+                                        })();
                                     </script>
                                 @endif
-                    </div>
-            @endif
-
-
-            <section>
-                @if ($poll->position == 'top')
-                    @include('polls.includes.poll-sidebar', $poll)
-                @endif
-                <div class="mb-4 row align-items-center upcoming-match upcoming-match-sidebar">
-                    <!-- Match Date, Time, and Venue -->
-                    <div class="col-md-12 text-center z-1">
-                        <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm'), " \t\r\n\f\v") }}
-                        </p>
-                    </div>
-
-                    <!-- Team Logos and Names -->
-                    <div class="col-md-12 text-center z-1">
-                        <div class="row">
-                            <div class="col-6">
-                                <img src="{{ $home_team['logo'] }}" alt="{{ $home_team['name'] }} Crest"
-                                    style="height: 30px; margin-bottom: 10px;">
-                                <h5>{{ $home_team['name'] }}</h5>
                             </div>
-                            <div class="col-6">
-                                <img src="{{ $away_team['logo'] }}" alt="{{ $away_team['name'] }} Crest"
-                                    style="height: 30px; margin-bottom: 10px;">
-                                <h5>{{ $away_team['name'] }}</h5>
+                        @endif
+
+
+                        <section>
+                            @if ($poll->position == 'top')
+                                @include('polls.includes.poll-sidebar', $poll)
+                            @endif
+                            <div class="mb-4 row align-items-center upcoming-match upcoming-match-sidebar">
+                                <!-- Match Date, Time, and Venue -->
+                                <div class="col-md-12 text-center z-1">
+                                    <p>{{ ucwords(\Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm'), " \t\r\n\f\v") }}
+                                    </p>
+                                </div>
+
+                                <!-- Team Logos and Names -->
+                                <div class="col-md-12 text-center z-1">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <img src="{{ $home_team['logo'] }}" alt="{{ $home_team['name'] }} Crest"
+                                                style="height: 30px; margin-bottom: 10px;">
+                                            <h5>{{ $home_team['name'] }}</h5>
+                                        </div>
+                                        <div class="col-6">
+                                            <img src="{{ $away_team['logo'] }}" alt="{{ $away_team['name'] }} Crest"
+                                                style="height: 30px; margin-bottom: 10px;">
+                                            <h5>{{ $away_team['name'] }}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Ticket Buttons -->
+                                <div class="col-md-12 text-center mt-4 z-1">
+                                    @if ($match->status == 'LIVE')
+                                        <a href="/diretta?match_id={{ $match->match_id }}"
+                                            class="btn-comment-submit text-white">VAI ALLA
+                                            DIRETTA</a>
+                                    @else
+                                        <div id="countdown mt-10"
+                                            style="background: #441274;padding:10px;border-radius:3px;">
+                                            <i class="fa fa-clock-o" aria-hidden="true"></i> <span
+                                                id="countdown-timer"></span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                    </div>
+                    @if (!$isMobile)
+                        <div class="row mt-4 ad-top-sidebar">
+                            @include('ads.includes.SIZE_300X250_TOP')
+                        </div>
+                    @endif
+                    @include('last_post_editoriale')
+                    <div class="widget widget__recent-post mt-4 mb-4">
+                        <ul class="nav nav-tabs" id="postTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts"
+                                    role="tab" aria-controls="recent-posts" aria-selected="true">
+                                    I PIÙ LETTI
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="most-commented-tab" data-toggle="tab" href="#most-commented"
+                                    role="tab" aria-controls="most-commented" aria-selected="false">
+                                    <span style="color: #8424e3; margin-right: 4px;"><i
+                                            class="fas fa-bolt"></i></span>
+                                    I PIÙ COMMENTATI
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="postTabsContent">
+                            <div class="tab-pane fade show active" id="recent-posts" role="tabpanel"
+                                aria-labelledby="recent-posts-tab">
+                                <div class="widget__content">
+                                    <ul>
+                                        @foreach ($mostReadPosts as $post)
+                                            <li>
+                                                <article class="post post__widget d-flex align-items-start"
+                                                    style="margin-bottom: 10px;">
+                                                    {{-- Thumbnail on the left, fixed width --}}
+                                                    <div class="post__thumbnail"
+                                                        style="width: 80px; flex-shrink: 0; margin-right: 10px;">
+                                                        {{ RvMedia::image($post->image, $post->name, 'thumb') }}
+                                                        <a href="{{ $post->url }}" title="{{ $post->name }}"
+                                                            class="post__overlay"></a>
+                                                    </div>
+
+                                                    {{-- Text content on the right --}}
+                                                    <header class="post__header" style="flex: 1;">
+                                                        {{-- Optional: Category label in uppercase, if you want it above the title --}}
+                                                        @if ($post->categories->count())
+                                                            <span class="category-span">
+                                                                {{ strtoupper($post->categories->first()->name) }}
+                                                            </span>
+                                                        @endif
+
+                                                        {{-- Post Title --}}
+                                                        <h4 class="post__title" style="margin: 0;">
+                                                            <a href="{{ $post->url }}"
+                                                                title="{{ $post->name }}"
+                                                                style="text-decoration: none; color: inherit;">
+                                                                {{ $post->name }}
+                                                            </a>
+                                                        </h4>
+
+                                                        {{-- Date --}}
+                                                        <div class="post__meta date-span"
+                                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
+                                                            <span class="post__created-at">
+                                                                {{ Theme::formatDate($post->created_at) }}
+                                                            </span>
+                                                        </div>
+                                                    </header>
+                                                </article>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="most-commented" role="tabpanel"
+                                aria-labelledby="most-commented-tab">
+                                <div class="widget__content">
+                                    <ul>
+                                        @foreach ($mostCommentedPosts as $post)
+                                            <li>
+                                                <article class="post post__widget d-flex align-items-start"
+                                                    style="margin-bottom: 10px;">
+                                                    {{-- Thumbnail on the left, fixed width --}}
+                                                    <div class="post__thumbnail"
+                                                        style="width: 80px; flex-shrink: 0; margin-right: 10px;">
+                                                        {{ RvMedia::image($post->image, $post->name, 'thumb') }}
+                                                        <a href="{{ $post->url }}" title="{{ $post->name }}"
+                                                            class="post__overlay"></a>
+                                                    </div>
+
+                                                    {{-- Text content on the right --}}
+                                                    <header class="post__header" style="flex: 1;">
+                                                        {{-- Optional: Category label in uppercase, if you want it above the title --}}
+                                                        @if ($post->categories->count())
+                                                            <span
+                                                                style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
+                                                                {{ strtoupper($post->categories->first()->name) }}
+                                                            </span>
+                                                        @endif
+
+                                                        {{-- Post Title --}}
+                                                        <h4 class="post__title" style="margin: 0;">
+                                                            <a href="{{ $post->url }}"
+                                                                title="{{ $post->name }}"
+                                                                style="text-decoration: none; color: inherit;">
+                                                                {{ $post->name }}
+                                                            </a>
+                                                        </h4>
+
+                                                        {{-- Date --}}
+                                                        <div class="post__meta"
+                                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
+                                                            <span class="post__created-at">
+                                                                {{ Theme::formatDate($post->created_at) }}
+                                                            </span>
+                                                        </div>
+                                                    </header>
+                                                </article>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    @if (!$isMobile)
+                        <div class="row mt-4 mb-4 ad-top-sidebar">
+                            @include('ads.includes.SIZE_300X250_C1')
+                        </div>
+                    @endif
 
-                    <!-- Ticket Buttons -->
-                    <div class="col-md-12 text-center mt-4 z-1">
-                        @if ($match->status == 'LIVE')
-                            <a href="/diretta?match_id={{ $match->match_id }}"
-                                class="btn-comment-submit text-white">VAI ALLA
-                                DIRETTA</a>
-                        @else
-                            <div id="countdown mt-10" style="background: #441274;padding:10px;border-radius:3px;">
-                                <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="countdown-timer"></span>
-                            </div>
-                        @endif
+
+                    <div>
+                        @php
+                            $updateMessage = App\Http\Controllers\StandingController::fetchStandingsIfNeeded();
+                            $updateScheduledMessage = App\Http\Controllers\StandingController::fetchScheduledMatches();
+                        @endphp
                     </div>
-                </div>
-        </div>
-        @if (!$isMobile)
-            <div class="row mt-4 ad-top-sidebar">
-                @include('ads.includes.SIZE_300X250_TOP')
-            </div>
-        @endif
-        @include('last_post_editoriale')
-        <div class="widget widget__recent-post mt-4 mb-4">
-            <ul class="nav nav-tabs" id="postTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts"
-                        role="tab" aria-controls="recent-posts" aria-selected="true">
-                        I PIÙ LETTI
-                    </a>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="most-commented-tab" data-toggle="tab" href="#most-commented"
-                        role="tab" aria-controls="most-commented" aria-selected="false">
-                        <span style="color: #8424e3; margin-right: 4px;"><i class="fas fa-bolt"></i></span>
-                        I PIÙ COMMENTATI
-                    </a>
-                </li>
-            </ul>
-            <div class="tab-content" id="postTabsContent">
-                <div class="tab-pane fade show active" id="recent-posts" role="tabpanel"
-                    aria-labelledby="recent-posts-tab">
-                    <div class="widget__content">
-                        <ul>
-                            @foreach ($mostReadPosts as $post)
-                                <li>
-                                    <article class="post post__widget d-flex align-items-start"
-                                        style="margin-bottom: 10px;">
-                                        {{-- Thumbnail on the left, fixed width --}}
-                                        <div class="post__thumbnail"
-                                            style="width: 80px; flex-shrink: 0; margin-right: 10px;">
-                                            {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                            <a href="{{ $post->url }}" title="{{ $post->name }}"
-                                                class="post__overlay"></a>
-                                        </div>
-
-                                        {{-- Text content on the right --}}
-                                        <header class="post__header" style="flex: 1;">
-                                            {{-- Optional: Category label in uppercase, if you want it above the title --}}
-                                            @if ($post->categories->count())
-                                                <span class="category-span">
-                                                    {{ strtoupper($post->categories->first()->name) }}
-                                                </span>
-                                            @endif
-
-                                            {{-- Post Title --}}
-                                            <h4 class="post__title" style="margin: 0;">
-                                                <a href="{{ $post->url }}" title="{{ $post->name }}"
-                                                    style="text-decoration: none; color: inherit;">
-                                                    {{ $post->name }}
-                                                </a>
-                                            </h4>
-
-                                            {{-- Date --}}
-                                            <div class="post__meta date-span"
-                                                style="font-size: 0.75rem; color: #999; margin-top: 2px;">
-                                                <span class="post__created-at">
-                                                    {{ Theme::formatDate($post->created_at) }}
-                                                </span>
-                                            </div>
-                                        </header>
-                                    </article>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="most-commented" role="tabpanel" aria-labelledby="most-commented-tab">
-                    <div class="widget__content">
-                        <ul>
-                            @foreach ($mostCommentedPosts as $post)
-                                <li>
-                                    <article class="post post__widget d-flex align-items-start"
-                                        style="margin-bottom: 10px;">
-                                        {{-- Thumbnail on the left, fixed width --}}
-                                        <div class="post__thumbnail"
-                                            style="width: 80px; flex-shrink: 0; margin-right: 10px;">
-                                            {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                            <a href="{{ $post->url }}" title="{{ $post->name }}"
-                                                class="post__overlay"></a>
-                                        </div>
-
-                                        {{-- Text content on the right --}}
-                                        <header class="post__header" style="flex: 1;">
-                                            {{-- Optional: Category label in uppercase, if you want it above the title --}}
-                                            @if ($post->categories->count())
-                                                <span
-                                                    style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
-                                                    {{ strtoupper($post->categories->first()->name) }}
-                                                </span>
-                                            @endif
-
-                                            {{-- Post Title --}}
-                                            <h4 class="post__title" style="margin: 0;">
-                                                <a href="{{ $post->url }}" title="{{ $post->name }}"
-                                                    style="text-decoration: none; color: inherit;">
-                                                    {{ $post->name }}
-                                                </a>
-                                            </h4>
-
-                                            {{-- Date --}}
-                                            <div class="post__meta"
-                                                style="font-size: 0.75rem; color: #999; margin-top: 2px;">
-                                                <span class="post__created-at">
-                                                    {{ Theme::formatDate($post->created_at) }}
-                                                </span>
-                                            </div>
-                                        </header>
-                                    </article>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @if (!$isMobile)
-            <div class="row mt-4 mb-4 ad-top-sidebar">
-                @include('ads.includes.SIZE_300X250_C1')
-            </div>
-        @endif
-
-
-        <div>
-            @php
-                $updateMessage = App\Http\Controllers\StandingController::fetchStandingsIfNeeded();
-                $updateScheduledMessage = App\Http\Controllers\StandingController::fetchScheduledMatches();
-            @endphp
-        </div>
-        <table class="table table-sm table-striped mt-4">
-            <thead
-                style="
+                    <table class="table table-sm table-striped mt-4">
+                        <thead
+                            style="
                             background: blueviolet;
                             border: 1px solid white;
                             color: white;
                             font-weight: 900;
                         ">
-                <tr>
-                    <th style="border-right: 1px solid white;font-weight:700">Classifica Serie A</th>
-                    <th style="border-right: 1px solid white;">PT</th>
-                    <th style="border-right: 1px solid white;">G</th>
-                    <th style="border-right: 1px solid white;">V</th>
-                    <th style="border-right: 1px solid white;">N</th>
-                    <th style="border-right: 1px solid white;">P</th>
-                    <th>DR</th>
-                </tr>
-            </thead>
-            <tbody
-                style="
+                            <tr>
+                                <th style="border-right: 1px solid white;font-weight:700">Classifica Serie A</th>
+                                <th style="border-right: 1px solid white;">PT</th>
+                                <th style="border-right: 1px solid white;">G</th>
+                                <th style="border-right: 1px solid white;">V</th>
+                                <th style="border-right: 1px solid white;">N</th>
+                                <th style="border-right: 1px solid white;">P</th>
+                                <th>DR</th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            style="
                             background: white;
                             border: 1px solid white;
                         ">
 
-                @foreach (App\Models\Standing::all() as $index => $standing)
-                    @php
-                        // Assign special styles or labels based on the position
-                        $rank = $index + 1;
-                        $labelClass = '';
-                        if ($rank <= 4) {
-                            $labelClass = 'badge badge-success'; // First place
-                        } elseif ($rank == 5) {
-                            $labelClass = 'badge badge-warning'; // Top 4
-                        } elseif ($rank == 6) {
-                            $labelClass = 'badge badge-warning'; // Top 6
-                        } elseif ($rank >= 18) {
-                            $labelClass = 'badge badge-danger'; // Top 6
-                        } else {
-                            $labelClass = 'text-dark badge badge-light'; // Top 6
-                        }
-                    @endphp
+                            @foreach (App\Models\Standing::all() as $index => $standing)
+                                @php
+                                    // Assign special styles or labels based on the position
+                                    $rank = $index + 1;
+                                    $labelClass = '';
+                                    if ($rank <= 4) {
+                                        $labelClass = 'badge badge-success'; // First place
+                                    } elseif ($rank == 5) {
+                                        $labelClass = 'badge badge-warning'; // Top 4
+                                    } elseif ($rank == 6) {
+                                        $labelClass = 'badge badge-warning'; // Top 6
+                                    } elseif ($rank >= 18) {
+                                        $labelClass = 'badge badge-danger'; // Top 6
+                                    } else {
+                                        $labelClass = 'text-dark badge badge-light'; // Top 6
+                                    }
+                                @endphp
 
-                    <tr style="border-bottom:1px solid blueviolet">
-                        <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;" @endif
-                            style="border-right: 1px solid blueviolet;">
-                            <span
-                                class="{{ $labelClass }}"@if ($standing->short_name == 'Fiorentina') style='color:white !important' @endif>{{ $rank }}</span>
-                            <img src="{{ $standing->crest_url }}" width="15">
-                            {{ $standing->short_name }}
-                        </td>
-                        <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;" @endif
-                            style="border-right: 1px solid blueviolet;">
-                            {{ $standing->points }}
-                        </td>
-                        <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
-                            style="border-right: 1px solid blueviolet;text-align:center">
-                            {{ $standing->played_games }}
-                        </td>
-                        <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
-                            style="border-right: 1px solid blueviolet;text-align:center">
-                            {{ $standing->won }}
-                        </td>
-                        <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
-                            style="border-right: 1px solid blueviolet;text-align:center">
-                            {{ $standing->draw }}
-                        </td>
-                        <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
-                            style="border-right: 1px solid blueviolet;text-align:center">
-                            {{ $standing->lost }}
-                        </td>
-                        <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
-                            style="text-align:center">{{ $standing->goal_difference }}
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="legend mb-4">
-            <span class="badge badge-success"
-                style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
-            Champions League
-            <span class="badge badge-warning"
-                style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
-            Europa & Conference League
-            <br>
-            <span class="badge badge-danger"
-                style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
-            Serie B
-        </div>
-        @if (!$isMobile)
-            <div class="row mt-4 ad-top-sidebar">
-                @include('ads.includes.SIZE_300X250_B1')
-            </div>
-        @endif
+                                <tr style="border-bottom:1px solid blueviolet">
+                                    <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;" @endif
+                                        style="border-right: 1px solid blueviolet;">
+                                        <span
+                                            class="{{ $labelClass }}"@if ($standing->short_name == 'Fiorentina') style='color:white !important' @endif>{{ $rank }}</span>
+                                        <img src="{{ $standing->crest_url }}" width="15">
+                                        {{ $standing->short_name }}
+                                    </td>
+                                    <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;" @endif
+                                        style="border-right: 1px solid blueviolet;">
+                                        {{ $standing->points }}
+                                    </td>
+                                    <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
+                                        style="border-right: 1px solid blueviolet;text-align:center">
+                                        {{ $standing->played_games }}
+                                    </td>
+                                    <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
+                                        style="border-right: 1px solid blueviolet;text-align:center">
+                                        {{ $standing->won }}
+                                    </td>
+                                    <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
+                                        style="border-right: 1px solid blueviolet;text-align:center">
+                                        {{ $standing->draw }}
+                                    </td>
+                                    <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
+                                        style="border-right: 1px solid blueviolet;text-align:center">
+                                        {{ $standing->lost }}
+                                    </td>
+                                    <td @if ($standing->short_name == 'Fiorentina') style="background-color:#441274 !important;color:white !important;text-align:center" @endif
+                                        style="text-align:center">{{ $standing->goal_difference }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <div class="legend mb-4">
+                        <span class="badge badge-success"
+                            style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
+                        Champions League
+                        <span class="badge badge-warning"
+                            style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
+                        Europa & Conference League
+                        <br>
+                        <span class="badge badge-danger"
+                            style="display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></span>
+                        Serie B
+                    </div>
+                    @if (!$isMobile)
+                        <div class="row mt-4 ad-top-sidebar">
+                            @include('ads.includes.SIZE_300X250_B1')
+                        </div>
+                    @endif
 
-        @if ($poll->position == 'under_calendario')
-            @include('polls.includes.poll-sidebar', $poll)
-        @endif
-        @include('videos.includes.adsvideo', ['foo' => 'bar'])
+                    @if ($poll->position == 'under_calendario')
+                        @include('polls.includes.poll-sidebar', $poll)
+                    @endif
+                    @include('videos.includes.adsvideo', ['foo' => 'bar'])
 
-        @if ($poll->position == 'end')
-            @include('polls.includes.poll-sidebar', $poll)
-        @endif
+                    @if ($poll->position == 'end')
+                        @include('polls.includes.poll-sidebar', $poll)
+                    @endif
 </section>
 </div>
 
