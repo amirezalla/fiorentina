@@ -262,7 +262,7 @@
 
                                 #{{ $uniq }} iframe {
                                     width: 100%;
-                                    height: 192px;
+                                    height: 200px;
                                     border: 0;
                                 }
 
