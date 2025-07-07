@@ -241,9 +241,6 @@
                     <div class="page-sidebar">
                         @php
                             $widget = \App\Models\YtWidget::first();
-                            $playlistIds = collect($widget->playlist_urls)
-                                ->map(fn($u) => \App\Models\YtWidget::extractId($u)) 
-                                ->values();
                         @endphp
                         @if ($widget)
                             @php
@@ -308,60 +305,30 @@
                             <div id="{{ $uniq }}">
                                 @if ($widget->type === 'live')
                                     <iframe
-                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?rel=0"
+                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?autoplay=0&rel=0"
                                         allowfullscreen></iframe>
                                 @else
-                                    {{-- playlist ---------------------------------------------------- --}}
-                                    <iframe id="{{ $uniq }}-frame" allowfullscreen></iframe>
-                                    <div class="yt-controls">
-                                        <button id="prev-{{ $uniq }}">&#9664;</button>
-                                        <button id="next-{{ $uniq }}">&#9654;</button>
-                                    </div>
+                                    <iframe id="{{ $uniq }}-frame"
+                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->playlist_urls[0] ?? '') }}?enablejsapi=1&rel=0"
+                                        allowfullscreen></iframe>
 
+
+                                    <script src="https://www.youtube.com/iframe_api"></script>
                                     <script>
-                                        (function() {
-                                            /* -------- data from PHP -------- */
-                                            const ids = @json($playlistIds); // pure video-IDs
-                                            let index = 0;
-                                            const frame = '{{ $uniq }}-frame';
+                                        let player, index = 0,
+                                            playlist = @json($widget->playlist_urls);
 
-                                            /* -------- attach click handlers -------- */
-                                            document.getElementById('prev-{{ $uniq }}')
-                                                .addEventListener('click', () => step(-1));
-                                            document.getElementById('next-{{ $uniq }}')
-                                                .addEventListener('click', () => step(+1));
+                                        function onYouTubeIframeAPIReady() {
+                                            player = new YT.Player('{{ $uniq }}-frame');
+                                        }
+                                        document.getElementById('prev-{{ $uniq }}').onclick = () => step(-1);
+                                        document.getElementById('next-{{ $uniq }}').onclick = () => step(+1);
 
-                                            /* -------- load / rotate videos -------- */
-                                            let player;
-
-                                            function step(delta) {
-                                                if (!player || !ids.length) return;
-                                                index = (index + delta + ids.length) % ids.length;
-                                                player.loadVideoById(ids[index]);
-                                            }
-
-                                            /* -------- initialise YT Player safely -------- */
-                                            function boot() {
-                                                player = new YT.Player(frame, {
-                                                    videoId: ids[0] ?? '',
-                                                });
-                                            }
-
-                                            /* load API once, then run boot() for every widget */
-                                            if (window.YT && YT.Player) {
-                                                boot();
-                                            } else {
-                                                window._ytBoots = (window._ytBoots || []).concat(boot);
-                                                if (!window._ytApiAdded) {
-                                                    window._ytApiAdded = true;
-                                                    const s = document.createElement('script');
-                                                    s.src = 'https://www.youtube.com/iframe_api';
-                                                    document.head.appendChild(s);
-                                                    window.onYouTubeIframeAPIReady = () =>
-                                                        window._ytBoots.forEach(fn => fn());
-                                                }
-                                            }
-                                        })();
+                                        function step(delta) {
+                                            if (!playlist.length) return;
+                                            index = (index + delta + playlist.length) % playlist.length;
+                                            player.loadVideoById(playlist[index]);
+                                        }
                                     </script>
                                 @endif
                             </div>
