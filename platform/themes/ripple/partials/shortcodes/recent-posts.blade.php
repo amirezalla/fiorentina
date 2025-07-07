@@ -253,7 +253,7 @@
                                     bottom: 20px;
                                     right: 20px;
                                     width: 340px;
-                                    z-index: 9999;
+                                    z-index: 9999999999;
                                     box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
                                     border-radius: 10px;
                                     overflow: hidden;
@@ -266,6 +266,7 @@
                                 }
 
                                 #{{ $uniq }} .yt-controls {
+                                    margin-top: -7px;
                                     display: flex;
                                     justify-content: space-between;
                                     background: #4b2d7f;
