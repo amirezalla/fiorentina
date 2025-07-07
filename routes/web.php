@@ -418,6 +418,16 @@ Route::group(['middleware' => ['web']], function () {
 });
 
 
+/* Admin */
+
+    Route::get ('admin/yt-widget',           [YtWidgetController::class, 'edit'])->name('ytwidget.edit');
+    Route::post('admin/yt-widget',           [YtWidgetController::class, 'update'])->name('ytwidget.update');
+
+
+/* Public include – no controller, just a view composer */
+View::composer('partials.yt-widget', function ($view) {
+    $view->with('widget', \App\Models\YtWidget::first());
+});
 
     Route::get('/chat-settings', [ChatSettingsController::class, 'index'])->name('chat-settings.index');
     Route::post('/chat-settings/update-light-words', [ChatSettingsController::class, 'updateLightWords'])->name('chat-settings.update-light-words');

@@ -239,6 +239,86 @@
                 @endphp
                 <div class="col-lg-4">
                     <div class="page-sidebar">
+                        @php
+                            $widget = \App\Models\YtWidget::first();
+                        @endphp
+                        @if ($widget)
+                            @php
+                                $uniq = 'ytwidget-' . uniqid();
+                            @endphp
+                            <style>
+                                /* floating bottom-right */
+                                #{{ $uniq }} {
+                                    position: fixed;
+                                    bottom: 20px;
+                                    right: 20px;
+                                    width: 340px;
+                                    z-index: 9999;
+                                    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+                                    border-radius: 10px;
+                                    overflow: hidden;
+                                }
+
+                                #{{ $uniq }} iframe {
+                                    width: 100%;
+                                    height: 192px;
+                                    border: 0;
+                                }
+
+                                #{{ $uniq }} .yt-controls {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    background: #4b2d7f;
+                                }
+
+                                #{{ $uniq }} .yt-controls button {
+                                    flex: 1;
+                                    color: #fff;
+                                    background: none;
+                                    border: 0;
+                                    padding: .5rem;
+                                }
+
+                                #{{ $uniq }} .yt-controls button:hover {
+                                    background: #37235c;
+                                }
+                            </style>
+
+                            <div id="{{ $uniq }}">
+                                @if ($widget->type === 'live')
+                                    <iframe
+                                        src="https://www.youtube.com/embed/{{ yt_id($widget->live_url) }}?autoplay=0&rel=0"
+                                        allowfullscreen></iframe>
+                                @else
+                                    <iframe id="{{ $uniq }}-frame"
+                                        src="https://www.youtube.com/embed/{{ yt_id($widget->playlist_urls[0] ?? '') }}?enablejsapi=1&rel=0"
+                                        allowfullscreen></iframe>
+
+                                    <div class="yt-controls">
+                                        <button id="prev-{{ $uniq }}">&#9664;</button>
+                                        <button id="next-{{ $uniq }}">&#9654;</button>
+                                    </div>
+
+                                    <script src="https://www.youtube.com/iframe_api"></script>
+                                    <script>
+                                        let player, index = 0,
+                                            playlist = @json($widget->playlist_urls);
+
+                                        function onYouTubeIframeAPIReady() {
+                                            player = new YT.Player('{{ $uniq }}-frame');
+                                        }
+                                        document.getElementById('prev-{{ $uniq }}').onclick = () => step(-1);
+                                        document.getElementById('next-{{ $uniq }}').onclick = () => step(+1);
+
+                                        function step(delta) {
+                                            if (!playlist.length) return;
+                                            index = (index + delta + playlist.length) % playlist.length;
+                                            player.loadVideoById(playlist[index]);
+                                        }
+                                    </script>
+                                @endif
+                            </div>
+                        @endif
 
 
                         <section>
