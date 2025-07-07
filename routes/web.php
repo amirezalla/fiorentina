@@ -42,6 +42,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DirettaController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WpImportController;
+use App\Http\Controllers\YtWidgetController;
 use App\Http\Controllers\AssetController;
 
 use Botble\Blog\Models\Post;
