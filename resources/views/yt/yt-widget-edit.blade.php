@@ -48,12 +48,19 @@
     {{-- TOGGLE VISIBILITY OF FIELDSETS -------------------------------------- --}}
     @push('scripts')
         <script>
-            document.querySelector('[name=type]').addEventListener('change', e => {
-                const live = document.getElementById('live-fields');
-                const playlist = document.getElementById('playlist-fields');
+            document.addEventListener('DOMContentLoaded', () => {
+                const typeSelect = document.getElementById('widget-type');
+                const liveFields = document.getElementById('live-fields');
+                const listFields = document.getElementById('playlist-fields');
 
-                live.classList.toggle('d-none', e.target.value !== 'live');
-                playlist.classList.toggle('d-none', e.target.value !== 'playlist');
+                function toggle() {
+                    const isLive = typeSelect.value === 'live';
+                    liveFields.classList.toggle('d-none', !isLive);
+                    listFields.classList.toggle('d-none', isLive);
+                }
+
+                typeSelect.addEventListener('change', toggle);
+                toggle(); // run once on page-load
             });
         </script>
     @endpush
