@@ -17,12 +17,7 @@ class YtWidgetController extends Controller
     /* ----------- 2. save form ----------- */
     public function update(Request $request)
     {
-        $request->validate([
-            'type'           => 'required|in:live,playlist',
-            'live_url'       => 'nullable|required_if:type,live|url',
-            'playlist_urls'  => 'array',
-            'playlist_urls.*'=> 'nullable|required_if:type,playlist|url',
-        ]);
+
 
         $widget = YtWidget::first() ?? new YtWidget;
 
