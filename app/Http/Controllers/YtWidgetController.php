@@ -38,4 +38,5 @@ class YtWidgetController extends Controller
         preg_match('%(?:youtu\\.be/|v=|embed/)([\\w-]{11})%i', $url, $m);
         return $m[1] ?? $url;   // accept plain IDs too
     }
+
 }

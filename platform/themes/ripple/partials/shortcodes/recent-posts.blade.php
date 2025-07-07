@@ -287,11 +287,11 @@
                             <div id="{{ $uniq }}">
                                 @if ($widget->type === 'live')
                                     <iframe
-                                        src="https://www.youtube.com/embed/{{ yt_id($widget->live_url) }}?autoplay=0&rel=0"
+                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?autoplay=0&rel=0"
                                         allowfullscreen></iframe>
                                 @else
                                     <iframe id="{{ $uniq }}-frame"
-                                        src="https://www.youtube.com/embed/{{ yt_id($widget->playlist_urls[0] ?? '') }}?enablejsapi=1&rel=0"
+                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->playlist_urls[0] ?? '') }}?enablejsapi=1&rel=0"
                                         allowfullscreen></iframe>
 
                                     <div class="yt-controls">
