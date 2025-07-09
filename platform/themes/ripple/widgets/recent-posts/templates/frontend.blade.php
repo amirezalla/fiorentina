@@ -170,8 +170,7 @@
                 @endforeach
             </div>
         </div>
-        <div class="slider-dots d-flex justify-content-center mt-2"></div>
-
+        <div class="slider-dots d-flex justify-content-center mb-2"></div>
     </div>
 
     <div class="row mt-30 ad-top-sidebar">
