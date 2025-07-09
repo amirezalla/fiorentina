@@ -10,6 +10,56 @@
 @endphp
 
 
+{{-- === Google News & SEO meta === --}}
+<link rel="canonical" href="{{ url($post->slug) }}" />
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ $post->title }}">
+<meta property="og:description" content="{{ $post->excerpt }}">
+<meta property="og:url" content="{{ url($post->slug) }}">
+<meta property="og:image" content="{{ $post->heroImage() }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $post->title }}">
+<meta name="twitter:description" content="{{ $post->excerpt }}">
+<meta name="twitter:image" content="{{ $post->heroImage() }}">
+
+<meta property="article:published_time" content="{{ $post->published_at->toIso8601String() }}">
+<meta property="article:modified_time" content="{{ $post->updated_at->toIso8601String() }}">
+
+<meta name="robots" content="max-image-preview:large">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type":  "NewsArticle",
+  "headline": "{{ Str::limit($post->title, 110, '') }}",
+  "image":    [ "{{ $post->heroImage() }}" ],
+  "datePublished": "{{ $post->published_at->toIso8601String() }}",
+  "dateModified":  "{{ $post->updated_at->toIso8601String() }}",
+  "author": {
+     "@type": "Person",
+     "name": "{{ $post->author->name }}"
+  },
+  "publisher": {
+     "@type": "Organization",
+     "name":  "Laviola.it",
+     "logo": {
+       "@type": "ImageObject",
+       "url": "{{ asset('images/logo-600x60.png') }}",
+       "width": 600,
+       "height": 60
+     }
+  },
+  "description": "{{ Str::limit($post->excerpt, 160, '') }}",
+  "mainEntityOfPage": {
+     "@type": "WebPage",
+     "@id": "{{ url($post->slug) }}"
+  }
+}
+</script>
+
+
 
 @if ($post->author->name)
     <div class="row">
