@@ -343,31 +343,57 @@
                                         rel="noopener">Seguici</a>
                                 </div>
                                 @if ($widget->type === 'live')
-                                    <iframe
-                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?autoplay=0&rel=0"
+
+                                    <iframe src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?rel=0"
                                         allowfullscreen></iframe>
                                 @else
-                                    <iframe id="{{ $uniq }}-frame"
-                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->playlist_urls[0] ?? '') }}?enablejsapi=1&rel=0"
-                                        allowfullscreen></iframe>
+                                    {{-- ======= PLAYLIST with multiple iframes =============== --}}
+                                    @php
+                                        $ids = collect($widget->playlist_urls)->map(fn($u) => \App\Models\YtWidget::extractId($u))->values();
+                                    @endphp
 
+                                    <div id="{{ $uniq }}-deck">
+                                        @foreach ($ids as $i => $vid)
+                                            <iframe class="yt-frame {{ $i ? 'd-none' : '' }}"
+                                                data-index="{{ $i }}" allowfullscreen {{-- load src only for the first item --}}
+                                                @unless ($i) src="https://www.youtube.com/embed/{{ $vid }}?rel=0" @endunless></iframe>
+                                        @endforeach
+                                    </div>
 
-                                    <script src="https://www.youtube.com/iframe_api"></script>
+                                    <div class="yt-controls">
+                                        <button id="prev-{{ $uniq }}">&#9664;</button>
+                                        <button id="next-{{ $uniq }}">&#9654;</button>
+                                    </div>
+
                                     <script>
-                                        let player, index = 0,
-                                            playlist = @json($widget->playlist_urls);
+                                        (function() {
+                                            const frames = [...document.querySelectorAll('#{{ $uniq }} .yt-frame')];
+                                            if (!frames.length) return;
 
-                                        function onYouTubeIframeAPIReady() {
-                                            player = new YT.Player('{{ $uniq }}-frame');
-                                        }
-                                        document.getElementById('prev-{{ $uniq }}').onclick = () => step(-1);
-                                        document.getElementById('next-{{ $uniq }}').onclick = () => step(+1);
+                                            let idx = 0;
 
-                                        function step(delta) {
-                                            if (!playlist.length) return;
-                                            index = (index + delta + playlist.length) % playlist.length;
-                                            player.loadVideoById(playlist[index]);
-                                        }
+                                            function show(i) {
+                                                frames.forEach((f, k) => {
+                                                    if (k === i) {
+                                                        if (!f.src) { // lazy-load when first shown
+                                                            const id = "{{ $ids->get(0) }}".replace(/.*/, () => {!! $ids !!}[k]);
+                                                            f.src = "https://www.youtube.com/embed/" + id + "?rel=0";
+                                                        }
+                                                        f.classList.remove('d-none');
+                                                    } else {
+                                                        if (f.src) f.src = ''; // clear src to stop audio
+                                                        f.classList.add('d-none');
+                                                    }
+                                                });
+                                                idx = i;
+                                            }
+
+                                            document.getElementById('prev-{{ $uniq }}').onclick = () =>
+                                                show((idx - 1 + frames.length) % frames.length);
+
+                                            document.getElementById('next-{{ $uniq }}').onclick = () =>
+                                                show((idx + 1) % frames.length);
+                                        })();
                                     </script>
                                 @endif
                             </div>
@@ -426,8 +452,9 @@
                     <div class="widget widget__recent-post mt-4 mb-4">
                         <ul class="nav nav-tabs" id="postTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts"
-                                    role="tab" aria-controls="recent-posts" aria-selected="true">
+                                <a class="nav-link active" id="recent-posts-tab" data-toggle="tab"
+                                    href="#recent-posts" role="tab" aria-controls="recent-posts"
+                                    aria-selected="true">
                                     I PIÙ LETTI
                                 </a>
                             </li>
