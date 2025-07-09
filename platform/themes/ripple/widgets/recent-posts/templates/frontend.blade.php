@@ -198,9 +198,9 @@
         </div>
 
         {{-- optional “More news” footer --------------------------------------- --}}
-        <div class="text-center py-3" style="background: #8424e3">
+        <div class="text-center py-2" style="background: #8424e3">
             <a href="" class="fw-semibold text-white text-decoration-none"
-                style="border-bottom: 2px solid #8424e3;
+                style="
     font-family: 'Titillium Web';
     font-size: 0.8rem;
     font-weight: 700;
