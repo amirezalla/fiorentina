@@ -81,14 +81,12 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="most-recent-tab" data-toggle="tab" href="#most-recent" role="tab"
                     aria-controls="most-recent" aria-selected="true">
-                    <span style="color: #8424e3; margin-right: 4px;"><i class="fas fa-clock"></i></span>
                     I PIÙ RECENTI
                 </a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="recent-posts-tab" data-toggle="tab" href="#recent-posts" role="tab"
-                    aria-controls="recent-posts" aria-selected="false" style="color: #8424e3; margin-right: 4px;"><i
-                        class="fas fa-book"></i>
+                    aria-controls="recent-posts" aria-selected="false"><i class="fas fa-book"></i>
                     I PIÙ LETTI
                 </a>
             </li>
