@@ -248,7 +248,50 @@
                             @endphp
                             <style>
                                 #{{ $uniq }}-deck {
-                                    background: black
+                                    background: black;
+                                    position: relative;
+                                }
+
+                                /* arrow buttons */
+                                #{{ $uniq }} .yt-nav {
+                                    position: absolute;
+                                    top: 50%;
+                                    /* centre vertically          */
+                                    transform: translateY(-50%);
+                                    width: 34px;
+                                    height: 34px;
+                                    border: 0;
+                                    border-radius: 50%;
+                                    background: rgba(75, 45, 127, .65);
+                                    /* violet @ 65 % opacity      */
+                                    color: #fff;
+                                    font-size: 1rem;
+                                    /* ▲ / ▼ characters           */
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    cursor: pointer;
+                                    transition: background .15s;
+                                }
+
+                                #{{ $uniq }} .yt-nav:hover {
+                                    background: rgba(75, 45, 127, .9);
+                                }
+
+                                /* left / right placement */
+                                #{{ $uniq }} .yt-prev {
+                                    left: 8px;
+                                }
+
+                                #{{ $uniq }} .yt-next {
+                                    right: 8px;
+                                }
+
+                                /* hide arrows on tiny screens if you prefer */
+                                @media(max-width: 480px) {
+                                    #{{ $uniq }} .yt-nav {
+                                        display: none;
+                                    }
                                 }
 
                                 /* === desktop / ≥ 576 px (unchanged) === */
@@ -360,10 +403,8 @@
 
                                     <div id="{{ $uniq }}-deck"></div>
 
-                                    <div class="yt-controls">
-                                        <button id="prev-{{ $uniq }}">&#9664;</button>
-                                        <button id="next-{{ $uniq }}">&#9654;</button>
-                                    </div>
+                                    <button class="yt-nav yt-prev" id="prev-{{ $uniq }}">&#9664;</button>
+                                    <button class="yt-nav yt-next" id="next-{{ $uniq }}">&#9654;</button>
 
                                     <script>
                                         (function() {
