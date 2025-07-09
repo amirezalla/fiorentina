@@ -83,9 +83,9 @@
 
     /* DOTS */
     .slider-dot {
-        width: 10px;
-        height: 12px;
-        border-radius: 50%;
+
+        height: 5px;
+
         background: #ccc;
         border: none;
         margin: 0 4px;
