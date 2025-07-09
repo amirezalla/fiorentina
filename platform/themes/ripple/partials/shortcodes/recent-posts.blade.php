@@ -247,6 +247,10 @@
                                 $uniq = 'ytwidget-' . uniqid();
                             @endphp
                             <style>
+                                #{{ $uniq }}-deck {
+                                    background: black
+                                }
+
                                 /* === desktop / ≥ 576 px (unchanged) === */
                                 #{{ $uniq }} {
                                     position: fixed;
