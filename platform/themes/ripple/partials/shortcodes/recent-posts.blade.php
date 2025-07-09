@@ -255,7 +255,7 @@
                                 /* arrow buttons */
                                 #{{ $uniq }} .yt-nav {
                                     position: absolute;
-                                    top: 50%;
+                                    top: 55%;
                                     /* centre vertically          */
                                     transform: translateY(-50%);
                                     width: 34px;
