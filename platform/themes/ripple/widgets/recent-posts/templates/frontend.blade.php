@@ -47,30 +47,8 @@
         ->orderByDesc('recent_comment_count')
         ->limit(5)
         ->get();
-    /*  NEW ➜ 15 post più recenti  */
-    $mostRecentPosts = Post::where('created_at', '>=', $since)->orderByDesc('created_at')->limit(15)->get();
 @endphp
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<style>
-    .slider-viewport {
-        width: 100%;
-    }
-
-    .slider-track {
-        transition: transform .4s ease;
-    }
-
-    .slider-track ul {
-        padding: 0 5px;
-    }
-
-    .btn-purple {
-        background-color: purple;
-        color: white;
-    }
-
-    /* a little gutter */
-</style>
 
 @if ($mostCommentedPosts->isNotEmpty())
     <div class="row mt-30 ad-top-sidebar">
@@ -79,15 +57,8 @@
     <div class="widget widget__recent-post mt-4 mb-4">
         <ul class="nav nav-tabs" id="postTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="most-commented-tab" data-toggle="tab" href="#most-commented"
-                    role="tab" aria-controls="most-commented" aria-selected="true">
-                    <span style="color: #8424e3; margin-right: 4px;"><i class="fas fa-bolt"></i></span>
-                    I PIÙ RECENTI
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="recent-posts-tab" data-toggle="tab" href="#recent-posts" role="tab"
-                    aria-controls="recent-posts" aria-selected="false">
+                <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts" role="tab"
+                    aria-controls="recent-posts" aria-selected="true">
                     I PIÙ LETTI
                 </a>
             </li>
@@ -100,68 +71,6 @@
             </li>
         </ul>
         <div class="tab-content" id="postTabsContent">
-
-            <div class="tab-pane fade" id="most-recent" role="tabpanel" aria-labelledby="most-recent-tab">
-                <div class="widget__content position-relative">
-
-                    <!-- arrows -->
-                    <button class="slider-btn slider-prev btn btn-sm btn-light position-absolute"
-                        style="left:-10px;top:50%;transform:translateY(-50%);" disabled>&lsaquo;</button>
-                    <button class="slider-btn slider-next btn btn-sm btn-light position-absolute"
-                        style="right:-10px;top:50%;transform:translateY(-50%);">&rsaquo;</button>
-
-                    <!-- viewport -->
-                    <div class="slider-viewport overflow-hidden">
-                        <!-- track width = (#slides × 100 %)  -->
-                        <div class="slider-track d-flex transition"
-                            style="width: {{ ceil($mostRecentPosts->count() / 5) * 100 }}%;">
-                            @foreach ($mostRecentPosts->chunk(5) as $chunk)
-                                <!-- each UL = one slide, width = 100 / #slides %  -->
-                                <ul class="list-unstyled m-0 p-0 d-flex flex-column"
-                                    style="width: {{ 100 / ceil($mostRecentPosts->count() / 5) }}%;">
-                                    @foreach ($chunk as $post)
-                                        <li class="mb-2">
-                                            <article class="post post__widget d-flex align-items-start">
-                                                <div class="post__thumbnail"
-                                                    style="width:80px;flex-shrink:0;margin-right:10px;">
-                                                    {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                                    <a href="{{ $post->url }}" class="post__overlay"
-                                                        title="{{ $post->name }}"></a>
-                                                </div>
-
-                                                <header class="post__header" style="flex:1;">
-                                                    @if ($post->categories->count())
-                                                        <span
-                                                            style="font-size:.75rem;text-transform:uppercase;color:#999;">
-                                                            {{ strtoupper($post->categories->first()->name) }}
-                                                        </span>
-                                                    @endif
-
-                                                    <h4 class="post__title" style="margin:0;">
-                                                        <a href="{{ $post->url }}"
-                                                            style="text-decoration:none;color:inherit;">
-                                                            {{ $post->name }}
-                                                        </a>
-                                                    </h4>
-
-                                                    <div class="post__meta"
-                                                        style="font-size:.75rem;color:#999;margin-top:2px;">
-                                                        <span class="post__created-at">
-                                                            {{ Theme::formatDate($post->created_at) }}
-                                                        </span>
-                                                    </div>
-                                                </header>
-                                            </article>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
             <div class="tab-pane fade show active" id="recent-posts" role="tabpanel" aria-labelledby="recent-posts-tab">
                 <div class="widget__content">
                     <ul>
@@ -196,53 +105,6 @@
 
                                         {{-- Date --}}
                                         <div class="post__meta date-span"
-                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
-                                            <span class="post__created-at">
-                                                {{ Theme::formatDate($post->created_at) }}
-                                            </span>
-                                        </div>
-                                    </header>
-                                </article>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-            <div class="tab-pane fade" id="most-commented" role="tabpanel" aria-labelledby="most-commented-tab">
-                <div class="widget__content">
-                    <ul>
-                        @foreach ($mostCommentedPosts as $post)
-                            <li>
-                                <article class="post post__widget d-flex align-items-start"
-                                    style="margin-bottom: 10px;">
-                                    {{-- Thumbnail on the left, fixed width --}}
-                                    <div class="post__thumbnail"
-                                        style="width: 80px; flex-shrink: 0; margin-right: 10px;">
-                                        {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                        <a href="{{ $post->url }}" title="{{ $post->name }}"
-                                            class="post__overlay"></a>
-                                    </div>
-
-                                    {{-- Text content on the right --}}
-                                    <header class="post__header" style="flex: 1;">
-                                        {{-- Optional: Category label in uppercase, if you want it above the title --}}
-                                        @if ($post->categories->count())
-                                            <span
-                                                style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #999;">
-                                                {{ strtoupper($post->categories->first()->name) }}
-                                            </span>
-                                        @endif
-
-                                        {{-- Post Title --}}
-                                        <h4 class="post__title" style="margin: 0;">
-                                            <a href="{{ $post->url }}" title="{{ $post->name }}"
-                                                style="text-decoration: none; color: inherit;">
-                                                {{ $post->name }}
-                                            </a>
-                                        </h4>
-
-                                        {{-- Date --}}
-                                        <div class="post__meta"
                                             style="font-size: 0.75rem; color: #999; margin-top: 2px;">
                                             <span class="post__created-at">
                                                 {{ Theme::formatDate($post->created_at) }}
@@ -401,43 +263,14 @@
                 }
             });
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const pane = document.querySelector('#most-recent');
-            if (!pane) return;
-
-            const track = pane.querySelector('.slider-track');
-            const slides = pane.querySelectorAll('.slider-track > ul');
-            const prevBtn = pane.querySelector('.slider-prev');
-            const nextBtn = pane.querySelector('.slider-next');
-
-            let index = 0,
-                total = slides.length;
-
-            const update = () => {
-                track.style.transform = `translateX(-${index * 100}%)`;
-                prevBtn.disabled = index === 0;
-                nextBtn.disabled = index === total - 1;
-            };
-
-            prevBtn.addEventListener('click', () => {
-                if (index) {
-                    index--;
-                    update();
-                }
-            });
-            nextBtn.addEventListener('click', () => {
-                if (index < total - 1) {
-                    index++;
-                    update();
-                }
-            });
-
-            update(); // initialise
-        });
     </script>
 
-
+    <style>
+        .btn-purple {
+            background-color: purple;
+            color: white;
+        }
+    </style>
 
 
 @endif
