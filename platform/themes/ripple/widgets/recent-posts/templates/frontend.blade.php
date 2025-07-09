@@ -200,7 +200,7 @@
         {{-- optional “More news” footer --------------------------------------- --}}
         <div class="text-center py-2" style="background: #8424e3">
             <a href="" class="fw-semibold text-white text-decoration-none"
-                style="
+                style="text-transform:uppercase;
     font-family: 'Titillium Web';
     font-size: 0.8rem;
     font-weight: 700;
