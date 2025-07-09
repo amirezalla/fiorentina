@@ -251,8 +251,8 @@
         </div>
 
         {{-- optional “More news” footer --------------------------------------- --}}
-        <div class="text-center py-3">
-            <a href="" class="fw-semibold text-dark text-decoration-none">
+        <div class="text-center py-3" style="background: #8424e3">
+            <a href="" class="fw-semibold text-white text-decoration-none">
                 Più notizie <span>&#10140;</span>
             </a>
         </div>
