@@ -67,7 +67,8 @@
     <header data-sticky="false" data-sticky-checkpoint="200" data-responsive="991"
         class="page-header page-header--light py-0">
         <div class="container d-flex" style="max-width: 1200px">
-            <div class="page-header__right flex-grow-1" style="border-top: 1px solid #eaeaea; padding-top: 10px;">
+            <div class="page-header__right flex-grow-1"
+                style="border-top: 1px solid rgba(0,0,0,0.2); padding-top: 10px;">
                 <!-- Mobile Navigation Toggle Button -->
                 <div id="nav-toggle" class="navigation-toggle"><span></span></div>
                 <div>
