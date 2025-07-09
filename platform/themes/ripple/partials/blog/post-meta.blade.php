@@ -13,7 +13,7 @@
 
 @if ($post->author->name)
     <div class="row">
-        <div class="col-lg-7" style="padding-top:6px">
+        <div class="col-lg-4" style="padding-top:6px">
 
 
             @if ($post->author->avatar->url)
@@ -29,8 +29,11 @@
             <span style="margin-left:5px">Di</span>
             <span class="author-name"><a style="font-size:medium;padding-left: 2px;color:#8424e3;font-weight:700;"
                     href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
-                    {{ $post->author->last_name }}</a></span> <span class="created_inner">{{ $formattedDate }}</span>
+                    {{ $post->author->last_name }}</a></span>
 
+        </div>
+        <div class="col-lg-3" style="padding-top: 10px">
+            <span class="created_inner">{{ $formattedDate }}</span>
         </div>
         <div class="col-lg-5 d-flex justify-content-end pr-30" style="padding-bottom:14px;">
             <div class="social-buttons" style="display: contents;">
