@@ -2,6 +2,7 @@
 <style>
     .payin-nav {
         display: flow;
+        text-align: center;
     }
 
     .payin-nav a {
