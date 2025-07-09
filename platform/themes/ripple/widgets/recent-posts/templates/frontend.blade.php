@@ -64,6 +64,40 @@
         padding: 0 5px;
     }
 
+    /* BIGGER ARROWS */
+    .slider-btn {
+        width: 42px;
+        /* ⇠ larger hit-area */
+        height: 42px;
+        font-size: 1.4rem;
+        /* ⇠ bigger ‹ › glyphs */
+        border-radius: 50%;
+        /* round buttons */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .15);
+        z-index: 2;
+        /* stay above slides */
+    }
+
+    /* DOTS */
+    .slider-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ccc;
+        border: none;
+        margin: 0 4px;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+    .slider-dot.active {
+        background: #8424e3;
+        /* theme color */
+    }
+
     .btn-purple {
         background-color: purple;
         color: white;
@@ -157,6 +191,8 @@
                             @endforeach
                         </div>
                     </div>
+                    <div class="slider-dots d-flex justify-content-center mt-2"></div>
+
                 </div>
             </div>
 
@@ -363,24 +399,39 @@
             const slides = pane.querySelectorAll('.slider-track > ul');
             const prevBtn = pane.querySelector('.slider-prev');
             const nextBtn = pane.querySelector('.slider-next');
+            const dotsBox = pane.querySelector('.slider-dots'); // NEW
 
             let index = 0;
             const total = slides.length;
-            const slidePct = 100 / total; // 33.333…% for 3 slides
+            const slidePct = 100 / total;
+
+            /* NEW ➜ create dots */
+            const dots = [...Array(total)].map((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'slider-dot';
+                btn.addEventListener('click', () => {
+                    index = i;
+                    update();
+                });
+                dotsBox.appendChild(btn);
+                return btn;
+            });
 
             const update = () => {
                 track.style.transform = `translateX(-${index * slidePct}%)`;
                 prevBtn.disabled = index === 0;
                 nextBtn.disabled = index === total - 1;
+
+                /* NEW ➜ toggle active color */
+                dots.forEach((d, i) => d.classList.toggle('active', i === index));
             };
 
             prevBtn.addEventListener('click', () => {
-                if (index > 0) {
+                if (index) {
                     index--;
                     update();
                 }
             });
-
             nextBtn.addEventListener('click', () => {
                 if (index < total - 1) {
                     index++;
@@ -388,7 +439,7 @@
                 }
             });
 
-            update(); // initialise
+            update(); // first paint
         });
     </script>
 
