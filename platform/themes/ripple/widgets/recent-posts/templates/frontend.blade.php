@@ -87,7 +87,8 @@
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="recent-posts-tab" data-toggle="tab" href="#recent-posts" role="tab"
-                    aria-controls="recent-posts" aria-selected="false"><i class="fas fa-book"></i>
+                    aria-controls="recent-posts" aria-selected="false" style="color: #8424e3; margin-right: 4px;"><i
+                        class="fas fa-book"></i>
                     I PIÙ LETTI
                 </a>
             </li>
