@@ -1,10 +1,7 @@
 </div>
 <style>
     .payin-nav {
-        display: inline-flex;
-        gap: 2rem;
-        /* spacing between links */
-        flex-wrap: wrap;
+        display: flow;
     }
 
     .payin-nav a {
@@ -12,6 +9,7 @@
         text-decoration: none;
         font-size: .95rem;
         transition: color .15s;
+        margin-right: 10px;
     }
 
     .payin-nav a:hover {
@@ -61,10 +59,10 @@
                 </li>
             </ul>
 
-            <nav class="payin-nav">
-                <a href="/redazione">Redazione</a>
-                <a href="/contatti">Contatti</a>
-                <a href="/cookie-policy">Cookie Policy</a>
+            <nav class="payin-nav my-3">
+                <a style="margin-right: 10px;" href="/redazione">Redazione</a>
+                <a style="margin-right: 10px;" href="/contatti">Contatti</a>
+                <a style="margin-right: 10px;" href="/cookie-policy">Cookie Policy</a>
             </nav>
 
             <div class="col-12 footer__text">
