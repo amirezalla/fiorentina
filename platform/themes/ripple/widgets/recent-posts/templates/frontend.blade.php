@@ -209,7 +209,7 @@
 
     <div class="widget__content" id="most-recent1">
         {{-- header ------------------------------------------------------------ --}}
-        <div class="editoriale-item-head d-flex mb-3" style="border-bottom:2px solid #ccc;">
+        <div class="editoriale-item-head d-flex mt-3 mb-1" style="border-bottom:2px solid #ccc;">
             <span class="editoriale-item-head-title px-1 text-dark"
                 style="border-bottom:2px solid #8424e3;font-weight:700;">
                 I PIÙ RECENTI
