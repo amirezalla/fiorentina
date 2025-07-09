@@ -110,6 +110,74 @@
     <div class="row mt-30 ad-top-sidebar">
         @include('ads.includes.SIZE_300X250_TOP')
     </div>
+
+
+    <div class="widget__content position-relative">
+        <div class="editoriale-item-head d-flex" style="border-bottom: 2px solid #ccc;margin-left:10px">
+            <span class="editoriale-item-head-title px-1 text-dark heading-container"
+                style="border-bottom: 2px solid #8424e3;margin-bottom:-2px;font-weight: 700;">
+                {{-- The title of the section --}}
+                I PIÙ RECENTI
+            </span>
+        </div>
+        <!-- arrows -->
+        <button class="slider-btn slider-prev btn btn-sm btn-light position-absolute"
+            style="left:-10px;top:50%;transform:translateY(-50%);" disabled>&lsaquo;</button>
+        <button class="slider-btn slider-next btn btn-sm btn-light position-absolute"
+            style="right:-10px;top:50%;transform:translateY(-50%);">&rsaquo;</button>
+
+        <!-- viewport -->
+        <div class="slider-viewport overflow-hidden">
+            <!-- track width = (#slides × 100 %)  -->
+            <div class="slider-track d-flex transition"
+                style="width: {{ ceil($mostRecentPosts->count() / 5) * 100 }}%;">
+                @foreach ($mostRecentPosts->chunk(5) as $chunk)
+                    <!-- each UL = one slide, width = 100 / #slides %  -->
+                    <ul class="list-unstyled m-0 p-0 d-flex flex-column"
+                        style="width: {{ 100 / ceil($mostRecentPosts->count() / 5) }}%;">
+                        @foreach ($chunk as $post)
+                            <li class="mb-2">
+                                <article class="post post__widget d-flex align-items-start">
+                                    <div class="post__thumbnail" style="width:80px;flex-shrink:0;margin-right:10px;">
+                                        {{ RvMedia::image($post->image, $post->name, 'thumb') }}
+                                        <a href="{{ $post->url }}" class="post__overlay"
+                                            title="{{ $post->name }}"></a>
+                                    </div>
+
+                                    <header class="post__header" style="flex:1;">
+                                        @if ($post->categories->count())
+                                            <span style="font-size:.75rem;text-transform:uppercase;color:#999;">
+                                                {{ strtoupper($post->categories->first()->name) }}
+                                            </span>
+                                        @endif
+
+                                        <h4 class="post__title" style="margin:0;">
+                                            <a href="{{ $post->url }}" style="text-decoration:none;color:inherit;">
+                                                {{ $post->name }}
+                                            </a>
+                                        </h4>
+
+                                        <div class="post__meta" style="font-size:.75rem;color:#999;margin-top:2px;">
+                                            <span class="post__created-at">
+                                                {{ Theme::formatDate($post->created_at) }}
+                                            </span>
+                                        </div>
+                                    </header>
+                                </article>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endforeach
+            </div>
+        </div>
+        <div class="slider-dots d-flex justify-content-center mt-2"></div>
+
+    </div>
+
+    <div class="row mt-30 ad-top-sidebar">
+        @include('ads.includes.SIZE_300X250_B1')
+    </div>
+
     <div class="widget widget__recent-post mt-4 mb-4">
         <ul class="nav nav-tabs" id="postTabs" role="tablist">
             <li class="nav-item" role="presentation">
@@ -224,70 +292,7 @@
 
         </div>
     </div>
-    <div class="row mt-30 ad-top-sidebar">
-        @include('ads.includes.SIZE_300X250_B1')
-    </div>
 
-
-    <div class="widget__content position-relative">
-        <a id="most-recent-tab" data-toggle="tab" href="#most-recent" role="tab" aria-controls="most-recent"
-            aria-selected="true">
-            I PIÙ RECENTI
-        </a>
-        <!-- arrows -->
-        <button class="slider-btn slider-prev btn btn-sm btn-light position-absolute"
-            style="left:-10px;top:50%;transform:translateY(-50%);" disabled>&lsaquo;</button>
-        <button class="slider-btn slider-next btn btn-sm btn-light position-absolute"
-            style="right:-10px;top:50%;transform:translateY(-50%);">&rsaquo;</button>
-
-        <!-- viewport -->
-        <div class="slider-viewport overflow-hidden">
-            <!-- track width = (#slides × 100 %)  -->
-            <div class="slider-track d-flex transition"
-                style="width: {{ ceil($mostRecentPosts->count() / 5) * 100 }}%;">
-                @foreach ($mostRecentPosts->chunk(5) as $chunk)
-                    <!-- each UL = one slide, width = 100 / #slides %  -->
-                    <ul class="list-unstyled m-0 p-0 d-flex flex-column"
-                        style="width: {{ 100 / ceil($mostRecentPosts->count() / 5) }}%;">
-                        @foreach ($chunk as $post)
-                            <li class="mb-2">
-                                <article class="post post__widget d-flex align-items-start">
-                                    <div class="post__thumbnail" style="width:80px;flex-shrink:0;margin-right:10px;">
-                                        {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                        <a href="{{ $post->url }}" class="post__overlay"
-                                            title="{{ $post->name }}"></a>
-                                    </div>
-
-                                    <header class="post__header" style="flex:1;">
-                                        @if ($post->categories->count())
-                                            <span style="font-size:.75rem;text-transform:uppercase;color:#999;">
-                                                {{ strtoupper($post->categories->first()->name) }}
-                                            </span>
-                                        @endif
-
-                                        <h4 class="post__title" style="margin:0;">
-                                            <a href="{{ $post->url }}"
-                                                style="text-decoration:none;color:inherit;">
-                                                {{ $post->name }}
-                                            </a>
-                                        </h4>
-
-                                        <div class="post__meta" style="font-size:.75rem;color:#999;margin-top:2px;">
-                                            <span class="post__created-at">
-                                                {{ Theme::formatDate($post->created_at) }}
-                                            </span>
-                                        </div>
-                                    </header>
-                                </article>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endforeach
-            </div>
-        </div>
-        <div class="slider-dots d-flex justify-content-center mt-2"></div>
-
-    </div>
 
 
     <div class="mt-30">
