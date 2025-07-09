@@ -364,21 +364,23 @@
             const prevBtn = pane.querySelector('.slider-prev');
             const nextBtn = pane.querySelector('.slider-next');
 
-            let index = 0,
-                total = slides.length;
+            let index = 0;
+            const total = slides.length;
+            const slidePct = 100 / total; // 33.333…% for 3 slides
 
             const update = () => {
-                track.style.transform = `translateX(-${index * 100}%)`;
+                track.style.transform = `translateX(-${index * slidePct}%)`;
                 prevBtn.disabled = index === 0;
                 nextBtn.disabled = index === total - 1;
             };
 
             prevBtn.addEventListener('click', () => {
-                if (index) {
+                if (index > 0) {
                     index--;
                     update();
                 }
             });
+
             nextBtn.addEventListener('click', () => {
                 if (index < total - 1) {
                     index++;
