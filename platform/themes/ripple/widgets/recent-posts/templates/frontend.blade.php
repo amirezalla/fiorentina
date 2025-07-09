@@ -113,7 +113,7 @@
     /* prettier scrollbar — WebKit & Firefox */
     .recent-scroll {
         scrollbar-width: thin;
-        scrollbar-color: #00d26a transparent;
+        scrollbar-color: #8424e3 transparent;
         /* thumb / track */
     }
 
@@ -122,7 +122,7 @@
     }
 
     .recent-scroll::-webkit-scrollbar-thumb {
-        background: #00d26a;
+        background: #8424e3;
         border-radius: 3px;
     }
 
@@ -131,7 +131,7 @@
     }
 
     .recent-scroll:hover::-webkit-scrollbar-thumb {
-        background: #00b85a;
+        background: #8424e3;
     }
 
 
