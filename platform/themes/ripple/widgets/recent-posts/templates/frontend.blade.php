@@ -103,6 +103,39 @@
         color: white;
     }
 
+    /* fixed height & scroll */
+    .recent-scroll {
+        max-height: 480px;
+        /* tweak to taste */
+        overflow-y: auto;
+    }
+
+    /* prettier scrollbar — WebKit & Firefox */
+    .recent-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: #00d26a transparent;
+        /* thumb / track */
+    }
+
+    .recent-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .recent-scroll::-webkit-scrollbar-thumb {
+        background: #00d26a;
+        border-radius: 3px;
+    }
+
+    .recent-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .recent-scroll:hover::-webkit-scrollbar-thumb {
+        background: #00b85a;
+    }
+
+
+
     /* a little gutter */
 </style>
 
@@ -110,7 +143,6 @@
     <div class="row mt-30 ad-top-sidebar">
         @include('ads.includes.SIZE_300X250_TOP')
     </div>
-
 
     <div class="widget__content position-relative" id="most-recent">
         <div class="editoriale-item-head d-flex" style="border-bottom: 2px solid #ccc;margin: 25px 0px 12px 0px;">
@@ -172,6 +204,60 @@
         </div>
         <div class="slider-dots d-flex justify-content-center mb-2"></div>
     </div>
+
+
+
+    <div class="widget__content" id="most-recent1">
+        {{-- header ------------------------------------------------------------ --}}
+        <div class="editoriale-item-head d-flex mb-3" style="border-bottom:2px solid #ccc;">
+            <span class="editoriale-item-head-title px-1 text-dark"
+                style="border-bottom:2px solid #8424e3;font-weight:700;">
+                I PIÙ RECENTI
+            </span>
+        </div>
+
+        {{-- SCROLLABLE LIST  --------------------------------------------------- --}}
+        <div class="recent-scroll pe-1"> {{-- 👈 new wrapper --}}
+            <ul class="list-unstyled m-0">
+                @foreach ($mostRecentPosts as $post)
+                    <li class="py-3 border-bottom">
+                        <article class="d-flex align-items-start">
+                            <div style="width:80px;flex-shrink:0;margin-right:10px;">
+                                {{ RvMedia::image($post->image, $post->name, 'thumb') }}
+                                <a href="{{ $post->url }}" class="post__overlay" title="{{ $post->name }}"></a>
+                            </div>
+
+                            <header style="flex:1;">
+                                @if ($post->categories->count())
+                                    <span style="font-size:.7rem;text-transform:uppercase;color:#999;">
+                                        {{ strtoupper($post->categories->first()->name) }}
+                                    </span>
+                                @endif
+
+                                <h4 style="margin:0;font-size:.95rem;line-height:1.2;">
+                                    <a href="{{ $post->url }}" class="text-dark text-decoration-none">
+                                        {{ $post->name }}
+                                    </a>
+                                </h4>
+
+                                <div style="font-size:.7rem;color:#999;margin-top:2px;">
+                                    {{ Theme::formatDate($post->created_at) }}
+                                </div>
+                            </header>
+                        </article>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        {{-- optional “More news” footer --------------------------------------- --}}
+        <div class="text-center py-3">
+            <a href="" class="fw-semibold text-dark text-decoration-none">
+                Più notizie <span>&#10140;</span>
+            </a>
+        </div>
+    </div>
+
 
     <div class="row mt-30 ad-top-sidebar">
         @include('ads.includes.SIZE_300X250_B1')
