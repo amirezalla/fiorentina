@@ -343,7 +343,6 @@
                                         rel="noopener">Seguici</a>
                                 </div>
                                 @if ($widget->type === 'live')
-
                                     <iframe
                                         src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?rel=0"
                                         allowfullscreen></iframe>
@@ -355,14 +354,7 @@
                                             ->values();
                                     @endphp
 
-                                    <div id="{{ $uniq }}-deck">
-                                        {{-- lazy-load only the first iframe, others will be loaded on demand --}}
-                                        @foreach ($ids as $i => $vid)
-                                            <iframe class="yt-frame {{ $i ? 'd-none' : '' }}"
-                                                data-index="{{ $i }}" allowfullscreen {{-- load src only for the first item --}}
-                                                @unless ($i) src="https://www.youtube.com/embed/{{ $vid }}?rel=0" @endunless></iframe>
-                                        @endforeach
-                                    </div>
+                                    <div id="{{ $uniq }}-deck"></div>
 
                                     <div class="yt-controls">
                                         <button id="prev-{{ $uniq }}">&#9664;</button>
@@ -371,32 +363,34 @@
 
                                     <script>
                                         (function() {
-                                            const frames = [...document.querySelectorAll('#{{ $uniq }} .yt-frame')];
-                                            if (!frames.length) return;
+                                            const deck = document.getElementById('{{ $uniq }}-deck');
+                                            const ids = @json($ids);
+                                            if (!ids.length) return;
 
                                             let idx = 0;
 
-                                            function show(i) {
-                                                frames.forEach((f, k) => {
-                                                    if (k === i) {
-                                                        if (!f.src) { // lazy-load when first shown
-                                                            const id = "{{ $ids->get(0) }}".replace(/.*/, () => {!! $ids !!}[k]);
-                                                            f.src = "https://www.youtube.com/embed/" + id + "?rel=0";
-                                                        }
-                                                        f.classList.remove('d-none');
-                                                    } else {
-                                                        if (f.src) f.src = ''; // clear src to stop audio
-                                                        f.classList.add('d-none');
-                                                    }
-                                                });
-                                                idx = i;
+                                            /* ---------- helper: build a fresh iframe ---------- */
+                                            function render() {
+                                                deck.innerHTML = ''; // zap any existing frame
+                                                const ifr = document.createElement('iframe');
+                                                ifr.className = 'yt-frame';
+                                                ifr.allowFullscreen = true;
+                                                ifr.src = `https://www.youtube.com/embed/${ids[idx]}?rel=0&autoplay=1`;
+                                                deck.appendChild(ifr);
                                             }
 
-                                            document.getElementById('prev-{{ $uniq }}').onclick = () =>
-                                                show((idx - 1 + frames.length) % frames.length);
+                                            /* ---------- first load ---------- */
+                                            render();
 
-                                            document.getElementById('next-{{ $uniq }}').onclick = () =>
-                                                show((idx + 1) % frames.length);
+                                            /* ---------- controls ---------- */
+                                            document.getElementById('prev-{{ $uniq }}').onclick = () => {
+                                                idx = (idx - 1 + ids.length) % ids.length;
+                                                render();
+                                            };
+                                            document.getElementById('next-{{ $uniq }}').onclick = () => {
+                                                idx = (idx + 1) % ids.length;
+                                                render();
+                                            };
                                         })();
                                     </script>
                                 @endif
