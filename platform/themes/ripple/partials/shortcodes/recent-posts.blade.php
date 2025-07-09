@@ -356,6 +356,8 @@
                                     @endphp
 
                                     <div id="{{ $uniq }}-deck">
+                                        @dd($ids);
+                                        {{-- lazy-load only the first iframe, others will be loaded on demand --}}
                                         @foreach ($ids as $i => $vid)
                                             <iframe class="yt-frame {{ $i ? 'd-none' : '' }}"
                                                 data-index="{{ $i }}" allowfullscreen {{-- load src only for the first item --}}
