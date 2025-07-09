@@ -48,7 +48,7 @@
         ->limit(5)
         ->get();
     /*  NEW ➜ 15 post più recenti  */
-    $mostRecentPosts = Post::where('created_at', '>=', $since)->orderByDesc('created_at')->limit(15)->get();
+    $mostRecentPosts = Post::orderByDesc('created_at')->limit(15)->get();
 @endphp
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
