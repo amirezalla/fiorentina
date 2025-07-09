@@ -21,7 +21,7 @@
 <article class="post post--single">
     <header class="post__header" style="padding-top: 20px">
         @if ($post->first_category?->name)
-            <span class="post-category"
+            <span class="post-category post-group__left-purple-badge"
                 style="display: block;
             width: fit-content;
             margin-bottom: 10px;">
