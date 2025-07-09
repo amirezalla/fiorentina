@@ -1,21 +1,22 @@
 </div>
 <style>
-    .footer-nav{
-    display:inline-flex;
-    gap: 2rem;            /* spacing between links */
-    flex-wrap:wrap;
-}
+    .payin-nav {
+        display: inline-flex;
+        gap: 2rem;
+        /* spacing between links */
+        flex-wrap: wrap;
+    }
 
-.footer-nav a{
-    color: white;
-    text-decoration:none;
-    font-size: .95rem;
-    transition: color .15s;
-}
+    .payin-nav a {
+        color: white;
+        text-decoration: none;
+        font-size: .95rem;
+        transition: color .15s;
+    }
 
-.footer-nav a:hover{
-    color: white;
-}
+    .payin-nav a:hover {
+        color: white;
+    }
 </style>
 <footer class="page-footer">
     <div class="container">
