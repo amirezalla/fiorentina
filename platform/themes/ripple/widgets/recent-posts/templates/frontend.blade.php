@@ -105,7 +105,7 @@
 
     /* fixed height & scroll */
     .recent-scroll {
-        max-height: 480px;
+        max-height: 580px;
         /* tweak to taste */
         overflow-y: auto;
     }
@@ -172,7 +172,8 @@
                                 <a href="{{ $post->url }}" class="post__overlay" title="{{ $post->name }}"></a>
                             </div>
 
-                            <header style="flex:1;">
+                            <header style="flex:1;align-self: center;">
+                                {{-- Optional: Category label in uppercase, if you want it above the title --}}
                                 @if ($post->categories->count())
                                     <span style="font-size:.7rem;text-transform:uppercase;color:#999;">
                                         {{ strtoupper($post->categories->first()->name) }}
@@ -185,7 +186,8 @@
                                     </a>
                                 </h4>
 
-                                <div style="font-size:.7rem;color:#999;margin-top:2px;">
+                                <div style="font-size:.7rem;color:#999;margin-top:2px;text-transform:uppercase;">
+                                    {{-- Date --}}
                                     {{ Theme::formatDate($post->created_at) }}
                                 </div>
                             </header>
