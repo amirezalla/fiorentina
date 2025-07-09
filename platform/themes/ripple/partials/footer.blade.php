@@ -1,4 +1,22 @@
 </div>
+<style>
+    .footer-nav{
+    display:inline-flex;
+    gap: 2rem;            /* spacing between links */
+    flex-wrap:wrap;
+}
+
+.footer-nav a{
+    color: white;
+    text-decoration:none;
+    font-size: .95rem;
+    transition: color .15s;
+}
+
+.footer-nav a:hover{
+    color: white;
+}
+</style>
 <footer class="page-footer">
     <div class="container">
         <div class="row">
@@ -41,6 +59,12 @@
                     </a>
                 </li>
             </ul>
+
+            <nav class="payin-nav">
+                <a href="/redazione">Redazione</a>
+                <a href="/contatti">Contatti</a>
+                <a href="/cookie-policy">Cookie Policy</a>
+            </nav>
 
             <div class="col-12 footer__text">
                 <p class="mb-1 text-center">Pubblicazione iscritta nel registro della stampa del Tribunale di Firenze
