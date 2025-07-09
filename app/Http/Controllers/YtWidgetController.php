@@ -23,14 +23,17 @@ public function update(Request $request)
     $widget->type     = $request->type;
     $widget->live_url = $request->live_url;
 
-    // ① grab raw textarea string
-    $raw = $request->input('playlist_urls', '');
+$raw = $request->input('playlist_urls', '');
 
-    // ② split on CR/LF, trim, drop empties
-    $urls = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $raw)));
+// turn an array into one big string
+if (is_array($raw)) {
+    $raw = implode("\n", $raw);
+}
 
-    // ③ store the clean array (still full URLs, no ID stripping here)
-    $widget->playlist_urls = array_values($urls);
+$urls = array_filter(array_map('trim', preg_split('/\R/', $raw)));
+$widget->playlist_urls = array_values($urls);
+
+
 
     $widget->save();
 
