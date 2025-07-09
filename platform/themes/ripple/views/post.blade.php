@@ -25,7 +25,8 @@
                 style="display: block;
             width: fit-content;
             margin-bottom: 10px;">
-                <a class="category-label" href="{{ $post->first_category->url }}">{{ $post->first_category->name }}</a>
+                <a class="category-label" style="font-size: 14px !important"
+                    href="{{ $post->first_category->url }}">{{ $post->first_category->name }}</a>
             </span>
         @endif
 
