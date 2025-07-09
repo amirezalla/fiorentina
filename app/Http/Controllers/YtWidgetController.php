@@ -15,20 +15,26 @@ class YtWidgetController extends Controller
     }
 
     /* ----------- 2. save form ----------- */
-    public function update(Request $request)
-    {
+public function update(Request $request)
+{
 
+    $widget = YtWidget::first() ?? new YtWidget;
 
-        $widget = YtWidget::first() ?? new YtWidget;
+    $widget->type     = $request->type;
+    $widget->live_url = $request->live_url;
 
-        $widget->type          = $request->type;
-        $widget->live_url      = $request->live_url;
-        $widget->playlist_urls = collect($request->playlist_urls)
-                                   ->filter()          // drop empty rows
-                                   ->values();        // keep raw URLs (NO yt_id here)
+    // ① grab raw textarea string
+    $raw = $request->input('playlist_urls', '');
 
-        $widget->save();
+    // ② split on CR/LF, trim, drop empties
+    $urls = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $raw)));
 
-        return back()->with('status', 'Widget salvato!');
-    }
+    // ③ store the clean array (still full URLs, no ID stripping here)
+    $widget->playlist_urls = array_values($urls);
+
+    $widget->save();
+
+    return back()->with('status', 'Widget salvato!');
+}
+
 }
