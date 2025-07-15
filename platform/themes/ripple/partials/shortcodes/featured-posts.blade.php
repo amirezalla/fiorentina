@@ -237,13 +237,13 @@
                                         <header class="post__header">
                                             <div class="d-flex">
                                                 @if ($post->categories->count())
-                                                    <span class="post-group__left-purple-badge mb-2">
+                                                    <span class="post-group__left-purple-badge mb-1">
                                                         {{ $post->categories->first()->name }}
                                                     </span>
                                                 @endif
 
                                                 @if ($post->in_aggiornamento)
-                                                    <span class="post-group__left-red-badge mb-2 ml-2">
+                                                    <span class="post-group__left-red-badge mb-1 ml-2">
                                                         <span class="pulse-circle"></span> In Aggiornamento
                                                     </span>
                                                 @endif
@@ -261,7 +261,7 @@
                                             <span class="text-dark mt-1 d-block post-desc">
                                                 <span class="fw-bold author-post author_featured" style="color:#ffffff">
                                                     <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
-                                                        {{ $post->author->last_name }}</a> 
+                                                        {{ $post->author->last_name }}</a>
                                                 </span>
                                                 <a class="fw-bold comments_at_featured"
                                                     href="{{ $post->url }}#comments" style="color:#ffffff">
@@ -303,7 +303,7 @@
                                             <header class="post__header">
                                                 <div class="d-flex">
                                                     @if ($post->categories->count())
-                                                        <span class="fz-14px post-group__left-purple-badge">
+                                                        <span class="post-group__left-purple-badge">
                                                             {{ $post->categories->first()->name }}
                                                         </span>
                                                     @endif
@@ -322,13 +322,14 @@
                                                     <span class=" author-post author_featured" style="color:#ffffff">
                                                         <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                             {{ $post->author->last_name }}</a>
-                                                    </span> 
+                                                    </span>
                                                     <a class="comments_at_featured" href="{{ $post->url }}#comments"
                                                         style="color:#ffffff">
                                                         <i class="fa fa-comment"></i>
                                                         {{ $post->comments_count ?: 'Commenta' }}
                                                     </a>
-                                                    <span class="created_at created_at_featured" style="color:#ffffff"> /
+                                                    <span class="created_at created_at_featured" style="color:#ffffff">
+                                                        /
                                                         {{ $post->formatted_date }}
                                                     </span>
                                                 </span>
