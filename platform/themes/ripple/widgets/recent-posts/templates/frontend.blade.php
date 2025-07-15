@@ -157,7 +157,7 @@
     font-size: 0.8rem;
     font-weight: 700;
     padding: 12px 16px;">
-                I PIÙ RECENTI
+                ULTIME NOTIZIE
             </span>
         </div>
 
