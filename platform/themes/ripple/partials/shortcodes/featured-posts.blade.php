@@ -261,7 +261,7 @@
                                             <span class="text-dark mt-2 d-block post-desc">
                                                 <span class="fw-bold author-post author_featured" style="color:#ffffff">
                                                     <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
-                                                        {{ $post->author->last_name }}</a> /
+                                                        {{ $post->author->last_name }}</a> 
                                                 </span>
                                                 <a class="fw-bold comments_at_featured"
                                                     href="{{ $post->url }}#comments" style="color:#ffffff">
@@ -319,16 +319,16 @@
                                                 </h3>
 
                                                 <span class="text-dark mt-2 d-block post-desc" style="">
-                                                    <span class=" author-post" style="color:#ffffff">
+                                                    <span class=" author-post author_featured" style="color:#ffffff">
                                                         <a href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
                                                             {{ $post->author->last_name }}</a>
-                                                    </span> /
-                                                    <a class="" href="{{ $post->url }}#comments"
+                                                    </span> 
+                                                    <a class="comments_at_featured" href="{{ $post->url }}#comments"
                                                         style="color:#ffffff">
                                                         <i class="fa fa-comment"></i>
                                                         {{ $post->comments_count ?: 'Commenta' }}
                                                     </a>
-                                                    <span class="created_at" style="color:#ffffff"> /
+                                                    <span class="created_at created_at_featured" style="color:#ffffff"> /
                                                         {{ $post->formatted_date }}
                                                     </span>
                                                 </span>
