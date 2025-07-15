@@ -357,7 +357,7 @@
                 <article class="w-100 @unless ($loop->last) mb-3 @endunless">
                     <header class="post__last4">
                         @if ($post->categories->count())
-                            <div class="d-flex mb-1">
+                            <div class="d-flex">
                                 <span class="post__last4-badge">
                                     {{ $post->categories->first()->name }}
                                 </span>
@@ -366,7 +366,7 @@
 
                         <a class="post__last4-text" href="{{ $post->url }}">{{ $post->name }}</a>
 
-                        <span class="text-dark mt-2 d-block" style="font-size:x-small;">
+                        <span class="text-dark mt-1 d-block" style="font-size:x-small;">
                             <span class="fw-bold author-post" style="color:#ffffff">
                                 <a style="color:#ffffff"
                                     href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
