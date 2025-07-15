@@ -6166,3 +6166,13 @@ h4.mvp-sec-head {
     cursor: default;
     opacity: .85;
 }
+
+.comments_at_featured,
+.created_at_featured {
+    font-size: smaller !important;
+    margin-left: 5px !important;
+}
+
+.author_featured {
+    font-size: smaller !important;
+}
