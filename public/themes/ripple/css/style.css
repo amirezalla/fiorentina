@@ -4984,9 +4984,9 @@ header>.container,
 
 .post__last4-badge {
     color: #888 !important;
-    font-size: small !important;
+    font-size: 0.7 !important;
     font-weight: 600 !important;
-    letter-spacing: .05rem !important;
+    letter-spacing: .08rem !important;
     font-family: "Titillium Web", sans-serif !important;
     text-transform: uppercase !important;
 
