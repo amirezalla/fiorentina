@@ -125,7 +125,7 @@
                                                                 : 'NOTIZIE';
                                                         @endphp
 
-                                                        <span class=" mb-1">
+                                                        <span class=" mb-1" style="color:#aaa;font-size:0.8rem;">
                                                             <span class="post__last4-badge">
                                                                 {{ $categoryName }}</span> /
                                                         </span>
