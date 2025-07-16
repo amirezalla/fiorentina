@@ -361,7 +361,7 @@
             @include('ads.includes.adsrecentp3')
         </div>
     @else
-        <div class="mt-5 d-block d-md-none">
+        <div class="mt-5">
             @include('ads.includes.MOBILE_POSIZIONE_6')
         </div>
     @endif
