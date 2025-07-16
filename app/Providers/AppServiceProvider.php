@@ -182,6 +182,9 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('ads.includes.MOBILE_POSIZIONE_5', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_5)->inRandomOrderByWeight()->first());
         });
+                view()->composer('ads.includes.MOBILE_POSIZIONE_6', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_6)->inRandomOrderByWeight()->first());
+        });
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
             $is_home = request()->route()->getName() == "public.index";
