@@ -138,12 +138,20 @@
 
     /* a little gutter */
 </style>
+@php
+    $ua = request()->header('User-Agent', '');
+
+    // very small UA test – good enough for phone / tablet vs desktop
+    $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
+@endphp
 
 @if ($mostCommentedPosts->isNotEmpty())
-    <div class="row mt-30 ad-top-sidebar">
-        @include('ads.includes.SIZE_300X250_TOP')
-    </div>
 
+    @if (!$isMobile)
+        <div class="row mt-30 ad-top-sidebar">
+            @include('ads.includes.SIZE_300X250_TOP')
+        </div>
+    @endif
 
 
 
@@ -210,10 +218,11 @@
         </div>
     </div>
 
-
-    <div class="row mt-30 ad-top-sidebar">
-        @include('ads.includes.SIZE_300X250_B1')
-    </div>
+    @if (!$isMobile)
+        <div class="row mt-30 ad-top-sidebar">
+            @include('ads.includes.SIZE_300X250_B1')
+        </div>
+    @endif
 
     <div class="widget widget__recent-post mt-4 mb-4">
         <ul class="nav nav-tabs" id="postTabs" role="tablist">
@@ -372,7 +381,11 @@
             </div>
         </div>
     @endif
-    @include('ads.includes.SIZE_300X250_C1')
+
+    @if (!$isMobile)
+        @include('ads.includes.SIZE_300X250_C1')
+    @endif
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script>
