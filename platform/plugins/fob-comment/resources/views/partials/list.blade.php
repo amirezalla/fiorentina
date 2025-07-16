@@ -100,12 +100,8 @@
         @continue(!$comment->is_approved && $comment->ip_address !== request()->ip())
         @if ($index == 3)
             @if (!$isMobile)
-                <div class="d-none d-md-block">
+                <div class="">
                     @include('ads.includes.adsrecentp4')
-                </div>
-            @else
-                <div class="mt-5">
-                    @include('ads.includes.MOBILE_POSIZIONE_6')
                 </div>
             @endif
         @endif
