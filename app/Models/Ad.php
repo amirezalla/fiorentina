@@ -61,6 +61,7 @@ class Ad extends BaseModel
     const MOBILE_POSIZIONE_3 = 37;
     const MOBILE_POSIZIONE_4 = 38;
     const MOBILE_POSIZIONE_5 = 39;
+    const MOBILE_POSIZIONE_6 = 99;
     const MOBILE_HOME_HERO_25 = 40;
     const MOBILE_DOPO_FOTO_26 = 41;
     const SKIN_MOBILE = 43;
@@ -100,6 +101,7 @@ class Ad extends BaseModel
         self::MOBILE_POSIZIONE_3 => "MOBILE_POSIZIONE_3",
         self::MOBILE_POSIZIONE_4 => "MOBILE_POSIZIONE_4",
         self::MOBILE_POSIZIONE_5 => "MOBILE_POSIZIONE_5",
+        self::MOBILE_POSIZIONE_6 => "MOBILE_POSIZIONE_6",
         // self::SKIN_MOBILE => "SKIN_MOBILE",
         self::MOBILE_HOME_HERO_25 => "MOBILE_HOME_HERO_25",
         self::MOBILE_DOPO_FOTO_26 => "MOBILE_DOPO_FOTO_26",
@@ -243,6 +245,7 @@ class Ad extends BaseModel
             self::MOBILE_POSIZIONE_2,
             self::MOBILE_POSIZIONE_4,
             self::MOBILE_POSIZIONE_5,
+                        self::MOBILE_POSIZIONE_6,
         ];
         
         $ads = self::query()

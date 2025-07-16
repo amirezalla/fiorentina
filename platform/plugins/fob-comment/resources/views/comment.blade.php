@@ -362,7 +362,7 @@
         </div>
     @else
         <div class="mt-5 d-block d-md-none">
-            @include('ads.includes.MOBILE_POSIZIONE_5')
+            @include('ads.includes.MOBILE_POSIZIONE_6')
         </div>
     @endif
 </div>
