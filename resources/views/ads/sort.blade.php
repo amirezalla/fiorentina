@@ -130,47 +130,32 @@
     </style>
 
     <script>
-        /* ---------- helpers -------------------------------------------- */
-        function gcd(a, b) {
-            return b ? gcd(b, a % b) : a;
-        }
-
-        function decimalToFraction(x) {
-            const EPS = 1e-6;
-            if (Math.abs(x - Math.round(x)) < EPS) return Math.round(x) + '';
-            let denom = 1;
-            while (Math.abs(x * denom - Math.round(x * denom)) > EPS && denom <= 100) denom++;
-            let num = Math.round(x * denom),
-                g = gcd(num, denom);
-            return (num / g) + "/" + (denom / g);
-        }
-
         /* ---------- per-row slider handling ---------------------------- */
         function updateSliderValue(adId) {
-            const slider = document.getElementById("slider-" + adId);
-            document.getElementById("slider-value-" + adId).textContent = slider.value;
+            document.getElementById('slider-value-' + adId).textContent =
+                document.getElementById('slider-' + adId).value;
             updateSummary();
         }
 
-        /* ---------- global summary ------------------------------------- */
+        /* ---------- summary in % --------------------------------------- */
         function updateSummary() {
             let perImageWeights = [];
+
             document.querySelectorAll('tbody tr').forEach(tr => {
-                const imagesCnt = parseInt(tr.dataset.images || '1', 10) || 1;
+                const imgCount = parseInt(tr.dataset.images || '1', 10) || 1;
                 const weight = parseFloat(tr.querySelector('.weight-slider').value);
-                const eff = weight / imagesCnt; // weight that each single image receives
-                for (let i = 0; i < imagesCnt; i++) perImageWeights.push(eff);
+                const eff = weight / imgCount; // weight each single image gets
+                for (let i = 0; i < imgCount; i++) perImageWeights.push(eff);
             });
 
-            const total = perImageWeights.reduce((a, b) => a + b, 0);
-            const fractions = perImageWeights
-                .map(w => w / total)
-                .map(decimalToFraction);
+            const total = perImageWeights.reduce((a, b) => a + b, 0) || 1;
+
+            const percentages = perImageWeights.map(w =>
+                (w / total * 100).toFixed(1).replace(/\.0$/, '') + '%' // “25%” or “33.3%”
+            );
 
             document.getElementById('weight-summary').textContent =
-                fractions.length ?
-                'Relative order (per image):  ' + fractions.join(' , ') :
-                'No images.';
+                'Relative share (per image):  ' + percentages.join(' , ');
         }
 
         /* run once on load */
