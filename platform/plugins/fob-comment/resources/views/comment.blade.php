@@ -360,10 +360,6 @@
         <div class="mt-5 d-none d-md-block">
             @include('ads.includes.adsrecentp3')
         </div>
-    @else
-        <div class="mt-5">
-            @include('ads.includes.MOBILE_POSIZIONE_6')
-        </div>
     @endif
 </div>
 <div class="fob-comment-list-section" style="display: none">

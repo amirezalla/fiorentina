@@ -89,13 +89,25 @@
     }
 </style>
 
+@php
+    $ua = request()->header('User-Agent', '');
+
+    // very small UA test – good enough for phone / tablet vs desktop
+    $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
+@endphp
 <div class="fob-comment-list">
     @foreach ($comments as $index => $comment)
         @continue(!$comment->is_approved && $comment->ip_address !== request()->ip())
         @if ($index == 3)
-            <div class="d-none d-md-block">
-                @include('ads.includes.adsrecentp4')
-            </div>
+            @if (!$isMobile)
+                <div class="d-none d-md-block">
+                    @include('ads.includes.adsrecentp4')
+                </div>
+            @else
+                <div class="mt-5">
+                    @include('ads.includes.MOBILE_POSIZIONE_6')
+                </div>
+            @endif
         @endif
         <div id="comment-{{ $comment->getKey() }}" class="fob-comment-item">
             <div class="fob-comment-item-inner">
