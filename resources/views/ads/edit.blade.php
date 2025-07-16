@@ -3,8 +3,20 @@
 
 @php
     use Illuminate\Support\Facades\Storage;
-    /* decode the JSON column once so we can reuse it */
-    $urls = json_decode($ad->urls, true) ?? [];
+
+    /** ----------------------------------------------------------------
+     *  Target-URL array is stored in the single “url” column as JSON.
+     * ----------------------------------------------------------------*/
+    $targetUrls = json_decode($ad->url, true) ?? [];
+
+    /** ----------------------------------------------------------------
+     *  Build the list of existing images (relation first, legacy fallback)
+     * ----------------------------------------------------------------*/
+    $existingImages = $ad->images()->orderBy('id')->get();
+    if ($existingImages->isEmpty() && $ad->image) {
+        // legacy single-column ad->image
+        $existingImages = collect([(object) ['id' => null, 'image_url' => $ad->image]]);
+    }
 @endphp
 
 @section('content')
@@ -17,96 +29,74 @@
             <div class="col-md-9 gap-3">
                 <div class="card mb-3">
                     <div class="card-body">
-
                         {{-- TITLE --}}
                         <div class="mb-3">
                             <label for="post_title" class="form-label">Titolo</label>
-                            <input type="text" class="form-control" name="post_title" id="post_title"
+                            <input name="post_title" id="post_title" type="text" class="form-control"
                                 value="{{ old('post_title', $ad->title) }}">
                         </div>
 
                         {{-- WEIGHT --}}
                         <div class="mb-3">
                             <label for="weight" class="form-label">Weight</label>
-                            <input type="text" class="form-control" name="weight" id="weight"
+                            <input name="weight" id="weight" type="number" class="form-control"
                                 value="{{ old('weight', $ad->weight) }}">
                         </div>
 
                         {{-- TIPO ANNUNCIO --}}
                         <div class="mb-3">
                             <label for="advanced-ad-type" class="form-label">Tipo Annuncio</label>
-                            <select class="form-select" name="type" id="advanced-ad-type">
-                                @foreach (\App\Models\Ad::TYPES as $key => $title)
-                                    <option value="{{ $key }}" @selected($ad->type == $key)>{{ $title }}
+                            <select name="type" id="advanced-ad-type" class="form-select">
+                                @foreach (\App\Models\Ad::TYPES as $k => $v)
+                                    <option value="{{ $k }}" @selected($ad->type == $k)>{{ $v }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        {{-- IMAGE UPLOAD + PREVIEWS (visible only for type 1) --}}
+                        {{-- IMAGE UPLOAD + PREVIEW (visible only for type-1 image ads) --}}
                         <div id="imageUploadSection" class="mb-3"
-                            @if ($ad->type == 2) style="display:none;" @endif>
+                            @if ($ad->type == \App\Models\Ad::TYPE_GOOGLE_ADS) style="display:none" @endif>
 
-                            {{-- new uploads go here --}}
                             <label class="form-label" for="imageUpload">Immagini</label>
-                            <input type="file" id="imageUpload" name="images[]" accept="image/*" multiple
+                            <input id="imageUpload" name="images[]" type="file" accept="image/*" multiple
                                 class="form-control mb-2">
 
-                            {{-- put this just before the preview loop --}}
-                            @php
-                                /**
-                                 * $ad->images  → regular Collection (0‒n rows in images table)
-                                 * $ad->image   → fallback single string column used by very old records
-                                 */
-                                $existingImages = collect($ad->images ?? []);
-
-                                // if there’s no relation but the old column is filled, wrap it
-                                if ($existingImages->isEmpty() && !empty($ad->image)) {
-                                    $existingImages = collect([
-                                        (object) [
-                                            'id' => null, // no DB row – just a placeholder
-                                            'image_url' => $ad->image,
-                                        ],
-                                    ]);
-                                }
-                            @endphp
-
                             <div id="previewWrapper" class="d-flex flex-column gap-3">
-                                @forelse ($existingImages as $i => $img)
+                                @foreach ($existingImages as $i => $img)
+                                    @php
+                                        $urlValue = $targetUrls[$i] ?? '';
+                                    @endphp
                                     <div class="existing-img border rounded p-2 position-relative"
                                         data-id="{{ $img->id }}">
-                                        <button type="button"
-                                            class="btn-close position-absolute top-0 end-0 m-2 remove-btn"
-                                            title="Remove"></button>
+                                        <button type="button" title="Rimuovi"
+                                            class="btn-close position-absolute top-0 end-0 m-2 remove-btn"></button>
 
                                         <img src="{{ Storage::disk('wasabi')->temporaryUrl($img->image_url, now()->addMinutes(15)) ?:
                                             Storage::disk('wasabi')->url($img->image_url) }}"
                                             style="max-width:100%;height:auto" class="d-block mb-2">
 
-                                        <input type="url" class="form-control"
-                                            name="urls_existing[{{ $img->id ?? 'single' }}]"
-                                            placeholder="https://example.com" value="{{ $urls[$i] ?? '' }}">
+                                        <input name="urls_existing[{{ $img->id ?? 'single' }}]" type="url"
+                                            class="form-control" placeholder="https://example.com"
+                                            value="{{ old("urls_existing.$img->id", $urlValue) }}">
                                     </div>
-                                @empty
-                                    <p class="text-muted">Nessuna immagine salvata per questo annuncio.</p>
-                                @endforelse
+                                @endforeach
                             </div>
-
                         </div>
 
-                        {{-- AMP FIELD (visible only for type 2) --}}
-                        <div id="googleAdImageNameSection" class="mb-3"
-                            @if ($ad->type == 1) style="display:none;" @endif>
+                        {{-- AMP textarea (visible only for Google-ad type-2) --}}
+                        <div id="googleAdAmpSection" class="mb-3"
+                            @if ($ad->type == \App\Models\Ad::TYPE_ANNUNCIO_IMMAGINE) style="display:none" @endif>
                             <label for="amp" class="form-label">AMP Code</label>
-                            <textarea name="amp" id="amp" rows="10" class="form-control" placeholder="Enter your AMP code here">{{ old('amp', $ad->amp) }}</textarea>
+                            <textarea id="amp" name="amp" rows="10" class="form-control" placeholder="Enter your AMP code here">{{ old('amp', $ad->amp) }}</textarea>
                         </div>
 
                         {{-- GROUP --}}
                         <div class="mb-3">
                             <label for="group" class="form-label">Gruppo annunci</label>
                             <select name="group" id="group" class="form-select">
-                                @foreach (\App\Models\Ad::GROUPS as $key => $title)
-                                    <option value="{{ $key }}" @selected($ad->group == $key)>{{ $title }}
+                                @foreach (\App\Models\Ad::GROUPS as $k => $v)
+                                    <option value="{{ $k }}" @selected($ad->group == $k)>{{ $v }}
                                     </option>
                                 @endforeach
                             </select>
@@ -116,12 +106,12 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="width" class="form-label">Larghezza (px)</label>
-                                <input type="number" id="width" name="width" class="form-control"
+                                <input name="width" id="width" type="number" class="form-control"
                                     value="{{ old('width', $ad->width) }}">
                             </div>
                             <div class="col-md-6">
                                 <label for="height" class="form-label">Altezza (px)</label>
-                                <input type="number" id="height" name="height" class="form-control"
+                                <input name="height" id="height" type="number" class="form-control"
                                     value="{{ old('height', $ad->height) }}">
                             </div>
                         </div>
@@ -130,12 +120,12 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="start_date" class="form-label">Data inizio</label>
-                                <input type="date" id="start_date" name="start_date" class="form-control"
+                                <input name="start_date" id="start_date" type="date" class="form-control"
                                     value="{{ old('start_date', $ad->start_date ?? date('Y-m-d')) }}">
                             </div>
                             <div class="col-md-6">
                                 <label for="expiry_date" class="form-label">Data scadenza</label>
-                                <input type="date" id="expiry_date" name="expiry_date" class="form-control"
+                                <input name="expiry_date" id="expiry_date" type="date" class="form-control"
                                     value="{{ old('expiry_date', $ad->expiry_date) }}">
                             </div>
                         </div>
@@ -150,38 +140,37 @@
                         </div>
 
                         <button class="btn btn-primary" type="submit">Aggiorna</button>
-                    </div>
-                </div>
-            </div>
+                    </div> {{-- .card-body --}}
+                </div> {{-- .card --}}
+            </div> {{-- .col-md-9 --}}
+            {{-- SIDEBAR left empty on purpose --}}
+        </div> {{-- .row --}}
 
-            {{-- SIDEBAR (leave empty or add cards like in create page) --}}
-        </div>
-
-        {{-- hidden field collects ids of existing images to delete --}}
+        {{-- Will hold a comma-separated list of existing-image IDs the user deleted --}}
         <input type="hidden" name="deleted_images" id="deleted_images" value="">
     </form>
 @endsection
 
-{{-- SCRIPTS ------------------------------------------------------------ --}}
+
 @push('footer')
-    {{-- CodeMirror for AMP (optional) --}}
+    {{-- CodeMirror (optional pretty editor for AMP textarea) --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
 
     <script>
         (function() {
-            /* ---------- DOM refs ---------- */
+            /* ---------- DOM references ---------- */
             const typeSelect = document.getElementById('advanced-ad-type');
             const imgSection = document.getElementById('imageUploadSection');
-            const ampSection = document.getElementById('googleAdImageNameSection');
+            const ampSection = document.getElementById('googleAdAmpSection');
             const fileInput = document.getElementById('imageUpload');
             const previewWrapper = document.getElementById('previewWrapper');
             const deletedField = document.getElementById('deleted_images');
 
             /* ---------- state ---------- */
-            let newFiles = []; // File objects chosen in this session
-            const deletedExisting = new Set(); // IDs of already-stored images to delete
+            let newFiles = []; // <File> objects chosen during this session
+            const deletedExisting = new Set(); // ids of already-stored AdImage rows
 
             /* ---------- helpers ---------- */
             function syncFileInput() {
@@ -190,80 +179,75 @@
                 fileInput.files = dt.files;
             }
 
-            function renderPreviews() {
-                /* clear previous new-image cards */
-                previewWrapper.querySelectorAll('.new-img').forEach(n => n.remove());
+            function renderNewPreviews() {
+                previewWrapper.querySelectorAll('.new-img').forEach(el => el.remove());
 
                 newFiles.forEach((file, idx) => {
                     const card = document.createElement('div');
                     card.className = 'new-img border rounded p-2 position-relative mt-2';
 
-                    /* remove btn */
+                    /* remove button */
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'btn-close position-absolute top-0 end-0 m-2';
-                    btn.title = 'Remove';
                     btn.onclick = () => {
                         newFiles.splice(idx, 1);
-                        renderPreviews();
+                        renderNewPreviews();
                         syncFileInput();
                     };
                     card.appendChild(btn);
 
-                    /* img preview */
+                    /* preview image */
                     const img = document.createElement('img');
                     img.style.maxWidth = '100%';
                     img.style.height = 'auto';
-                    const rdr = new FileReader();
-                    rdr.onload = e => img.src = e.target.result;
-                    rdr.readAsDataURL(file);
+                    new FileReader().addEventListener('load', e => img.src = e.target.result);
+                    new FileReader().readAsDataURL?.(file);
                     card.appendChild(img);
 
-                    /* url field that travels with the file */
+                    /* target url */
                     const url = document.createElement('input');
                     url.type = 'url';
                     url.name = `urls_new[${idx}]`;
-                    url.placeholder = 'https://example.com';
                     url.required = true;
                     url.className = 'form-control mt-2';
+                    url.placeholder = 'https://example.com';
                     card.appendChild(url);
 
                     previewWrapper.appendChild(card);
                 });
             }
 
-            /* ---------- event wires ---------- */
-            /* 1) switch sections when type changes */
+            /* ---------- events ---------- */
             typeSelect.addEventListener('change', e => {
-                const isGoogleAd = parseInt(e.target.value) === 2;
-                imgSection.style.display = isGoogleAd ? 'none' : 'block';
-                ampSection.style.display = isGoogleAd ? 'block' : 'none';
+                const isGoogle = +e.target.value === {{ \App\Models\Ad::TYPE_GOOGLE_ADS }};
+                imgSection.style.display = isGoogle ? 'none' : 'block';
+                ampSection.style.display = isGoogle ? 'block' : 'none';
             });
 
-            /* 2) existing image remove buttons (rendered server-side) */
             document.querySelectorAll('.existing-img .remove-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const card = btn.closest('.existing-img');
-                    deletedExisting.add(card.dataset.id);
+                    if (card.dataset.id) deletedExisting.add(card.dataset.id);
                     card.remove();
                     deletedField.value = [...deletedExisting].join(',');
                 });
             });
 
-            /* 3) new file picker */
-            fileInput?.addEventListener('change', e => {
+            fileInput.addEventListener('change', e => {
                 newFiles = [...e.target.files];
-                renderPreviews();
+                renderNewPreviews();
                 syncFileInput();
             });
 
-            /* 4) AMP textarea → CodeMirror */
             if (document.getElementById('amp')) {
-                CodeMirror.fromTextArea(document.getElementById('amp'), {
-                    lineNumbers: true,
-                    mode: 'javascript',
-                    theme: 'default'
-                });
+                CodeMirror.fromTextArea(
+                    document.getElementById('amp'), {
+                        lineNumbers: true,
+                        mode: 'javascript',
+                        theme: 'default'
+                    }
+                );
             }
         })();
     </script>

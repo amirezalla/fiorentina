@@ -239,9 +239,14 @@ public function groupsIndex()
         return view('ads.edit', compact('ad'));
     }
 
-    public function update(Request $request, Ad $ad)
+public function update(Request $request, Ad $ad)
 {
-    $validated = $request->validate([
+    /* ---------------------------------------------------------------
+     * 1.  Validate
+     * --------------------------------------------------------------*/
+    $isImageAd = $request->input('type') == Ad::TYPE_ANNUNCIO_IMMAGINE;
+
+    $rules = [
         'post_title' => 'required|string|max:255',
         'width'      => 'nullable|numeric|min:0',
         'height'     => 'nullable|numeric|min:0',
@@ -250,80 +255,118 @@ public function groupsIndex()
         'group'      => ['required', Rule::in(array_keys(Ad::GROUPS))],
         'start_date' => 'nullable|date',
         'expiry_date'=> 'nullable|date',
-        'images'     => 'nullable|array',
-        'images.*'   => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
-        'urls'       => 'nullable|array',
-        'urls.*'     => 'nullable|url|max:255',
-    ]);
+    ];
 
-    $ad->title       = $validated['post_title'];
-    $ad->group       = $validated['group'];
-    $ad->type        = $validated['type'];
-    $ad->weight      = $validated['weight'];
-    $ad->width       = $validated['width'] ?? null;
-    $ad->height      = $validated['height'] ?? null;
-    $ad->amp         = $request->amp;
-    $ad->start_date  = $validated['start_date'] ?? date('Y-m-d');
-    $ad->expiry_date = $validated['expiry_date'] ?? null;
-    $ad->status      = $request->status == '1' ? 1 : 0;
+    if ($isImageAd) {
+        $rules['images.*']        = 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048';
+        $rules['urls_existing.*'] = 'nullable|url|max:255';
+        $rules['urls_new.*']      = 'nullable|url|max:255';
+    } else {
+        $rules['amp']             = 'required|string';
+    }
 
-    $ad->save();
+    $validated = $request->validate($rules);
 
-    if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
-        $files   = $request->file('images', []);
-        $targets = $request->input('urls', []);
+    /* ---------------------------------------------------------------
+     * 2.  Fill simple scalar columns
+     * --------------------------------------------------------------*/
+    $ad->fill([
+        'title'       => $validated['post_title'],
+        'group'       => $validated['group'],
+        'type'        => $validated['type'],
+        'weight'      => $validated['weight'],
+        'width'       => $validated['width']  ?? null,
+        'height'      => $validated['height'] ?? null,
+        'amp'         => $request->amp,
+        'start_date'  => $validated['start_date']  ?? date('Y-m-d'),
+        'expiry_date' => $validated['expiry_date'] ?? null,
+        'status'      => $request->boolean('status') ? 1 : 0,
+    ])->save();
 
-        if (count($files) !== count($targets)) {
+    /* ---------------------------------------------------------------
+     * 3.  Handle image-based ads
+     * --------------------------------------------------------------*/
+    if ($isImageAd) {
+
+        /* ---------- 3a. remove images that the editor flagged for deletion */
+        $deleteIds = array_filter(explode(',', $request->input('deleted_images', '')));
+        if ($deleteIds) {
+            $ad->images()->whereIn('id', $deleteIds)->delete();
+        }
+
+        /* ---------- 3b. update target URLs of the still-existing images */
+        $urlsExisting = $request->input('urls_existing', []);
+
+        /* ---------- 3c. handle NEW uploads */
+        $newFiles = $request->file('images', []);
+        $urlsNew  = $request->input('urls_new', []);
+
+        if (count($newFiles) !== count($urlsNew)) {
             return back()
                 ->withInput()
-                ->withErrors(['urls' => 'Devi fornire un URL per ogni immagine caricata.']);
+                ->withErrors(['urls_new' => 'Devi fornire un URL per ogni immagine caricata.']);
         }
 
-        $storedUrls = [];
+        $storedUrlMap = []; // [imageId => targetUrl]
 
-        // Remove old images if needed:
-        $ad->images()->delete();
-
-        foreach ($files as $idx => $file) {
-            if ($file->isValid()) {
-                $ext = strtolower($file->getClientOriginalExtension());
-                if ($ext === 'webp') {
-                    return back()->withInput()->withErrors(['images' => 'Le immagini .webp non sono consentite.']);
-                }
-
-                $filename = Str::random(32) . time() . ".$ext";
-                $img = ImageManager::gd()->read($file);
-                if ($ad->width && $ad->height) {
-                    $img = $img->resize($ad->width, $ad->height);
-                }
-                $tempPath = sys_get_temp_dir() . "/$filename";
-                $img->encode()->save($tempPath);
-
-                $uploaded = $this->rvMedia
-                                 ->uploadFromPath($tempPath, 0, 'ads-images/');
-                unlink($tempPath);
-
-                $ad->images()->create([
-                    'image_url' => $uploaded['data']->url,
-                ]);
-
-                $storedUrls[] = $targets[$idx] ?? '';
+        foreach ($newFiles as $idx => $file) {
+            if (!$file || !$file->isValid()) {
+                continue;
             }
+
+            if (strtolower($file->getClientOriginalExtension()) === 'webp') {
+                return back()->withInput()
+                    ->withErrors(['images' => 'Le immagini .webp non sono consentite.']);
+            }
+
+            $fileName = Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
+
+            // Resize if width+height supplied
+            $img = \Intervention\Image\Facades\Image::make($file);
+            if ($ad->width && $ad->height) {
+                $img->resize($ad->width, $ad->height);
+            }
+            $tmp = sys_get_temp_dir() . "/{$fileName}";
+            $img->save($tmp);
+
+            /** @var \RvMedia $this->rvMedia (injected via constructor) */
+            $upload = $this->rvMedia
+                           ->uploadFromPath($tmp, 0, 'ads-images/');
+            @unlink($tmp);
+
+            $newImg = $ad->images()->create([
+                'image_url' => $upload['data']->url,
+            ]);
+
+            $storedUrlMap[$newImg->id] = $urlsNew[$idx] ?? '';
         }
 
-        $ad->url = json_encode($storedUrls);
+        /* ---------- 3d. rebuild the “url” JSON so its indices match images order */
+        $finalUrls = [];
+
+        $ad->load('images'); // refresh after deletions / insertions
+        foreach ($ad->images()->orderBy('id')->get() as $img) {
+            $finalUrls[] =
+                $urlsExisting[$img->id]    // updated via form
+             ?? $storedUrlMap[$img->id]   // brand-new upload
+             ?? '';                       // keep empty if user left it blank
+        }
+
+        $ad->url = json_encode($finalUrls);
         $ad->save();
     }
 
-    // Schedule activation if needed
-    if ($ad->start_date !== date('Y-m-d')) {
+    /* ---------------------------------------------------------------
+     * 4.  Schedule activation job (if start date is in the future)
+     * --------------------------------------------------------------*/
+    if ($ad->start_date && \Carbon\Carbon::parse($ad->start_date)->isFuture()) {
         $delay = \Carbon\Carbon::parse($ad->start_date)->diffInSeconds(now());
-        if ($delay > 0) {
-            dispatch(new \App\Jobs\ActivateAdJob($ad))->delay($delay);
-        }
+        \App\Jobs\ActivateAdJob::dispatch($ad)->delay($delay);
     }
 
-    return redirect()->route('ads.index')->with('success', 'Advertisement updated successfully!');
+    return redirect()
+        ->route('ads.index')
+        ->with('success', 'Advertisement updated successfully!');
 }
 
 
