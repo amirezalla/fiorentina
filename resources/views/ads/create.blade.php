@@ -352,12 +352,25 @@
             const adInputs = document.getElementById('vis_ad_inputs');
 
             function toggle() {
-                const v = typeSel.value;
-                pageInput.style.display = v === 'page_impressions' ? 'block' : 'none';
-                adInputs.style.display = v === 'ad_impressions' ? 'flex' : 'none';
+                switch (typeSel.value) {
+                    case 'page_impressions':
+                        pageInput.style.display = 'block';
+                        adInputs.style.display = 'none';
+                        break;
+
+                    case 'ad_impressions':
+                        pageInput.style.display = 'none';
+                        adInputs.style.display = 'flex'; // keep the horizontal layout
+                        break;
+
+                    default: // “— Nessuna —”
+                        pageInput.style.display = 'none';
+                        adInputs.style.display = 'none';
+                }
             }
+
             typeSel.addEventListener('change', toggle);
-            toggle(); // run once at load
+            toggle(); // run once on load
         })();
     </script>
 @endpush
