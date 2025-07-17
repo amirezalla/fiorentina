@@ -295,4 +295,19 @@
             }
         })();
     </script>
+    <script>
+        (() => {
+            const typeSel = document.getElementById('vis_cond_type');
+            const pageInput = document.getElementById('vis_page_input');
+            const adInputs = document.getElementById('vis_ad_inputs');
+
+            function toggle() {
+                const v = typeSel.value;
+                pageInput.style.display = v === 'page_impressions' ? 'block' : 'none';
+                adInputs.style.display = v === 'ad_impressions' ? 'flex' : 'none';
+            }
+            typeSel.addEventListener('change', toggle);
+            toggle(); // run once at load
+        })();
+    </script>
 @endpush
