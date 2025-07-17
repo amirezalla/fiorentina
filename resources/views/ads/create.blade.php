@@ -79,6 +79,39 @@
                                 </div>
                             </div>
 
+                            <div class="mt-3">
+                                <label for="vis_cond_type" class="form-label">Condizione per Visitatori</label>
+                                <select id="vis_cond_type" name="vis_cond_type" class="form-select">
+                                    <option value="">— Nessuna —</option>
+                                    <option value="page_impressions" @selected(old('vis_cond_type') == 'page_impressions')>
+                                        Impressioni pagina
+                                    </option>
+                                    <option value="ad_impressions" @selected(old('vis_cond_type') == 'ad_impressions')>
+                                        Max Impressioni annuncio
+                                    </option>
+                                </select>
+
+                                {{--   Impressioni pagina → singolo numero                           --}}
+                                <input id="vis_page_input" type="number" name="vis_page_value" class="form-control mt-2"
+                                    min="1" placeholder="Esempio: 3" value="{{ old('vis_page_value') }}"
+                                    style="display:none">
+
+                                {{--   Max impressioni annuncio → due campi (come screenshot)        --}}
+                                <div id="vis_ad_inputs" class="d-flex gap-2 mt-2" style="display:none">
+                                    <input type="number" name="vis_ad_max" class="form-control" min="1"
+                                        placeholder="0" value="{{ old('vis_ad_max') }}">
+                                    <span class="align-self-center">entro</span>
+                                    <input type="number" name="vis_ad_seconds" class="form-control" min="1"
+                                        placeholder="0" value="{{ old('vis_ad_seconds') }}">
+                                    <span class="align-self-center">secondi</span>
+                                </div>
+
+                                <small class="text-muted">
+                                    Visualizza l'annuncio al massimo per il valore indicato.
+                                </small>
+                            </div>
+
+
                             <!-- Ad Parameters Section -->
                             <div class="postbox" id="ad-parameters-box">
                                 <div class="postbox-header">
@@ -175,6 +208,29 @@
                             <input class="form-check-input" type="checkbox" id="never_expire" name="never_expire"
                                 value="1" @if (old('never_expire')) checked @endif>
                             <label class="form-check-label" for="never_expire">Scade mai</label>
+                        </div>
+                    </div>
+
+                    {{-- PLACEMENT (solo mobile ads) -------------------------------------- --}}
+                    <div class="mt-3">
+                        <label class="form-label d-block">Placement <small>(solo mobile ads)</small></label>
+                        @php
+                            $placementOld = old('placement');
+                        @endphp
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="placement" id="pl_home"
+                                value="homepage" @checked($placementOld === 'homepage')>
+                            <label class="form-check-label" for="pl_home">Homepage</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="placement" id="pl_article"
+                                value="article" @checked($placementOld === 'article')>
+                            <label class="form-check-label" for="pl_article">Article</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="placement" id="pl_both"
+                                value="both" @checked($placementOld === 'both')>
+                            <label class="form-check-label" for="pl_both">Both</label>
                         </div>
                     </div>
                 </div>

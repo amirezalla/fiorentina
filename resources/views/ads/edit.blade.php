@@ -145,6 +145,50 @@
             </div> {{-- .col-md-9 --}}
             {{-- SIDEBAR left empty on purpose --}}
         </div> {{-- .row --}}
+        @php
+            $visType = old('vis_cond_type', $ad->vis_cond_type);
+        @endphp
+        <div class="mb-3">
+            <label for="vis_cond_type" class="form-label">Condizione per Visitatori</label>
+            <select id="vis_cond_type" name="vis_cond_type" class="form-select">
+                <option value="">— Nessuna —</option>
+                <option value="page_impressions" @selected($visType == 'page_impressions')>Impressioni pagina</option>
+                <option value="ad_impressions" @selected($visType == 'ad_impressions')>Max Impressioni annuncio</option>
+            </select>
+
+            <input id="vis_page_input" type="number" name="vis_page_value" class="form-control mt-2"
+                value="{{ old('vis_page_value', $ad->vis_page_value) }}" style="display:none">
+
+            <div id="vis_ad_inputs" class="d-flex gap-2 mt-2" style="display:none">
+                <input type="number" name="vis_ad_max" class="form-control"
+                    value="{{ old('vis_ad_max', $ad->vis_ad_max) }}">
+                <span class="align-self-center">entro</span>
+                <input type="number" name="vis_ad_seconds" class="form-control"
+                    value="{{ old('vis_ad_seconds', $ad->vis_ad_seconds) }}">
+                <span class="align-self-center">secondi</span>
+            </div>
+        </div>
+
+        {{-- PLACEMENT --------------------------------------------------------- --}}
+        @php  $pl = old('placement', $ad->placement);  @endphp
+        <div class="mb-3">
+            <label class="form-label d-block">Placement <small>(solo mobile ads)</small></label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="placement" id="pl_home" value="homepage"
+                    @checked($pl === 'homepage')>
+                <label class="form-check-label" for="pl_home">Homepage</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="placement" id="pl_article" value="article"
+                    @checked($pl === 'article')>
+                <label class="form-check-label" for="pl_article">Article</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="placement" id="pl_both" value="both"
+                    @checked($pl === 'both')>
+                <label class="form-check-label" for="pl_both">Both</label>
+            </div>
+        </div>
 
         {{-- Will hold a comma-separated list of existing-image IDs the user deleted --}}
         <input type="hidden" name="deleted_images" id="deleted_images" value="">

@@ -98,112 +98,98 @@ class AdController extends BaseController
     }
 
     public function store(Request $request)
-    {
-        /* ─────────────── 1. validation ─────────────── */
-        $validated = $request->validate([
-            'post_title'        => 'required|string|max:255',
-            'width'             => 'nullable|numeric|min:0',
-            'height'            => 'nullable|numeric|min:0',
-            'weight'            => 'required|numeric|min:1',
-            'type'              => ['required', Rule::in(array_keys(Ad::TYPES))],
-            'group'             => ['required', Rule::in(array_keys(Ad::GROUPS))],
-            'start_date'        => 'nullable|date',
-            'expiry_date'       => 'nullable|date',
-            'images'            => 'nullable|array',
-            'images.*'          => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
-            'urls'              => 'nullable|array',
-            'urls.*'            => 'nullable|url|max:255',
-        ]);
-    
-        /* ─────────────── 2. create the Ad shell ─────────────── */
-        $ad = new Ad();
-        $ad->title        = $validated['post_title'];
-        $ad->group        = $validated['group'];
-        $ad->weight       = $validated['weight'];
-        $ad->type         = $validated['type'];
-        $ad->width        = $validated['width']  ?? null;
-        $ad->height       = $validated['height'] ?? null;
-        $ad->amp          = $request->amp;
-        $ad->start_date   = $validated['start_date']  ?? date('Y-m-d');
-        $ad->expiry_date  = $validated['expiry_date'] ?? null;
-        /* status */
-        $ad->status = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
-    
-        /* ─────────────── 3. handle TYPE 1 (images) ─────────────── */
-        if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
-    
-            // Persist now so we have an id for the relationship
-            $ad->save();
-    
-            $files   = $request->file('images', []);
-            $targets = $request->input('urls', []);
-    
-            if (count($files) !== count($targets)) {
-                return back()
-                       ->withInput()
-                       ->withErrors(['urls' => 'Devi fornire un URL per ogni immagine caricata.']);
-            }
-    
-            $storedUrls = [];   // will be saved in `ads.urls`
-    
-            foreach ($files as $idx => $file) {
-                if ($file->isValid()) {
-    
-                    /* 3‑a  block .webp */
-                    $ext = strtolower($file->getClientOriginalExtension());
-                    if ($ext === 'webp') {
-                        return back()
-                               ->withInput()
-                               ->withErrors(['images' => "Le immagini .webp non sono consentite."]);
-                    }
-    
-                    /* 3‑b  process + upload */
-                    $filename = Str::random(32) . time() . ".$ext";
-    
-                    $img = ImageManager::gd()->read($file);
-                    if ($ad->width && $ad->height) {
-                        $img = $img->resize($ad->width, $ad->height);
-                    }
-                    $tempPath = sys_get_temp_dir() . "/$filename";
-                    $img->encode()->save($tempPath);
-    
-                    $uploaded = $this->rvMedia
-                                     ->uploadFromPath($tempPath, 0, 'ads-images/');
-                    unlink($tempPath);
-    
-                    /* 3‑c  save child row */
-                    $ad->images()->create([
-                        'image_url' => $uploaded['data']->url,
-                    ]);
-    
-                    /* 3‑d  keep redirect url in same order */
-                    $storedUrls[] = $targets[$idx] ?? '';
-                }
-            }
-    
-            /* 3‑e  save the ordered url list in JSON column */
-            $ad->url = json_encode($storedUrls);
-            $ad->save();   // update only
+{
+    $validated = $request->validate([
+        'post_title'       => 'required|string|max:255',
+        'width'            => 'nullable|numeric|min:0',
+        'height'           => 'nullable|numeric|min:0',
+        'weight'           => 'required|numeric|min:1',
+        'type'             => ['required', Rule::in(array_keys(Ad::TYPES))],
+        'group'            => ['required', Rule::in(array_keys(Ad::GROUPS))],
+        'start_date'       => 'nullable|date',
+        'expiry_date'      => 'nullable|date',
+        'images'           => 'nullable|array',
+        'images.*'         => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
+        'urls'             => 'nullable|array',
+        'urls.*'           => 'nullable|url|max:255',
+        'vis_cond_type'    => ['nullable','in:page_impressions,ad_impressions'],
+        'vis_page_value'   => ['required_if:vis_cond_type,page_impressions','integer','min:1'],
+        'vis_ad_max'       => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
+        'vis_ad_seconds'   => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
+        'placement'        => ['nullable','in:homepage,article,both'],
+    ]);
+
+    $ad = new Ad();
+    $ad->title                  = $validated['post_title'];
+    $ad->group                  = $validated['group'];
+    $ad->weight                 = $validated['weight'];
+    $ad->type                   = $validated['type'];
+    $ad->width                  = $validated['width']  ?? null;
+    $ad->height                 = $validated['height'] ?? null;
+    $ad->amp                    = $request->amp;
+    $ad->visualization_condition= $this->packVisualizationCondition($request);
+    $ad->placement              = $request->input('placement');
+    $ad->start_date             = $validated['start_date']  ?? date('Y-m-d');
+    $ad->expiry_date            = $validated['expiry_date'] ?? null;
+    $ad->status                 = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
+    $ad->save();
+
+    if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
+        $files   = $request->file('images', []);
+        $targets = $request->input('urls', []);
+        if (count($files) !== count($targets)) {
+            return back()->withInput()->withErrors(['urls' => 'Devi fornire un URL per ogni immagine caricata.']);
         }
-    
-        /* ─────────────── 4. TYPE 2 (Google / AMP) ─────────────── */
-        elseif ($ad->type == Ad::TYPE_GOOGLE_ADS) {
-            $ad->amp = $request->amp;   // as before
-            $ad->save();
-        }
-    
-        /* ─────────────── 5. schedule future activation ─────────────── */
-        if ($ad->start_date !== date('Y-m-d')) {
-            $delay = \Carbon\Carbon::parse($ad->start_date)
-                                   ->diffInSeconds(now());
-            if ($delay > 0) {
-                dispatch(new \App\Jobs\ActivateAdJob($ad))->delay($delay);
+        $storedUrls = [];
+        foreach ($files as $i => $file) {
+            if (!$file->isValid() || strtolower($file->getClientOriginalExtension()) === 'webp') {
+                return back()->withInput()->withErrors(['images' => 'File non valido o formato non consentito.']);
             }
+            $name = Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
+            $img  = ImageManager::gd()->read($file);
+            if ($ad->width && $ad->height) $img = $img->resize($ad->width, $ad->height);
+            $tmp  = sys_get_temp_dir() . "/$name";
+            $img->encode()->save($tmp);
+            $up   = $this->rvMedia->uploadFromPath($tmp, 0, 'ads-images/');
+            unlink($tmp);
+            $ad->images()->create(['image_url' => $up['data']->url]);
+            $storedUrls[] = $targets[$i] ?? '';
         }
-    
-        return redirect()->route('ads.index')
-                         ->with('success', 'Advertisement created successfully!');
+        $ad->url = json_encode($storedUrls);
+        $ad->save();
+    } elseif ($ad->type == Ad::TYPE_GOOGLE_ADS) {
+        $ad->save();
     }
+
+    if ($ad->start_date !== date('Y-m-d')) {
+        $delay = \Carbon\Carbon::parse($ad->start_date)->diffInSeconds(now());
+        if ($delay > 0) dispatch(new \App\Jobs\ActivateAdJob($ad))->delay($delay);
+    }
+
+    return redirect()->route('ads.index')->with('success', 'Advertisement created successfully!');
+}
+
+
+    private function packVisualizationCondition(Request $r): ?string
+{
+    switch ($r->input('vis_cond_type')) {
+        case 'page_impressions':
+            return json_encode([
+                'type' => 'page',
+                'max'  => (int) $r->input('vis_page_value'),
+            ]);
+
+        case 'ad_impressions':
+            return json_encode([
+                'type'    => 'ad',
+                'max'     => (int) $r->input('vis_ad_max'),
+                'seconds' => (int) $r->input('vis_ad_seconds'),
+            ]);
+
+        default:
+            return null;
+    }
+} 
 
 public function groupsIndex()
 {
@@ -241,20 +227,22 @@ public function groupsIndex()
 
 public function update(Request $request, Ad $ad)
 {
-    /* ---------------------------------------------------------------
-     * 1.  Validate
-     * --------------------------------------------------------------*/
     $isImageAd = $request->input('type') == Ad::TYPE_ANNUNCIO_IMMAGINE;
 
     $rules = [
-        'post_title' => 'required|string|max:255',
-        'width'      => 'nullable|numeric|min:0',
-        'height'     => 'nullable|numeric|min:0',
-        'weight'     => 'required|numeric|min:1',
-        'type'       => ['required', Rule::in(array_keys(Ad::TYPES))],
-        'group'      => ['required', Rule::in(array_keys(Ad::GROUPS))],
-        'start_date' => 'nullable|date',
-        'expiry_date'=> 'nullable|date',
+        'post_title'      => 'required|string|max:255',
+        'width'           => 'nullable|numeric|min:0',
+        'height'          => 'nullable|numeric|min:0',
+        'weight'          => 'required|numeric|min:1',
+        'type'            => ['required', Rule::in(array_keys(Ad::TYPES))],
+        'group'           => ['required', Rule::in(array_keys(Ad::GROUPS))],
+        'start_date'      => 'nullable|date',
+        'expiry_date'     => 'nullable|date',
+        'vis_cond_type'   => ['nullable','in:page_impressions,ad_impressions'],
+        'vis_page_value'  => ['required_if:vis_cond_type,page_impressions','integer','min:1'],
+        'vis_ad_max'      => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
+        'vis_ad_seconds'  => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
+        'placement'       => ['nullable','in:homepage,article,both'],
     ];
 
     if ($isImageAd) {
@@ -267,106 +255,59 @@ public function update(Request $request, Ad $ad)
 
     $validated = $request->validate($rules);
 
-    /* ---------------------------------------------------------------
-     * 2.  Fill simple scalar columns
-     * --------------------------------------------------------------*/
     $ad->fill([
-        'title'       => $validated['post_title'],
-        'group'       => $validated['group'],
-        'type'        => $validated['type'],
-        'weight'      => $validated['weight'],
-        'width'       => $validated['width']  ?? null,
-        'height'      => $validated['height'] ?? null,
-        'amp'         => $request->amp,
-        'start_date'  => $validated['start_date']  ?? date('Y-m-d'),
-        'expiry_date' => $validated['expiry_date'] ?? null,
-        'status'      => $request->boolean('status') ? 1 : 0,
+        'title'                  => $validated['post_title'],
+        'group'                  => $validated['group'],
+        'type'                   => $validated['type'],
+        'weight'                 => $validated['weight'],
+        'width'                  => $validated['width']  ?? null,
+        'height'                 => $validated['height'] ?? null,
+        'amp'                    => $request->amp,
+        'start_date'             => $validated['start_date']  ?? date('Y-m-d'),
+        'expiry_date'            => $validated['expiry_date'] ?? null,
+        'status'                 => $request->boolean('status') ? 1 : 0,
+        'visualization_condition'=> $this->packVisualizationCondition($request),
+        'placement'              => $request->input('placement'),
     ])->save();
 
-    /* ---------------------------------------------------------------
-     * 3.  Handle image-based ads
-     * --------------------------------------------------------------*/
     if ($isImageAd) {
-
-        /* ---------- 3a. remove images that the editor flagged for deletion */
         $deleteIds = array_filter(explode(',', $request->input('deleted_images', '')));
-        if ($deleteIds) {
-            $ad->images()->whereIn('id', $deleteIds)->delete();
-        }
+        if ($deleteIds) $ad->images()->whereIn('id', $deleteIds)->delete();
 
-        /* ---------- 3b. update target URLs of the still-existing images */
         $urlsExisting = $request->input('urls_existing', []);
-
-        /* ---------- 3c. handle NEW uploads */
-        $newFiles = $request->file('images', []);
-        $urlsNew  = $request->input('urls_new', []);
+        $newFiles     = $request->file('images', []);
+        $urlsNew      = $request->input('urls_new', []);
 
         if (count($newFiles) !== count($urlsNew)) {
-            return back()
-                ->withInput()
-                ->withErrors(['urls_new' => 'Devi fornire un URL per ogni immagine caricata.']);
+            return back()->withInput()->withErrors(['urls_new' => 'Devi fornire un URL per ogni immagine caricata.']);
         }
 
-        $storedUrlMap = []; // [imageId => targetUrl]
-
-        foreach ($newFiles as $idx => $file) {
-            if (!$file || !$file->isValid()) {
-                continue;
+        $storedUrlMap = [];
+        foreach ($newFiles as $i => $file) {
+            if (!$file || !$file->isValid() || strtolower($file->getClientOriginalExtension()) === 'webp') {
+                return back()->withInput()->withErrors(['images' => 'File non valido o formato non consentito.']);
             }
-
-            if (strtolower($file->getClientOriginalExtension()) === 'webp') {
-                return back()->withInput()
-                    ->withErrors(['images' => 'Le immagini .webp non sono consentite.']);
-            }
-
-            $fileName = Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
-
-            // Resize if width+height supplied
-            $img = \Intervention\Image\Facades\Image::make($file);
-            if ($ad->width && $ad->height) {
-                $img->resize($ad->width, $ad->height);
-            }
-            $tmp = sys_get_temp_dir() . "/{$fileName}";
+            $name = Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
+            $img  = \Intervention\Image\Facades\Image::make($file);
+            if ($ad->width && $ad->height) $img->resize($ad->width, $ad->height);
+            $tmp  = sys_get_temp_dir() . "/$name";
             $img->save($tmp);
-
-            /** @var \RvMedia $this->rvMedia (injected via constructor) */
-            $upload = $this->rvMedia
-                           ->uploadFromPath($tmp, 0, 'ads-images/');
-            @unlink($tmp);
-
-            $newImg = $ad->images()->create([
-                'image_url' => $upload['data']->url,
-            ]);
-
-            $storedUrlMap[$newImg->id] = $urlsNew[$idx] ?? '';
+            $up   = $this->rvMedia->uploadFromPath($tmp, 0, 'ads-images/');
+            unlink($tmp);
+            $newImg = $ad->images()->create(['image_url' => $up['data']->url]);
+            $storedUrlMap[$newImg->id] = $urlsNew[$i] ?? '';
         }
 
-        /* ---------- 3d. rebuild the “url” JSON so its indices match images order */
         $finalUrls = [];
-
-        $ad->load('images'); // refresh after deletions / insertions
+        $ad->load('images');
         foreach ($ad->images()->orderBy('id')->get() as $img) {
-            $finalUrls[] =
-                $urlsExisting[$img->id]    // updated via form
-             ?? $storedUrlMap[$img->id]   // brand-new upload
-             ?? '';                       // keep empty if user left it blank
+            $finalUrls[] = $urlsExisting[$img->id] ?? $storedUrlMap[$img->id] ?? '';
         }
-
         $ad->url = json_encode($finalUrls);
         $ad->save();
     }
 
-    /* ---------------------------------------------------------------
-     * 4.  Schedule activation job (if start date is in the future)
-     * --------------------------------------------------------------*/
-    if ($ad->start_date && \Carbon\Carbon::parse($ad->start_date)->isFuture()) {
-        $delay = \Carbon\Carbon::parse($ad->start_date)->diffInSeconds(now());
-        \App\Jobs\ActivateAdJob::dispatch($ad)->delay($delay);
-    }
-
-    return redirect()
-        ->route('ads.index')
-        ->with('success', 'Advertisement updated successfully!');
+    return back()->with('success','Advertisement updated successfully!');
 }
 
 

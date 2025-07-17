@@ -125,7 +125,9 @@ class Ad extends BaseModel
         'width',
         'height',
         'weight',
-        'status'
+        'status',
+            'visualization_condition',   //  ← NEW
+        'placement', 
     ];
 
     /**
