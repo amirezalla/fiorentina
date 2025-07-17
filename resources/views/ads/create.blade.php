@@ -350,6 +350,8 @@
             const typeSel = document.getElementById('vis_cond_type');
             const pageInput = document.getElementById('vis_page_input');
             const adInputs = document.getElementById('vis_ad_inputs');
+            pageInput.style.display = 'none';
+            adInputs.style.display = 'none';
 
             function toggle() {
                 switch (typeSel.value) {
