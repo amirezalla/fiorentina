@@ -112,10 +112,6 @@ class AdController extends BaseController
         'images.*'         => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
         'urls'             => 'nullable|array',
         'urls.*'           => 'nullable|url|max:255',
-        'vis_cond_type'    => ['nullable','in:page_impressions,ad_impressions'],
-        'vis_page_value'   => ['required_if:vis_cond_type,page_impressions','integer','min:1'],
-        'vis_ad_max'       => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
-        'vis_ad_seconds'   => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
         'placement'        => ['nullable','in:homepage,article,both'],
     ]);
 
@@ -238,10 +234,6 @@ public function update(Request $request, Ad $ad)
         'group'           => ['required', Rule::in(array_keys(Ad::GROUPS))],
         'start_date'      => 'nullable|date',
         'expiry_date'     => 'nullable|date',
-        'vis_cond_type'   => ['nullable','in:page_impressions,ad_impressions'],
-        'vis_page_value'  => ['required_if:vis_cond_type,page_impressions','integer','min:1'],
-        'vis_ad_max'      => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
-        'vis_ad_seconds'  => ['required_if:vis_cond_type,ad_impressions','integer','min:1'],
         'placement'       => ['nullable','in:homepage,article,both'],
     ];
 
