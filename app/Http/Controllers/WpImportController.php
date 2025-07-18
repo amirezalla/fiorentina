@@ -431,29 +431,28 @@ private function category($primaryCategoryId,$post_id){
 }
    private function ensureBackupAndGetPublicUrl($post): string
 {
-    $path        = ltrim($post->image, '/');      // normalise path
-    $sourceDisk  = Storage::disk('wasabi');       // private bucket
-    $backupDisk  = Storage::disk('wasabi_backup');/* public bucket */
+$path       = ltrim($post->image, '/');
+$sourceDisk = Storage::disk('wasabi');
+$backupDisk = Storage::disk('wasabi_backup');
 
-    if (! $sourceDisk->exists($path)) {
-        throw new \RuntimeException("Source image {$path} not found.");
+if (! $backupDisk->exists($path)) {
+
+    // 1. Create a signed URL that lives 15 min
+    $tempUrl = $sourceDisk->temporaryUrl($path, now()->addMinutes(15));
+
+    // 2. Open a read-only HTTP stream
+    $stream  = fopen($tempUrl, 'rb');
+    if ($stream === false) {
+        throw new RuntimeException("Unable to download $tempUrl");
     }
 
-    // Copy once, with public ACL
-    if (! $backupDisk->exists($path)) {
-        $stream = $sourceDisk->readStream($path);
+    // 3. Stream-upload to the public bucket
+    $backupDisk->writeStream($path, $stream, ['visibility' => 'public']);
+    fclose($stream);
+}
 
-        // The third argument sets the ACL/visibility on S3-compatible drivers
-        $backupDisk->writeStream($path, $stream, [
-            'visibility' => 'public',             // Flysystem parameter
-            // 'ACL' => 'public-read',            // older AWS SDK syntax
-        ]);
-
-        fclose($stream);
-    }
-
-    // This returns a **permanent** URL (no signature, public object)
-    return $backupDisk->url($path);
+$publicUrl = $backupDisk->url($path);
+return $publicUrl;
 }
 
     public function generateSEO(Request $request)
