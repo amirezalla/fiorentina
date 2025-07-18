@@ -441,7 +441,7 @@ Route::get('/health/wasabi-backup', function () {
         // any metadata call that touches the bucket is enough
         Storage::disk('wasabi_backup')->files('/', 1);   // Flysystem v3
 
-        return response()->json(['status' => 'ok'], Response::HTTP_OK);
+        return response()->json(['status' => 'ok'], 200);
     } catch (\Throwable $e) {
         // log the stack trace for later inspection
         report($e);
@@ -449,6 +449,6 @@ Route::get('/health/wasabi-backup', function () {
         return response()->json([
             'status'  => 'error',
             'message' => 'Wasabi backup unreachable',
-        ], Response::HTTP_SERVICE_UNAVAILABLE);
+        ], 503);
     }
 });
