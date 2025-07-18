@@ -483,7 +483,7 @@ $keywordsMetaJson = DB::table('meta_boxes')
     ->where('meta_key',       'vig_seo_keywords')
     ->value('meta_value');        // → null if row missing
 
-dd($this->ensureBackupAndGetPublicUrl($post));
+$seo_image=$this->ensureBackupAndGetPublicUrl($post);
 
 // ---------------------------------------------------
 // 2)  Decode & inspect
@@ -611,7 +611,7 @@ $prompt = "Generate SEO metadata for the following post:
                     ],
                     [
                         'meta_key' => 'seo_meta',
-                        'meta_value' => json_encode([['index' => 'index','seo_title'=>$post->name , 'seo_description' => $metaDescription]]),
+                        'meta_value' => json_encode([['index' => 'index','seo_title'=>$post->name , 'seo_description' => $metaDescription,"seo_image" => $seo_image]]),
                         'reference_id' => $postId,
                         'reference_type' => 'Botble\Blog\Models\Post',
                         'created_at' => now(),
