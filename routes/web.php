@@ -47,6 +47,7 @@ use App\Http\Controllers\AssetController;
 
 use Botble\Blog\Models\Post;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
 
@@ -434,3 +435,20 @@ View::composer('partials.yt-widget', function ($view) {
     Route::post('/chat-settings/update-light-words', [ChatSettingsController::class, 'updateLightWords'])->name('chat-settings.update-light-words');
     Route::post('/chat-settings/update-auto-message', [ChatSettingsController::class, 'updateAutoMessage'])->name('chat-settings.update-auto-message');
     
+
+Route::get('/health/wasabi-backup', function () {
+    try {
+        // any metadata call that touches the bucket is enough
+        Storage::disk('wasabi_backup')->files('/', 1);   // Flysystem v3
+
+        return response()->json(['status' => 'ok'], Response::HTTP_OK);
+    } catch (\Throwable $e) {
+        // log the stack trace for later inspection
+        report($e);
+
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Wasabi backup unreachable',
+        ], Response::HTTP_SERVICE_UNAVAILABLE);
+    }
+});

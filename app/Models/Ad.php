@@ -140,6 +140,53 @@ class Ad extends BaseModel
     }
 
 
+    #
+        protected static function userKey(): string
+    {
+        return auth()->check()
+            ? 'u' . auth()->id()           // logged-in user
+            : 's' . session()->getId();    // anonymous per-session
+    }
+
+    // ------------------------------------------------------------------
+    //  Eligibility & accounting
+    // ------------------------------------------------------------------
+    public function isEligible(): bool
+    {
+        $v = $this->visualization();       // ← your JSON column
+        if (!$v) return true;              // no limits
+
+        $key = static::userKey();
+        $cache = "ad:{$this->id}:{$key}";
+
+        if ($v['type'] === 'page') {
+            return Cache::get("$cache:views", 0) < $v['max'];
+        }
+
+        if ($v['type'] === 'ad') {
+            $views = Cache::get("$cache:views", 0);
+            $last  = Cache::get("$cache:last", 0);
+            return $views < $v['max'] && (time() - $last) >= $v['seconds'];
+        }
+
+        return true;
+    }
+
+    public function markShown(): void
+    {
+        $key   = static::userKey();
+        $cache = "ad:{$this->id}:{$key}";
+        Cache::increment("$cache:views");
+        Cache::put("$cache:last", time(), now()->addDays(30));
+    }
+
+    public function visualization(): ?array
+    {
+        return $this->visualization_condition
+            ? json_decode($this->visualization_condition, true)
+            : null;
+    }
+
     public function getGroupNameAttribute()
     {
         return self::GROUPS[$this->group] ?? 'Unknown Group';
