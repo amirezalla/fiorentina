@@ -93,11 +93,10 @@
 
                                 {{--   Impressioni pagina → singolo numero                           --}}
                                 <input id="vis_page_input" type="number" name="vis_page_value" class="form-control mt-2"
-                                    min="1" placeholder="Esempio: 3" value="{{ old('vis_page_value') }}"
-                                    style="display:none">
+                                    min="1" placeholder="Esempio: 3" value="{{ old('vis_page_value') }}">
 
                                 {{--   Max impressioni annuncio → due campi (come screenshot)        --}}
-                                <div id="vis_ad_inputs" class="d-flex gap-2 mt-2" style="display:none">
+                                <div id="vis_ad_inputs" class="d-flex gap-2 mt-2">
                                     <input type="number" name="vis_ad_max" class="form-control" min="1"
                                         placeholder="0" value="{{ old('vis_ad_max') }}">
                                     <span class="align-self-center">entro</span>
