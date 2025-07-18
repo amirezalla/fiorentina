@@ -345,6 +345,19 @@
         }
     </script>
 
+    <style>
+        .hidden {
+            display: none !important;
+        }
+
+        .visible-block {
+            display: block !important;
+        }
+
+        .visible-flex {
+            display: flex !important;
+        }
+    </style>
     <script>
         (() => {
             const typeSel = document.getElementById('vis_cond_type');
@@ -356,21 +369,22 @@
             function toggle() {
                 switch (typeSel.value) {
                     case 'page_impressions':
-                        pageInput.style.display = 'block';
-                        adInputs.style.display = 'none !important';
+                        pageInput.classList.add('visible-block');
+                        pageInput.classList.remove('hidden');
+                        adInputs.classList.add('hidden');
                         break;
 
                     case 'ad_impressions':
-                        pageInput.style.display = 'none !important';
-                        adInputs.style.display = 'flex'; // keep the horizontal layout
+                        pageInput.classList.add('hidden');
+                        adInputs.classList.add('visible-flex');
+                        adInputs.classList.remove('hidden');
                         break;
 
-                    default: // “— Nessuna —”
-                        pageInput.style.display = 'none !important';
-                        adInputs.style.display = 'none !important';
+                    default:
+                        pageInput.classList.add('hidden');
+                        adInputs.classList.add('hidden');
                 }
             }
-
             typeSel.addEventListener('change', toggle);
             toggle(); // run once on load
         })();
