@@ -211,7 +211,7 @@
                     </div>
 
                     {{-- PLACEMENT (solo mobile ads) -------------------------------------- --}}
-                    <div class="mt-3">
+                    <div class="mt-3 p-3">
                         <label class="form-label d-block">Placement <small>(solo mobile ads)</small></label>
                         @php
                             $placementOld = old('placement');
