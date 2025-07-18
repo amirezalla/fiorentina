@@ -349,41 +349,48 @@
             display: none !important;
         }
 
-        .visible-block {
+        .block {
             display: block !important;
         }
 
-        .visible-flex {
+        /* pageInput when shown   */
+        .flex {
             display: flex !important;
         }
+
+        /* adInputs when shown    */
     </style>
     <script>
-        (() => {
-            const typeSel = document.getElementById('vis_cond_type');
-            const pageInput = document.getElementById('vis_page_input');
-            const adInputs = document.getElementById('vis_ad_inputs');
+        const typeSel = document.getElementById('vis_cond_type');
+        const pageInput = document.getElementById('vis_page_input');
+        const adInputs = document.getElementById('vis_ad_inputs');
 
-            function toggle() {
-                switch (typeSel.value) {
-                    case 'page_impressions':
-                        pageInput.classList.add('visible-block');
-                        pageInput.classList.remove('hidden');
-                        adInputs.classList.add('hidden');
-                        break;
+        typeSel.addEventListener('change', toggle);
+        toggle(); // run once on page-load
 
-                    case 'ad_impressions':
-                        pageInput.classList.add('hidden');
-                        adInputs.classList.add('visible-flex');
-                        adInputs.classList.remove('hidden');
-                        break;
+        function clearDisplay(el) {
+            el.classList.remove('hidden', 'block', 'flex'); // wipes previous state
+        }
 
-                    default:
-                        pageInput.classList.add('hidden');
-                        adInputs.classList.add('hidden');
-                }
+        function toggle() {
+            clearDisplay(pageInput);
+            clearDisplay(adInputs);
+
+            switch (typeSel.value) {
+                case 'page_impressions':
+                    pageInput.classList.add('block'); // show as block
+                    adInputs.classList.add('hidden'); // hide the flex container
+                    break;
+
+                case 'ad_impressions':
+                    pageInput.classList.add('hidden'); // hide the single input
+                    adInputs.classList.add('flex'); // show the pair, keep it horizontal
+                    break;
+
+                default: // “— Nessuna —”
+                    pageInput.classList.add('hidden');
+                    adInputs.classList.add('hidden');
             }
-            typeSel.addEventListener('change', toggle);
-            toggle(); // run once on load
-        })();
+        }
     </script>
 @endpush
