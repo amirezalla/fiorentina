@@ -357,17 +357,17 @@
                 switch (typeSel.value) {
                     case 'page_impressions':
                         pageInput.style.display = 'block';
-                        adInputs.style.display = 'none';
+                        adInputs.style.display = 'none !important';
                         break;
 
                     case 'ad_impressions':
-                        pageInput.style.display = 'none';
+                        pageInput.style.display = 'none !important';
                         adInputs.style.display = 'flex'; // keep the horizontal layout
                         break;
 
                     default: // “— Nessuna —”
-                        pageInput.style.display = 'none';
-                        adInputs.style.display = 'none';
+                        pageInput.style.display = 'none !important';
+                        adInputs.style.display = 'none !important';
                 }
             }
 
