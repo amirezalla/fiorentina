@@ -429,13 +429,39 @@ private function category($primaryCategoryId,$post_id){
         ], 500);
     }
 }
-   
+   private function ensureBackupAndGetPublicUrl($post): string
+{
+    $path        = ltrim($post->image, '/');      // normalise path
+    $sourceDisk  = Storage::disk('wasabi');       // private bucket
+    $backupDisk  = Storage::disk('wasabi_backup');/* public bucket */
+
+    if (! $sourceDisk->exists($path)) {
+        throw new \RuntimeException("Source image {$path} not found.");
+    }
+
+    // Copy once, with public ACL
+    if (! $backupDisk->exists($path)) {
+        $stream = $sourceDisk->readStream($path);
+
+        // The third argument sets the ACL/visibility on S3-compatible drivers
+        $backupDisk->writeStream($path, $stream, [
+            'visibility' => 'public',             // Flysystem parameter
+            // 'ACL' => 'public-read',            // older AWS SDK syntax
+        ]);
+
+        fclose($stream);
+    }
+
+    // This returns a **permanent** URL (no signature, public object)
+    return $backupDisk->url($path);
+}
 
     public function generateSEO(Request $request)
     {
         try {
             if($request->has('post_id')){
                 $postId = $request->input('post_id');
+
             }
             // Retrieve the post
             $post = DB::table('posts')->where('id', $postId)->first();
@@ -457,6 +483,8 @@ $keywordsMetaJson = DB::table('meta_boxes')
     ->where('reference_type', 'Botble\Blog\Models\Post')
     ->where('meta_key',       'vig_seo_keywords')
     ->value('meta_value');        // → null if row missing
+
+dd($this->ensureBackupAndGetPublicUrl($post));
 
 // ---------------------------------------------------
 // 2)  Decode & inspect
