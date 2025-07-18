@@ -431,22 +431,28 @@ private function category($primaryCategoryId,$post_id){
 }
    private function ensureBackupAndGetPublicUrl($post): string
 {
-$prefix = 'laviola-public/';                  //  <- folder in the bucket
-$path   = $prefix . ltrim($post->image, '/'); // posts/img-1643-1.jpeg → laviola-public/posts/…
-
+$path       = ltrim($post->image, '/');
 $sourceDisk = Storage::disk('wasabi');
 $backupDisk = Storage::disk('wasabi_backup');
 
 if (! $backupDisk->exists($path)) {
 
-    $tempUrl = $sourceDisk->temporaryUrl($prefix . $post->image, now()->addMinutes(15));
-    $stream  = fopen($tempUrl, 'rb');
+    // 1. Create a signed URL that lives 15 min
+    $tempUrl = $sourceDisk->temporaryUrl($path, now()->addMinutes(15));
 
+    // 2. Open a read-only HTTP stream
+    $stream  = fopen($tempUrl, 'rb');
+    if ($stream === false) {
+        throw new RuntimeException("Unable to download $tempUrl");
+    }
+
+    // 3. Stream-upload to the public bucket
     $backupDisk->writeStream($path, $stream, ['visibility' => 'public']);
     fclose($stream);
 }
 
-return $backupDisk->url($path);
+$publicUrl = $backupDisk->url($path);
+return $publicUrl;
 }
 
     public function generateSEO(Request $request)
