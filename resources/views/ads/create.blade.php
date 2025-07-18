@@ -79,7 +79,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3">
+                            <div class="mt-3 mb-3">
                                 <label for="vis_cond_type" class="form-label">Condizione per Visitatori</label>
                                 <select id="vis_cond_type" name="vis_cond_type" class="form-select">
                                     <option value="">— Nessuna —</option>
