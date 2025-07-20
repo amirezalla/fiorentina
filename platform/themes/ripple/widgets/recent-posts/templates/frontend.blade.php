@@ -271,7 +271,7 @@
                                         @endif
 
                                         {{-- Post Title --}}
-                                        <h4 class="post__title" style="margin: 0;">
+                                        <h4 class="post__title" style="margin: 0;font-size: 14px;">
                                             <a href="{{ $post->url }}" title="{{ $post->name }}"
                                                 style="text-decoration: none; color: inherit;">
                                                 {{ $post->name }}
@@ -318,7 +318,7 @@
                                         @endif
 
                                         {{-- Post Title --}}
-                                        <h4 class="post__title" style="margin: 0;">
+                                        <h4 class="post__title" style="margin: 0;font-size: 14px;">
                                             <a href="{{ $post->url }}" title="{{ $post->name }}"
                                                 style="text-decoration: none; color: inherit;">
                                                 {{ $post->name }}
