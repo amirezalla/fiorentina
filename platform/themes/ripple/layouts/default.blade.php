@@ -42,8 +42,7 @@
     <div class="container mobile-p-0" style="position: relative;margin-top: -66px;">
         <div class="row row col-lg-11 bg-white mx-auto pb-50">
 
-
-            @if (!View::hasSection('isArticle'))
+            @if (!Theme::get('isArticle'))
                 <div class="col-lg-8">
                     <div class="page-content">
                         {!! Theme::content() !!}
