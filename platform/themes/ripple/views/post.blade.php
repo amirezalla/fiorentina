@@ -17,31 +17,32 @@
 @php
     Theme::set('isArticle', true);
 @endphp
-@if ($post->first_category?->name)
-    <span class="post-category post-group__left-purple-badge"
-        style="display: block;
-            width: fit-content;
-            margin-bottom: 10px;">
-        <a class="category-label" style="font-size: 14px !important"
-            href="{{ $post->first_category->url }}">{{ $post->first_category->name }}</a>
-    </span>
-@endif
 
-<h1 class="post__title post__title_in">{{ $post->name }}</h1>
 <article class="post post--single">
     <header class="post__header" style="padding-top: 20px">
+        @if ($post->first_category?->name)
+            <span class="post-category post-group__left-purple-badge"
+                style="display: block;
+            width: fit-content;
+            margin-bottom: 10px;">
+                <a class="category-label" style="font-size: 14px !important"
+                    href="{{ $post->first_category->url }}">{{ $post->first_category->name }}</a>
+            </span>
+        @endif
 
-        <div class="post__meta">
-            {!! Theme::partial('blog.post-meta', compact('post')) !!}
+        <h1 class="post__title post__title_in">{{ $post->name }}</h1>
+        <div class="col-8">
+            <div class="post__meta">
+                {!! Theme::partial('blog.post-meta', compact('post')) !!}
 
-            @if ($post->tags->isNotEmpty())
-                @php
-                    if (is_plugin_active('language') && is_plugin_active('language-advanced')) {
-                        $post->tags->loadMissing('translations');
-                    }
-                @endphp
-            @endif
-        </div>
+                @if ($post->tags->isNotEmpty())
+                    @php
+                        if (is_plugin_active('language') && is_plugin_active('language-advanced')) {
+                            $post->tags->loadMissing('translations');
+                        }
+                    @endphp
+                @endif
+            </div>
     </header>
     <div class="post__content">
         @if (defined('GALLERY_MODULE_SCREEN_NAME') && !empty(($galleries = gallery_meta_data($post))))
@@ -54,4 +55,6 @@
 
     <br>
     {!! apply_filters(BASE_FILTER_PUBLIC_COMMENT_AREA, null, $post) !!}
+    </div>
+
 </article>

@@ -42,11 +42,19 @@
     <div class="container mobile-p-0" style="position: relative;margin-top: -66px;">
         <div class="row row col-lg-11 bg-white mx-auto pb-50">
 
-            <div class="col-lg-8">
+
+            @if (!View::hasSection('is_article'))
+                <div class="col-lg-8">
+                    <div class="page-content">
+                        {!! Theme::content() !!}
+                    </div>
+                </div>
+            @else
                 <div class="page-content">
                     {!! Theme::content() !!}
                 </div>
-            </div>
+            @endif
+
             @if (Request::path() !== 'diretta')
                 {{-- Check if the page is not /diretta --}}
                 <div class="col-lg-4">
