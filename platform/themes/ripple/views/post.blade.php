@@ -153,6 +153,21 @@
             ->get();
     }
 @endphp
+@dd($relatedPosts)
+
+            {{-- Related posts section --}}
+            @if ($relatedPosts->isNotEmpty())
+                <div class="related-posts mt-5">
+                    <h3 class="fw-bold text-uppercase mb-3"
+                        style="font-family:'Titillium Web';font-size:1rem;border-bottom:2px solid #ccc;">
+                        <span style="border-bottom:2px solid #8424e3;padding-bottom:4px;">
+                            ALTRE NOTIZIE RASSEGNA STAMPA
+                        </span>
+                    </h3>
+
+                    <div class="row gx-3 gy-4">
+                        @foreach ($relatedPosts as $item)
+                            <div class="col-12 col
 
 @if ($relatedPosts->isNotEmpty())
     <div class="related-posts mt-5">
