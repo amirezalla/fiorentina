@@ -17,20 +17,20 @@
 @php
     Theme::set('isArticle', true);
 @endphp
-
-<article class="post post--single">
-    <header class="post__header" style="padding-top: 20px">
-        @if ($post->first_category?->name)
-            <span class="post-category post-group__left-purple-badge"
-                style="display: block;
+@if ($post->first_category?->name)
+    <span class="post-category post-group__left-purple-badge"
+        style="display: block;
             width: fit-content;
             margin-bottom: 10px;">
-                <a class="category-label" style="font-size: 14px !important"
-                    href="{{ $post->first_category->url }}">{{ $post->first_category->name }}</a>
-            </span>
-        @endif
+        <a class="category-label" style="font-size: 14px !important"
+            href="{{ $post->first_category->url }}">{{ $post->first_category->name }}</a>
+    </span>
+@endif
 
-        <h1 class="post__title post__title_in">{{ $post->name }}</h1>
+<h1 class="post__title post__title_in">{{ $post->name }}</h1>
+<article class="post post--single">
+    <header class="post__header" style="padding-top: 20px">
+
         <div class="post__meta">
             {!! Theme::partial('blog.post-meta', compact('post')) !!}
 
