@@ -156,67 +156,7 @@
 
 
 
-    <div class="widget__content" id="most-recent1">
-        {{-- header ------------------------------------------------------------ --}}
-        <div class="editoriale-item-head d-flex mt-3 mb-1" style="border-bottom:2px solid #ccc;">
-            <span class="editoriale-item-head-title px-1 text-dark"
-                style="border-bottom: 2px solid #8424e3;
-    font-family: 'Titillium Web';
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 12px 16px;">
-                ULTIME NOTIZIE
-            </span>
-        </div>
 
-        {{-- SCROLLABLE LIST  --------------------------------------------------- --}}
-        <div class="recent-scroll pe-1"> {{-- 👈 new wrapper --}}
-            <ul class="list-unstyled m-0">
-                @foreach ($mostRecentPosts as $post)
-                    <li class="py-3 border-bottom">
-                        <article class="d-flex align-items-start">
-                            <div style="width:80px;flex-shrink:0;margin-right:10px;">
-                                {{ RvMedia::image($post->image, $post->name, 'thumb') }}
-                                <a href="{{ $post->url }}" class="post__overlay" title="{{ $post->name }}"></a>
-                            </div>
-
-                            <header style="flex:1;align-self: center;">
-                                {{-- Optional: Category label in uppercase, if you want it above the title --}}
-                                @if ($post->categories->count())
-                                    <span style="font-size:.7rem;text-transform:uppercase;color:#999;">
-                                        {{ strtoupper($post->categories->first()->name) }}
-                                    </span>
-                                @endif
-
-                                <h4 style="margin:0;font-size:.95rem;line-height:1.2;">
-                                    <a href="{{ $post->url }}" class="text-dark text-decoration-none">
-                                        {{ $post->name }}
-                                    </a>
-                                </h4>
-
-                                <div style="font-size:.7rem;color:#999;margin-top:2px;text-transform:uppercase;">
-                                    {{-- Date --}}
-                                    {{ Theme::formatDate($post->created_at) }}
-                                </div>
-                            </header>
-                        </article>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-
-        {{-- optional “More news” footer --------------------------------------- --}}
-        <div class="text-center py-2" style="background: #8424e3">
-            <a href="" class="fw-semibold text-white text-decoration-none"
-                style="text-transform:uppercase;
-    font-family: 'Titillium Web';
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 12px 16px;">
-                Più notizie <span>&#10140;</span>
-            </a>
-        </div>
-    </div>
 
     @if (!$isMobile)
         <div class="row mt-30 ad-top-sidebar">
