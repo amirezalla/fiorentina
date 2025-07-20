@@ -42,7 +42,7 @@
                         }
                     @endphp
                 @endif
-            </div>
+
     </header>
     <div class="post__content">
         @if (defined('GALLERY_MODULE_SCREEN_NAME') && !empty(($galleries = gallery_meta_data($post))))
