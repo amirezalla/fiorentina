@@ -148,7 +148,7 @@
 @if ($mostCommentedPosts->isNotEmpty())
 
     @if (!$isMobile)
-        <div class="row mt-30 ad-top-sidebar">
+        <div class="row mt-3 ad-top-sidebar">
             @include('ads.includes.SIZE_300X250_TOP')
         </div>
     @endif

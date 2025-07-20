@@ -28,7 +28,7 @@
 
 
         {{-- ============ Header ============ --}}
-        <header class="post__header" style="padding-top:20px">
+        <header class="post__header mb-3" style="padding-top:20px">
 
             {{-- Category badge ----------------------------------------------------- --}}
             @if ($post->first_category?->name)
