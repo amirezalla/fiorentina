@@ -90,6 +90,7 @@
 
 
 
+
         </div>
 
         {{-- ============ Sidebar (only relevant if the layout still shows it) ===== --}}
@@ -129,7 +130,7 @@
 
                 {{-- ── section heading ─────────────────────────────────────────────── --}}
                 <h3 class="fw-bold text-uppercase mb-3"
-                    style="font-family:'Titillium Web';font-size:1rem;border-bottom:2px solid #ccc;">
+                    style="font-family:'Titillium Web';font-size:1rem;border-bottom:2px solid #ccc;padding-bottom:4px;">
                     <span style="border-bottom:2px solid #8424e3;padding-bottom:4px;">
                         ALTRE NOTIZIE {{ $post->first_category->name }}
                     </span>
@@ -148,14 +149,22 @@
                                 </a>
 
                                 {{-- title --}}
-                                <h4 class="h6 fw-bold mb-1" style="font-family:'Titillium Web';line-height:1.2;">
-                                    <a href="{{ $item->url }}" class="text-dark text-decoration-none">
+                                <h4 class="h6 fw-bold mb-1" style="font-family:'Titillium Web';">
+                                    <a href="{{ $item->url }}" class="text-dark text-decoration-none"
+                                        style="font-size: 1.2rem;font-weight: 600;font-family: 'Titillium Web';line-height:1.2;">
+                                        {{-- Limit title length to 90 characters --}}
                                         {{ Str::limit($item->name, 90) }}
                                     </a>
                                 </h4>
 
                                 {{-- short excerpt (optional) --}}
-                                <p class="small text-muted mb-0">
+                                <p class="small mb-0"
+                                    style="    color: #555;font-family: 'Titillium Web';
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-top: 7px;
+    width: 100%;">
                                     {{ Str::limit(strip_tags($item->description ?: $item->content), 90) }}
                                 </p>
 
