@@ -349,6 +349,7 @@ class Ad extends BaseModel
             max(1, ceil($contentOnly->count() / 4))
         );
     
+        dd($chunks);
         /* ─────────────────────────────────────────────────────────────
          * 4.  Append the desktop / mobile ads after each chunk
          * ───────────────────────────────────────────────────────────*/
