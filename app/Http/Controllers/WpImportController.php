@@ -448,7 +448,6 @@ if (! $backupDisk->exists($path)) {
 
     // 3. Stream-upload to the public bucket
     $backupDisk->writeStream($path, $stream, ['visibility' => 'public']);
-    fclose($stream);
 }
 
 $publicUrl = $backupDisk->url($path);
