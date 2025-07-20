@@ -48,23 +48,24 @@
                         {!! Theme::content() !!}
                     </div>
                 </div>
+                @if (Request::path() !== 'diretta')
+                    {{-- Check if the page is not /diretta --}}
+                    <div class="col-lg-4">
+                        {!! Theme::partial('sidebar') !!}
+                        @if (Request::path() == 'calendario-primavera')
+                            @include('ads.includes.primaverastanding')
+                        @endif
+                    </div>
+                @elseif (Request::path() == 'diretta')
+                    @include('ads.includes.livechat')
+                @endif
             @else
                 <div class="page-content">
                     {!! Theme::content() !!}
                 </div>
             @endif
 
-            @if (Request::path() !== 'diretta')
-                {{-- Check if the page is not /diretta --}}
-                <div class="col-lg-4">
-                    {!! Theme::partial('sidebar') !!}
-                    @if (Request::path() == 'calendario-primavera')
-                        @include('ads.includes.primaverastanding')
-                    @endif
-                </div>
-            @elseif (Request::path() == 'diretta')
-                @include('ads.includes.livechat')
-            @endif
+
 
         </div>
 </section>

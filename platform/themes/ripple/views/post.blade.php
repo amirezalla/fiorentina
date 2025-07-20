@@ -56,5 +56,10 @@
     <br>
     {!! apply_filters(BASE_FILTER_PUBLIC_COMMENT_AREA, null, $post) !!}
     </div>
+    </div>
+    <div class="col-lg-4">
+        {!! Theme::partial('sidebar') !!}
+    </div>
+
 
 </article>
