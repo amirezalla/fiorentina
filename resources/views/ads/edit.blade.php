@@ -72,7 +72,7 @@
                                         <button type="button" title="Rimuovi"
                                             class="btn-close position-absolute top-0 end-0 m-2 remove-btn"></button>
 
-                                        <img src="{{ Storage::disk('wasabi')->temporaryUrl($img->image_url, now()->addMinutes(15)) ?:
+                                        <img src="{{ Storage::disk('wasabi')->temporaryUrl($img->image_url, now()->addMinutes(1500)) ?:
                                             Storage::disk('wasabi')->url($img->image_url) }}"
                                             style="max-width:100%;height:auto" class="d-block mb-2">
 
