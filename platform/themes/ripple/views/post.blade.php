@@ -140,14 +140,11 @@
 
                 $relatedPosts = collect();
 
-                // only if the article actually has a first category
                 if ($post->first_category) {
                     $relatedPosts = Post::with(['slugable', 'metadata'])
-                        ->whereHas('categories', function ($q) use ($post) {
-                            $q->where('categories.id', $post->first_category->id);
-                        })
+                        ->whereHas('categories', fn($q) => $q->where('categories.id', $post->first_category->id))
                         ->where('id', '!=', $post->id) // exclude this post
-                        ->published()
+                        ->published() // ← now returns rows
                         ->latest()
                         ->take(4)
                         ->get();
