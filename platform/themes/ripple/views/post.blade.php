@@ -138,70 +138,77 @@
         <div class="col-lg-4">
             {!! Theme::partial('sidebar') !!}
         </div>
-        {{-- ============================================================
+
+        @if ($post->first_category?->name)
+
+
+            {{-- ============================================================
 |  Related posts: last 4 from the same category
 |  Insert right after the comments section in post.blade.php
 |============================================================ --}}
-        @php
-            use Illuminate\Support\Str;
-            use Botble\Blog\Models\Post;
+            @php
+                use Illuminate\Support\Str;
+                use Botble\Blog\Models\Post;
 
-            $relatedPosts = collect();
+                $relatedPosts = collect();
 
-            if ($post->first_category) {
-                $relatedPosts = Post::with(['slugable', 'metadata'])
-                    ->whereHas('categories', fn($q) => $q->where('categories.id', $post->first_category->id))
-                    ->where('id', '!=', $post->id) // exclude this post
-                    ->published() // ← now returns rows
-                    ->latest()
-                    ->take(4)
-                    ->get();
-            }
-        @endphp
+                if ($post->first_category) {
+                    $relatedPosts = Post::with(['slugable', 'metadata'])
+                        ->whereHas('categories', fn($q) => $q->where('categories.id', $post->first_category->id))
+                        ->where('id', '!=', $post->id) // exclude this post
+                        ->published() // ← now returns rows
+                        ->latest()
+                        ->take(4)
+                        ->get();
+                }
+            @endphp
 
 
 
-        @if ($relatedPosts->isNotEmpty())
-            <div class="related-posts mt-5 col-lg-12">
 
-                {{-- ── section heading ─────────────────────────────────────────────── --}}
-                <h3 class="fw-bold text-uppercase mb-3"
-                    style="font-family:'Titillium Web';font-size:1rem;border-bottom:2px solid #ccc;">
-                    <span style="border-bottom:2px solid #8424e3;padding-bottom:4px;">
-                        ALTRE NOTIZIE RASSEGNA STAMPA
-                    </span>
-                </h3>
+            @if ($relatedPosts->isNotEmpty())
+                <div class="related-posts mt-5 col-lg-12">
 
-                {{-- ── grid of four items ──────────────────────────────────────────── --}}
-                <div class="row gx-3 gy-4">
-                    @foreach ($relatedPosts as $item)
-                        <div class="col-12 col-sm-6 col-md-3">
-                            <article>
+                    {{-- ── section heading ─────────────────────────────────────────────── --}}
+                    <h3 class="fw-bold text-uppercase mb-3"
+                        style="font-family:'Titillium Web';font-size:1rem;border-bottom:2px solid #ccc;">
+                        <span style="border-bottom:2px solid #8424e3;padding-bottom:4px;">
+                            ALTRE NOTIZIE {{ $post->first_category?->name }}
+                        </span>
+                    </h3>
 
-                                {{-- thumbnail --}}
-                                <a href="{{ $item->url }}" class="d-block mb-2">
-                                    <img src="{{ RvMedia::getImageUrl($item->image, 'medium', false, RvMedia::getDefaultImage()) }}"
-                                        alt="{{ $item->name }}" class="img-fluid w-100">
-                                </a>
+                    {{-- ── grid of four items ──────────────────────────────────────────── --}}
+                    <div class="row gx-3 gy-4">
+                        @foreach ($relatedPosts as $item)
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <article>
 
-                                {{-- title --}}
-                                <h4 class="h6 fw-bold mb-1" style="font-family:'Titillium Web';line-height:1.2;">
-                                    <a href="{{ $item->url }}" class="text-dark text-decoration-none">
-                                        {{ Str::limit($item->name, 90) }}
+                                    {{-- thumbnail --}}
+                                    <a href="{{ $item->url }}" class="d-block mb-2">
+                                        <img src="{{ RvMedia::getImageUrl($item->image, 'medium', false, RvMedia::getDefaultImage()) }}"
+                                            alt="{{ $item->name }}" class="img-fluid w-100">
                                     </a>
-                                </h4>
 
-                                {{-- short excerpt (optional) --}}
-                                <p class="small text-muted mb-0">
-                                    {{ Str::limit(strip_tags($item->description ?: $item->content), 90) }}
-                                </p>
+                                    {{-- title --}}
+                                    <h4 class="h6 fw-bold mb-1" style="font-family:'Titillium Web';line-height:1.2;">
+                                        <a href="{{ $item->url }}" class="text-dark text-decoration-none">
+                                            {{ Str::limit($item->name, 90) }}
+                                        </a>
+                                    </h4>
 
-                            </article>
-                        </div>
-                    @endforeach
+                                    {{-- short excerpt (optional) --}}
+                                    <p class="small text-muted mb-0">
+                                        {{ Str::limit(strip_tags($item->description ?: $item->content), 90) }}
+                                    </p>
+
+                                </article>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
+            @endif
         @endif
     </div>
+
 
 </article>
