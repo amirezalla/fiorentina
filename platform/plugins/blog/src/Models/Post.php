@@ -109,13 +109,11 @@ class Post extends BaseModel
      * @param $q
      * @return mixed
      */
-    public function scopePublished($q): mixed
-    {
-        return $q->where(function ($q) {
-            $q->whereNull('published_at')
-                ->where('published_at', '<=', now());
-        });
-    }
+public function scopePublished($q): mixed
+{
+    return $q->whereNotNull('published_at')
+             ->where('published_at', '<=', now());
+}
 
     /**
      * @param $q
