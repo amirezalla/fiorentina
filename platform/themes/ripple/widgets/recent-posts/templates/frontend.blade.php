@@ -213,7 +213,7 @@
 
             {{-- ── “more news” link (optional) ─────────────────────────────────── --}}
             <div class="text-center py-2" style="background:#8424e3;">
-                <a href="{{ route('public.blog') }}" {{-- ← adjust to your news archive route --}}
+                <a href="" {{-- ← adjust to your news archive route --}}
                     class="fw-semibold text-white text-decoration-none text-uppercase">
                     Più notizie <span>&#10140;</span>
                 </a>
