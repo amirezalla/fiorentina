@@ -48,7 +48,7 @@
                 @if ($socialLinks = Theme::getSocialLinks())
                     <ul class="social social--simple"
                         style="display: flex; margin-right: 15px; list-style: none; padding: 0;">
-                        <li style="margin-right"> <span>Seguici</span></li>
+                        <li style="margin-right;align-content:center;font-size:smaller"> <span>Seguici</span></li>
                         @foreach ($socialLinks as $socialLink)
                             @continue(!($icon = $socialLink->getIconHtml()))
                             <li style="margin-right: 10px;">
