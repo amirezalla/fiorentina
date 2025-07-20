@@ -327,7 +327,8 @@
 
                                         {{-- Date --}}
                                         <div class="post__meta"
-                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;">
+                                            style="font-size: 0.75rem; color: #999; margin-top: 2px;text-transform: uppercase;">
+                                
                                             <span class="post__created-at">
                                                 {{ Theme::formatDate($post->created_at) }}
                                             </span>

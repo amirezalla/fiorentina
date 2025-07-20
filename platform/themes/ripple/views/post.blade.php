@@ -129,6 +129,80 @@
                     </div>
                 </div>
             @endif
+
+            {{-- ============================================================
+|  Related posts: last 4 from the same category
+|  Insert right after the comments section in post.blade.php
+|============================================================ --}}
+@php
+    use Illuminate\Support\Str;
+    use Botble\Blog\Models\Post;
+
+    $relatedPosts = collect();
+
+    // only if the article actually has a first category
+    if ($post->first_category) {
+        $relatedPosts = Post::with(['slugable', 'metadata'])
+            ->whereHas('categories', function ($q) use ($post) {
+                $q->where('categories.id', $post->first_category->id);
+            })
+            ->where('id', '!=', $post->id)   // exclude this post
+            ->published()
+            ->latest()
+            ->take(4)
+            ->get();
+    }
+@endphp
+
+@if ($relatedPosts->isNotEmpty())
+    <div class="related-posts mt-5">
+
+        {{-- ── section heading ─────────────────────────────────────────────── --}}
+        <h3 class="fw-bold text-uppercase mb-3"
+            style="font-family:'Titillium Web';font-size:1rem;border-bottom:2px solid #ccc;">
+            <span style="border-bottom:2px solid #8424e3;padding-bottom:4px;">
+                ALTRE NOTIZIE RASSEGNA STAMPA
+            </span>
+        </h3>
+
+        {{-- ── grid of four items ──────────────────────────────────────────── --}}
+        <div class="row gx-3 gy-4">
+            @foreach ($relatedPosts as $item)
+                <div class="col-12 col-sm-6 col-md-3">
+                    <article>
+
+                        {{-- thumbnail --}}
+                        <a href="{{ $item->url }}" class="d-block mb-2">
+                            <img src="{{ RvMedia::getImageUrl(
+                                        $item->image,
+                                        'medium',
+                                        false,
+                                        RvMedia::getDefaultImage()) }}"
+                                 alt="{{ $item->name }}"
+                                 class="img-fluid w-100">
+                        </a>
+
+                        {{-- title --}}
+                        <h4 class="h6 fw-bold mb-1"
+                            style="font-family:'Titillium Web';line-height:1.2;">
+                            <a href="{{ $item->url }}"
+                               class="text-dark text-decoration-none">
+                                {{ Str::limit($item->name, 90) }}
+                            </a>
+                        </h4>
+
+                        {{-- short excerpt (optional) --}}
+                        <p class="small text-muted mb-0">
+                            {{ Str::limit(strip_tags($item->description ?: $item->content), 90) }}
+                        </p>
+
+                    </article>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
+
         </div>
 
         {{-- ============ Sidebar (only relevant if the layout still shows it) ===== --}}
