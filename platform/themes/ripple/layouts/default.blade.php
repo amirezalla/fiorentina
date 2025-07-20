@@ -43,7 +43,7 @@
         <div class="row row col-lg-11 bg-white mx-auto pb-50">
 
 
-            @if (!View::hasSection('is_article'))
+            @if (!View::hasSection('isArticle'))
                 <div class="col-lg-8">
                     <div class="page-content">
                         {!! Theme::content() !!}
