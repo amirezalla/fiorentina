@@ -148,7 +148,7 @@
 @if ($mostCommentedPosts->isNotEmpty())
 
     @if (!$isMobile)
-        <div class="row mt-3 ad-top-sidebar">
+        <div class="row mt-0 mb-3 ad-top-sidebar">
             @include('ads.includes.SIZE_300X250_TOP')
         </div>
     @endif
@@ -223,12 +223,12 @@
     @endif
 
     @if (!$isMobile)
-        <div class="row mt-30 ad-top-sidebar">
+        <div class="row mt-3 ad-top-sidebar">
             @include('ads.includes.SIZE_300X250_B1')
         </div>
     @endif
 
-    <div class="widget widget__recent-post mt-4 mb-4">
+    <div class="widget widget__recent-post mt-3">
         <ul class="nav nav-tabs" id="postTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="recent-posts-tab" data-toggle="tab" href="#recent-posts" role="tab"
@@ -345,11 +345,11 @@
 
 
 
-    <div class="mt-30">
+    <div class="mt-3">
         @include('videos.includes.adsvideo')
     </div>
     @if ($poll)
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-12">
                 <div>
                     <h1>{{ $poll->question }}</h1>
@@ -387,7 +387,9 @@
     @endif
 
     @if (!$isMobile)
-        @include('ads.includes.SIZE_300X250_C1')
+        <div class="mt-3 ">
+            @include('ads.includes.SIZE_300X250_C1')
+        </div>
     @endif
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
