@@ -320,85 +320,86 @@ class Ad extends BaseModel
         }
     
         /* ─────────────────────────────────────────────────────────────
-         * 2.  Split the article into blocks we keep
-         *     – shortcode blocks
-         *     – paragraph blocks  <p>
-         *     – heading blocks    <h1>…<h6>
-         * ───────────────────────────────────────────────────────────*/
-        preg_match_all(
-            '/<shortcode>[\s\S]*?<\/shortcode>'                               // shortcode
-          . '|<p[^>]*?>[\s\S]*?<\/p>'                                        // paragraph
-          . '|<h[1-6][^>]*?>[\s\S]*?<\/h[1-6]>/i',                           // heading
-            $content,
-            $m
-        );
-    
-        if (empty($m[0])) {
-            return $content;                                                 // nothing matched
+ * 1.  Split the markup into atomic blocks
+ *     (shortcode | p | h1-6)
+ * ───────────────────────────────────────────────────────────*/
+preg_match_all(
+    '/<shortcode>[\s\S]*?<\/shortcode>'
+  . '|<p[^>]*?>[\s\S]*?<\/p>'
+  . '|<h[1-6][^>]*?>[\s\S]*?<\/h[1-6]>/i',
+    $content,
+    $m
+);
+
+if (empty($m[0])) {
+    return $content;                 // nothing matched
+}
+
+$blocks = collect($m[0]);
+
+/* ─────────────────────────────────────────────────────────────
+ * 2.  Walk through the blocks and drop ads after paragraph #n
+ * ───────────────────────────────────────────────────────────*/
+$paraIndex = 0;
+$out       = [];
+
+foreach ($blocks as $block) {
+    $out[] = $block;
+
+    // count only real paragraphs
+    if (preg_match('/^<p/i', $block)) {
+        $paraIndex++;
+
+        switch ($paraIndex) {
+            case 1:
+                if ($ads->has(self::GROUP_DBLOG_P1)) {
+                    $out[] = view('ads.includes.dblog-p1',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P1]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_1',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_1]])->render();
+                }
+                break;
+
+            case 2:
+                if ($ads->has(self::GROUP_DBLOG_P2)) {
+                    $out[] = view('ads.includes.dblog-p2',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P2]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_2',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_2]])->render();
+                }
+                break;
+
+            case 3:
+                if ($ads->has(self::GROUP_DBLOG_P3)) {
+                    $out[] = view('ads.includes.dblog-p3',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P3]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_5',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
+                }
+                break;
+
+            case 4:
+                if ($ads->has(self::GROUP_DBLOG_P4)) {
+                    $out[] = view('ads.includes.dblog-p4',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P4]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_4',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_4]])->render();
+                }
+                break;
+
+            default:        // paragraph 5+
+                if ($ads->has(self::GROUP_DBLOG_P5)) {
+                    $out[] = view('ads.includes.dblog-p5',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P5]])->render();
+                }
         }
-    
-        $blocks      = collect($m[0]);
-        $shortCodes  = $blocks->filter(fn ($b) => str_starts_with($b, '<shortcode'));
-        $contentOnly = $blocks->diff($shortCodes)->values();                 // p + h blocks only
-    
-        /* ─────────────────────────────────────────────────────────────
-         * 3.  Cut the article into four roughly equal chunks
-         *     (headings now stay inside those chunks)
-         * ───────────────────────────────────────────────────────────*/
-        $chunks = $contentOnly->chunk(
-            max(1, ceil($contentOnly->count() / 4))
-        );
-    
-        dd($chunks);
-        /* ─────────────────────────────────────────────────────────────
-         * 4.  Append the desktop / mobile ads after each chunk
-         * ───────────────────────────────────────────────────────────*/
-        $assembled = $chunks->flatMap(function ($items, $idx) use ($ads) {
-            $out = $items->toArray();
-    
-            switch ($idx) {
-                case 0:
-                    if ($ads->has(self::GROUP_DBLOG_P1)) {
-                        $out[] = view('ads.includes.dblog-p1',
-                                       ['ad' => $ads[self::GROUP_DBLOG_P1]])->render();
-                        $out[] = view('ads.includes.MOBILE_POSIZIONE_1',
-                                       ['ad' => $ads[self::MOBILE_POSIZIONE_1]])->render();
-                    }
-                    break;
-                case 1:
-                    if ($ads->has(self::GROUP_DBLOG_P2)) {
-                        $out[] = view('ads.includes.dblog-p2',
-                                       ['ad' => $ads[self::GROUP_DBLOG_P2]])->render();
-                        $out[] = view('ads.includes.MOBILE_POSIZIONE_2',
-                                       ['ad' => $ads[self::MOBILE_POSIZIONE_2]])->render();
-                    }
-                    break;
-                case 2:
-                    if ($ads->has(self::GROUP_DBLOG_P3)) {
-                        $out[] = view('ads.includes.dblog-p3',
-                                       ['ad' => $ads[self::GROUP_DBLOG_P3]])->render();
-                        $out[] = view('ads.includes.MOBILE_POSIZIONE_5',
-                                       ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
-                    }
-                    break;
-                case 3:
-                    if ($ads->has(self::GROUP_DBLOG_P4)) {
-                        $out[] = view('ads.includes.dblog-p4',
-                                       ['ad' => $ads[self::GROUP_DBLOG_P4]])->render();
-                        $out[] = view('ads.includes.MOBILE_POSIZIONE_4',
-                                       ['ad' => $ads[self::MOBILE_POSIZIONE_4]])->render();
-                    }
-                    break;
-                default:
-                    // optional fifth chunk
-                    if ($ads->has(self::GROUP_DBLOG_P5)) {
-                        $out[] = view('ads.includes.dblog-p5',
-                                       ['ad' => $ads[self::GROUP_DBLOG_P5]])->render();
-                    }
-            }
-    
-            return $out;
-        });
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * 3.  Stitch everything back together
+ * ───────────────────────────────────────────────────────────*/
+return implode('', $out);
     
         /* ─────────────────────────────────────────────────────────────
          * 5.  Preserve [ads‑background] shortcode if present
