@@ -14,9 +14,8 @@
 
 @endphp
 
-@php
-    Theme::set('isArticle', true);
-@endphp
+@section('isArticle')
+@endsection
 
 <article class="post post--single">
     <header class="post__header" style="padding-top: 20px">
