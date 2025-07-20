@@ -87,48 +87,6 @@
             {!! apply_filters(BASE_FILTER_PUBLIC_COMMENT_AREA, null, $post) !!}
 
 
-            @php
-                /** @var \Botble\Blog\Models\Post $post */
-
-                // Guard: only if the article has a category
-                $relatedPosts = collect();
-                if ($post->first_category) {
-                    $relatedPosts = \Botble\Blog\Models\Post::with(['slugable', 'metadata'])
-                        ->whereHas('categories', function ($q) use ($post) {
-                            $q->where('categories.id', $post->first_category->id);
-                        })
-                        ->where('id', '!=', $post->id) // skip this post
-                        ->published() // Botble scope
-                        ->latest() // order by created_at desc
-                        ->take(4)
-                        ->get();
-                }
-            @endphp
-
-            @if ($relatedPosts->isNotEmpty())
-                <div class="related-posts mt-40">
-                    <h3 class="section-title mb-20">
-                        ALTRE NOTIZIE {{ $post->first_category->name }}
-                    </h3>
-
-                    <div class="row g-3">
-                        @foreach ($relatedPosts as $item)
-                            <div class="col-6 col-md-3">
-                                <article class="card border-0 h-100">
-                                    <a href="{{ $item->url }}" class="d-block">
-                                        <img class="img-fluid w-100 mb-2"
-                                            src="{{ RvMedia::getImageUrl($item->image, 'medium', false, RvMedia::getDefaultImage()) }}"
-                                            alt="{{ $item->name }}">
-                                        <h4 class="h6 lh-sm text-dark mb-0">
-                                            {{ Str::limit($item->name, 70) }}
-                                        </h4>
-                                    </a>
-                                </article>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
 
 
 
@@ -173,7 +131,7 @@
                 <h3 class="fw-bold text-uppercase mb-3"
                     style="font-family:'Titillium Web';font-size:1rem;border-bottom:2px solid #ccc;">
                     <span style="border-bottom:2px solid #8424e3;padding-bottom:4px;">
-                        ALTRE NOTIZIE {{ $post->first_category?->name }}
+                        ALTRE NOTIZIE {{ $post->first_category->name }}
                     </span>
                 </h3>
 
