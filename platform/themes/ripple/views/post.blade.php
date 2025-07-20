@@ -86,7 +86,7 @@
             <br>
             {!! apply_filters(BASE_FILTER_PUBLIC_COMMENT_AREA, null, $post) !!}
 
-            @if ($post->first_category?->name)
+
                 @php
                     /** @var \Botble\Blog\Models\Post $post */
 
@@ -129,7 +129,7 @@
                         </div>
                     </div>
                 @endif
-            @endif
+
         </div>
 
         {{-- ============ Sidebar (only relevant if the layout still shows it) ===== --}}
