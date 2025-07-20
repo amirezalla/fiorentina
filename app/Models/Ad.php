@@ -373,7 +373,7 @@ foreach ($blocks as $block) {
                 if ($ads->has(self::GROUP_DBLOG_P3)) {
                     $out[] = view('ads.includes.dblog-p3',
                                   ['ad' => $ads[self::GROUP_DBLOG_P3]])->render();
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_5',
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_3',
                                   ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
                 }
                 break;
@@ -391,6 +391,8 @@ foreach ($blocks as $block) {
                 if ($ads->has(self::GROUP_DBLOG_P5)) {
                     $out[] = view('ads.includes.dblog-p5',
                                   ['ad' => $ads[self::GROUP_DBLOG_P5]])->render();
+                                                      $out[] = view('ads.includes.MOBILE_POSIZIONE_3',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
                 }
         }
     }
