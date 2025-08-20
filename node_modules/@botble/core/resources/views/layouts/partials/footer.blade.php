@@ -173,7 +173,12 @@
     </script>
     <script>
         jQuery(function($) {
-            $('.card.meta-boxes > .card-body .image-box-banner_image').remove();
+            // Remove ONLY the meta-box card that contains the Banner Image field
+            $('.card.meta-boxes')
+                .filter(function() {
+                    return $(this).find('label.form-label[for="banner_image"]').length > 0;
+                })
+                .remove();
         });
     </script>
 
