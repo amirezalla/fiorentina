@@ -171,6 +171,23 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const root = document.querySelector('.card.meta-boxes');
+            if (!root) return;
 
+            const kill = () => {
+                const el = root.querySelector(':scope > .card-body .image-box-banner_image');
+                if (el) el.remove();
+            };
+
+            kill(); // remove if already present
+
+            new MutationObserver(kill).observe(root, {
+                childList: true,
+                subtree: true
+            });
+        });
+    </script>
 
 </footer>
