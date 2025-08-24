@@ -161,11 +161,11 @@
 
             {{-- ── header ───────────────────────────────────────────────────────── --}}
             <div class="editoriale-item-head d-flex mb-2 border-bottom">
-                <span class="editoriale-item-head-title px-3 text-dark"
+                <span class="editoriale-item-head-title text-dark"
                     style="
                       border-bottom:2px solid #8424e3;
                       font-family:'Titillium Web';
-                      font-size:.8rem;
+                      font-size:.95rem;
                       font-weight:700;
                       padding:12px 0;">
                     ULTIME NOTIZIE
@@ -328,7 +328,7 @@
                                         {{-- Date --}}
                                         <div class="post__meta"
                                             style="font-size: 0.75rem; color: #999; margin-top: 2px;text-transform: uppercase;">
-                                
+
                                             <span class="post__created-at">
                                                 {{ Theme::formatDate($post->created_at) }}
                                             </span>
