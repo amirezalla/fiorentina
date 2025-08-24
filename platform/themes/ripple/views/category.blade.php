@@ -79,10 +79,8 @@
                     $size = $isMobile ? 'thumb' : 'medium';
                 @endphp
 
-                <div class="post__thumbnail">
-                    {{ RvMedia::image($post->image, $post->name, 'medium') }}
-                    <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
-                </div>
+                {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
+                <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
             </div>
 
             <!-- Content (Title and Description) on the right -->
