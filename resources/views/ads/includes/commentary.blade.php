@@ -141,7 +141,7 @@
                 toggleEditBox(id);
 
                 // // 3. sync JSON on server
-                // fetch(`/match/${matchId}/sync-all-commentaries`);
+                fetch(`/match/${matchId}/sync-all-commentaries`);
 
                 // 4. refresh UI
                 fetchCommentaries();
