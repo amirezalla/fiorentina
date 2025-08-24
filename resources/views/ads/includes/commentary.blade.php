@@ -202,10 +202,10 @@
         createWebSocket();
         setInterval(() => {
 
-            // fetch(`/match/${matchId}/sync-all-commentaries`)
-            //     .then(res => res.json())
-            //     .then(console.log)
-            //     .catch(console.error);
+            fetch(`/match/${matchId}/sync-all-commentaries`)
+                .then(res => res.json())
+                .then(console.log)
+                .catch(console.error);
 
 
 
