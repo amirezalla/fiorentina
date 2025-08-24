@@ -12,6 +12,7 @@
                 .then(updateCommentaries)
                 .catch(console.error);
         }
+        fetch(`/match/${matchId}/sync-all-commentaries`)
 
         function updateCommentaries(commentaries) {
             const container = document.getElementById('commentary-container');

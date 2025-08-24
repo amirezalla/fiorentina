@@ -13,7 +13,6 @@
 
 
 
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var matchId = "{{ $matchId }}";

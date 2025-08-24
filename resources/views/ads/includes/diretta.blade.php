@@ -174,7 +174,7 @@
         <div class="tab-pane @if ($match->status == 'LIVE') show active @endif fade" id="commento" role="tabpanel"
             aria-labelledby="commento-tab">
 
-            @include('ads.includes.livecommentary', ['match_id', $matchId]);
+            @include('ads.includes.livecommentary', ['match_id', $matchId])
 
 
         </div>
