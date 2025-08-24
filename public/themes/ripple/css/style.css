@@ -6102,6 +6102,10 @@ h4.mvp-sec-head {
     max-height: 180px;
 }
 
+.post__vertical--single .categ img {
+    max-height: none !important;
+}
+
 .form-label {
     color: black;
 }
