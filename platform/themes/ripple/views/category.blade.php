@@ -73,7 +73,7 @@
         <article class="post post__vertical post__vertical--single post-item category-article"
             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
             <!-- Image on the left -->
-            <div class="post__thumbnail" style=" width: 48%;">
+            <div class="post__thumbnail category-thumbnail" style=" width: 48%; align-self: flex-start;">
                 @php
 
                     $size = $isMobile ? 'thumb' : 'medium';
