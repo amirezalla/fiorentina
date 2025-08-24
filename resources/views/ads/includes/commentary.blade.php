@@ -107,7 +107,7 @@
                 toggleEditBox(commentId);
 
                 // // 3. tell backend to sync JSON
-                fetch(`/match/${matchId}/sync-all-commentaries`);
+                // fetch(`/match/${matchId}/sync-all-commentaries`);
 
                 // 4. refresh UI list
                 fetchCommentaries();
@@ -202,10 +202,10 @@
         createWebSocket();
         setInterval(() => {
 
-            fetch(`/match/${matchId}/sync-all-commentaries`)
-                .then(res => res.json())
-                .then(console.log)
-                .catch(console.error);
+            // fetch(`/match/${matchId}/sync-all-commentaries`)
+            //     .then(res => res.json())
+            //     .then(console.log)
+            //     .catch(console.error);
 
 
 
