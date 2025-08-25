@@ -27,6 +27,9 @@ use FriendsOfBotble\Comment\Models\Comment;
 use FriendsOfBotble\Comment\Enums\CommentStatus;
 use Botble\Base\Models\MetaBox;
 use Botble\Setting\Models\Setting;
+use App\Jobs\ImportWpPostsJob;
+use App\Jobs\ImportWpMetaJob;
+use App\Jobs\ImportWpSlugsJob;
 
 
 
@@ -92,194 +95,30 @@ class WpImportController extends BaseController
     
 
 public function importPostsWithoutMeta()
-{
-    try {
-        DB::connection('mysql2')
-            ->table('frntn_posts')
-            ->where('post_type', 'post')
-            ->where('post_date_gmt', '>', '2025-02-01 00:00:00')
-            ->orderBy('ID')
-            ->chunk(100, function ($wpPosts) {
-                $postsToInsert = [];
+    {
+        // Dispatch an async job so the HTTP request is short
+        ImportWpPostsJob::dispatch();
 
-                foreach ($wpPosts as $wpPost) {
-                    $postsToInsert[] = [
-                        'id' => $wpPost->ID,
-                        'name' => $wpPost->post_title,
-                        'description' => Str::limit(strip_tags($wpPost->post_content), 100, '...'),
-                        'content' => $wpPost->post_content,
-                        'status' => $wpPost->post_status === 'publish' ? 'published' : 'draft',
-                        'author_id' => 1,
-                        'author_type' => 'Botble\ACL\Models\User',
-                        'published_at' => $wpPost->post_date,
-                        'created_at' => $wpPost->post_date_gmt,
-                        'updated_at' => $wpPost->post_date_gmt,
-                        'plain_slug' => $wpPost->post_name
-                    ];
-
-                    $metaToInsert[] = [
-                        'meta_key' => 'allow_comments',
-                        'meta_value' => $wpPost->comment_status === 'open' ? json_encode(['1']) : json_encode(['0']),
-                        'reference_id' => $wpPost->ID,
-                        'reference_type' => 'Botble\Blog\Models\Post',
-                        'created_at' => $wpPost->post_date_gmt,
-                        'updated_at' => $wpPost->post_date_gmt
-                    ];
-                }
-
-                if (!empty($postsToInsert)) {
-                    $existingPostIds = Post::whereIn('id', array_column($postsToInsert, 'id'))->pluck('id')->toArray();
-                    $postsToInsert = array_filter($postsToInsert, function ($post) use ($existingPostIds) {
-                        return !in_array($post['id'], $existingPostIds);
-                    });
-                    Post::insert($postsToInsert);
-                }
-
-                if (!empty($metaToInsert)) {
-                    $existingMeta = MetaBox::whereIn('reference_id', array_column($metaToInsert, 'reference_id'))
-                        ->whereIn('meta_key', array_column($metaToInsert, 'meta_key'))
-                        ->get(['reference_id', 'meta_key'])
-                        ->toArray();
-                    $metaToInsert = array_filter($metaToInsert, function ($meta) use ($existingMeta) {
-                        foreach ($existingMeta as $existing) {
-                            if ($existing['reference_id'] == $meta['reference_id'] && $existing['meta_key'] == $meta['meta_key']) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    });
-                    MetaBox::insert($metaToInsert);
-                }
-            });
-
-        return response()->json(['message' => 'Posts imported successfully without meta!'], 200);
-
-    } catch (\Exception $e) {
         return response()->json([
-            'message' => 'Error importing posts.',
-            'error' => $e->getMessage(),
-        ], 500);
+            'message' => 'Import scheduled: posts (without meta). Check logs / horizon for progress.'
+        ], 202);
     }
-}
 
-public function importMetaForPosts()
-{
-    try {
-        $posts = Post::where('category_id','')->get(); // Fetch all posts from the Laravel database
-        foreach ($posts as $post) {
-            $meta = DB::connection('mysql2')
-                ->table('frntn_postmeta')
-                ->where('post_id', $post->id)
-                ->get()
-                ->pluck('meta_value', 'meta_key');
-
-
-            // Process featured image
-            // $featuredImageId = $meta['_thumbnail_id'] ?? null;
-            $featuredImageId = $meta['_thumbnail_id'] ?? null;
-            $primaryCategoryId = $meta['_yoast_wpseo_primary_category'] ?? '';
-
-
-
-            //Put image process on job and call it 
-            // $featuredImageUrl = $featuredImageId
-            //     ? DB::connection('mysql2')
-            //         ->table('frntn_posts')
-            //         ->where('ID', $featuredImageId)
-            //         ->value('guid')
-            //     : null;
-
-            // $storedImagePath = null;
-            // if ($featuredImageUrl) {
-            //     // Generate a temporary file path
-            //     $tempPath = storage_path('app/temp_images/' . uniqid() . '.jpg');
-            //     $tempDir = dirname($tempPath);
-            
-            //     // Ensure the temp directory exists
-            //     if (!file_exists($tempDir)) {
-            //         mkdir($tempDir, 0755, true);
-            //     }
-            
-            //     // Download the image
-            //     try {
-            //         file_put_contents($tempPath, file_get_contents($featuredImageUrl));
-            //     } catch (\Exception $e) {
-            //         throw new \Exception('Failed to download image: ' . $e->getMessage());
-            //     }
-            
-            //     // Sanitize filename for upload
-            //     $pathInfo = pathinfo($featuredImageUrl);
-            //     $sanitizedFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $pathInfo['filename']);
-            //     $newFilePath = "{$tempDir}/{$sanitizedFileName}.{$pathInfo['extension']}";
-            
-            //     // Rename the file locally
-            //     rename($tempPath, $newFilePath);
-            
-            //     // Upload the sanitized file
-            //     $uploadResult = $this->rvMedia->uploadFromPath($newFilePath, 0, 'posts');
-            //     unlink($newFilePath); // Clean up the temporary file after uploading
-            
-            //     if (!empty($uploadResult['error'])) {
-            //         throw new \Exception($uploadResult['message']);
-            //     }
-            
-            //     $storedImagePath = $uploadResult['data']->url ?? null;
-            // }
-
-            
-            
-            // $post->update and finish job
-            
-            
-
-            $post->update([
-                // 'image' => $storedImagePath,
-                'format_type' => 'post',
-                'category_id' => $primaryCategoryId
-            ]);
-        }
-
-        return response()->json(['message' => 'Post meta imported successfully!'], 200);
-
-    } catch (\Exception $e) {
+    public function importMetaForPosts()
+    {
+        ImportWpMetaJob::dispatch(); // will handle batching internally
         return response()->json([
-            'message' => 'Error importing post meta.',
-            'error' => $e->getMessage(),
-        ], 500);
+            'message' => 'Import scheduled: post meta (and enqueue image jobs).'
+        ], 202);
     }
-}
 
-public function importSlugsForPosts()
-{
-    try {
-        $posts = Post::all(); // Fetch all posts from the Laravel database
-        $slugsToInsert = [];
-
-        foreach ($posts as $post) {
-            $slugsToInsert[] = [
-                'key' => $post->plain_slug, // Use the existing slug from the model
-                'reference_id' => $post->id,
-                'reference_type' => 'Botble\Blog\Models\Post',
-                'created_at' => $post->created_at,
-                'updated_at' => $post->updated_at,
-            ];
-        }
-
-        if (!empty($slugsToInsert)) {
-            Slug::insert($slugsToInsert); // Bulk insert the slugs
-        }
-
-        return response()->json(['message' => 'Slugs imported successfully!'], 200);
-
-    } catch (\Exception $e) {
+    public function importSlugsForPosts()
+    {
+        ImportWpSlugsJob::dispatch();
         return response()->json([
-            'message' => 'Error importing slugs.',
-            'error' => $e->getMessage(),
-        ], 500);
+            'message' => 'Import scheduled: slugs.'
+        ], 202);
     }
-}
-
-
 
 
 
