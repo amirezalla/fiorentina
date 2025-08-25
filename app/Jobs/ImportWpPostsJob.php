@@ -25,85 +25,109 @@ class ImportWpPostsJob implements ShouldQueue
         $this->onQueue('imports');
     }
 
-    public function handle()
-    {
-        DB::connection()->disableQueryLog();
+public function handle()
+{
+    DB::connection()->disableQueryLog();
 
-        $this->postNameMax = $this->getVarcharLimit(DB::getDatabaseName(), DB::getTablePrefix() . 'posts', 'name') ?? 191;
-        $this->slugKeyMax  = $this->getVarcharLimit(DB::getDatabaseName(), DB::getTablePrefix() . 'slugs', 'key') ?? 120;
+    $this->postNameMax = $this->getVarcharLimit(DB::getDatabaseName(), DB::getTablePrefix() . 'posts', 'name') ?? 191;
+    $this->slugKeyMax  = $this->getVarcharLimit(DB::getDatabaseName(), DB::getTablePrefix() . 'slugs', 'key') ?? 120;
 
-        $wp = DB::connection('mysql2')->table('frntn_posts')->where('post_type', 'post');
-        if ($this->sinceGmt) $wp->where('post_date_gmt', '>', $this->sinceGmt);
+    // TUNE ME: smaller source chunk to keep memory stable
+    $SOURCE_CHUNK  = 150;
+    // TUNE ME: split each processed chunk into tiny upserts
+    $UPSERT_BATCH  = 50;
 
-        $wp->orderBy('ID')->chunkById(1000, function ($rows) {
-            $now   = now()->format('Y-m-d H:i:s');
-            $posts = [];
-            $metas = [];
+    $wp = DB::connection('mysql2')
+        ->table('frntn_posts')
+        ->select([
+            'ID', 'post_title', 'post_content', 'post_status',
+            'post_date', 'post_date_gmt', 'post_name', 'comment_status',
+        ])
+        ->where('post_type', 'post');
 
-            foreach ($rows as $r) {
-                // ---------- sanitize dates ----------
-                $createdAt   = $this->normalizeWpDate($r->post_date_gmt) ?? $now;
-                $updatedAt   = $this->normalizeWpDate($r->post_date_gmt) ?? $now;
-                $publishedAt = $this->normalizeWpDate($r->post_date); // may be null
+    if ($this->sinceGmt) {
+        $wp->where('post_date_gmt', '>', $this->sinceGmt);
+    }
 
-                // ---------- title + slug (length-safe) ----------
-                $rawTitle = (string) $r->post_title;
-                $name     = $this->mbLimit($rawTitle, $this->postNameMax);
+    $wp->orderBy('ID')->chunkById($SOURCE_CHUNK, function ($rows) use ($UPSERT_BATCH) {
+        $now   = now()->format('Y-m-d H:i:s');
+        $posts = [];
+        $metas = [];
 
-                $baseSlug = (string) ($r->post_name ?: Str::slug($rawTitle));
-                if ($baseSlug === '') $baseSlug = 'post-' . (int) $r->ID;
-                $plainSlug = $this->mbLimit($baseSlug, $this->slugKeyMax);
-                if ($plainSlug === '') $plainSlug = 'post-' . (int) $r->ID;
-                if (mb_strlen($baseSlug) > $this->slugKeyMax && $this->slugKeyMax > (mb_strlen((string)$r->ID) + 1)) {
-                    $plainSlug = $this->mbLimit($plainSlug, $this->slugKeyMax - (mb_strlen((string)$r->ID) + 1)) . '-' . (int)$r->ID;
-                }
+        foreach ($rows as $r) {
+            // ---- dates (sanitize WP zero/invalid) ----
+            $createdAt   = $this->normalizeWpDate($r->post_date_gmt) ?? $now;
+            $updatedAt   = $this->normalizeWpDate($r->post_date_gmt) ?? $now;
+            $publishedAt = $this->normalizeWpDate($r->post_date); // nullable
 
-                $posts[] = [
-                    'id'           => (int) $r->ID,
-                    'name'         => $name,
-                    'description'  => Str::limit(trim(strip_tags((string) $r->post_content)), 100, '...'),
-                    'content'      => (string) $r->post_content,
-                    'status'       => $r->post_status === 'publish' ? 'published' : 'draft',
-                    'author_id'    => 1,
-                    'author_type'  => 'Botble\ACL\Models\User',
-                    'published_at' => $publishedAt, // can be null
-                    'created_at'   => $createdAt,
-                    'updated_at'   => $updatedAt,
-                    'plain_slug'   => $plainSlug,
-                ];
+            // ---- title + slug (truncate safely) ----
+            $rawTitle  = (string) $r->post_title;
+            $name      = $this->mbLimit($rawTitle, $this->postNameMax);
 
-                $metas[] = [
-                    'meta_key'       => 'allow_comments',
-                    'meta_value'     => json_encode([(string) ($r->comment_status === 'open' ? '1' : '0')]),
-                    'reference_id'   => (int) $r->ID,
-                    'reference_type' => Post::class,
-                    'created_at'     => $createdAt,
-                    'updated_at'     => $updatedAt,
-                ];
+            $baseSlug  = (string) ($r->post_name ?: Str::slug($rawTitle));
+            if ($baseSlug === '') $baseSlug = 'post-' . (int) $r->ID;
+            $plainSlug = $this->mbLimit($baseSlug, $this->slugKeyMax);
+            if ($plainSlug === '') $plainSlug = 'post-' . (int) $r->ID;
+            if (mb_strlen($baseSlug) > $this->slugKeyMax && $this->slugKeyMax > (mb_strlen((string)$r->ID) + 1)) {
+                $plainSlug = $this->mbLimit($plainSlug, $this->slugKeyMax - (mb_strlen((string)$r->ID) + 1)) . '-' . (int)$r->ID;
             }
 
-            if ($posts) {
+            $posts[] = [
+                'id'           => (int) $r->ID,
+                'name'         => $name,
+                'description'  => Str::limit(trim(strip_tags((string) $r->post_content)), 100, '...'),
+                'content'      => (string) $r->post_content,
+                'status'       => $r->post_status === 'publish' ? 'published' : 'draft',
+                'author_id'    => 1,
+                'author_type'  => 'Botble\ACL\Models\User',
+                'published_at' => $publishedAt,
+                'created_at'   => $createdAt,
+                'updated_at'   => $updatedAt,
+                'plain_slug'   => $plainSlug,
+            ];
+
+            $metas[] = [
+                'meta_key'       => 'allow_comments',
+                'meta_value'     => json_encode([(string) ($r->comment_status === 'open' ? '1' : '0')]),
+                'reference_id'   => (int) $r->ID,
+                'reference_type' => Post::class,
+                'created_at'     => $createdAt,
+                'updated_at'     => $updatedAt,
+            ];
+        }
+
+        // ---- UPSERT posts in small slices to avoid huge SQL / RAM ----
+        if ($posts) {
+            foreach (array_chunk($posts, $UPSERT_BATCH) as $slice) {
                 Post::upsert(
-                    $posts,
+                    $slice,
                     ['id'],
                     ['name','description','content','status','author_id','author_type','published_at','created_at','updated_at','plain_slug']
                 );
             }
+        }
 
-            if ($metas) {
-                $idsInChunk = array_column($metas, 'reference_id');
-                DB::table('meta_boxes')
-                    ->where('reference_type', Post::class)
-                    ->where('meta_key', 'allow_comments')
-                    ->whereIn('reference_id', $idsInChunk)
-                    ->delete();
+        // ---- meta: delete+insert, also in slices ----
+        if ($metas) {
+            $idsInChunk = array_column($metas, 'reference_id');
 
-                DB::table('meta_boxes')->insert($metas);
+            DB::table('meta_boxes')
+                ->where('reference_type', Post::class)
+                ->where('meta_key', 'allow_comments')
+                ->whereIn('reference_id', $idsInChunk)
+                ->delete();
+
+            foreach (array_chunk($metas, max(200, $UPSERT_BATCH * 3)) as $slice) {
+                DB::table('meta_boxes')->insert($slice);
             }
+        }
 
-            unset($posts, $metas);
-        }, 'ID');
-    }
+        // free memory before next chunk
+        unset($posts, $metas);
+        gc_collect_cycles();
+    }, 'ID');
+}
+
 
     // ---------- helpers ----------
 
