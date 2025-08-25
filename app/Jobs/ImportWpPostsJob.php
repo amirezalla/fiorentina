@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use Botble\Blog\Models\Post;
-use Botble\Base\Facades\MetaBox;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
