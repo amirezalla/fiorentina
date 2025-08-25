@@ -1,12 +1,10 @@
 <?php
 // app/Jobs/ImportWpMetaJob.php
-
 namespace App\Jobs;
 
 use Botble\Blog\Models\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,58 +21,70 @@ class ImportWpMetaJob implements ShouldQueue
 
     public function handle()
     {
+        // turn off logs on BOTH connections to save memory
         DB::connection()->disableQueryLog();
+        DB::connection('mysql2')->disableQueryLog();
 
-        // work over all posts (or narrow: whereNull('category_id') if you want)
+        // knobs – tune down if needed
+        $POSTS_CHUNK   = 300;  // posts per iteration
+        $UPSERT_BATCH  = 120;  // posts per upsert slice
+
+        $NEEDED_KEYS = ['_thumbnail_id', '_yoast_wpseo_primary_category'];
+
         Post::query()
             ->orderBy('id')
-            ->chunkById(800, function ($posts) {
+            ->select('id') // tiny select
+            ->chunkById($POSTS_CHUNK, function ($posts) use ($NEEDED_KEYS, $UPSERT_BATCH) {
 
-                $ids = $posts->pluck('id')->all();
+                $ids = $posts->pluck('id')->values()->all();
+                if (!$ids) return;
 
-                // Pull all postmeta for this batch at once
+                // Pull ONLY the 2 keys we need, for these post IDs
                 $rawMeta = DB::connection('mysql2')
                     ->table('frntn_postmeta')
-                    ->whereIn('post_id', $ids)
                     ->select('post_id', 'meta_key', 'meta_value')
+                    ->whereIn('post_id', $ids)
+                    ->whereIn('meta_key', $NEEDED_KEYS)
+                    ->orderBy('post_id')
                     ->get();
 
-                // Group meta by post_id into an array [post_id => [key => value]]
+                // Group minimal meta
                 $byPost = [];
                 foreach ($rawMeta as $m) {
                     $byPost[$m->post_id][$m->meta_key] = $m->meta_value;
                 }
-                unset($rawMeta);
+                unset($rawMeta); // free ASAP
 
                 $updates = [];
+                foreach ($ids as $postId) {
+                    $meta = $byPost[$postId] ?? [];
 
-                foreach ($posts as $post) {
-                    $meta = $byPost[$post->id] ?? [];
-
-                    // Yoast primary category (string id)
                     $primaryCategoryId = isset($meta['_yoast_wpseo_primary_category'])
-                        ? (int) $meta['_yoast_wpseo_primary_category'] : null;
+                        ? (int) $meta['_yoast_wpseo_primary_category']
+                        : null;
 
-                    // queue featured image import if present
+                    // enqueue image job only if we actually have a thumbnail
                     $thumbId = isset($meta['_thumbnail_id']) ? (int) $meta['_thumbnail_id'] : null;
                     if ($thumbId) {
-                        ImportWpFeaturedImageJob::dispatch($post->id, $thumbId)->onQueue('images');
+                        ImportWpFeaturedImageJob::dispatch($postId, $thumbId)->onQueue('images');
                     }
 
                     $updates[] = [
-                        'id'           => $post->id,
-                        'format_type'  => 'post',
-                        // WARNING: you may need a mapping from WP term id to your Botble categories table
-                        'category_id'  => $primaryCategoryId ?: null,
-                        'updated_at'   => now(),
+                        'id'          => $postId,
+                        'format_type' => 'post',
+                        // NOTE: ensure your Botble category IDs match WP term IDs or map them separately
+                        'category_id' => $primaryCategoryId ?: null,
+                        'updated_at'  => now(),
                     ];
                 }
 
-                if ($updates) {
-                    Post::upsert($updates, ['id'], ['format_type','category_id','updated_at']);
+                // upsert in small slices
+                foreach (array_chunk($updates, $UPSERT_BATCH) as $slice) {
+                    Post::upsert($slice, ['id'], ['format_type','category_id','updated_at']);
                 }
 
                 unset($byPost, $updates);
+                gc_collect_cycles();
             });
     }
 }
