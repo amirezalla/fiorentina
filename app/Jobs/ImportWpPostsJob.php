@@ -1,7 +1,5 @@
 <?php
 
-// app/Jobs/ImportWpPostsJob.php
-
 namespace App\Jobs;
 
 use Botble\Blog\Models\Post;
@@ -21,6 +19,10 @@ class ImportWpPostsJob implements ShouldQueue
 
     public ?string $sinceGmt;
 
+    // cached limits
+    protected ?int $postNameMax = null;
+    protected ?int $slugKeyMax  = null;
+
     public function __construct(?string $sinceGmt = null)
     {
         $this->sinceGmt = $sinceGmt;
@@ -29,8 +31,11 @@ class ImportWpPostsJob implements ShouldQueue
 
     public function handle()
     {
-        // keep memory small
         DB::connection()->disableQueryLog();
+
+        // fetch limits once
+        $this->postNameMax = $this->getVarcharLimit(DB::getDatabaseName(), DB::getTablePrefix() . 'posts', 'name') ?? 191;
+        $this->slugKeyMax  = $this->getVarcharLimit(DB::getDatabaseName(), DB::getTablePrefix() . 'slugs', 'key') ?? 120;
 
         $wp = DB::connection('mysql2')->table('frntn_posts')
             ->where('post_type', 'post');
@@ -39,18 +44,34 @@ class ImportWpPostsJob implements ShouldQueue
             $wp->where('post_date_gmt', '>', $this->sinceGmt);
         }
 
-        // iterate by ID to avoid misses and reduce locks
         $wp->orderBy('ID')
            ->chunkById(1000, function ($rows) {
-
                $now = now();
                $posts = [];
-               $metas  = []; // allow_comments only (simple meta)
+               $metas = [];
 
                foreach ($rows as $r) {
+                   // Title (truncate safely to posts.name limit)
+                   $rawTitle = (string) $r->post_title;
+                   $name     = $this->mbLimit($rawTitle, $this->postNameMax);
+
+                   // Build slug from WP post_name first, else from title
+                   $baseSlug = (string) ($r->post_name ?: Str::slug($rawTitle));
+                   if ($baseSlug === '') {
+                       $baseSlug = 'post-' . (int) $r->ID;
+                   }
+                   $plainSlug = $this->mbLimit($baseSlug, $this->slugKeyMax);
+                   if ($plainSlug === '') {
+                       $plainSlug = 'post-' . (int) $r->ID;
+                   }
+                   // If we were forced to truncate a lot, keep uniqueness by appending -{id} when possible
+                   if (mb_strlen($baseSlug) > $this->slugKeyMax && $this->slugKeyMax > (mb_strlen((string)$r->ID) + 1)) {
+                       $plainSlug = $this->mbLimit($plainSlug, $this->slugKeyMax - (mb_strlen((string)$r->ID) + 1)) . '-' . (int)$r->ID;
+                   }
+
                    $posts[] = [
                        'id'           => (int) $r->ID,
-                       'name'         => (string) $r->post_title,
+                       'name'         => $name,
                        'description'  => Str::limit(trim(strip_tags((string) $r->post_content)), 100, '...'),
                        'content'      => (string) $r->post_content,
                        'status'       => $r->post_status === 'publish' ? 'published' : 'draft',
@@ -59,7 +80,7 @@ class ImportWpPostsJob implements ShouldQueue
                        'published_at' => $r->post_date ?: $now,
                        'created_at'   => $r->post_date_gmt ?: $now,
                        'updated_at'   => $r->post_date_gmt ?: $now,
-                       'plain_slug'   => (string) ($r->post_name ?: Str::slug($r->post_title)),
+                       'plain_slug'   => $plainSlug,
                    ];
 
                    $metas[] = [
@@ -72,11 +93,10 @@ class ImportWpPostsJob implements ShouldQueue
                    ];
                }
 
-               // use UPSERTS — no pre-reads
                if ($posts) {
                    Post::upsert(
                        $posts,
-                       ['id'], // unique key
+                       ['id'],
                        [
                            'name','description','content','status',
                            'author_id','author_type','published_at',
@@ -86,7 +106,6 @@ class ImportWpPostsJob implements ShouldQueue
                }
 
                if ($metas) {
-                   // MetaBox table usually has a composite uniqueness; emulate with upsert on (reference_id, reference_type, meta_key)
                    MetaBox::query()->upsert(
                        $metas,
                        ['reference_id','reference_type','meta_key'],
@@ -94,8 +113,38 @@ class ImportWpPostsJob implements ShouldQueue
                    );
                }
 
-               // free memory per chunk
                unset($posts, $metas);
-           }, 'ID'); // use primary key
+           }, 'ID');
+    }
+
+    /**
+     * Multibyte-safe truncate to $limit characters.
+     */
+    protected function mbLimit(string $value, int $limit): string
+    {
+        if ($limit <= 0) return '';
+        if (mb_strlen($value) <= $limit) return $value;
+        return mb_substr($value, 0, $limit);
+    }
+
+    /**
+     * Read VARCHAR length from information_schema. Returns null if not found / not varchar.
+     */
+    protected function getVarcharLimit(string $db, string $table, string $column): ?int
+    {
+        try {
+            $row = DB::selectOne(
+                "SELECT CHARACTER_MAXIMUM_LENGTH AS len
+                 FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND COLUMN_NAME = ?",
+                [$db, $table, $column]
+            );
+            if ($row && isset($row->len) && $row->len) {
+                return (int) $row->len;
+            }
+        } catch (\Throwable $e) {
+            // ignore, fall back to defaults
+        }
+        return null;
     }
 }
