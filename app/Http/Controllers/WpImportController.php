@@ -106,10 +106,8 @@ public function importPostsWithoutMeta()
 
     public function importMetaForPosts()
     {
-        ImportWpMetaJob::dispatch(); // will handle batching internally
-        return response()->json([
-            'message' => 'Import scheduled: post meta (and enqueue image jobs).'
-        ], 202);
+    \App\Jobs\MetaImport\DispatchMetaChunks::dispatch();
+    return response()->json(['message' => 'Meta import scheduled (chunked).'], 202);
     }
 
     public function importSlugsForPosts()
