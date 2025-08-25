@@ -106,11 +106,17 @@ class ImportWpPostsJob implements ShouldQueue
                }
 
                if ($metas) {
-                   MetaBox::query()->upsert(
-                       $metas,
-                       ['reference_id','reference_type','meta_key'],
-                       ['meta_value','updated_at']
-                   );
+    // delete existing rows for these posts + key to avoid duplicates
+    $idsInChunk = array_column($metas, 'reference_id');
+
+    DB::table('meta_boxes')
+        ->where('reference_type', Post::class)
+        ->where('meta_key', 'allow_comments')
+        ->whereIn('reference_id', $idsInChunk)
+        ->delete();
+
+    // bulk insert fresh values
+    DB::table('meta_boxes')->insert($metas);
                }
 
                unset($posts, $metas);
