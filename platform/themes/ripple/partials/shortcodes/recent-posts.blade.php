@@ -1,7 +1,7 @@
 @php
     use App\Models\PollOne;
     use Carbon\Carbon;
-
+    use Illuminate\Support\Facades\Storage;
     use Botble\Blog\Models\Post;
     use Illuminate\Support\Facades\DB;
     $poll = null;
@@ -47,6 +47,7 @@
     $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
 @endphp
 
+@dd($publicUrl = Storage::disk('wasabi')->url('posts/img-1643-1.jpeg'))
 
 <div class="d-block d-md-none col-12 text-center">
     @include('ads.includes.MOBILE_HOME_HERO_25')

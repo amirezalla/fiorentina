@@ -4,11 +4,11 @@
     use Carbon\Carbon;
     use Illuminate\Support\Facades\Cache;
     use FriendsOfBotble\Comment\Models\Comment;
-    use Illuminate\Support\Facades\Storage;
+
 @endphp
 @if ($posts->isNotEmpty())
 
-    @dd($publicUrl = Storage::disk('wasabi')->url('posts/img-1643-1.jpeg'))
+
     <section class="section hero-section pb-20"
         @if ($shortcode->background_color) style="background-color: #441274 !important;" @endif>
 
