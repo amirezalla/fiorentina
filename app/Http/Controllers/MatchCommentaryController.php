@@ -21,11 +21,11 @@ class MatchCommentaryController extends Controller
 {
     $path = "commentary/commentary_{$matchId}.json";
 
-    if (! Storage::disk('wasabi')->exists($path)) {
+    if (! Storage::disk('laviolas3')->exists($path)) {
         return response()->json([], 404);
     }
 
-    $entries = json_decode(Storage::disk('wasabi')->get($path), true) ?? [];
+    $entries = json_decode(Storage::disk('laviolas3')->get($path), true) ?? [];
 
     /* ───── helper: "45+3'" ➜ 45.03 ,  "41'" ➜ 41.00 ───── */
     $toMinute = static function (string $raw): float {

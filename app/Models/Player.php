@@ -29,6 +29,6 @@ class Player extends Model
 
     public function wasabiImage($playername){
         $playerImage=Player::where('name',$playername)->first();
-        return Storage::temporaryUrl($playerImage->image, now()->addMinutes(20));
+        return Storage::disk('laviolas3')->url($playerImage->image);
     }
 }

@@ -39,9 +39,9 @@
                                 // helper that always returns a usable URL
                                 $resolve = function ($path) {
                                     try {
-                                        return Storage::disk('wasabi')->temporaryUrl($path, now()->addMinutes(5));
+                                        return Storage::disk('laviolas3')->url($path);
                                     } catch (\Throwable $e) {
-                                        return Storage::disk('wasabi')->url($path);
+                                        return Storage::disk('laviolas3')->url($path);
                                     }
                                 };
                             @endphp

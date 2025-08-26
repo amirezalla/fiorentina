@@ -269,7 +269,7 @@ private function category($primaryCategoryId,$post_id){
    private function ensureBackupAndGetPublicUrl($post): string
 {
 $path       = ltrim($post->image, '/');
-$sourceDisk = Storage::disk('wasabi');
+$sourceDisk = Storage::disk('laviolas3');
 $backupDisk = Storage::disk('wasabi_backup');
 
 if (! $backupDisk->exists($path)) {
