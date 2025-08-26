@@ -204,7 +204,7 @@ class Ad extends BaseModel
     {
         if ($this->type == 1) {
 
-            return Storage::temporaryUrl($this->image, now()->addMinutes(1500));
+            return Storage::disk('laviolas3')->url($this->image);
         }
         return $this->image;
 
@@ -224,7 +224,7 @@ class Ad extends BaseModel
         $fileKeyWithoutExtension = $dir . '/' . $filenameWithoutExt;
         $op= $fileKeyWithoutExtension . '-optimized.gif';
     
-        return Storage::temporaryUrl($op, now()->addMinutes(1500));
+        return Storage::disk('laviolas3')->url($op);
     }else{
         return $url;
     }        // Remove the leading slash to get the storage key
@@ -453,11 +453,11 @@ public function getDisplayImageUrl(): ?string
         // Calculate index using the display_count field.
         // Ensure display_count is incremented externally (see next section).
         $index = $this->display_count % $count;
-        return Storage::temporaryUrl($images[$index]->image_url, now()->addMinutes(1500));
+        return Storage::disk('laviolas3')->url($images[$index]->image_url);
     }
 
     // Fallback: return the single stored image (if present).
-    return Storage::temporaryUrl($this->image, now()->addMinutes(15));
+    return Storage::disk("laviolas3")->url($this->image);
 }
 
 // Optionally, to compute effective weight per image:

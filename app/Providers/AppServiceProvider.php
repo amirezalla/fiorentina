@@ -205,7 +205,7 @@ class AppServiceProvider extends ServiceProvider
                     })
                     ->get();
                 $video_files = $mediaFiles->map(function ($item) {
-                    return \Illuminate\Support\Facades\Storage::temporaryUrl($item->url, now()->addMinutes(1500));
+                    return \Illuminate\Support\Facades\Storage::disk("laviolas3")->url($item->url);
                 });
                 $video_file_urls = $mediaFiles->map(function ($item) {
                     return $item->pivot->url;

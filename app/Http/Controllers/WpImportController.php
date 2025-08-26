@@ -275,7 +275,7 @@ $backupDisk = Storage::disk('wasabi_backup');
 if (! $backupDisk->exists($path)) {
 
     // 1. Create a signed URL that lives 15 min
-    $tempUrl = $sourceDisk->temporaryUrl($path, now()->addMinutes(15));
+    $tempUrl = $sourceDisk->url($path);
 
     // 2. Open a read-only HTTP stream
     $stream  = fopen($tempUrl, 'rb');
