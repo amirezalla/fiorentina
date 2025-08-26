@@ -1026,31 +1026,47 @@ class RvMedia
         ]);
     }
 
-    public function setWasabiDisk(array $config): void
-    {
-        if (
-            ! $config['key'] ||
-            ! $config['secret'] ||
-            ! $config['region'] ||
-            ! $config['bucket']
-        ) {
-            return;
-        }
-
-        config()->set([
-            'filesystems.disks.wasabi' => [
-                'driver' => 'wasabi',
-                'visibility' => 'public',
-                'throw' => true,
-                'key' => $config['key'],
-                'secret' => $config['secret'],
-                'region' => $config['region'],
-                'bucket' => $config['bucket'],
-                'root' => $config['root'] ?: '/',
-            ],
-        ]);
+public function setWasabiDisk(array $config): void
+{
+    if (
+        empty($config['key']) ||
+        empty($config['secret']) ||
+        empty($config['region']) ||
+        empty($config['bucket'])
+    ) {
+        return;
     }
 
+    // Optional: allow overriding via settings/env
+    $cdnUrl   = $config['cdn_url']   ?? 'https://laviolas3.collaudo.biz';
+    $endpoint = $config['endpoint']  ?? 'https://s3.eu-south-1.wasabisys.com';
+    $root     = $config['root']      ?? '/';
+    $public   = ($config['visibility'] ?? 'public') === 'public';
+
+    config()->set([
+        'filesystems.disks.wasabi' => [
+            // IMPORTANT: use s3 driver with a Wasabi endpoint
+            'driver' => 's3',
+            'key'    => $config['key'],
+            'secret' => $config['secret'],
+            'region' => $config['region'],
+            'bucket' => $config['bucket'],
+
+            // SDK origin endpoint (read/write goes to Wasabi)
+            'endpoint' => $endpoint,
+
+            // The URL that will be printed to users (your CF Worker host)
+            'url' => $cdnUrl,
+
+            // Wasabi prefers path-style for best compatibility
+            'use_path_style_endpoint' => true,
+
+            'root'       => $root,
+            'visibility' => $public ? 'public' : 'private',
+            'throw'      => true,
+        ],
+    ]);
+}
     public function setBunnyCdnDisk(array $config): void
     {
         if (
