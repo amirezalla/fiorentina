@@ -61,8 +61,8 @@ return [
             'secret' => 'BNR9iTAc94XrHXfmlaBiOFGEV0kwC3GYwnt3MeJs',
             'region' => 'eu-south-1',
             'bucket' => 'laviola',
-            'url' => 'https://s3.eu-south-1.wasabisys.com',
-            'endpoint' => 'https://s3.eu-south-1.wasabisys.com',
+            'url' => 'https://laviolas3.collaudo.biz/',
+            'endpoint' => 'https://laviolas3.collaudo.biz',
             'visibility' => 'private', // Ensure private access 
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
             'throw' => false,
