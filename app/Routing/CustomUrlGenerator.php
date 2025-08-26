@@ -16,7 +16,7 @@ class CustomUrlGenerator extends BaseUrlGenerator
     public function asset($path, $secure = null)
     {
         // Check if the path starts with the Wasabi/S3 domain.
-        if (strpos($path, 'https://laviola.s3.eu-south-1.wasabisys.com/') === 0) {
+        if (strpos($path, 'https://laviolas3.collaudo.biz/') === 0) {
             // Parse the URL to extract the path portion (ignoring query parameters).
             $parsed = parse_url($path);
             if (isset($parsed['path'])) {
