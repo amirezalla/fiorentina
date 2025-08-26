@@ -74,7 +74,7 @@ class MediaServiceProvider extends ServiceProvider
             ->publishAssets();
 
         Storage::extend('wasabi', function ($app, $config) {
-            $config['url'] = 'https://laviols3.collaudo.biz';
+            $config['url'] = 'https://' . $config['bucket'] . '.s3.' . $config['region'] . '.wasabisys.com/';
 
             $client = new S3Client([
                 'endpoint' => $config['url'],
