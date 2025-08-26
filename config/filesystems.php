@@ -55,18 +55,21 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
-        'wasabi' => [
-            'driver' => 's3',
-            'key' => 'SSCN8V6RQDECYNDM2TT8',
-            'secret' => 'BNR9iTAc94XrHXfmlaBiOFGEV0kwC3GYwnt3MeJs',
-            'region' => 'eu-south-1',
-            'bucket' => '',
-            'url' => 'https://laviolas3.collaudo.biz',
-            'endpoint' => 'https://laviolas3.collaudo.biz',
-            'visibility' => 'private', // Ensure private access 
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
-            'throw' => false,
-        ],
+'wasabi' => [
+    'driver' => 's3',
+    'key' => env('WASABI_KEY'),
+    'secret' => env('WASABI_SECRET'),
+    'region' => 'eu-south-1',
+    'bucket' => 'laviola',
+    // SDK talks to Wasabi for reads/writes:
+    'endpoint' => 'https://s3.eu-south-1.wasabisys.com',
+    // URLs shown to users (your CF Worker):
+    'url' => 'https://laviolas3.collaudo.biz',
+    'use_path_style_endpoint' => true,
+    'visibility' => 'public',
+    'throw' => false,
+],
+
             'wasabi_backup' => [
             'driver' => 's3',
             'key' => 'SSCN8V6RQDECYNDM2TT8',
