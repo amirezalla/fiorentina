@@ -125,8 +125,8 @@ public function importPostsWithoutMeta()
 
         // Cursor is "last processed id" — start just before $startId
         $cursor = $startId - 1;
-
-        return redirect()->route('wp.meta.step', compact('startId', 'endId', 'cursor', 'batch', 'images'));
+$debug  = (int) $request->query('debug', 0);
+        return redirect()->route('wp.meta.step', compact('startId', 'endId', 'cursor', 'batch', 'images','debug'));
     }
 
     public function metaStep(Request $request)
@@ -158,6 +158,7 @@ public function importPostsWithoutMeta()
                 'cursor'      => $cursor,
                 'batch'       => $batch,
                 'images'      => $images,
+                   'debug'  => $debug,
                 'processed'   => 0,
                 'errors'      => [],
                 'nextUrl'     => null,
@@ -190,15 +191,15 @@ public function importPostsWithoutMeta()
                 ]);
 
                 // If requested, bring over featured image if missing
-                if ($images === 1) {
-                    $thumbId = isset($meta['_thumbnail_id']) ? (int) $meta['_thumbnail_id'] : null;
-                    if ($thumbId && empty($p->image)) {
-                        $set = $this->importFeaturedImage($p->id, $thumbId);
-                        if ($set === false) {
-                            $errors[] = "Post {$p->id}: failed to import image (attachment {$thumbId})";
-                        }
-                    }
-                }
+if ($images === 1) {
+    $thumbId = isset($meta['_thumbnail_id']) ? (int) $meta['_thumbnail_id'] : null;
+    if ($thumbId && empty($p->image)) {
+        $res = $this->importFeaturedImage($p->id, $thumbId, (bool) $debug);
+        if ($res['ok'] === false) {
+            $errors[] = "Post {$p->id}: failed to import image (attachment {$thumbId}) — {$res['reason']}";
+        }
+    }
+}
 
                 unset($meta);
                 $processed++;
@@ -217,15 +218,16 @@ public function importPostsWithoutMeta()
             ->where('id', '>', $lastId)
             ->exists();
 
-        $nextUrl = $hasMore
-            ? route('wp.meta.step', [
-                'startId' => $startId,
-                'endId'   => $endId,
-                'cursor'  => $lastId,
-                'batch'   => $batch,
-                'images'  => $images,
-            ])
-            : null;
+$nextUrl = $hasMore
+    ? route('wp.meta.step', [
+        'startId' => $startId,
+        'endId'   => $endId,
+        'cursor'  => $lastId,
+        'batch'   => $batch,
+        'images'  => $images,
+        'debug'   => 1,
+    ])
+    : null;
 
         return $this->progressView([
             'done'        => !$hasMore,
@@ -234,100 +236,167 @@ public function importPostsWithoutMeta()
             'cursor'      => $lastId,
             'batch'       => $batch,
             'images'      => $images,
+               'debug'  => $debug,
             'processed'   => $processed,
             'errors'      => $errors,
             'nextUrl'     => $nextUrl,
         ]);
     }
-    protected function importFeaturedImage(int $postId, int $attachmentId): bool
+    protected function importFeaturedImage(int $postId, int $attachmentId, bool $debug = false): array
 {
-    try {
-        // Skip if already set
-        $has = \Botble\Blog\Models\Post::query()->where('id', $postId)->value('image');
-        if (!empty($has)) return true;
+    // return shape: ['ok'=>bool, 'reason'=>string]
+    $ctx = ['postId'=>$postId, 'attachmentId'=>$attachmentId];
 
+    try {
+        // 0) Already set?
+        $has = \Botble\Blog\Models\Post::query()->where('id', $postId)->value('image');
+        if (!empty($has)) {
+            return ['ok'=>true, 'reason'=>'image already set'];
+        }
+
+        // 1) Attachment row & GUID
         $att = DB::connection('mysql2')
             ->table('frntn_posts')
             ->where('ID', $attachmentId)
             ->first(['ID','post_title','post_excerpt','guid']);
 
-        if (!$att || empty($att->guid)) return false;
+        if (!$att) {
+            $this->maybeDd($debug, 'Attachment row not found', $ctx);
+            return ['ok'=>false, 'reason'=>'attachment not found in frntn_posts'];
+        }
+        if (empty($att->guid)) {
+            $this->maybeDd($debug, 'Attachment GUID empty', $ctx + ['att'=>$att]);
+            return ['ok'=>false, 'reason'=>'attachment guid empty'];
+        }
 
-        // pull meta for alt/caption
+        $origUrl = $att->guid;
+
+        // 2) HEAD check (is it reachable? is it an image?)
+        $headers = @get_headers($origUrl, 1);
+        if ($headers === false) {
+            $this->maybeDd($debug, 'get_headers failed (DNS/SSL/remote unreachable)', $ctx + ['url'=>$origUrl]);
+            return ['ok'=>false, 'reason'=>'remote unreachable (get_headers failed)'];
+        }
+        // Normalize headers
+        $statusLine = is_array($headers[0] ?? null) ? end($headers[0]) : ($headers[0] ?? '');
+        if (!preg_match('/\s(200|301|302)\s/i', (string)$statusLine)) {
+            $this->maybeDd($debug, 'Non-200 status', $ctx + ['url'=>$origUrl, 'status'=>$statusLine, 'headers'=>$headers]);
+            return ['ok'=>false, 'reason'=>"http status not ok: {$statusLine}"];
+        }
+        $contentType = '';
+        if (isset($headers['Content-Type'])) {
+            $contentType = is_array($headers['Content-Type']) ? end($headers['Content-Type']) : $headers['Content-Type'];
+        }
+        if ($contentType && stripos($contentType, 'image/') === false) {
+            // some hosts don’t send type on HEAD; don’t hard-fail, but note it
+            $ctx['contentTypeWarning'] = $contentType;
+        }
+
+        // 3) WP meta for ALT/caption
         $meta = DB::connection('mysql2')
             ->table('frntn_postmeta')
             ->where('post_id', $attachmentId)
             ->pluck('meta_value', 'meta_key');
 
-        $wpAlt         = $meta['_wp_attachment_image_alt'] ?? '';
-        $wpMetaSer     = $meta['_wp_attachment_metadata'] ?? null;
+        $wpAlt     = $meta['_wp_attachment_image_alt'] ?? '';
+        $wpMetaSer = $meta['_wp_attachment_metadata'] ?? null;
         $imgMetaCaption = '';
-
         if ($wpMetaSer) {
             try {
                 $arr = @unserialize($wpMetaSer);
                 if (is_array($arr) && isset($arr['image_meta']['caption'])) {
                     $imgMetaCaption = (string) $arr['image_meta']['caption'];
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                // ignore
+            }
         }
-
-        // caption > alt > image_meta.caption
         $alt = trim($att->post_excerpt) ?: trim($wpAlt) ?: trim($imgMetaCaption) ?: '';
 
-        $origUrl  = $att->guid;
+        // 4) Prepare temp path on local storage
         $basename = basename(parse_url($origUrl, PHP_URL_PATH) ?? '');
         $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $basename) ?: ('image_' . $attachmentId . '.jpg');
 
-        // ---------- STREAM DOWNLOAD -> LOCAL DISK ----------
-        $tmpDisk = Storage::disk('local');          // storage/app
-        $tmpPath = 'temp_images/' . $safeName;      // relative path on the disk
+        $tmpDisk = Storage::disk('local'); // storage/app
+        $dir = 'temp_images';
+        $tmpPath = $dir . '/' . $safeName;
 
-        // Ensure folder exists
-        if (!$tmpDisk->exists('temp_images')) {
-            $tmpDisk->makeDirectory('temp_images');
+        if (!$tmpDisk->exists($dir)) {
+            if (!$tmpDisk->makeDirectory($dir)) {
+                $this->maybeDd($debug, 'Failed to make temp_images dir', $ctx);
+                return ['ok'=>false, 'reason'=>'cannot create temp_images dir'];
+            }
         }
 
-        // Open remote for reading
+        // 5) Stream download
         $read = @fopen($origUrl, 'rb');
         if ($read === false) {
-            // fallback to file_get_contents if fopen wrappers are off
             $bin = @file_get_contents($origUrl);
-            if ($bin === false) return false;
-            $tmpDisk->put($tmpPath, $bin);          // writes the whole string to storage/app/temp_images/...
+            if ($bin === false) {
+                $this->maybeDd($debug, 'Download failed (fopen+file_get_contents)', $ctx + ['url'=>$origUrl]);
+                return ['ok'=>false, 'reason'=>'download failed'];
+            }
+            $tmpDisk->put($tmpPath, $bin);
         } else {
-            // Stream to disk (no memory spike)
-            $tmpDisk->writeStream($tmpPath, $read);
+            $ok = $tmpDisk->writeStream($tmpPath, $read);
             @fclose($read);
+            if ($ok === false) {
+                $this->maybeDd($debug, 'writeStream to local disk failed', $ctx + ['tmpPath'=>$tmpPath]);
+                return ['ok'=>false, 'reason'=>'local write failed'];
+            }
         }
 
-        // Absolute local path for RvMedia::uploadFromPath
         $localAbsolute = $tmpDisk->path($tmpPath);
+        if (!is_file($localAbsolute) || filesize($localAbsolute) === 0) {
+            $this->maybeDd($debug, 'Temp file missing/empty after download', $ctx + ['local'=>$localAbsolute]);
+            return ['ok'=>false, 'reason'=>'temp file missing/empty'];
+        }
 
-        // ---------- RV MEDIA UPLOAD ----------
+        // 6) Upload to RV Media
         $upload = app('rv_media')->uploadFromPath($localAbsolute, 0, 'posts', [
-            'file_name' => $safeName,   // preserve original name
-            'alt'       => $alt,        // set alt text if your RvMedia supports it
+            'file_name' => $safeName,
+            'alt'       => $alt,
         ]);
 
-        // cleanup temp file regardless of result
+        // cleanup temp
         $tmpDisk->delete($tmpPath);
 
-        if (!empty($upload['error'])) return false;
+        if (!is_array($upload) || !empty($upload['error'])) {
+            $this->maybeDd($debug, 'rv_media uploadFromPath returned error', $ctx + ['upload'=>$upload]);
+            return ['ok'=>false, 'reason'=>'rv_media upload error'];
+        }
 
         $url = $upload['data']->url ?? null;
-        if (!$url) return false;
+        if (!$url) {
+            $this->maybeDd($debug, 'rv_media result missing URL', $ctx + ['upload'=>$upload]);
+            return ['ok'=>false, 'reason'=>'rv_media no url'];
+        }
 
+        // 7) Save on post
         \Botble\Blog\Models\Post::where('id', $postId)->update([
             'image'      => $url,
             'updated_at' => now(),
         ]);
 
-        return true;
+        return ['ok'=>true, 'reason'=>'uploaded'];
 
     } catch (\Throwable $e) {
-        \Log::error('[WP Image Import] Post '.$postId.' attach '.$attachmentId.' error: '.$e->getMessage());
-        return false;
+        \Log::error('[WP Image Import] hard failure', $ctx + ['err'=>$e->getMessage()]);
+        $this->maybeDd($debug, 'Exception thrown', $ctx + ['exception'=>$e->getMessage()]);
+        return ['ok'=>false, 'reason'=>'exception: '.$e->getMessage()];
+    }
+}
+
+/**
+ * When debug=1: stop immediately with a loud dump of context.
+ * Otherwise, just log the message and continue.
+ */
+protected function maybeDd(bool $debug, string $msg, array $context = []): void
+{
+    if ($debug) {
+        dd(['where'=>$msg] + $context);
+    } else {
+        \Log::warning('[WP Image Import DEBUG] '.$msg, $context);
     }
 }
 
@@ -370,7 +439,9 @@ body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-seri
      <strong>Last processed ID:</strong> {$data['cursor']}<br>
      <strong>Processed this request:</strong> {$data['processed']}<br>
      <strong>Batch size:</strong> {$data['batch']}<br>
-     <strong>Images:</strong> {$data['images']} (1=yes, 0=no)</p>
+     <strong>Images:</strong> {$data['images']} (1=yes, 0=no)
+    — <strong>Debug:</strong> {$data['debug']}</p>
+</p>
   {$errorsHtml}
   <p>
 HTML;
