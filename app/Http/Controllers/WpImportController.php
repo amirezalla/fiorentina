@@ -245,7 +245,6 @@ public function metaStep(Request $request)
 }
     protected function importFeaturedImage(int $postId, int $attachmentId, bool $debug = false): array
 {
-    // return shape: ['ok'=>bool, 'reason'=>string]
     $ctx = ['postId'=>$postId, 'attachmentId'=>$attachmentId];
 
     try {
@@ -263,37 +262,31 @@ public function metaStep(Request $request)
 
         if (!$att) {
             $this->maybeDd($debug, 'Attachment row not found', $ctx);
-            return ['ok'=>false, 'reason'=>'attachment not found in frntn_posts'];
+            return ['ok'=>false, 'reason'=>'attachment not found'];
         }
         if (empty($att->guid)) {
             $this->maybeDd($debug, 'Attachment GUID empty', $ctx + ['att'=>$att]);
             return ['ok'=>false, 'reason'=>'attachment guid empty'];
         }
 
-        $origUrl = $att->guid;
+        // 2) Normalize URL (http→https, encode filename, strip query if needed)
+        $origUrl = $this->normalizeGuidUrl((string)$att->guid);
 
-        // 2) HEAD check (is it reachable? is it an image?)
-        $headers = @get_headers($origUrl, 1);
-        if ($headers === false) {
-            $this->maybeDd($debug, 'get_headers failed (DNS/SSL/remote unreachable)', $ctx + ['url'=>$origUrl]);
-            return ['ok'=>false, 'reason'=>'remote unreachable (get_headers failed)'];
+        // 3) HEAD/GET via cURL (with retries & UA)
+        $dl = $this->curlDownload($origUrl);
+        if ($dl['ok'] === false) {
+            // Attempt a second try with encoded basename (spaces, specials)
+            $encodedUrl = $this->encodeBasename($origUrl);
+            if ($encodedUrl !== $origUrl) {
+                $dl = $this->curlDownload($encodedUrl);
+            }
         }
-        // Normalize headers
-        $statusLine = is_array($headers[0] ?? null) ? end($headers[0]) : ($headers[0] ?? '');
-        if (!preg_match('/\s(200|301|302)\s/i', (string)$statusLine)) {
-            $this->maybeDd($debug, 'Non-200 status', $ctx + ['url'=>$origUrl, 'status'=>$statusLine, 'headers'=>$headers]);
-            return ['ok'=>false, 'reason'=>"http status not ok: {$statusLine}"];
-        }
-        $contentType = '';
-        if (isset($headers['Content-Type'])) {
-            $contentType = is_array($headers['Content-Type']) ? end($headers['Content-Type']) : $headers['Content-Type'];
-        }
-        if ($contentType && stripos($contentType, 'image/') === false) {
-            // some hosts don’t send type on HEAD; don’t hard-fail, but note it
-            $ctx['contentTypeWarning'] = $contentType;
+        if ($dl['ok'] === false) {
+            $this->maybeDd($debug, 'Download failed', $ctx + ['url'=>$origUrl, 'why'=>$dl['reason']]);
+            return ['ok'=>false, 'reason'=>$dl['reason']];
         }
 
-        // 3) WP meta for ALT/caption
+        // 4) Compose ALT text from caption/alt/meta
         $meta = DB::connection('mysql2')
             ->table('frntn_postmeta')
             ->where('post_id', $attachmentId)
@@ -308,19 +301,16 @@ public function metaStep(Request $request)
                 if (is_array($arr) && isset($arr['image_meta']['caption'])) {
                     $imgMetaCaption = (string) $arr['image_meta']['caption'];
                 }
-            } catch (\Throwable $e) {
-                // ignore
-            }
+            } catch (\Throwable $e) {}
         }
         $alt = trim($att->post_excerpt) ?: trim($wpAlt) ?: trim($imgMetaCaption) ?: '';
 
-        // 4) Prepare temp path on local storage
+        // 5) Save to local disk (storage/app/temp_images/...)
         $basename = basename(parse_url($origUrl, PHP_URL_PATH) ?? '');
         $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $basename) ?: ('image_' . $attachmentId . '.jpg');
-
-        $tmpDisk = Storage::disk('local'); // storage/app
-        $dir = 'temp_images';
-        $tmpPath = $dir . '/' . $safeName;
+        $tmpDisk  = Storage::disk('local');
+        $dir      = 'temp_images';
+        $tmpPath  = $dir . '/' . $safeName;
 
         if (!$tmpDisk->exists($dir)) {
             if (!$tmpDisk->makeDirectory($dir)) {
@@ -329,32 +319,21 @@ public function metaStep(Request $request)
             }
         }
 
-        // 5) Stream download
-        $read = @fopen($origUrl, 'rb');
-        if ($read === false) {
-            $bin = @file_get_contents($origUrl);
-            if ($bin === false) {
-                $this->maybeDd($debug, 'Download failed (fopen+file_get_contents)', $ctx + ['url'=>$origUrl]);
-                return ['ok'=>false, 'reason'=>'download failed'];
-            }
-            $tmpDisk->put($tmpPath, $bin);
-        } else {
-            $ok = $tmpDisk->writeStream($tmpPath, $read);
-            @fclose($read);
-            if ($ok === false) {
-                $this->maybeDd($debug, 'writeStream to local disk failed', $ctx + ['tmpPath'=>$tmpPath]);
-                return ['ok'=>false, 'reason'=>'local write failed'];
-            }
+        $putOk = $tmpDisk->put($tmpPath, $dl['body']); // binary
+        if ($putOk === false) {
+            $this->maybeDd($debug, 'Writing binary to local disk failed', $ctx + ['tmpPath'=>$tmpPath]);
+            return ['ok'=>false, 'reason'=>'local write failed'];
         }
-
         $localAbsolute = $tmpDisk->path($tmpPath);
+
         if (!is_file($localAbsolute) || filesize($localAbsolute) === 0) {
-            $this->maybeDd($debug, 'Temp file missing/empty after download', $ctx + ['local'=>$localAbsolute]);
+            $tmpDisk->delete($tmpPath);
+            $this->maybeDd($debug, 'Temp file missing/empty', $ctx + ['local'=>$localAbsolute]);
             return ['ok'=>false, 'reason'=>'temp file missing/empty'];
         }
 
-        // 6) Upload to RV Media
-        $upload = app('rv_media')->uploadFromPath($localAbsolute, 0, 'posts', [
+        // 6) Upload to RV Media (via Facade)
+        $upload = RvMedia::uploadFromPath($localAbsolute, 0, 'posts', [
             'file_name' => $safeName,
             'alt'       => $alt,
         ]);
@@ -363,17 +342,16 @@ public function metaStep(Request $request)
         $tmpDisk->delete($tmpPath);
 
         if (!is_array($upload) || !empty($upload['error'])) {
-            $this->maybeDd($debug, 'rv_media uploadFromPath returned error', $ctx + ['upload'=>$upload]);
+            $this->maybeDd($debug, 'RvMedia upload error', $ctx + ['upload'=>$upload]);
             return ['ok'=>false, 'reason'=>'rv_media upload error'];
         }
 
         $url = $upload['data']->url ?? null;
         if (!$url) {
-            $this->maybeDd($debug, 'rv_media result missing URL', $ctx + ['upload'=>$upload]);
+            $this->maybeDd($debug, 'RvMedia missing URL', $ctx + ['upload'=>$upload]);
             return ['ok'=>false, 'reason'=>'rv_media no url'];
         }
 
-        // 7) Save on post
         \Botble\Blog\Models\Post::where('id', $postId)->update([
             'image'      => $url,
             'updated_at' => now(),
@@ -389,8 +367,91 @@ public function metaStep(Request $request)
 }
 
 /**
- * When debug=1: stop immediately with a loud dump of context.
- * Otherwise, just log the message and continue.
+ * Try to improve legacy GUIDs: http→https, strip obvious junk query, etc.
+ */
+protected function normalizeGuidUrl(string $url): string
+{
+    // Force https if it looks like same host supports it
+    if (str_starts_with($url, 'http://')) {
+        $url = preg_replace('#^http://#i', 'https://', $url);
+    }
+
+    // Some old WP setups append query markers on images; many CDNs reject
+    // Keep query if it looks like signed (X-Amz-), otherwise drop
+    $parts = parse_url($url);
+    if (!empty($parts['query']) && !str_contains($parts['query'], 'X-Amz-')) {
+        $url = preg_replace('/\?.*$/', '', $url);
+    }
+
+    return $url;
+}
+
+/**
+ * URL-encode just the basename to handle spaces and special chars.
+ */
+protected function encodeBasename(string $url): string
+{
+    $parts = parse_url($url);
+    if (empty($parts['path'])) return $url;
+    $segments = explode('/', $parts['path']);
+    $last = array_pop($segments);
+    $encoded = rawurlencode($last);
+    $parts['path'] = implode('/', $segments) . '/' . $encoded;
+    // rebuild URL
+    $rebuilt = ($parts['scheme'] ?? 'https') . '://' . ($parts['host'] ?? '');
+    if (!empty($parts['port']))   $rebuilt .= ':' . $parts['port'];
+    $rebuilt .= $parts['path'];
+    if (!empty($parts['query']))  $rebuilt .= '?' . $parts['query'];
+    if (!empty($parts['fragment'])) $rebuilt .= '#' . $parts['fragment'];
+    return $rebuilt;
+}
+
+/**
+ * Robust downloader using cURL. Follows redirects, sets UA, and returns body or reason.
+ */
+protected function curlDownload(string $url): array
+{
+    if (!function_exists('curl_init')) {
+        // fallback to file_get_contents if cURL missing
+        $bin = @file_get_contents($url);
+        if ($bin === false) return ['ok'=>false, 'reason'=>'download failed'];
+        return ['ok'=>true, 'body'=>$bin];
+    }
+
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL            => $url,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_MAXREDIRS      => 5,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_TIMEOUT        => 25,
+        CURLOPT_USERAGENT      => 'Mozilla/5.0 (compatible; WP-Importer/1.0; +https://laviola.it)',
+        CURLOPT_SSL_VERIFYPEER => false, // legacy hosts often misconfigured; relax
+        CURLOPT_SSL_VERIFYHOST => 0,
+        CURLOPT_HTTPHEADER     => ['Accept: image/*,*/*;q=0.8'],
+    ]);
+
+    $body = curl_exec($ch);
+    $err  = curl_error($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($body === false) {
+        return ['ok'=>false, 'reason'=>'download failed: '.$err];
+    }
+    if (!in_array($code, [200, 301, 302], true)) {
+        return ['ok'=>false, 'reason'=>"http status not ok: {$code}"];
+    }
+    if ($body === '' || strlen($body) < 8) {
+        return ['ok'=>false, 'reason'=>'empty body'];
+    }
+
+    return ['ok'=>true, 'body'=>$body];
+}
+
+/**
+ * When debug=1: dd() immediately; else log and continue.
  */
 protected function maybeDd(bool $debug, string $msg, array $context = []): void
 {
