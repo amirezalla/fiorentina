@@ -390,7 +390,7 @@ protected function makeImageManager(): ImageManager
  */
 protected function makeThumbnails(string $path, array $sizes = [[150,150],[540,360],[565,375]]): void
 {
-    $disk = Storage::disk('laviolas3');
+    $disk = Storage::disk('wasabi');
     if (!$disk->exists($path)) return;
 
     $manager = $this->makeImageManager();
