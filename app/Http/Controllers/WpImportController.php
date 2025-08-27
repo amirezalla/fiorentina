@@ -104,30 +104,31 @@ public function importPostsWithoutMeta()
         ], 202);
     }
 
-    public function importMetaForPosts(Request $request)
-    {
- DB::connection()->disableQueryLog();
-        DB::connection('mysql2')->disableQueryLog();
+public function importMetaForPosts(Request $request)
+{
+    DB::connection()->disableQueryLog();
+    DB::connection('mysql2')->disableQueryLog();
 
-        // Range defaults to entire posts table if not provided
-        $minId = (int) Post::min('id') ?: 1;
-        $maxId = (int) Post::max('id') ?: $minId;
+    // Defaults to entire posts table if not provided
+    $minId = (int) Post::min('id') ?: 1;
+    $maxId = (int) Post::max('id') ?: $minId;
 
-        $startId = (int) $request->query('start_id', $minId);
-        $endId   = (int) $request->query('end_id', $maxId);
+    $startId = (int) $request->query('start_id', $minId);
+    $endId   = (int) $request->query('end_id', $maxId);
 
-        if ($startId > $endId) {
-            [$startId, $endId] = [$endId, $startId];
-        }
-
-        $batch  = max(10, (int) $request->query('batch', 100)); // posts per HTTP request
-        $images = (int) $request->query('images', 1);           // 1 = import featured images; 0 = skip
-
-        // Cursor is "last processed id" — start just before $startId
-        $cursor = $startId - 1;
-$debug  = (int) $request->query('debug', 0);
-        return redirect()->route('wp.meta.step', compact('startId', 'endId', 'cursor', 'batch', 'images','debug'));
+    if ($startId > $endId) {
+        [$startId, $endId] = [$endId, $startId];
     }
+
+    $batch  = max(10, (int) $request->query('batch', 100)); // posts per HTTP request
+    $images = (int) $request->query('images', 1);           // 1 = import featured images; 0 = skip
+    $debug  = (int) $request->query('debug', 1);
+
+    // Descending walk: start cursor just AFTER the endId, then fetch id < cursor
+    $cursor = $endId + 1;
+
+    return redirect()->route('wp.meta.step', compact('startId', 'endId', 'cursor', 'batch', 'images', 'debug'));
+}
 
 public function metaStep(Request $request)
 {
@@ -138,16 +139,16 @@ public function metaStep(Request $request)
 
     $startId = (int) $request->query('startId');
     $endId   = (int) $request->query('endId');
-    $cursor  = (int) $request->query('cursor', $startId - 1);
+    $cursor  = (int) $request->query('cursor', $endId + 1); // walk downward
     $batch   = max(10, (int) $request->query('batch', 100));
     $images  = (int) $request->query('images', 1);
     $debug   = (int) $request->query('debug', 0);
 
-    // Fetch next slice of posts
+    // Fetch next slice DESC where id < cursor
     $posts = Post::query()
         ->whereBetween('id', [$startId, $endId])
-        ->where('id', '>', $cursor)
-        ->orderBy('id')
+        ->where('id', '<', $cursor)
+        ->orderByDesc('id')
         ->limit($batch)
         ->get(['id', 'image']);
 
@@ -168,20 +169,21 @@ public function metaStep(Request $request)
 
     $errors = [];
     $processed = 0;
+
+    // In DESC mode, the next cursor should become the SMALLEST id we processed this page
     $lastId = $cursor;
 
     foreach ($posts as $p) {
-        $lastId = (int) $p->id;
+        $lastId = (int) $p->id; // this keeps decreasing in DESC order
 
         try {
-            // Get only the meta we need for THIS post from WP DB
+            // Pull only needed WP meta for THIS post
             $meta = DB::connection('mysql2')
                 ->table('frntn_postmeta')
                 ->where('post_id', $p->id)
                 ->whereIn('meta_key', ['_thumbnail_id', '_yoast_wpseo_primary_category'])
                 ->pluck('meta_value', 'meta_key');
 
-            // category: assumes Botble category IDs == WP term IDs (adjust mapping if needed)
             $primaryCategoryId = isset($meta['_yoast_wpseo_primary_category'])
                 ? (int) $meta['_yoast_wpseo_primary_category'] : null;
 
@@ -191,13 +193,14 @@ public function metaStep(Request $request)
                 'updated_at'  => now(),
             ]);
 
-            // If requested, bring over featured image if missing
+            // Import featured image if requested and missing
             if ($images === 1) {
                 $thumbId = isset($meta['_thumbnail_id']) ? (int) $meta['_thumbnail_id'] : null;
                 if ($thumbId && empty($p->image)) {
                     $res = $this->importFeaturedImage($p->id, $thumbId, (bool) $debug);
-                    if ($res['ok'] === false) {
-                        $errors[] = "Post {$p->id}: failed to import image (attachment {$thumbId}) — {$res['reason']}";
+                    if (($res['ok'] ?? false) === false) {
+                        $reason = $res['reason'] ?? 'unknown';
+                        $errors[] = "Post {$p->id}: failed to import image (attachment {$thumbId}) — {$reason}";
                     }
                 }
             }
@@ -213,16 +216,17 @@ public function metaStep(Request $request)
         }
     }
 
-    // Build redirect to next step
+    // Are there more posts with id >= startId and < lastId ?
     $hasMore = Post::query()
         ->whereBetween('id', [$startId, $endId])
-        ->where('id', '>', $lastId)
+        ->where('id', '<', $lastId)
         ->exists();
 
     $nextUrl = $hasMore
         ? route('wp.meta.step', [
             'startId' => $startId,
             'endId'   => $endId,
+            // move the cursor downward (next page must fetch id < this)
             'cursor'  => $lastId,
             'batch'   => $batch,
             'images'  => $images,
@@ -234,7 +238,7 @@ public function metaStep(Request $request)
         'done'        => !$hasMore,
         'startId'     => $startId,
         'endId'       => $endId,
-        'cursor'      => $lastId,
+        'cursor'      => $lastId, // smallest processed id in this page
         'batch'       => $batch,
         'images'      => $images,
         'debug'       => $debug,
