@@ -125,7 +125,7 @@ public function importMetaForPosts(Request $request)
         [$startId, $endId] = [$endId, $startId];
     }
 
-    $batch  = max(10, (int) $request->query('batch', 100)); // posts per HTTP request
+    $batch  = max(10, (int) $request->query('batch', 20)); // posts per HTTP request
     $images = (int) $request->query('images', 1);           // 1 = import featured images; 0 = skip
     $debug  = (int) $request->query('debug', 1);
 
