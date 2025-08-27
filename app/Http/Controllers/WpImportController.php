@@ -243,7 +243,7 @@ public function metaStep(Request $request)
         'nextUrl'     => $nextUrl,
     ]);
 }
-    protected function importFeaturedImage(int $postId, int $attachmentId, bool $debug = false): array
+protected function importFeaturedImage(int $postId, int $attachmentId, bool $debug = false): array
 {
     $ctx = ['postId'=>$postId, 'attachmentId'=>$attachmentId];
 
@@ -260,25 +260,17 @@ public function metaStep(Request $request)
             ->where('ID', $attachmentId)
             ->first(['ID','post_title','post_excerpt','guid']);
 
-        if (!$att) {
-            $this->maybeDd($debug, 'Attachment row not found', $ctx);
-            return ['ok'=>false, 'reason'=>'attachment not found'];
-        }
-        if (empty($att->guid)) {
-            $this->maybeDd($debug, 'Attachment GUID empty', $ctx + ['att'=>$att]);
-            return ['ok'=>false, 'reason'=>'attachment guid empty'];
-        }
+        if (!$att)  { $this->maybeDd($debug, 'Attachment not found', $ctx); return ['ok'=>false,'reason'=>'attachment not found']; }
+        if (empty($att->guid)) { $this->maybeDd($debug, 'Attachment GUID empty', $ctx+['att'=>$att]); return ['ok'=>false,'reason'=>'attachment guid empty']; }
 
-        // 2) Normalize URL (http→https, encode filename, strip query if needed)
+        // 2) Normalize URL and download (retry with encoded basename if needed)
         $origUrl = $this->normalizeGuidUrl((string)$att->guid);
-
-        // 3) HEAD/GET via cURL (with retries & UA)
         $dl = $this->curlDownload($origUrl);
         if ($dl['ok'] === false) {
-            // Attempt a second try with encoded basename (spaces, specials)
             $encodedUrl = $this->encodeBasename($origUrl);
             if ($encodedUrl !== $origUrl) {
                 $dl = $this->curlDownload($encodedUrl);
+                $origUrl = $encodedUrl;
             }
         }
         if ($dl['ok'] === false) {
@@ -286,7 +278,7 @@ public function metaStep(Request $request)
             return ['ok'=>false, 'reason'=>$dl['reason']];
         }
 
-        // 4) Compose ALT text from caption/alt/meta
+        // 3) Build ALT (caption > alt > image_meta.caption)
         $meta = DB::connection('mysql2')
             ->table('frntn_postmeta')
             ->where('post_id', $attachmentId)
@@ -305,51 +297,47 @@ public function metaStep(Request $request)
         }
         $alt = trim($att->post_excerpt) ?: trim($wpAlt) ?: trim($imgMetaCaption) ?: '';
 
-        // 5) Save to local disk (storage/app/temp_images/...)
+        // 4) Prepare destination path on S3 (preserve original filename)
         $basename = basename(parse_url($origUrl, PHP_URL_PATH) ?? '');
         $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $basename) ?: ('image_' . $attachmentId . '.jpg');
-        $tmpDisk  = Storage::disk('local');
-        $dir      = 'temp_images';
-        $tmpPath  = $dir . '/' . $safeName;
 
-        if (!$tmpDisk->exists($dir)) {
-            if (!$tmpDisk->makeDirectory($dir)) {
-                $this->maybeDd($debug, 'Failed to make temp_images dir', $ctx);
-                return ['ok'=>false, 'reason'=>'cannot create temp_images dir'];
-            }
+        // folders by year/month (like WP)
+        $ym   = date('Y/m');
+        $path = "posts/{$ym}/{$safeName}";
+
+        $disk = Storage::disk('laviolas3');
+
+        // Ensure unique name if file exists
+        if ($disk->exists($path)) {
+            $dot = strrpos($safeName, '.');
+            $name = $dot !== false ? substr($safeName, 0, $dot) : $safeName;
+            $ext  = $dot !== false ? substr($safeName, $dot) : '';
+            $path = "posts/{$ym}/{$name}-{$attachmentId}{$ext}";
         }
 
-        $putOk = $tmpDisk->put($tmpPath, $dl['body']); // binary
-        if ($putOk === false) {
-            $this->maybeDd($debug, 'Writing binary to local disk failed', $ctx + ['tmpPath'=>$tmpPath]);
-            return ['ok'=>false, 'reason'=>'local write failed'];
-        }
-        $localAbsolute = $tmpDisk->path($tmpPath);
+        // 5) Stream upload to S3
+        $stream = fopen('php://temp', 'w+');
+        fwrite($stream, $dl['body']);
+        rewind($stream);
 
-        if (!is_file($localAbsolute) || filesize($localAbsolute) === 0) {
-            $tmpDisk->delete($tmpPath);
-            $this->maybeDd($debug, 'Temp file missing/empty', $ctx + ['local'=>$localAbsolute]);
-            return ['ok'=>false, 'reason'=>'temp file missing/empty'];
+        $opts = ['visibility' => 'public'];
+        if (!empty($dl['content_type'])) {
+            $opts['ContentType'] = $dl['content_type'];
         }
 
-        // 6) Upload to RV Media (via Facade)
-        $upload = RvMedia::uploadFromPath($localAbsolute, 0, 'posts', [
-            'file_name' => $safeName,
-            'alt'       => $alt,
-        ]);
+        $ok = $disk->writeStream($path, $stream, $opts);
+        fclose($stream);
 
-        // cleanup temp
-        $tmpDisk->delete($tmpPath);
-
-        if (!is_array($upload) || !empty($upload['error'])) {
-            $this->maybeDd($debug, 'RvMedia upload error', $ctx + ['upload'=>$upload]);
-            return ['ok'=>false, 'reason'=>'rv_media upload error'];
+        if ($ok === false) {
+            $this->maybeDd($debug, 'S3 writeStream failed', $ctx + ['path'=>$path]);
+            return ['ok'=>false, 'reason'=>'s3 write failed'];
         }
 
-        $url = $upload['data']->url ?? null;
+        // 6) Get public URL and save to post
+        $url = $disk->url($path);
         if (!$url) {
-            $this->maybeDd($debug, 'RvMedia missing URL', $ctx + ['upload'=>$upload]);
-            return ['ok'=>false, 'reason'=>'rv_media no url'];
+            $this->maybeDd($debug, 'S3 url() returned empty', $ctx + ['path'=>$path]);
+            return ['ok'=>false, 'reason'=>'s3 url empty'];
         }
 
         \Botble\Blog\Models\Post::where('id', $postId)->update([
@@ -357,65 +345,55 @@ public function metaStep(Request $request)
             'updated_at' => now(),
         ]);
 
-        return ['ok'=>true, 'reason'=>'uploaded'];
+        // Optional: if you also want to store ALT somewhere (Botble usually keeps it in media library),
+        // you can add a MetaBox or a custom table here.
+
+        return ['ok'=>true, 'reason'=>'uploaded to s3'];
 
     } catch (\Throwable $e) {
-        \Log::error('[WP Image Import] hard failure', $ctx + ['err'=>$e->getMessage()]);
+        Log::error('[WP Image Import] hard failure', $ctx + ['err'=>$e->getMessage()]);
         $this->maybeDd($debug, 'Exception thrown', $ctx + ['exception'=>$e->getMessage()]);
         return ['ok'=>false, 'reason'=>'exception: '.$e->getMessage()];
     }
 }
 
-/**
- * Try to improve legacy GUIDs: http→https, strip obvious junk query, etc.
- */
+/** Normalize legacy GUIDs: prefer https; strip non-signed query strings */
 protected function normalizeGuidUrl(string $url): string
 {
-    // Force https if it looks like same host supports it
     if (str_starts_with($url, 'http://')) {
         $url = preg_replace('#^http://#i', 'https://', $url);
     }
-
-    // Some old WP setups append query markers on images; many CDNs reject
-    // Keep query if it looks like signed (X-Amz-), otherwise drop
     $parts = parse_url($url);
     if (!empty($parts['query']) && !str_contains($parts['query'], 'X-Amz-')) {
         $url = preg_replace('/\?.*$/', '', $url);
     }
-
     return $url;
 }
 
-/**
- * URL-encode just the basename to handle spaces and special chars.
- */
+/** URL-encode only the filename to fix spaces/special chars */
 protected function encodeBasename(string $url): string
 {
-    $parts = parse_url($url);
-    if (empty($parts['path'])) return $url;
-    $segments = explode('/', $parts['path']);
-    $last = array_pop($segments);
-    $encoded = rawurlencode($last);
-    $parts['path'] = implode('/', $segments) . '/' . $encoded;
-    // rebuild URL
-    $rebuilt = ($parts['scheme'] ?? 'https') . '://' . ($parts['host'] ?? '');
-    if (!empty($parts['port']))   $rebuilt .= ':' . $parts['port'];
-    $rebuilt .= $parts['path'];
-    if (!empty($parts['query']))  $rebuilt .= '?' . $parts['query'];
-    if (!empty($parts['fragment'])) $rebuilt .= '#' . $parts['fragment'];
+    $p = parse_url($url);
+    if (empty($p['path'])) return $url;
+    $segs = explode('/', $p['path']);
+    $last = array_pop($segs);
+    $p['path'] = implode('/', $segs) . '/' . rawurlencode($last);
+
+    $rebuilt = ($p['scheme'] ?? 'https') . '://' . ($p['host'] ?? '');
+    if (!empty($p['port'])) $rebuilt .= ':' . $p['port'];
+    $rebuilt .= $p['path'];
+    if (!empty($p['query'])) $rebuilt .= '?' . $p['query'];
+    if (!empty($p['fragment'])) $rebuilt .= '#' . $p['fragment'];
     return $rebuilt;
 }
 
-/**
- * Robust downloader using cURL. Follows redirects, sets UA, and returns body or reason.
- */
+/** Robust downloader with cURL; returns body and content_type or reason */
 protected function curlDownload(string $url): array
 {
     if (!function_exists('curl_init')) {
-        // fallback to file_get_contents if cURL missing
         $bin = @file_get_contents($url);
         if ($bin === false) return ['ok'=>false, 'reason'=>'download failed'];
-        return ['ok'=>true, 'body'=>$bin];
+        return ['ok'=>true, 'body'=>$bin, 'content_type'=>null];
     }
 
     $ch = curl_init();
@@ -427,32 +405,37 @@ protected function curlDownload(string $url): array
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_TIMEOUT        => 25,
         CURLOPT_USERAGENT      => 'Mozilla/5.0 (compatible; WP-Importer/1.0; +https://laviola.it)',
-        CURLOPT_SSL_VERIFYPEER => false, // legacy hosts often misconfigured; relax
+        CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_SSL_VERIFYHOST => 0,
         CURLOPT_HTTPHEADER     => ['Accept: image/*,*/*;q=0.8'],
+        CURLOPT_HEADER         => true,
     ]);
 
-    $body = curl_exec($ch);
-    $err  = curl_error($ch);
-    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($body === false) {
+    $resp = curl_exec($ch);
+    if ($resp === false) {
+        $err = curl_error($ch);
+        curl_close($ch);
         return ['ok'=>false, 'reason'=>'download failed: '.$err];
     }
-    if (!in_array($code, [200, 301, 302], true)) {
-        return ['ok'=>false, 'reason'=>"http status not ok: {$code}"];
+
+    $headerSize   = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $statusCode   = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType  = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    $body         = substr($resp, $headerSize);
+
+    curl_close($ch);
+
+    if (!in_array($statusCode, [200, 301, 302], true)) {
+        return ['ok'=>false, 'reason'=>"http status not ok: HTTP {$statusCode}"];
     }
     if ($body === '' || strlen($body) < 8) {
         return ['ok'=>false, 'reason'=>'empty body'];
     }
 
-    return ['ok'=>true, 'body'=>$body];
+    return ['ok'=>true, 'body'=>$body, 'content_type'=>$contentType];
 }
 
-/**
- * When debug=1: dd() immediately; else log and continue.
- */
+/** When debug=1: dd() immediately; else just log */
 protected function maybeDd(bool $debug, string $msg, array $context = []): void
 {
     if ($debug) {
