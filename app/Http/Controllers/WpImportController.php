@@ -145,7 +145,7 @@ public function metaStep(Request $request)
     $startId = (int) $request->query('startId');
     $endId   = (int) $request->query('endId');
     $cursor  = (int) $request->query('cursor', $endId + 1); // walk downward
-    $batch   = max(10, (int) $request->query('batch', 100));
+    $batch   = max(10, (int) $request->query('batch', 20));
     $images  = (int) $request->query('images', 1);
     $debug   = (int) $request->query('debug', 0);
 
