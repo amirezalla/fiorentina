@@ -129,119 +129,120 @@ $debug  = (int) $request->query('debug', 0);
         return redirect()->route('wp.meta.step', compact('startId', 'endId', 'cursor', 'batch', 'images','debug'));
     }
 
-    public function metaStep(Request $request)
-    {
-        DB::connection()->disableQueryLog();
-        DB::connection('mysql2')->disableQueryLog();
-        @ini_set('max_execution_time', '0');
-        @ini_set('memory_limit', '512M');
+public function metaStep(Request $request)
+{
+    DB::connection()->disableQueryLog();
+    DB::connection('mysql2')->disableQueryLog();
+    @ini_set('max_execution_time', '0');
+    @ini_set('memory_limit', '512M');
 
-        $startId = (int) $request->query('startId');
-        $endId   = (int) $request->query('endId');
-        $cursor  = (int) $request->query('cursor', $startId - 1);
-        $batch   = max(10, (int) $request->query('batch', 100));
-        $images  = (int) $request->query('images', 1);
+    $startId = (int) $request->query('startId');
+    $endId   = (int) $request->query('endId');
+    $cursor  = (int) $request->query('cursor', $startId - 1);
+    $batch   = max(10, (int) $request->query('batch', 100));
+    $images  = (int) $request->query('images', 1);
+    $debug   = (int) $request->query('debug', 0);
 
-        // Fetch next slice of posts
-        $posts = Post::query()
-            ->whereBetween('id', [$startId, $endId])
-            ->where('id', '>', $cursor)
-            ->orderBy('id')
-            ->limit($batch)
-            ->get(['id', 'image']);
+    // Fetch next slice of posts
+    $posts = Post::query()
+        ->whereBetween('id', [$startId, $endId])
+        ->where('id', '>', $cursor)
+        ->orderBy('id')
+        ->limit($batch)
+        ->get(['id', 'image']);
 
-        if ($posts->isEmpty()) {
-            return $this->progressView([
-                'done'        => true,
-                'startId'     => $startId,
-                'endId'       => $endId,
-                'cursor'      => $cursor,
-                'batch'       => $batch,
-                'images'      => $images,
-                   'debug'  => $debug,
-                'processed'   => 0,
-                'errors'      => [],
-                'nextUrl'     => null,
-            ]);
-        }
-
-        $errors = [];
-        $processed = 0;
-        $lastId = $cursor;
-
-        foreach ($posts as $p) {
-            $lastId = (int) $p->id;
-
-            try {
-                // Get only the meta we need for THIS post from WP DB
-                $meta = DB::connection('mysql2')
-                    ->table('frntn_postmeta')
-                    ->where('post_id', $p->id)
-                    ->whereIn('meta_key', ['_thumbnail_id', '_yoast_wpseo_primary_category'])
-                    ->pluck('meta_value', 'meta_key');
-
-                // category: assumes Botble category IDs == WP term IDs (adjust mapping if needed)
-                $primaryCategoryId = isset($meta['_yoast_wpseo_primary_category'])
-                    ? (int) $meta['_yoast_wpseo_primary_category'] : null;
-
-                Post::where('id', $p->id)->update([
-                    'format_type' => 'post',
-                    'category_id' => $primaryCategoryId ?: null,
-                    'updated_at'  => now(),
-                ]);
-
-                // If requested, bring over featured image if missing
-if ($images === 1) {
-    $thumbId = isset($meta['_thumbnail_id']) ? (int) $meta['_thumbnail_id'] : null;
-    if ($thumbId && empty($p->image)) {
-        $res = $this->importFeaturedImage($p->id, $thumbId, (bool) $debug);
-        if ($res['ok'] === false) {
-            $errors[] = "Post {$p->id}: failed to import image (attachment {$thumbId}) — {$res['reason']}";
-        }
-    }
-}
-
-                unset($meta);
-                $processed++;
-                gc_collect_cycles();
-
-            } catch (\Throwable $e) {
-                $msg = "Post {$p->id} error: " . $e->getMessage();
-                $errors[] = $msg;
-                Log::error('[WP Meta Import] ' . $msg, ['trace' => substr($e->getTraceAsString(), 0, 2000)]);
-            }
-        }
-
-        // Build redirect to next step
-        $hasMore = Post::query()
-            ->whereBetween('id', [$startId, $endId])
-            ->where('id', '>', $lastId)
-            ->exists();
-
-$nextUrl = $hasMore
-    ? route('wp.meta.step', [
-        'startId' => $startId,
-        'endId'   => $endId,
-        'cursor'  => $lastId,
-        'batch'   => $batch,
-        'images'  => $images,
-        'debug'   => 1,
-    ])
-    : null;
-
+    if ($posts->isEmpty()) {
         return $this->progressView([
-            'done'        => !$hasMore,
+            'done'        => true,
             'startId'     => $startId,
             'endId'       => $endId,
-            'cursor'      => $lastId,
+            'cursor'      => $cursor,
             'batch'       => $batch,
             'images'      => $images,
-               'debug'  => $debug,
-            'processed'   => $processed,
-            'errors'      => $errors,
-            'nextUrl'     => $nextUrl,
+            'debug'       => $debug,
+            'processed'   => 0,
+            'errors'      => [],
+            'nextUrl'     => null,
         ]);
     }
+
+    $errors = [];
+    $processed = 0;
+    $lastId = $cursor;
+
+    foreach ($posts as $p) {
+        $lastId = (int) $p->id;
+
+        try {
+            // Get only the meta we need for THIS post from WP DB
+            $meta = DB::connection('mysql2')
+                ->table('frntn_postmeta')
+                ->where('post_id', $p->id)
+                ->whereIn('meta_key', ['_thumbnail_id', '_yoast_wpseo_primary_category'])
+                ->pluck('meta_value', 'meta_key');
+
+            // category: assumes Botble category IDs == WP term IDs (adjust mapping if needed)
+            $primaryCategoryId = isset($meta['_yoast_wpseo_primary_category'])
+                ? (int) $meta['_yoast_wpseo_primary_category'] : null;
+
+            Post::where('id', $p->id)->update([
+                'format_type' => 'post',
+                'category_id' => $primaryCategoryId ?: null,
+                'updated_at'  => now(),
+            ]);
+
+            // If requested, bring over featured image if missing
+            if ($images === 1) {
+                $thumbId = isset($meta['_thumbnail_id']) ? (int) $meta['_thumbnail_id'] : null;
+                if ($thumbId && empty($p->image)) {
+                    $res = $this->importFeaturedImage($p->id, $thumbId, (bool) $debug);
+                    if ($res['ok'] === false) {
+                        $errors[] = "Post {$p->id}: failed to import image (attachment {$thumbId}) — {$res['reason']}";
+                    }
+                }
+            }
+
+            unset($meta);
+            $processed++;
+            gc_collect_cycles();
+
+        } catch (\Throwable $e) {
+            $msg = "Post {$p->id} error: " . $e->getMessage();
+            $errors[] = $msg;
+            Log::error('[WP Meta Import] ' . $msg, ['trace' => substr($e->getTraceAsString(), 0, 2000)]);
+        }
+    }
+
+    // Build redirect to next step
+    $hasMore = Post::query()
+        ->whereBetween('id', [$startId, $endId])
+        ->where('id', '>', $lastId)
+        ->exists();
+
+    $nextUrl = $hasMore
+        ? route('wp.meta.step', [
+            'startId' => $startId,
+            'endId'   => $endId,
+            'cursor'  => $lastId,
+            'batch'   => $batch,
+            'images'  => $images,
+            'debug'   => $debug,
+        ])
+        : null;
+
+    return $this->progressView([
+        'done'        => !$hasMore,
+        'startId'     => $startId,
+        'endId'       => $endId,
+        'cursor'      => $lastId,
+        'batch'       => $batch,
+        'images'      => $images,
+        'debug'       => $debug,
+        'processed'   => $processed,
+        'errors'      => $errors,
+        'nextUrl'     => $nextUrl,
+    ]);
+}
     protected function importFeaturedImage(int $postId, int $attachmentId, bool $debug = false): array
 {
     // return shape: ['ok'=>bool, 'reason'=>string]
