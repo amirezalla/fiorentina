@@ -240,81 +240,96 @@ public function importPostsWithoutMeta()
         ]);
     }
     protected function importFeaturedImage(int $postId, int $attachmentId): bool
-    {
-        try {
-            // Skip if already set (double safety)
-            $has = Post::query()->where('id', $postId)->value('image');
-            if (!empty($has)) return true;
+{
+    try {
+        // Skip if already set
+        $has = \Botble\Blog\Models\Post::query()->where('id', $postId)->value('image');
+        if (!empty($has)) return true;
 
-            $att = DB::connection('mysql2')
-                ->table('frntn_posts')
-                ->where('ID', $attachmentId)
-                ->first(['ID','post_title','post_excerpt','guid']);
+        $att = DB::connection('mysql2')
+            ->table('frntn_posts')
+            ->where('ID', $attachmentId)
+            ->first(['ID','post_title','post_excerpt','guid']);
 
-            if (!$att || empty($att->guid)) return false;
+        if (!$att || empty($att->guid)) return false;
 
-            // Pull meta for alt/caption
-            $meta = DB::connection('mysql2')
-                ->table('frntn_postmeta')
-                ->where('post_id', $attachmentId)
-                ->pluck('meta_value', 'meta_key');
+        // pull meta for alt/caption
+        $meta = DB::connection('mysql2')
+            ->table('frntn_postmeta')
+            ->where('post_id', $attachmentId)
+            ->pluck('meta_value', 'meta_key');
 
-            $wpAlt = $meta['_wp_attachment_image_alt'] ?? '';
-            $wpMetaSer = $meta['_wp_attachment_metadata'] ?? null;
-            $imgMetaCaption = '';
+        $wpAlt         = $meta['_wp_attachment_image_alt'] ?? '';
+        $wpMetaSer     = $meta['_wp_attachment_metadata'] ?? null;
+        $imgMetaCaption = '';
 
-            if ($wpMetaSer) {
-                try {
-                    $arr = @unserialize($wpMetaSer);
-                    if (is_array($arr) && isset($arr['image_meta']['caption'])) {
-                        $imgMetaCaption = (string) $arr['image_meta']['caption'];
-                    }
-                } catch (\Throwable $e) {}
-            }
+        if ($wpMetaSer) {
+            try {
+                $arr = @unserialize($wpMetaSer);
+                if (is_array($arr) && isset($arr['image_meta']['caption'])) {
+                    $imgMetaCaption = (string) $arr['image_meta']['caption'];
+                }
+            } catch (\Throwable $e) {}
+        }
 
-            // priority: caption > alt > image_meta.caption
-            $alt = trim($att->post_excerpt) ?: trim($wpAlt) ?: trim($imgMetaCaption) ?: '';
+        // caption > alt > image_meta.caption
+        $alt = trim($att->post_excerpt) ?: trim($wpAlt) ?: trim($imgMetaCaption) ?: '';
 
-            $origUrl = $att->guid;
+        $origUrl  = $att->guid;
+        $basename = basename(parse_url($origUrl, PHP_URL_PATH) ?? '');
+        $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $basename) ?: ('image_' . $attachmentId . '.jpg');
 
-            // preserve original filename
-            $basename = basename(parse_url($origUrl, PHP_URL_PATH) ?? '');
-            $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $basename) ?: ('image_' . $attachmentId . '.jpg');
+        // ---------- STREAM DOWNLOAD -> LOCAL DISK ----------
+        $tmpDisk = Storage::disk('local');          // storage/app
+        $tmpPath = 'temp_images/' . $safeName;      // relative path on the disk
 
-            $tmpDir = storage_path('app/temp_images');
-            if (!is_dir($tmpDir)) @mkdir($tmpDir, 0755, true);
-            $local = $tmpDir . DIRECTORY_SEPARATOR . $safeName;
+        // Ensure folder exists
+        if (!$tmpDisk->exists('temp_images')) {
+            $tmpDisk->makeDirectory('temp_images');
+        }
 
-            // Download
+        // Open remote for reading
+        $read = @fopen($origUrl, 'rb');
+        if ($read === false) {
+            // fallback to file_get_contents if fopen wrappers are off
             $bin = @file_get_contents($origUrl);
             if ($bin === false) return false;
-            file_put_contents($local, $bin);
-
-            // Upload via RvMedia
-            $upload = app('rv_media')->uploadFromPath($local, 0, 'posts', [
-                'file_name' => $safeName,
-                'alt'       => $alt,
-            ]);
-
-            @unlink($local);
-
-            if (!empty($upload['error'])) return false;
-
-            $url = $upload['data']->url ?? null;
-            if (!$url) return false;
-
-            Post::where('id', $postId)->update([
-                'image'      => $url,
-                'updated_at' => now(),
-            ]);
-
-            return true;
-
-        } catch (\Throwable $e) {
-            Log::error('[WP Image Import] Post '.$postId.' attach '.$attachmentId.' error: '.$e->getMessage());
-            return false;
+            $tmpDisk->put($tmpPath, $bin);          // writes the whole string to storage/app/temp_images/...
+        } else {
+            // Stream to disk (no memory spike)
+            $tmpDisk->writeStream($tmpPath, $read);
+            @fclose($read);
         }
+
+        // Absolute local path for RvMedia::uploadFromPath
+        $localAbsolute = $tmpDisk->path($tmpPath);
+
+        // ---------- RV MEDIA UPLOAD ----------
+        $upload = app('rv_media')->uploadFromPath($localAbsolute, 0, 'posts', [
+            'file_name' => $safeName,   // preserve original name
+            'alt'       => $alt,        // set alt text if your RvMedia supports it
+        ]);
+
+        // cleanup temp file regardless of result
+        $tmpDisk->delete($tmpPath);
+
+        if (!empty($upload['error'])) return false;
+
+        $url = $upload['data']->url ?? null;
+        if (!$url) return false;
+
+        \Botble\Blog\Models\Post::where('id', $postId)->update([
+            'image'      => $url,
+            'updated_at' => now(),
+        ]);
+
+        return true;
+
+    } catch (\Throwable $e) {
+        \Log::error('[WP Image Import] Post '.$postId.' attach '.$attachmentId.' error: '.$e->getMessage());
+        return false;
     }
+}
 
     /**
      * Minimal HTML view with progress + auto-redirect.
