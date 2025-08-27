@@ -363,30 +363,72 @@ if ($disk->exists($path)) {
     }
 }
 
-protected function makeThumbnails(string $path, array $sizes = [[150,150],[540,360],[565,375]])
+protected function makeThumbnails(string $path, array $sizes = [[150,150],[540,360],[565,375]]): void
 {
-    $disk = Storage::disk('wasabi');
-    $manager = new ImageManager(['driver' => 'gd']); // or 'imagick'
+    $disk    = Storage::disk('laviolas3');
+    $manager = $this->makeImageManager();
 
-    // read original binary
-    $orig = $disk->get($path);
-    $image = $manager->make($orig);
+    if (!$disk->exists($path)) {
+        return;
+    }
 
-    // base info
-    $info = pathinfo($path);
-    $basename = $info['filename']; // without extension
-    $ext = $info['extension'];
+    // Read original as stream (low memory)
+    $readStream = $disk->readStream($path);
+    if ($readStream === false) {
+        return;
+    }
 
-    foreach ($sizes as [$w,$h]) {
-        // clone and resize/crop
-        $resized = clone $image;
-        $resized->fit($w, $h);
+    // v3 uses ->read(); v2 uses ->make()
+    if (method_exists($manager, 'read')) {
+        $image = $manager->read($readStream); // v3
+    } else {
+        $image = $manager->make(stream_get_contents($readStream)); // v2
+    }
+    if (is_resource($readStream)) {
+        @fclose($readStream);
+    }
 
-        // new filename
-        $newPath = "{$info['dirname']}/{$basename}-{$w}x{$h}.{$ext}";
+    $info     = pathinfo($path);
+    $dir      = $info['dirname'] ?? '';
+    $filename = $info['filename'] ?? 'image';
+    $ext      = strtolower($info['extension'] ?? 'jpg');
 
-        // stream to disk
-        $disk->put($newPath, (string) $resized->encode($ext, 90), ['visibility' => 'public']);
+    foreach ($sizes as [$w, $h]) {
+        // Clone for each size
+        if (method_exists($image, 'clone')) {
+            $im = $image->clone(); // v3
+        } else {
+            $im = clone $image;    // v2 fallback
+        }
+
+        // Hard crop to exact box
+        if (method_exists($im, 'cover')) {
+            // v3 API
+            $im = $im->cover($w, $h);
+        } else {
+            // v2 API
+            $im->fit($w, $h);
+        }
+
+        // Encode back to the original extension
+        if (method_exists($im, 'toJpeg')) {
+            // v3 encoders
+            $binary = match ($ext) {
+                'png'  => (string) $im->toPng()->toString(),
+                'webp' => (string) $im->toWebp(90)->toString(),
+                default => (string) $im->toJpeg(90)->toString(),
+            };
+        } else {
+            // v2 encoders
+            $format = in_array($ext, ['png','webp','jpg','jpeg']) ? $ext : 'jpg';
+            $binary = (string) $im->encode($format, 90);
+            if ($format === 'jpg') $ext = 'jpg';
+        }
+
+        $newPath = ($dir && $dir !== '.') ? "{$dir}/{$filename}-{$w}x{$h}.{$ext}"
+                                          : "{$filename}-{$w}x{$h}.{$ext}";
+
+        $disk->put($newPath, $binary, ['visibility' => 'public']);
     }
 }
 
