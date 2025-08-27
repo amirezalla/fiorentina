@@ -303,21 +303,22 @@ protected function importFeaturedImage(int $postId, int $attachmentId, bool $deb
 
         // 4) Prepare destination path on S3 (preserve original filename)
         $basename = basename(parse_url($origUrl, PHP_URL_PATH) ?? '');
-        $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $basename) ?: ('image_' . $attachmentId . '.jpg');
+// Build a safe, short filename
+$safeName = $this->buildSafeFilename($origUrl, $attachmentId, 80);
 
-        // folders by year/month (like WP)
-        $ym   = date('Y/m');
-        $path = "posts/{$ym}/{$safeName}";
+// folders by year/month (like WP)
+$ym   = date('Y/m');
+$path = "posts/{$ym}/{$safeName}";
 
-        $disk = Storage::disk('laviolas3');
+$disk = Storage::disk('laviolas3');
 
-        // Ensure unique name if file exists
-        if ($disk->exists($path)) {
-            $dot = strrpos($safeName, '.');
-            $name = $dot !== false ? substr($safeName, 0, $dot) : $safeName;
-            $ext  = $dot !== false ? substr($safeName, $dot) : '';
-            $path = "posts/{$ym}/{$name}-{$attachmentId}{$ext}";
-        }
+// Ensure unique name if file already exists (append -{id} before the extension)
+if ($disk->exists($path)) {
+    $dot  = strrpos($safeName, '.');
+    $base = $dot !== false ? substr($safeName, 0, $dot) : $safeName;
+    $ext  = $dot !== false ? substr($safeName, $dot) : '';
+    $path = "posts/{$ym}/{$base}-{$attachmentId}{$ext}";
+}
 
         // 5) Stream upload to S3
         $stream = fopen('php://temp', 'w+');
@@ -448,6 +449,43 @@ protected function maybeDd(bool $debug, string $msg, array $context = []): void
         \Log::warning('[WP Image Import DEBUG] '.$msg, $context);
     }
 }
+
+
+protected function buildSafeFilename(string $url, int $attachmentId, int $maxBaseLen = 80): string
+{
+    $basename = basename(parse_url($url, PHP_URL_PATH) ?? '');
+
+    // Split name/ext
+    $dot = strrpos($basename, '.');
+    $name = $dot !== false ? substr($basename, 0, $dot) : $basename;
+    $ext  = $dot !== false ? substr($basename, $dot) : '';
+
+    // 1) Try to transliterate to ASCII (iconv may be unavailable on some builds)
+    $nameAscii = function_exists('iconv')
+        ? @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name)
+        : $name;
+
+    // Fallback sanitize
+    $nameAscii = preg_replace('/[^A-Za-z0-9._-]/', '_', (string) $nameAscii);
+    $nameAscii = trim($nameAscii, '_');
+
+    if ($nameAscii === '') {
+        $nameAscii = "image_{$attachmentId}";
+    }
+
+    // 2) Enforce max length on the basename (without extension)
+    // leave room for "-{id}" that we'll append when needed
+    $reserveForId = 1 + strlen((string) $attachmentId); // dash + digits
+    $limit = max(10, $maxBaseLen - $reserveForId);
+
+    if (strlen($nameAscii) > $limit) {
+        $nameAscii = substr($nameAscii, 0, $limit);
+    }
+
+    // 3) Final filename (we’ll still add -id if a collision happens)
+    return $nameAscii . $ext;
+}
+
 
     /**
      * Minimal HTML view with progress + auto-redirect.
