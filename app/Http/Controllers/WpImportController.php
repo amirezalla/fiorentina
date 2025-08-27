@@ -340,11 +340,12 @@ if ($disk->exists($path)) {
 
         // 6) Get public URL and save to post
         $url = $disk->url($path);
+
         if (!$url) {
             $this->maybeDd($debug, 'S3 url() returned empty', $ctx + ['path'=>$path]);
             return ['ok'=>false, 'reason'=>'s3 url empty'];
         }
-
+        $this->makeThumbnails($path);
         \Botble\Blog\Models\Post::where('id', $postId)->update([
             'image'      => $url,
             'updated_at' => now(),
@@ -359,6 +360,33 @@ if ($disk->exists($path)) {
         Log::error('[WP Image Import] hard failure', $ctx + ['err'=>$e->getMessage()]);
         $this->maybeDd($debug, 'Exception thrown', $ctx + ['exception'=>$e->getMessage()]);
         return ['ok'=>false, 'reason'=>'exception: '.$e->getMessage()];
+    }
+}
+
+protected function makeThumbnails(string $path, array $sizes = [[150,150],[540,360],[565,375]])
+{
+    $disk = Storage::disk('wasabi');
+    $manager = new ImageManager(['driver' => 'gd']); // or 'imagick'
+
+    // read original binary
+    $orig = $disk->get($path);
+    $image = $manager->make($orig);
+
+    // base info
+    $info = pathinfo($path);
+    $basename = $info['filename']; // without extension
+    $ext = $info['extension'];
+
+    foreach ($sizes as [$w,$h]) {
+        // clone and resize/crop
+        $resized = clone $image;
+        $resized->fit($w, $h);
+
+        // new filename
+        $newPath = "{$info['dirname']}/{$basename}-{$w}x{$h}.{$ext}";
+
+        // stream to disk
+        $disk->put($newPath, (string) $resized->encode($ext, 90), ['visibility' => 'public']);
     }
 }
 
