@@ -310,7 +310,7 @@ $safeName = $this->buildSafeFilename($origUrl, $attachmentId, 80);
 $ym   = date('Y/m');
 $path = "posts/{$ym}/{$safeName}";
 
-$disk = Storage::disk('laviolas3');
+$disk = Storage::disk('wasabi');
 
 // Ensure unique name if file already exists (append -{id} before the extension)
 if ($disk->exists($path)) {
@@ -716,7 +716,7 @@ private function category($primaryCategoryId,$post_id){
    private function ensureBackupAndGetPublicUrl($post): string
 {
 $path       = ltrim($post->image, '/');
-$sourceDisk = Storage::disk('laviolas3');
+$sourceDisk = Storage::disk('wasabi');
 $backupDisk = Storage::disk('wasabi_backup');
 
 if (! $backupDisk->exists($path)) {
