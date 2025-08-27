@@ -1,5 +1,5 @@
 <?php
-// app/Jobs/MetaImport/DispatchMetaChunks.php
+
 namespace App\Jobs\MetaImport;
 
 use Botble\Blog\Models\Post;
@@ -14,8 +14,8 @@ class DispatchMetaChunks implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $tries   = 1;      // splitter is cheap
-    public $timeout = 60;     // seconds
+    public $tries = 1;
+    public $timeout = 60;
 
     public function __construct()
     {
@@ -26,8 +26,8 @@ class DispatchMetaChunks implements ShouldQueue
     {
         DB::connection()->disableQueryLog();
 
-        // Make N chunk jobs by ID ranges. Tune CHUNK_SIZE if needed.
-        $CHUNK_SIZE = 2000;
+        // Create small ID ranges so a failure doesn't kill the whole run
+        $CHUNK_SIZE = 1500;
 
         $min = (int) Post::min('id');
         $max = (int) Post::max('id');
