@@ -644,13 +644,160 @@ HTML;
 
 
 
-    public function importSlugsForPosts()
-    {
-        ImportWpSlugsJob::dispatch();
-        return response()->json([
-            'message' => 'Import scheduled: slugs.'
-        ], 202);
+
+public function importSlugs(Request $request)
+{
+    DB::connection()->disableQueryLog();
+
+    // Default full range
+    $minId = (int) Post::min('id') ?: 1;
+    $maxId = (int) Post::max('id') ?: $minId;
+
+    $startId = (int) $request->query('start_id', $minId);
+    $endId   = (int) $request->query('end_id', $maxId);
+
+    if ($startId > $endId) {
+        [$startId, $endId] = [$endId, $startId];
     }
+
+    $batch   = max(10, (int) $request->query('batch', 100)); // 100 as requested
+    $reverse = (int) $request->query('reverse', 0);          // 1 = from end to start
+
+    // Cursor is "last processed id"
+    $cursor = $reverse ? ($endId + 1) : ($startId - 1);
+
+    return redirect()->route('wp.slugs.step', compact('startId','endId','cursor','batch','reverse'));
+}
+
+public function slugsStep(Request $request)
+{
+    DB::connection()->disableQueryLog();
+    @ini_set('max_execution_time', '0');
+    @ini_set('memory_limit', '512M');
+
+    $startId = (int) $request->query('startId');
+    $endId   = (int) $request->query('endId');
+    $cursor  = $request->query('cursor');               // int-ish but we keep as given
+    $batch   = max(10, (int) $request->query('batch', 100));
+    $reverse = (int) $request->query('reverse', 0);
+
+    // Figure direction + comparison operator
+    if ($reverse) {
+        $op       = '<';
+        $orderCol = 'id';
+        $orderDir = 'desc';
+        $cursor   = $cursor !== null ? (int) $cursor : ($endId + 1);
+    } else {
+        $op       = '>';
+        $orderCol = 'id';
+        $orderDir = 'asc';
+        $cursor   = $cursor !== null ? (int) $cursor : ($startId - 1);
+    }
+
+    // Pull next slice
+    $q = Post::query()
+        ->whereBetween('id', [$startId, $endId])
+        ->where('id', $op, $cursor)
+        ->orderBy($orderCol, $orderDir)
+        ->limit($batch)
+        ->get(['id','plain_slug','created_at','updated_at']);
+
+    if ($q->isEmpty()) {
+        return $this->progressView([
+            'done'      => true,
+            'startId'   => $startId,
+            'endId'     => $endId,
+            'cursor'    => $cursor,
+            'batch'     => $batch,
+            'images'    => null,
+            'debug'     => 0,
+            'processed' => 0,
+            'errors'    => [],
+            'nextUrl'   => null,
+            'title'     => 'WP Slug Import',
+        ]);
+    }
+
+    // Determine VARCHAR limit for slugs.key once
+    static $slugKeyMax = null;
+    if ($slugKeyMax === null) {
+        try {
+            $row = DB::selectOne(
+                "SELECT CHARACTER_MAXIMUM_LENGTH AS len
+                 FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND COLUMN_NAME = ?",
+                [DB::getDatabaseName(), DB::getTablePrefix() . 'slugs', 'key']
+            );
+            $slugKeyMax = $row && $row->len ? (int) $row->len : 120;
+        } catch (\Throwable $e) {
+            $slugKeyMax = 120;
+        }
+    }
+
+    $mbLimit = function (string $value, int $limit): string {
+        if ($limit <= 0) return '';
+        return mb_strlen($value) <= $limit ? $value : mb_substr($value, 0, $limit);
+    };
+
+    $rows = [];
+    $lastId = null;
+    foreach ($q as $p) {
+        $lastId = (int) $p->id;
+        // Prefer existing plain_slug, fallback to slugified id/title if you want (id is safest)
+        $base = trim((string) $p->plain_slug);
+        if ($base === '') $base = (string) $p->id;
+
+        $key = $mbLimit($base, $slugKeyMax);
+        if ($key === '') $key = (string) $p->id;
+
+        $rows[] = [
+            'key'            => $key,
+            'reference_id'   => $p->id,
+            'reference_type' => Post::class,
+            'created_at'     => $p->created_at ?? now(),
+            'updated_at'     => now(),
+        ];
+    }
+
+    if ($rows) {
+        // Upsert by (reference_id, reference_type) to keep one slug per post
+        Slug::query()->upsert(
+            $rows,
+            ['reference_id', 'reference_type'],
+            ['key','updated_at']
+        );
+    }
+
+    // Do we have more?
+    $hasMore = Post::query()
+        ->whereBetween('id', [$startId, $endId])
+        ->where('id', $op, $lastId)
+        ->exists();
+
+    $nextUrl = $hasMore
+        ? route('wp.slugs.step', [
+            'startId' => $startId,
+            'endId'   => $endId,
+            'cursor'  => $lastId,
+            'batch'   => $batch,
+            'reverse' => $reverse,
+        ])
+        : null;
+
+    return $this->progressView([
+        'title'     => 'WP Slug Import',
+        'done'      => !$hasMore,
+        'startId'   => $startId,
+        'endId'     => $endId,
+        'cursor'    => $lastId,
+        'batch'     => $batch,
+        'images'    => null,
+        'debug'     => 0,
+        'processed' => count($rows),
+        'errors'    => [],
+        'nextUrl'   => $nextUrl,
+    ]);
+}
 
 
 

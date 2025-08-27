@@ -170,7 +170,13 @@ Route::get('/delete-today-posts', [WpImportController::class, 'deleteTodayImport
 Route::get('/import-posts', [WpImportController::class, 'importPostsWithoutMeta']);
 Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/meta/step',  [WpImportController::class, 'metaStep'])->name('wp.meta.step');
-Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
+
+    Route::get('/import-slugs', [WpImportController::class, 'importSlugs'])
+        ->name('wp.slugs.import');
+
+    // Step-by-step slug import
+    Route::get('/import-slugs/step', [WpImportController::class, 'slugsStep'])
+        ->name('wp.slugs.step');
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
 Route::get('/feed', function () {
