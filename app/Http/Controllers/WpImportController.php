@@ -104,7 +104,7 @@ public function importPostsWithoutMeta()
         ], 202);
     }
 
-    public function importMetaForPosts()
+    public function importMetaForPosts(Request $request)
     {
  DB::connection()->disableQueryLog();
         DB::connection('mysql2')->disableQueryLog();
