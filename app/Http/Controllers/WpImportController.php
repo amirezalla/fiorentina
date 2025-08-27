@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManager;
+
+
+// v3 drivers (exist only on Intervention Image v3)
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Botble\Media\RvMedia;
 
 use Illuminate\Support\Carbon;
@@ -362,55 +367,67 @@ if ($disk->exists($path)) {
         return ['ok'=>false, 'reason'=>'exception: '.$e->getMessage()];
     }
 }
+protected function makeImageManager(): ImageManager
+{
+    // Intervention Image v3: construct with a Driver instance
+    if (class_exists(GdDriver::class)) {
+        if (extension_loaded('imagick') && class_exists(ImagickDriver::class)) {
+            return new ImageManager(new ImagickDriver());
+        }
+        return new ImageManager(new GdDriver());
+    }
 
+    // Intervention Image v2 fallback: old array syntax
+    $driver = extension_loaded('imagick') ? 'imagick' : 'gd';
+    return new ImageManager(['driver' => $driver]);
+}
+
+/**
+ * Make WP-like hard-cropped thumbnails next to the original on the 'laviolas3' disk.
+ *
+ * @param string $path  e.g. "posts/2025/08/1-7-1.jpg"
+ * @param array  $sizes e.g. [[150,150],[540,360],[565,375]]
+ */
 protected function makeThumbnails(string $path, array $sizes = [[150,150],[540,360],[565,375]]): void
 {
-    $disk    = Storage::disk('laviolas3');
+    $disk = Storage::disk('laviolas3');
+    if (!$disk->exists($path)) return;
+
     $manager = $this->makeImageManager();
 
-    if (!$disk->exists($path)) {
-        return;
-    }
-
-    // Read original as stream (low memory)
-    $readStream = $disk->readStream($path);
-    if ($readStream === false) {
-        return;
-    }
+    // Read original (stream for low memory)
+    $stream = $disk->readStream($path);
+    if ($stream === false) return;
 
     // v3 uses ->read(); v2 uses ->make()
     if (method_exists($manager, 'read')) {
-        $image = $manager->read($readStream); // v3
+        $image = $manager->read($stream); // v3
     } else {
-        $image = $manager->make(stream_get_contents($readStream)); // v2
+        $image = $manager->make(stream_get_contents($stream)); // v2
     }
-    if (is_resource($readStream)) {
-        @fclose($readStream);
-    }
+    if (is_resource($stream)) @fclose($stream);
 
     $info     = pathinfo($path);
-    $dir      = $info['dirname'] ?? '';
+    $dir      = $info['dirname']  ?? '';
     $filename = $info['filename'] ?? 'image';
     $ext      = strtolower($info['extension'] ?? 'jpg');
 
     foreach ($sizes as [$w, $h]) {
-        // Clone for each size
+        // Clone
         if (method_exists($image, 'clone')) {
             $im = $image->clone(); // v3
         } else {
-            $im = clone $image;    // v2 fallback
+            $im = clone $image;    // v2
         }
 
         // Hard crop to exact box
         if (method_exists($im, 'cover')) {
-            // v3 API
-            $im = $im->cover($w, $h);
+            $im = $im->cover($w, $h);   // v3
         } else {
-            // v2 API
-            $im->fit($w, $h);
+            $im->fit($w, $h);           // v2
         }
 
-        // Encode back to the original extension
+        // Encode
         if (method_exists($im, 'toJpeg')) {
             // v3 encoders
             $binary = match ($ext) {
