@@ -106,9 +106,283 @@ public function importPostsWithoutMeta()
 
     public function importMetaForPosts()
     {
-    \App\Jobs\MetaImport\DispatchMetaChunks::dispatch();
-    return response()->json(['message' => 'Meta import scheduled (chunked).'], 202);
+ DB::connection()->disableQueryLog();
+        DB::connection('mysql2')->disableQueryLog();
+
+        // Range defaults to entire posts table if not provided
+        $minId = (int) Post::min('id') ?: 1;
+        $maxId = (int) Post::max('id') ?: $minId;
+
+        $startId = (int) $request->query('start_id', $minId);
+        $endId   = (int) $request->query('end_id', $maxId);
+
+        if ($startId > $endId) {
+            [$startId, $endId] = [$endId, $startId];
+        }
+
+        $batch  = max(10, (int) $request->query('batch', 100)); // posts per HTTP request
+        $images = (int) $request->query('images', 1);           // 1 = import featured images; 0 = skip
+
+        // Cursor is "last processed id" — start just before $startId
+        $cursor = $startId - 1;
+
+        return redirect()->route('wp.meta.step', compact('startId', 'endId', 'cursor', 'batch', 'images'));
     }
+
+    public function metaStep(Request $request)
+    {
+        DB::connection()->disableQueryLog();
+        DB::connection('mysql2')->disableQueryLog();
+        @ini_set('max_execution_time', '0');
+        @ini_set('memory_limit', '512M');
+
+        $startId = (int) $request->query('startId');
+        $endId   = (int) $request->query('endId');
+        $cursor  = (int) $request->query('cursor', $startId - 1);
+        $batch   = max(10, (int) $request->query('batch', 100));
+        $images  = (int) $request->query('images', 1);
+
+        // Fetch next slice of posts
+        $posts = Post::query()
+            ->whereBetween('id', [$startId, $endId])
+            ->where('id', '>', $cursor)
+            ->orderBy('id')
+            ->limit($batch)
+            ->get(['id', 'image']);
+
+        if ($posts->isEmpty()) {
+            return $this->progressView([
+                'done'        => true,
+                'startId'     => $startId,
+                'endId'       => $endId,
+                'cursor'      => $cursor,
+                'batch'       => $batch,
+                'images'      => $images,
+                'processed'   => 0,
+                'errors'      => [],
+                'nextUrl'     => null,
+            ]);
+        }
+
+        $errors = [];
+        $processed = 0;
+        $lastId = $cursor;
+
+        foreach ($posts as $p) {
+            $lastId = (int) $p->id;
+
+            try {
+                // Get only the meta we need for THIS post from WP DB
+                $meta = DB::connection('mysql2')
+                    ->table('frntn_postmeta')
+                    ->where('post_id', $p->id)
+                    ->whereIn('meta_key', ['_thumbnail_id', '_yoast_wpseo_primary_category'])
+                    ->pluck('meta_value', 'meta_key');
+
+                // category: assumes Botble category IDs == WP term IDs (adjust mapping if needed)
+                $primaryCategoryId = isset($meta['_yoast_wpseo_primary_category'])
+                    ? (int) $meta['_yoast_wpseo_primary_category'] : null;
+
+                Post::where('id', $p->id)->update([
+                    'format_type' => 'post',
+                    'category_id' => $primaryCategoryId ?: null,
+                    'updated_at'  => now(),
+                ]);
+
+                // If requested, bring over featured image if missing
+                if ($images === 1) {
+                    $thumbId = isset($meta['_thumbnail_id']) ? (int) $meta['_thumbnail_id'] : null;
+                    if ($thumbId && empty($p->image)) {
+                        $set = $this->importFeaturedImage($p->id, $thumbId);
+                        if ($set === false) {
+                            $errors[] = "Post {$p->id}: failed to import image (attachment {$thumbId})";
+                        }
+                    }
+                }
+
+                unset($meta);
+                $processed++;
+                gc_collect_cycles();
+
+            } catch (\Throwable $e) {
+                $msg = "Post {$p->id} error: " . $e->getMessage();
+                $errors[] = $msg;
+                Log::error('[WP Meta Import] ' . $msg, ['trace' => substr($e->getTraceAsString(), 0, 2000)]);
+            }
+        }
+
+        // Build redirect to next step
+        $hasMore = Post::query()
+            ->whereBetween('id', [$startId, $endId])
+            ->where('id', '>', $lastId)
+            ->exists();
+
+        $nextUrl = $hasMore
+            ? route('wp.meta.step', [
+                'startId' => $startId,
+                'endId'   => $endId,
+                'cursor'  => $lastId,
+                'batch'   => $batch,
+                'images'  => $images,
+            ])
+            : null;
+
+        return $this->progressView([
+            'done'        => !$hasMore,
+            'startId'     => $startId,
+            'endId'       => $endId,
+            'cursor'      => $lastId,
+            'batch'       => $batch,
+            'images'      => $images,
+            'processed'   => $processed,
+            'errors'      => $errors,
+            'nextUrl'     => $nextUrl,
+        ]);
+    }
+    protected function importFeaturedImage(int $postId, int $attachmentId): bool
+    {
+        try {
+            // Skip if already set (double safety)
+            $has = Post::query()->where('id', $postId)->value('image');
+            if (!empty($has)) return true;
+
+            $att = DB::connection('mysql2')
+                ->table('frntn_posts')
+                ->where('ID', $attachmentId)
+                ->first(['ID','post_title','post_excerpt','guid']);
+
+            if (!$att || empty($att->guid)) return false;
+
+            // Pull meta for alt/caption
+            $meta = DB::connection('mysql2')
+                ->table('frntn_postmeta')
+                ->where('post_id', $attachmentId)
+                ->pluck('meta_value', 'meta_key');
+
+            $wpAlt = $meta['_wp_attachment_image_alt'] ?? '';
+            $wpMetaSer = $meta['_wp_attachment_metadata'] ?? null;
+            $imgMetaCaption = '';
+
+            if ($wpMetaSer) {
+                try {
+                    $arr = @unserialize($wpMetaSer);
+                    if (is_array($arr) && isset($arr['image_meta']['caption'])) {
+                        $imgMetaCaption = (string) $arr['image_meta']['caption'];
+                    }
+                } catch (\Throwable $e) {}
+            }
+
+            // priority: caption > alt > image_meta.caption
+            $alt = trim($att->post_excerpt) ?: trim($wpAlt) ?: trim($imgMetaCaption) ?: '';
+
+            $origUrl = $att->guid;
+
+            // preserve original filename
+            $basename = basename(parse_url($origUrl, PHP_URL_PATH) ?? '');
+            $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $basename) ?: ('image_' . $attachmentId . '.jpg');
+
+            $tmpDir = storage_path('app/temp_images');
+            if (!is_dir($tmpDir)) @mkdir($tmpDir, 0755, true);
+            $local = $tmpDir . DIRECTORY_SEPARATOR . $safeName;
+
+            // Download
+            $bin = @file_get_contents($origUrl);
+            if ($bin === false) return false;
+            file_put_contents($local, $bin);
+
+            // Upload via RvMedia
+            $upload = app('rv_media')->uploadFromPath($local, 0, 'posts', [
+                'file_name' => $safeName,
+                'alt'       => $alt,
+            ]);
+
+            @unlink($local);
+
+            if (!empty($upload['error'])) return false;
+
+            $url = $upload['data']->url ?? null;
+            if (!$url) return false;
+
+            Post::where('id', $postId)->update([
+                'image'      => $url,
+                'updated_at' => now(),
+            ]);
+
+            return true;
+
+        } catch (\Throwable $e) {
+            Log::error('[WP Image Import] Post '.$postId.' attach '.$attachmentId.' error: '.$e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Minimal HTML view with progress + auto-redirect.
+     * Shows errors plainly so you can see exactly what's wrong.
+     */
+    protected function progressView(array $data)
+    {
+        $auto = $data['nextUrl'] ? '<meta http-equiv="refresh" content="1;url=' . e($data['nextUrl']) . '">' : '';
+        $errorsHtml = '';
+        if (!empty($data['errors'])) {
+            $errorsHtml = '<h3 style="color:#c00;margin-top:16px">Errors this batch ('
+                . count($data['errors']) . '):</h3><ul style="color:#900">';
+            foreach ($data['errors'] as $e) {
+                $errorsHtml .= '<li>' . e($e) . '</li>';
+            }
+            $errorsHtml .= '</ul>';
+        }
+
+        $html = <<<HTML
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WP Meta Import</title>
+<style>
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 18px; }
+.card { border:1px solid #ddd; border-radius:10px; padding:16px; max-width: 900px; }
+.btn { display:inline-block; background:#4b2d7f; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; }
+.btn:visited { color:#fff; }
+.small { color:#666; font-size: 12px; }
+</style>
+{$auto}
+</head>
+<body>
+<div class="card">
+  <h2>WP Meta Import</h2>
+  <p><strong>Range:</strong> {$data['startId']} → {$data['endId']}<br>
+     <strong>Last processed ID:</strong> {$data['cursor']}<br>
+     <strong>Processed this request:</strong> {$data['processed']}<br>
+     <strong>Batch size:</strong> {$data['batch']}<br>
+     <strong>Images:</strong> {$data['images']} (1=yes, 0=no)</p>
+  {$errorsHtml}
+  <p>
+HTML;
+
+        if ($data['nextUrl']) {
+            $html .= '<a class="btn" href="' . e($data['nextUrl']) . '">Continue</a> ';
+            $html .= '<span class="small">Auto-redirecting in ~1s…</span>';
+        } else {
+            $html .= '<span class="btn" style="background:#2c974b">Done</span>';
+        }
+
+        $html .= <<<HTML
+  </p>
+</div>
+</body>
+</html>
+HTML;
+
+        return response($html);
+    }
+
+
+
+
+
+
+
 
     public function importSlugsForPosts()
     {

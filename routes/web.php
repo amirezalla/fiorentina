@@ -169,6 +169,7 @@ Route::get('/delete-today-posts', [WpImportController::class, 'deleteTodayImport
 
 Route::get('/import-posts', [WpImportController::class, 'importPostsWithoutMeta']);
 Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
+Route::get('/meta/step',  [WpImportController::class, 'metaStep'])->name('wp.meta.step');
 Route::get('/import-slug', [WpImportController::class, 'importSlugsForPosts']);
 Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
