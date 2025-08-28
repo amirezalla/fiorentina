@@ -459,3 +459,4 @@ Route::get('/health/wasabi-backup', function () {
         ], 503);
     }
 });
+Route::get('/normalize-posts', [PostNormalizeController::class, 'normalize']);
