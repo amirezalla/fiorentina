@@ -44,6 +44,7 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WpImportController;
 use App\Http\Controllers\YtWidgetController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\PostNormalizeController;
 
 use Botble\Blog\Models\Post;
 use Carbon\Carbon;
