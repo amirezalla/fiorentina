@@ -9,7 +9,24 @@
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
 
-    $content = \App\Models\Ad::addAdsToContent($post->content);
+    // 1) Pre-normalize raw WP HTML (no Mews)
+    $html = (string) $post->content;
+
+    // remove <script>/<style>/<noscript> blocks
+    $html = preg_replace('#<(script|style|noscript)\b[^>]*>.*?</\1>#is', '', $html);
+
+    // convert lazy attrs to real ones
+    $html = preg_replace('#\sdata-lazy-src=#i', ' src=', $html);
+    $html = preg_replace('#\sdata-lazy-srcset=#i', ' srcset=', $html);
+
+    // optional: rewrite image host to your CDN/gateway
+    $html = str_replace('https://www.laviola.it/wp-frntn/uploads/', 'https://laviolas3.collaudo.biz/', $html);
+
+    // (optional) basic cleanup of doubled whitespace between tags
+    $html = preg_replace('#>\s+<#', '><', $html);
+
+    // 2) Now inject ads via your model (kept DOM-safe)
+    $content = \App\Models\Ad::addAdsToContent($html);
 
     // ❷ Import WP comments on first view -------------------------------------
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
