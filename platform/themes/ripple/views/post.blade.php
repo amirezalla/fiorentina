@@ -72,7 +72,7 @@
 
                 {{-- Main body ---------------------------------------------------------- --}}
                 <div class="ck-content amir" style="color:black">
-                    {!! BaseHelper::clean($post->content) !!}
+                    {!! BaseHelper::clean($content) !!}
                 </div>
 
                 {{-- Facebook like/share ------------------------------------------------- --}}
