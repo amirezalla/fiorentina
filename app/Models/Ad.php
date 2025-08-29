@@ -7,6 +7,9 @@ use Botble\Theme\Facades\Theme;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use DOMDocument;
+use DOMXPath;
+use DOMNode;
 
 
 class Ad extends BaseModel
