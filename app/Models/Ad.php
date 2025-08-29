@@ -540,6 +540,36 @@ return implode('', $out);
 
     return $out;
 }
+public static function splitLongParagraphs(string $html): string
+{
+    return preg_replace_callback('/<p>(.*?)<\/p>/is', function ($matches) {
+        $inner = $matches[1];
+
+        // Split at sentence boundaries *with formatting tags* like </strong>. or </em>.
+        $parts = preg_split('/(<\/(?:strong|em|b|i)>[^<]*?\.)\s*/i', $inner, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+        // Reassemble into clean <p> blocks
+        $output = '';
+        $buffer = '';
+
+        foreach ($parts as $part) {
+            $buffer .= $part;
+
+            // End paragraph if part ends with a full stop (after tag)
+            if (preg_match('/\.\s*$/', $part)) {
+                $output .= '<p>' . trim($buffer) . '</p>';
+                $buffer = '';
+            }
+        }
+
+        // Final leftover
+        if (trim($buffer)) {
+            $output .= '<p>' . trim($buffer) . '</p>';
+        }
+
+        return $output;
+    }, $html);
+}
 
     /**
      * @param $q
