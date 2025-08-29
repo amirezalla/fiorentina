@@ -421,7 +421,39 @@ return implode('', $out);
          * ───────────────────────────────────────────────────────────*/
         return $shortCodes->merge($assembled)->implode('');
     }
-    
+    public static function normalizeContent($content)
+{
+    // 1. Strip unwanted inline styles (you can refine regex if needed)
+    $content = preg_replace('/\s*style=("|\')(.*?)("|\')/i', '', $content);
+
+    // 2. Ensure <br> tags become paragraph breaks
+    $content = preg_replace('/<br\s*\/?>/i', "\n", $content);
+
+    // 3. Replace double newlines with paragraph separators
+    $content = preg_replace("/\n{2,}/", "\n\n", $content);
+
+    // 4. Wrap loose text in <p> … </p>
+    //    (keeps existing <p>, <h1-6>, <ul>, <ol>, <li>, <strong>, <em> etc intact)
+    $parts   = preg_split('/\n{2,}/', trim(strip_tags($content, '<h1><h2><h3><h4><h5><h6><strong><em><b><i>')));
+    $output  = '';
+
+    foreach ($parts as $part) {
+        $part = trim($part);
+
+        if ($part === '') {
+            continue;
+        }
+
+        // If block already looks like a header, keep as is
+        if (preg_match('/^<h[1-6][^>]*>.*<\/h[1-6]>$/i', $part)) {
+            $output .= $part . "\n";
+        } else {
+            $output .= "<p>{$part}</p>\n";
+        }
+    }
+
+    return $output;
+}
 
     /**
      * @param $q
