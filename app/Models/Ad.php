@@ -545,27 +545,28 @@ public static function splitLongParagraphs(string $html): string
     return preg_replace_callback('/<p>(.*?)<\/p>/is', function ($matches) {
         $inner = $matches[1];
 
-        // Try to split on `.</strong>` or `.</em>` and similar patterns
-        $parts = preg_split(
-            '/(<\/(?:strong|em|b|i)>[^<]*?\.)\s*/i',
+        // Normalize sentence endings
+        $sentences = preg_split(
+            '/(?<=[.?!])\s+(?=[A-ZÀ-Ú])/u', // Split after . ? ! followed by capital letter
             $inner,
             -1,
-            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+            PREG_SPLIT_NO_EMPTY
         );
 
         $output = '';
         $buffer = '';
 
-        foreach ($parts as $part) {
-            $buffer .= $part;
+        foreach ($sentences as $i => $sentence) {
+            $buffer .= trim($sentence) . ' ';
 
-            if (preg_match('/\.\s*$/', $part)) {
+            // Every 3 sentences or at the end → flush into <p>
+            if (($i + 1) % 3 === 0) {
                 $output .= '<p>' . trim($buffer) . '</p>';
                 $buffer = '';
             }
         }
 
-        // Final buffer if anything remains
+        // Remaining sentence(s)
         if (trim($buffer)) {
             $output .= '<p>' . trim($buffer) . '</p>';
         }
@@ -573,6 +574,7 @@ public static function splitLongParagraphs(string $html): string
         return $output;
     }, $html);
 }
+
 
     /**
      * @param $q
