@@ -421,38 +421,121 @@ return implode('', $out);
          * ───────────────────────────────────────────────────────────*/
         return $shortCodes->merge($assembled)->implode('');
     }
-    public static function normalizeContent($content)
+    public static function normalizeContent($html): string
 {
-    // 1. Strip unwanted inline styles (you can refine regex if needed)
-    $content = preg_replace('/\s*style=("|\')(.*?)("|\')/i', '', $content);
+    // Safety: ensure UTF-8
+    if (!mb_detect_encoding($html, 'UTF-8', true)) {
+        $html = mb_convert_encoding($html, 'UTF-8', 'auto');
+    }
 
-    // 2. Ensure <br> tags become paragraph breaks
-    $content = preg_replace('/<br\s*\/?>/i', "\n", $content);
+    // Load as a fragment inside a known root
+    $doc = new DOMDocument('1.0', 'UTF-8');
+    // Suppress warnings from malformed HTML
+    libxml_use_internal_errors(true);
+    $doc->loadHTML(
+        '<!DOCTYPE html><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><div id="__root__">'.$html.'</div>',
+        LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+    );
+    libxml_clear_errors();
 
-    // 3. Replace double newlines with paragraph separators
-    $content = preg_replace("/\n{2,}/", "\n\n", $content);
+    $xpath = new DOMXPath($doc);
+    $root  = $xpath->query('//*[@id="__root__"]')->item(0);
 
-    // 4. Wrap loose text in <p> … </p>
-    //    (keeps existing <p>, <h1-6>, <ul>, <ol>, <li>, <strong>, <em> etc intact)
-    $parts   = preg_split('/\n{2,}/', trim(strip_tags($content, '<h1><h2><h3><h4><h5><h6><strong><em><b><i>')));
-    $output  = '';
+    if (!$root) {
+        return $html;
+    }
 
-    foreach ($parts as $part) {
-        $part = trim($part);
+    // 1) Strip all style attributes
+    foreach ($xpath->query('//*[@style]') as $el) {
+        $el->removeAttribute('style');
+    }
 
-        if ($part === '') {
-            continue;
-        }
-
-        // If block already looks like a header, keep as is
-        if (preg_match('/^<h[1-6][^>]*>.*<\/h[1-6]>$/i', $part)) {
-            $output .= $part . "\n";
-        } else {
-            $output .= "<p>{$part}</p>\n";
+    // 2) Remove empty <p> tags (no text or only whitespace & no element children with text)
+    foreach ($xpath->query('//p') as $p) {
+        $text = trim($p->textContent ?? '');
+        if ($text === '' && $p->childNodes->length === 0) {
+            $p->parentNode->removeChild($p);
         }
     }
 
-    return $output;
+    // Helper: decide if a node should be treated as a "block boundary"
+    $isBlock = function (DOMNode $n): bool {
+        if ($n->nodeType !== XML_ELEMENT_NODE) return false;
+        $name = strtoupper($n->nodeName);
+        // treat these as block-level for our purposes
+        return in_array($name, ['P','H1','H2','H3','H4','H5','H6','SHORTCODE'], true);
+    };
+
+    // Helper: is ignorable whitespace text
+    $isIgnorableText = function (DOMNode $n): bool {
+        return $n->nodeType === XML_TEXT_NODE && trim($n->nodeValue) === '';
+    };
+
+    // 3) Walk the root children and wrap inline/text runs into <p>
+    // Because we will be modifying the DOM, first copy the node references
+    $children = [];
+    foreach (iterator_to_array($root->childNodes) as $node) {
+        $children[] = $node;
+    }
+
+    $buffer = []; // collect inline/text nodes between blocks
+
+    $flushBufferAsParagraph = function () use (&$buffer, $doc, $root) {
+        if (empty($buffer)) return;
+
+        // Build <p> and move buffered nodes into it
+        $p = $doc->createElement('p');
+        foreach ($buffer as $n) {
+            $p->appendChild($n); // this will reparent the node
+        }
+        $buffer = [];
+
+        // Insert at the end of root
+        $root->appendChild($p);
+    };
+
+    // We rebuild the order by moving nodes; to preserve original order,
+    // we’ll remove everything then append back in sequence.
+    foreach ($children as $n) {
+        $root->removeChild($n);
+    }
+
+    foreach ($children as $n) {
+        // Skip pure whitespace text nodes between blocks
+        if ($isIgnorableText($n)) {
+            continue;
+        }
+
+        if ($isBlock($n)) {
+            // Flush buffered inline/text as a paragraph before a block
+            $flushBufferAsParagraph();
+
+            // Append the block as-is
+            $root->appendChild($n);
+        } else {
+            // Inline/text (STRONG, EM, A, SPAN, #text, IMG, etc.) → buffer
+            $buffer[] = $n;
+        }
+    }
+
+    // Flush any trailing inline/text run
+    $flushBufferAsParagraph();
+
+    // 4) Remove any now-empty <p> created incidentally
+    foreach ($xpath->query('//*[@id="__root__"]//p') as $p) {
+        $text = trim($p->textContent ?? '');
+        if ($text === '' && $p->childNodes->length === 0) {
+            $p->parentNode->removeChild($p);
+        }
+    }
+
+    // 5) Return innerHTML of root
+    $out = '';
+    foreach ($root->childNodes as $n) {
+        $out .= $doc->saveHTML($n);
+    }
+
+    return $out;
 }
 
     /**
