@@ -9,13 +9,10 @@
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
 
-    // 1) Pre-normalize raw WP HTML (no Mews)
     $html = (string) $post->content;
-
-    $splited = \App\Models\Ad::splitLongParagraphs($html);
-
-    // 2) Now inject ads via your model (kept DOM-safe)
-    $content = \App\Models\Ad::addAdsToContent($splited);
+    $wrapped = \App\Models\Ad::wrapInlineIntoParagraphs($html);
+    $splitted = \App\Models\Ad::splitLongParagraphs($wrapped); // 5-rows rule
+    $content = \App\Models\Ad::addAdsToContent($splitted);
 
     // ❷ Import WP comments on first view -------------------------------------
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();

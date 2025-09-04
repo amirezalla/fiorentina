@@ -424,6 +424,49 @@ return implode('', $out);
          * ───────────────────────────────────────────────────────────*/
         return $shortCodes->merge($assembled)->implode('');
     }
+ 
+
+    public static function wrapInlineIntoParagraphs(string $html): string
+{
+    libxml_use_internal_errors(true);
+    $doc = new DOMDocument('1.0', 'UTF-8');
+    $doc->loadHTML('<meta charset="utf-8"><div id="root">'.$html.'</div>',
+        LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    $xp   = new DOMXPath($doc);
+    $root = $xp->query('//*[@id="root"]')->item(0);
+    if (!$root) return $html;
+
+    $isBlock = static function (DOMNode $n): bool {
+        if ($n->nodeType !== XML_ELEMENT_NODE) return false;
+        $name = strtoupper($n->nodeName);
+        return in_array($name, ['P','H1','H2','H3','H4','H5','H6','SHORTCODE','UL','OL','TABLE','BLOCKQUOTE'], true);
+    };
+
+    // Rebuild children, buffering inline/text into <p>
+    $children = iterator_to_array($root->childNodes);
+    foreach ($children as $n) $root->removeChild($n);
+    $buffer = [];
+    $flush  = function () use (&$buffer, $doc, $root) {
+        if (!$buffer) return;
+        $p = $doc->createElement('p');
+        foreach ($buffer as $n) $p->appendChild($n);
+        $root->appendChild($p);
+        $buffer = [];
+    };
+
+    foreach ($children as $n) {
+        if ($n->nodeType === XML_TEXT_NODE && trim($n->nodeValue) === '') continue;
+        if ($isBlock($n)) { $flush(); $root->appendChild($n); }
+        else             { $buffer[] = $n; }
+    }
+    $flush();
+
+    $out = '';
+    foreach ($root->childNodes as $n) $out .= $doc->saveHTML($n);
+    libxml_clear_errors();
+    return $out;
+}
+
     public static function normalizeContent($html): string
 {
     // Safety: ensure UTF-8
@@ -542,62 +585,43 @@ return implode('', $out);
 }
 public static function splitLongParagraphs(string $html, int $rows = 5, int $rowWidth = 95): string
 {
-    // rows × approx chars/row → rough plain-text length before we allow a break
-    $threshold = $rows * $rowWidth;
+    // Ensure we actually have <p>…</p> to work with
+    $html = self::wrapInlineIntoParagraphs($html);
 
-    return preg_replace_callback('/<p>(.*?)<\/p>/is', function ($m) use ($threshold) {
+    $threshold = $rows * $rowWidth; // rough chars before first split
+
+    return preg_replace_callback('/<p[^>]*>(.*?)<\/p>/is', function ($m) use ($threshold) {
         $inner = $m[1];
+        $plain = trim(strip_tags($inner));
+        if (mb_strlen($plain) <= $threshold) {
+            return '<p>' . $inner . '</p>';
+        }
 
-        // Split on sentence boundaries while being tolerant to inline tags around the dot
-        // (e.g., "... La Nazione.</em> ")
+        // sentence-aware (handles inline tags around the dot)
         $parts = preg_split(
-            '/((?<=[.!?])(?:\s|<\/(?:strong|em|b|i|span|a|u|small|sup|sub|mark|code)[^>]*>)+)/iu',
+            '/(?<=[.!?])(?:\s|<\/(?:strong|em|b|i|span|a|u|small|sup|sub|mark|code)[^>]*>)+/iu',
             $inner,
             -1,
-            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+            PREG_SPLIT_NO_EMPTY
         );
 
-        // Re-attach the captured boundary to the sentence it belongs to
-        $sentences = [];
+        $chunks = [];
         $buf = '';
-        foreach ($parts as $piece) {
-            $buf .= $piece;
-            // boundary chunks are only spaces/closing-inline-tags
-            if (preg_match('/^(?:\s|<\/(?:strong|em|b|i|span|a|u|small|sup|sub|mark|code)[^>]*>)+$/iu', $piece)) {
-                $sentences[] = $buf;
+        foreach ($parts as $s) {
+            $buf .= $s . ' ';
+            if (mb_strlen(trim(strip_tags($buf))) >= $threshold) {
+                $chunks[] = trim($buf);
                 $buf = '';
             }
         }
-        if (trim($buf) !== '') {
-            $sentences[] = $buf;
-        }
+        if (trim($buf) !== '') $chunks[] = trim($buf);
 
-        // Build new <p> chunks: once we pass the ~5-row threshold,
-        // stop at the FIRST full stop (i.e., at the end of that sentence).
-        $chunks = [];
-        $acc = '';
-        foreach ($sentences as $s) {
-            $acc .= $s;
-
-            $plainLen = mb_strlen(trim(strip_tags($acc)));
-            if ($plainLen >= $threshold) {
-                // cut here (right after the sentence we just appended)
-                $chunks[] = trim($acc);
-                $acc = '';
-            }
-        }
-        if (trim($acc) !== '') {
-            $chunks[] = trim($acc);
-        }
-
-        // Re-wrap chunks back into <p>…</p>
         $out = '';
-        foreach ($chunks as $c) {
-            $out .= '<p>' . $c . '</p>';
-        }
+        foreach ($chunks as $c) $out .= '<p>' . $c . '</p>';
         return $out;
     }, $html);
 }
+
 
 
     /**
