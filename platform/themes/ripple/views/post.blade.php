@@ -11,7 +11,7 @@
 
     $html = (string) $post->content;
     $wrapped = \App\Models\Ad::wrapInlineIntoParagraphs($html);
-    $content = \App\Models\Ad::addAdsToContent($splitted);
+    $content = \App\Models\Ad::addAdsToContent($wrapped);
 
     // ❷ Import WP comments on first view -------------------------------------
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
