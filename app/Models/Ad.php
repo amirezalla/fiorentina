@@ -540,38 +540,62 @@ return implode('', $out);
 
     return $out;
 }
-public static function splitLongParagraphs(string $html): string
+public static function splitLongParagraphs(string $html, int $rows = 5, int $rowWidth = 95): string
 {
-    return preg_replace_callback('/<p>(.*?)<\/p>/is', function ($matches) {
-        $inner = $matches[1];
+    // rows × approx chars/row → rough plain-text length before we allow a break
+    $threshold = $rows * $rowWidth;
 
-        // Normalize sentence endings
-        $sentences = preg_split(
-            '/(?<=[.?!])\s+(?=[A-ZÀ-Ú])/u', // Split after . ? ! followed by capital letter
+    return preg_replace_callback('/<p>(.*?)<\/p>/is', function ($m) use ($threshold) {
+        $inner = $m[1];
+
+        // Split on sentence boundaries while being tolerant to inline tags around the dot
+        // (e.g., "... La Nazione.</em> ")
+        $parts = preg_split(
+            '/((?<=[.!?])(?:\s|<\/(?:strong|em|b|i|span|a|u|small|sup|sub|mark|code)[^>]*>)+)/iu',
             $inner,
             -1,
-            PREG_SPLIT_NO_EMPTY
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
         );
 
-        $output = '';
-        $buffer = '';
-
-        foreach ($sentences as $i => $sentence) {
-            $buffer .= trim($sentence) . ' ';
-
-            // Every 3 sentences or at the end → flush into <p>
-            if (($i + 1) % 3 === 0) {
-                $output .= '<p>' . trim($buffer) . '</p>';
-                $buffer = '';
+        // Re-attach the captured boundary to the sentence it belongs to
+        $sentences = [];
+        $buf = '';
+        foreach ($parts as $piece) {
+            $buf .= $piece;
+            // boundary chunks are only spaces/closing-inline-tags
+            if (preg_match('/^(?:\s|<\/(?:strong|em|b|i|span|a|u|small|sup|sub|mark|code)[^>]*>)+$/iu', $piece)) {
+                $sentences[] = $buf;
+                $buf = '';
             }
         }
-
-        // Remaining sentence(s)
-        if (trim($buffer)) {
-            $output .= '<p>' . trim($buffer) . '</p>';
+        if (trim($buf) !== '') {
+            $sentences[] = $buf;
         }
 
-        return $output;
+        // Build new <p> chunks: once we pass the ~5-row threshold,
+        // stop at the FIRST full stop (i.e., at the end of that sentence).
+        $chunks = [];
+        $acc = '';
+        foreach ($sentences as $s) {
+            $acc .= $s;
+
+            $plainLen = mb_strlen(trim(strip_tags($acc)));
+            if ($plainLen >= $threshold) {
+                // cut here (right after the sentence we just appended)
+                $chunks[] = trim($acc);
+                $acc = '';
+            }
+        }
+        if (trim($acc) !== '') {
+            $chunks[] = trim($acc);
+        }
+
+        // Re-wrap chunks back into <p>…</p>
+        $out = '';
+        foreach ($chunks as $c) {
+            $out .= '<p>' . $c . '</p>';
+        }
+        return $out;
     }, $html);
 }
 
