@@ -8,10 +8,9 @@
     if ($bannerImage = $post->getMetaData('banner_image', true)) {
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
-
-    $html = (string) $post->content;
-    $wrapped = \App\Models\Ad::wrapInlineIntoParagraphs($html);
-    $content = \App\Models\Ad::addAdsToContent($wrapped);
+    $html = (string) $post->content; // your fragment with <h3> + inline text
+    $splitted = \App\Models\Ad::paragraphsEveryRows($html, 5, 95);
+    $content = \App\Models\Ad::addAdsToContent($splitted); // now counts <p>… correctly
 
     // ❷ Import WP comments on first view -------------------------------------
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();

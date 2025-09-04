@@ -622,7 +622,78 @@ public static function splitLongParagraphs(string $html, int $rows = 5, int $row
     }, $html);
 }
 
+public static function paragraphsEveryRows(string $html, int $rows = 5, int $rowWidth = 95): string
+{
+    libxml_use_internal_errors(true);
+    $doc = new DOMDocument('1.0', 'UTF-8');
+    $doc->loadHTML('<meta charset="utf-8"><div id="root">'.$html.'</div>',
+        LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    libxml_clear_errors();
 
+    $xp   = new DOMXPath($doc);
+    $root = $xp->query('//*[@id="root"]')->item(0);
+    if (!$root) return $html;
+
+    $isBlock = static function (DOMNode $n): bool {
+        if ($n->nodeType !== XML_ELEMENT_NODE) return false;
+        $name = strtoupper($n->nodeName);
+        // we only keep these as standalone blocks; they don't count toward the row calculation
+        return in_array($name, ['H1','H2','H3','H4','H5','H6','SHORTCODE'], true);
+    };
+
+    $threshold = $rows * $rowWidth;
+
+    $flushInlineToParagraphs = static function (string $inlineHtml, int $threshold) : string {
+        $inlineHtml = trim($inlineHtml);
+        if ($inlineHtml === '' || mb_strlen(trim(strip_tags($inlineHtml))) === 0) return '';
+
+        // Split on sentence ends while tolerating inline tags around punctuation
+        $sentences = preg_split(
+            '/(?<=[.!?])(?:\s|<\/(?:strong|em|b|i|span|a|u|small|sup|sub|mark|code)[^>]*>)+/iu',
+            $inlineHtml,
+            -1,
+            PREG_SPLIT_NO_EMPTY
+        );
+
+        $out = '';
+        $buf = '';
+        foreach ($sentences as $s) {
+            $buf .= $s . ' ';
+            if (mb_strlen(trim(strip_tags($buf))) >= $threshold) {
+                $out .= '<p>' . trim($buf) . '</p>';
+                $buf = '';
+            }
+        }
+        if (trim(strip_tags($buf)) !== '') {
+            $out .= '<p>' . trim($buf) . '</p>';
+        }
+        return $out;
+    };
+
+    $out = '';
+    $inline = '';
+
+    foreach (iterator_to_array($root->childNodes) as $node) {
+        // skip pure whitespace nodes
+        if ($node->nodeType === XML_TEXT_NODE && trim($node->nodeValue) === '') continue;
+
+        if ($isBlock($node)) {
+            // flush what we collected so far into paragraphs, then output the heading untouched
+            $out .= $flushInlineToParagraphs($inline, $threshold);
+            $inline = '';
+            $out .= $doc->saveHTML($node);
+        } else {
+            // collect inline/text nodes to be split into paragraphs
+            $out .= ''; // no-op, just clarity
+            $inline .= $doc->saveHTML($node);
+        }
+    }
+
+    // tail
+    $out .= $flushInlineToParagraphs($inline, $threshold);
+
+    return $out;
+}
 
     /**
      * @param $q
