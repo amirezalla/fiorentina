@@ -10,7 +10,9 @@
     }
     $html = (string) $post->content; // your fragment with <h3> + inline text
     $splitted = \App\Models\Ad::paragraphsEveryRows($html, 5, 45);
+
     $content = \App\Models\Ad::addAdsToContent($splitted); // now counts <p>… correctly
+    dd($splitted, $content);
 
     // ❷ Import WP comments on first view -------------------------------------
     $comments = FriendsOfBotble\Comment\Models\Comment::where('reference_id', $post->id)->get();
