@@ -11,7 +11,6 @@
 
     $html = (string) $post->content;
     $wrapped = \App\Models\Ad::wrapInlineIntoParagraphs($html);
-    $splitted = \App\Models\Ad::splitLongParagraphs($wrapped); // 5-rows rule
     $content = \App\Models\Ad::addAdsToContent($splitted);
 
     // ❷ Import WP comments on first view -------------------------------------
