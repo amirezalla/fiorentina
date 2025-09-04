@@ -9,7 +9,7 @@
         Theme::set('breadcrumbBannerImage', RvMedia::getImageUrl($bannerImage));
     }
     $html = (string) $post->content; // your fragment with <h3> + inline text
-    $splitted = \App\Models\Ad::paragraphsEveryRows($html, 5, 40);
+    $splitted = \App\Models\Ad::paragraphsEveryRows($html, 5, 45);
     dd($splitted);
     $content = \App\Models\Ad::addAdsToContent($splitted); // now counts <p>… correctly
 
