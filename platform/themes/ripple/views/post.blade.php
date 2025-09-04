@@ -10,6 +10,7 @@
     }
     $html = (string) $post->content; // your fragment with <h3> + inline text
     $splitted = \App\Models\Ad::paragraphsEveryRows($html, 5, 95);
+    dd($splitted);
     $content = \App\Models\Ad::addAdsToContent($splitted); // now counts <p>… correctly
 
     // ❷ Import WP comments on first view -------------------------------------
