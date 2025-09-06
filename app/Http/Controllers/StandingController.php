@@ -548,7 +548,7 @@ foreach (($tournament['EVENTS'] ?? []) as $match) {
     }
 
 
-                    $matchDate = Carbon::createFromTimestamp($start, 'Europe/Rome')->format('Y-m-d H:i:s');
+                    $matchDate = Carbon::createFromTimestamp($startTs, 'Europe/Rome')->format('Y-m-d H:i:s');
 
                 // Prepare the home and away team information
                 $homeTeam = [
