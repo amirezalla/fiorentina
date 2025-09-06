@@ -551,6 +551,7 @@ foreach($data as $tournament){
                     if (!$startTs || $startTs < $fromTs) {
                         continue;
                     }
+                    dd($startTs, $match['START_TIME'],$fromTs);
 
                     // Human-readable local time for storage
                     $matchDate = Carbon::createFromTimestamp($startTs, 'Europe/Rome')->toDateTimeString();
