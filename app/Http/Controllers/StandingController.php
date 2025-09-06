@@ -526,6 +526,7 @@ foreach($data as $tournament){
 
         // Extract the data from the response
         $data = $response->json()['DATA'];
+    $fromTs = Carbon::create(2025, 8, 1, 0, 0, 0, 'Europe/Rome')->timestamp;
 
         foreach($data as $tournament){
 foreach (($tournament['EVENTS'] ?? []) as $match) {
