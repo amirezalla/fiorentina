@@ -532,13 +532,22 @@ foreach($data as $tournament){
 
         foreach($data as $tournament){
 foreach (($tournament['EVENTS'] ?? []) as $match) {
-                    $start = $match['START_TIME'] ?? null;
-                    
+     $startRaw = $match['START_TIME'] ?? null;
 
-                    // Skip anything before 1 Aug 2025
-                    if (!$start || $start < $fromTs) {
-                        continue;
-                    }
+    // Normalize START_TIME to epoch seconds
+    $startTs = null;
+    if (is_numeric($startRaw)) {
+        $startTs = (int) $startRaw;
+    } elseif (is_string($startRaw) && trim($startRaw) !== '') {
+        // If API ever returns a date string, parse as UTC (adjust if needed)
+        $startTs = Carbon::parse($startRaw, 'UTC')->timestamp;
+    }
+
+    // Skip if we can’t read the start time or it’s before the cutoff
+    if (!$startTs || $startTs < $fromTs /* || $startTs > $toTs */) {
+        continue;
+    }
+
 
                     $matchDate = Carbon::createFromTimestamp($start, 'Europe/Rome')->format('Y-m-d H:i:s');
 
