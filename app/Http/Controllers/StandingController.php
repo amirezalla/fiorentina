@@ -528,9 +528,15 @@ foreach($data as $tournament){
         $data = $response->json()['DATA'];
 
         foreach($data as $tournament){
-            foreach ($tournament['EVENTS'] as $match) {
-                // Parse the match date from the timestamp
-                $matchDate = Carbon::createFromTimestamp($match['START_TIME'])->format('Y-m-d H:i:s');
+foreach (($tournament['EVENTS'] ?? []) as $match) {
+                    $start = $match['START_TIME'] ?? null;
+
+                    // Skip anything before 1 Aug 2025
+                    if (!$start || $start < $fromTs) {
+                        continue;
+                    }
+
+                    $matchDate = Carbon::createFromTimestamp($start, 'Europe/Rome')->format('Y-m-d H:i:s');
 
                 // Prepare the home and away team information
                 $homeTeam = [
