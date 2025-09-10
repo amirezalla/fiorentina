@@ -33,9 +33,9 @@ public function handle()
     $this->slugKeyMax  = $this->getVarcharLimit(DB::getDatabaseName(), DB::getTablePrefix() . 'slugs', 'key') ?? 120;
 
     // TUNE ME: smaller source chunk to keep memory stable
-    $SOURCE_CHUNK  = 150;
+    $SOURCE_CHUNK  = 50;
     // TUNE ME: split each processed chunk into tiny upserts
-    $UPSERT_BATCH  = 50;
+    $UPSERT_BATCH  = 20;
 
     $wp = DB::connection('mysql2')
         ->table('frntn_posts')

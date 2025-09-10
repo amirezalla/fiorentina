@@ -19,7 +19,7 @@ cat >/etc/cron.app <<EOF
 # Run Laravel scheduler every minute
 * * * * * cd /var/www/html && ${PHP_BIN} artisan schedule:run
 # Drain the 'imports' queue every minute; exits when empty
-* * * * * cd /var/www/html && ${PHP_BIN} artisan queue:work --queue=imports --stop-when-empty --sleep=3 --tries=1 --timeout=120
+* * * * * cd /var/www/html && ${PHP_BIN} artisan queue:work --queue=imports --stop-when-empty --sleep=3 --tries=1 --timeout=900 --max-time=840
 EOF
 
 # --- Start supercronic in background (logs to stdout in JSON) ---
