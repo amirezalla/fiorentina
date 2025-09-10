@@ -45,9 +45,9 @@ public function handle()
         ])
         ->where('post_type', 'post');
 
-    if ($this->sinceGmt) {
-        $wp->where('post_date_gmt', '>', $this->sinceGmt);
-    }
+
+        $wp->where('post_date_gmt', '>', "  2022-01-01 00:00:00"); // temp filter to test only recent posts
+
 
     $wp->orderBy('ID')->chunkById($SOURCE_CHUNK, function ($rows) use ($UPSERT_BATCH) {
         $now   = now()->format('Y-m-d H:i:s');
