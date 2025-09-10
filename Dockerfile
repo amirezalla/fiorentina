@@ -1,28 +1,35 @@
 FROM europe-west1-docker.pkg.dev/laviola-450518/laviola-base/php-8.3-apache-deps:latest
 
-
+# -----------------------------
+# Add supercronic (cron runner without PAM)
+# -----------------------------
+ARG SUPERCRONIC_VERSION=v0.2.29
+ARG SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/${SUPERCRONIC_VERSION}/supercronic-linux-amd64
+# (Optional) Add checksum verification by setting SUPERCRONIC_SHA256 and checking it.
+RUN set -eux; \
+    apt-get update && apt-get install -y --no-install-recommends ca-certificates curl; \
+    curl -fsSL "$SUPERCRONIC_URL" -o /usr/local/bin/supercronic; \
+    chmod +x /usr/local/bin/supercronic; \
+    apt-get purge -y --auto-remove curl; \
+    rm -rf /var/lib/apt/lists/*
 
 # -----------------------------
-# Priority 3: Set Working Directory
+# Set Working Directory
 # -----------------------------
 WORKDIR /var/www/html
 
 # -----------------------------
-# Priority 4: Copy Dependency Files for Caching
-# Copy composer files first so that if only app code changes later,
-# this layer is cached.
+# Copy Dependency Files (cache-friendly)
 # -----------------------------
 COPY composer.json composer.lock ./
 
-
-
 # -----------------------------
-# Priority 5: Copy the Remaining Application Code
+# Copy Application Code
 # -----------------------------
 COPY . .
 
 # -----------------------------
-# Priority 6: Set File Permissions & Cache Directory
+# Permissions & Cache Dir
 # -----------------------------
 RUN chown -R www-data:www-data /var/www/html && \
     mkdir -p bootstrap/cache && \
@@ -30,14 +37,14 @@ RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 775 bootstrap/cache
 
 # -----------------------------
-# Priority 7: Apache Configuration & Expose Port
+# Apache Configuration & Expose
 # -----------------------------
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 EXPOSE 8080
 
 # -----------------------------
-# Priority 8: Copy and Set Entrypoint
+# Entrypoint
 # -----------------------------
-COPY entrypoint.sh /usr/local/bin/
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
