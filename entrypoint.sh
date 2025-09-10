@@ -1,9 +1,12 @@
 #!/bin/bash
+set -euo pipefail
 
-# Setup Laravel Schedule Run
-echo "* * * * * cd /var/www/html && php artisan schedule:run >> /var/log/cron.log 2>&1" | crontab -
+# --- Setup cron tasks ---
+cat <<'CRON' | crontab -
+* * * * * cd /var/www/html && php artisan schedule:run >> /var/log/schedule.log 2>&1
+* * * * * cd /var/www/html && php artisan queue:work --queue=imports --stop-when-empty --sleep=3 --tries=1 --timeout=120 >> /var/log/queue-imports.log 2>&1
+CRON
 
-# Start cron
 service cron start
 #!/bin/bash
 set -e
