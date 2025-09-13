@@ -34,10 +34,10 @@ COPY . .
 RUN chown -R www-data:www-data /var/www/html && \
     mkdir -p bootstrap/cache && \
     chown -R www-data:www-data bootstrap/cache && \
-    chmod -R 775 bootstrap/cache \
-    mkdir -p /var/www/html/storage/app/purifier \
-    chown -R www-data:www-data /var/www/html/storage/app/purifier \
-    chmod -R 775 /var/www/html/storage/app/purifier 
+    chmod -R 775 bootstrap/cache && \
+    mkdir -p /var/www/html/storage/app/purifier && \
+    chown -R www-data:www-data /var/www/html/storage/app/purifier && \
+    chmod -R 775 /var/www/html/storage/app/purifier
 
 # -----------------------------
 # Apache Configuration & Expose

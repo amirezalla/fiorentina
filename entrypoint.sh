@@ -15,6 +15,7 @@ fi
 echo "Using PHP at: ${PHP_BIN}"
 
 # --- Runtime writable dirs in /tmp ---
+mkdir -p /tmp/purifier /tmp/view && chmod 777 /tmp/purifier /tmp/view
 mkdir -p /tmp/purifier /tmp/view /tmp/laravel-logs
 chmod 777 /tmp/purifier /tmp/view /tmp/laravel-logs
 
