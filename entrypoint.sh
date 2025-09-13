@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# -------- PHP CLI ----------
+# --- PHP CLI ---
 PHP_BIN="$(command -v php || true)"
 if [[ -z "${PHP_BIN}" ]]; then
   for p in /usr/local/bin/php /usr/bin/php /opt/bitnami/php/bin/php /opt/php*/bin/php; do
@@ -9,34 +9,36 @@ if [[ -z "${PHP_BIN}" ]]; then
   done
 fi
 if [[ -z "${PHP_BIN}" ]]; then
-  echo "ERROR: PHP CLI not found. Install php-cli or adjust PATH." >&2
+  echo "ERROR: PHP CLI not found." >&2
   exit 1
 fi
 echo "Using PHP at: ${PHP_BIN}"
 
-# -------- Runtime writable dirs in /tmp (Cloud Run) ----------
+# --- Runtime writable dirs in /tmp ---
 mkdir -p /tmp/purifier /tmp/view /tmp/laravel-logs
 chmod 777 /tmp/purifier /tmp/view /tmp/laravel-logs
 
-# Best-effort: if root FS is writable, point storage/logs at /tmp (safe no-op on read-only)
+# Point storage/logs at /tmp (safe even if root FS is read-only)
 if [[ ! -L /var/www/html/storage/logs ]]; then
   rm -rf /var/www/html/storage/logs 2>/dev/null || true
   ln -s /tmp/laravel-logs /var/www/html/storage/logs 2>/dev/null || true
 fi
 
-# -------- Laravel maintenance (avoid write-heavy commands) ----------
+# --- Don’t rely on cached config/route (file logger may be baked in) ---
+# If the files exist and FS allows, remove them; otherwise continue.
+rm -f /var/www/html/bootstrap/cache/config.php 2>/dev/null || true
+rm -f /var/www/html/bootstrap/cache/routes-*.php 2>/dev/null || true
+
 # Ask any workers to gracefully restart (safe if none)
 ${PHP_BIN} artisan queue:restart || true
 
-# Clear view cache (goes to /tmp/view now)
+# Clear compiled views (they’ll go to /tmp/view)
 ${PHP_BIN} artisan view:clear || true
 
-# Avoid config:cache/route:cache on read-only roots; they write to bootstrap/cache
-# If your root FS is writable, you can re-enable:
-# ${PHP_BIN} artisan config:cache || true
-# ${PHP_BIN} artisan route:cache  || true
+# Avoid config:cache/route:cache here (write to bootstrap/cache). If you really need them,
+# do it at build-time only, not at runtime in Cloud Run.
 
-# -------- Supercronic schedule ----------
+# --- Supercronic schedule ---
 cat >/etc/cron.app <<'EOF'
 # Run Laravel scheduler every minute
 * * * * * cd /var/www/html && php artisan schedule:run
@@ -52,11 +54,10 @@ else
   exit 1
 fi
 
-# -------- Apache for Cloud Run ----------
+# --- Apache for Cloud Run ---
 : "${PORT:=8080}"
 echo "Updating Apache to listen on port ${PORT}"
 sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
 sed -i "s#<VirtualHost \*:80>#<VirtualHost *:${PORT}>#" /etc/apache2/sites-available/000-default.conf
 
-# -------- Start Apache (PID 1) ----------
 exec apache2-foreground
