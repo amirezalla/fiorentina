@@ -24,7 +24,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+// Force HTMLPurifier cache to a writable path (works even if config is cached)
+        $purifierPath = env('PURIFIER_CACHE_PATH', storage_path('app/purifier'));
 
+        // Best effort: create the directory if missing
+        if (!is_dir($purifierPath)) {
+            @mkdir($purifierPath, 0777, true);
+        }
+        @chmod($purifierPath, 0777);
+
+        // Set both the package cachePath and the HTMLPurifier setting used by some versions
+        config()->set('purifier.cachePath', $purifierPath);
+
+        foreach (['default', 'general', 'youtube'] as $group) {
+            // This key is honored by HTMLPurifier itself
+            config()->set("purifier.settings.$group.Cache.SerializerPath", $purifierPath);
+        }
     }
 
     /**
