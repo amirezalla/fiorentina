@@ -16,6 +16,8 @@ use App\Http\Controllers\MatchCommentaryController;
 use App\Http\Controllers\MatchStaticsController;
 use App\Http\Controllers\MatchSummaryController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\Member\MemberActivityController;
+
 
 use Botble\Base\Facades\AdminHelper;
 use Botble\Blog\Http\Controllers\PostController;
@@ -181,7 +183,7 @@ Route::get('/categories/step',  [WpImportController::class, 'categoriesStep'])->
     // Step-by-step slug import
     Route::get('/import-slugs/step', [WpImportController::class, 'slugsStep'])
         ->name('wp.slugs.step');
-
+Route::get('/import-categories', [WpImportController::class, 'importCategories']);
 
 Route::get('/feed', function () {
 
@@ -464,3 +466,8 @@ Route::get('/health/wasabi-backup', function () {
     }
 });
 Route::get('/normalize-posts', [PostNormalizeController::class, 'normalize']);
+
+Route::group(['middleware' => ['web', 'member']], function () {
+    Route::get('/member/activity/comment/{comment}', [MemberActivityController::class, 'show'])
+        ->name('public.member.activity.comment');
+});
