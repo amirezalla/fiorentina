@@ -23,7 +23,7 @@
 
             <!-- Content (Title and Description) on the right -->
             <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px; margin-top: 5%">
-                <header class="post__header">
+                <header class="post__header" style="border:none">
                     @php
                         $date = $post->created_at;
 
@@ -59,13 +59,16 @@
 
                     <h4 class="post__title" style="margin: 0;">
                         <a href="{{ $post->url }}" title="{{ $post->name }}"
-                            style="text-decoration: none; color: inherit;">
+                            style="text-decoration: none; color: #000;font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02rem;
+    line-height: 1.1;">
                             {{ $post->name }}
                         </a>
                     </h4>
                 </header>
 
-                <div class="post__content">
+                <div class="post__content" style="padding: 0">
                     <p style="margin: 10px 0 0;">{{ $post->description }}</p>
 
                     <span class="text-dark mt-1 d-block"
