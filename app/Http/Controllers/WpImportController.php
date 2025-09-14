@@ -579,64 +579,92 @@ protected function buildSafeFilename(string $url, int $attachmentId, int $maxBas
      * Minimal HTML view with progress + auto-redirect.
      * Shows errors plainly so you can see exactly what's wrong.
      */
-    protected function progressView(array $data)
-    {
-        $auto = $data['nextUrl'] ? '<meta http-equiv="refresh" content="1;url=' . e($data['nextUrl']) . '">' : '';
-        $errorsHtml = '';
-        if (!empty($data['errors'])) {
-            $errorsHtml = '<h3 style="color:#c00;margin-top:16px">Errors this batch ('
-                . count($data['errors']) . '):</h3><ul style="color:#900">';
-            foreach ($data['errors'] as $e) {
-                $errorsHtml .= '<li>' . e($e) . '</li>';
-            }
-            $errorsHtml .= '</ul>';
-        }
+protected function progressView(array $data)
+{
+    $auto  = !empty($data['nextUrl'])
+        ? '<meta http-equiv="refresh" content="1;url=' . e($data['nextUrl']) . '">'
+        : '';
 
-        $html = <<<HTML
+    $title = e($data['title'] ?? 'WP Import Progress');
+
+    // Build the info lines only if the keys exist
+    $lines = [];
+
+    if (isset($data['startId']) || isset($data['endId'])) {
+        $lines[] = '<strong>Range:</strong> ' . e($data['startId'] ?? '?') . ' → ' . e($data['endId'] ?? '?');
+    }
+    if (isset($data['cursor'])) {
+        $lines[] = '<strong>Last processed ID:</strong> ' . e($data['cursor']);
+    }
+    if (isset($data['processed'])) {
+        $lines[] = '<strong>Processed this request:</strong> ' . e($data['processed']);
+    }
+    if (isset($data['batch'])) {
+        $lines[] = '<strong>Batch size:</strong> ' . e($data['batch']);
+    }
+    if (array_key_exists('images', $data)) {
+        $lines[] = '<strong>Images:</strong> ' . e($data['images']) . ' (1=yes, 0=no)';
+    }
+    if (isset($data['created'])) {
+        $lines[] = '<strong>Created categories:</strong> ' . e($data['created']);
+    }
+    if (isset($data['attached'])) {
+        $lines[] = '<strong>Attached posts↔categories:</strong> ' . e($data['attached']);
+    }
+    if (isset($data['debug'])) {
+        $lines[] = '<strong>Debug:</strong> ' . e($data['debug']);
+    }
+
+    // Errors block
+    $errorsHtml = '';
+    if (!empty($data['errors'])) {
+        $errorsHtml = '<h3 style="color:#c00;margin-top:16px">Errors this batch ('
+            . count($data['errors']) . '):</h3><ul style="color:#900">';
+        foreach ($data['errors'] as $e) {
+            $errorsHtml .= '<li>' . e($e) . '</li>';
+        }
+        $errorsHtml .= '</ul>';
+    }
+
+    // Compose HTML
+    $infoHtml = implode('<br>', $lines);
+
+    $btnHtml = '';
+    if (!empty($data['nextUrl'])) {
+        $btnHtml  = '<a class="btn" href="' . e($data['nextUrl']) . '">Continue</a> ';
+        $btnHtml .= '<span class="small">Auto-redirecting in ~1s…</span>';
+    } else {
+        $btnHtml  = '<span class="btn" style="background:#2c974b">Done</span>';
+    }
+
+    $html = <<<HTML
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>WP Meta Import</title>
+<title>{$title}</title>
 <style>
-body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 18px; }
-.card { border:1px solid #ddd; border-radius:10px; padding:16px; max-width: 900px; }
-.btn { display:inline-block; background:#4b2d7f; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; }
-.btn:visited { color:#fff; }
-.small { color:#666; font-size: 12px; }
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 18px; }
+  .card { border:1px solid #ddd; border-radius:10px; padding:16px; max-width: 900px; }
+  .btn { display:inline-block; background:#4b2d7f; color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; }
+  .btn:visited { color:#fff; }
+  .small { color:#666; font-size: 12px; }
 </style>
 {$auto}
 </head>
 <body>
-<div class="card">
-  <h2>WP Meta Import</h2>
-  <p><strong>Range:</strong> {$data['startId']} → {$data['endId']}<br>
-     <strong>Last processed ID:</strong> {$data['cursor']}<br>
-     <strong>Processed this request:</strong> {$data['processed']}<br>
-     <strong>Batch size:</strong> {$data['batch']}<br>
-     <strong>Images:</strong> {$data['images']} (1=yes, 0=no)
-    — <strong>Debug:</strong> {$data['debug']}</p>
-</p>
-  {$errorsHtml}
-  <p>
-HTML;
-
-        if ($data['nextUrl']) {
-            $html .= '<a class="btn" href="' . e($data['nextUrl']) . '">Continue</a> ';
-            $html .= '<span class="small">Auto-redirecting in ~1s…</span>';
-        } else {
-            $html .= '<span class="btn" style="background:#2c974b">Done</span>';
-        }
-
-        $html .= <<<HTML
-  </p>
-</div>
+  <div class="card">
+    <h2>{$title}</h2>
+    <p>{$infoHtml}</p>
+    {$errorsHtml}
+    <p>{$btnHtml}</p>
+  </div>
 </body>
 </html>
 HTML;
 
-        return response($html);
-    }
+    return response($html);
+}
 
 
 
