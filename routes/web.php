@@ -468,6 +468,9 @@ Route::get('/health/wasabi-backup', function () {
 Route::get('/normalize-posts', [PostNormalizeController::class, 'normalize']);
 
 Route::group(['middleware' => ['web', 'member']], function () {
+    Route::get('/member/activity/comments', [MemberActivityController::class, 'index'])
+        ->name('public.member.activity.comments');
+
     Route::get('/member/activity/comment/{comment}', [MemberActivityController::class, 'show'])
         ->name('public.member.activity.comment');
 });

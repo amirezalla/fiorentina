@@ -11,6 +11,55 @@ use Illuminate\Support\Facades\Auth;
 
 class MemberActivityController extends Controller
 {
+    public function index(Request $request)
+{
+    $comments = MemberActivity::myCommentsPaginated(20);
+
+    $rows = '';
+    foreach ($comments as $c) {
+        $post = $c->reference_type === Post::class ? Post::find($c->reference_id) : null;
+        $postLink = $post ? '<a href="'.e($post->url).'" target="_blank">'.e($post->name).'</a>' : '<em>(post removed)</em>';
+        $snippet = e(Str::limit(strip_tags($c->content), 160));
+        $openInPost = $post ? '<a href="'.e($post->url).'#comment-'.$c->id.'" target="_blank">Open</a>' : '';
+        $repliesUrl = route('public.member.activity.comment', $c->id);
+
+        $rows .= <<<HTML
+        <tr>
+          <td>{$c->created_at->format('Y-m-d H:i')}</td>
+          <td>{$postLink}</td>
+          <td>{$snippet}</td>
+          <td>{$openInPost} · <a href="{$repliesUrl}">Replies</a></td>
+        </tr>
+        HTML;
+    }
+
+    $prev = $comments->previousPageUrl() ? '<a class="btn" href="'.e($comments->previousPageUrl()).'">« Prev</a>' : '';
+    $next = $comments->nextPageUrl()     ? '<a class="btn" href="'.e($comments->nextPageUrl()).'">Next »</a>'     : '';
+    $pager = ($prev || $next) ? '<div class="pager">'.$prev.' '.$next.'</div>' : '';
+
+    $html = <<<HTML
+    <!doctype html><html lang="en"><head>
+      <meta charset="utf-8"><title>My comments</title>
+      <style>
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:24px;max-width:1000px;margin:0 auto;}
+        .btn{display:inline-block;background:#4b2d7f;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none;margin-right:6px}
+        .btn:visited{color:#fff}
+        table{width:100%;border-collapse:collapse}
+        td,th{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top}
+        .pager{margin-top:12px}
+      </style>
+    </head><body>
+      <h2>My comments</h2>
+      <table>
+        <thead><tr><th>Date</th><th>Post</th><th>Comment</th><th>Actions</th></tr></thead>
+        <tbody>{$rows}</tbody>
+      </table>
+      {$pager}
+    </body></html>
+    HTML;
+
+    return response($html);
+}
     public function show(Request $request, Comment $comment)
     {
         $member = Auth::guard('member')->user();
