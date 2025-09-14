@@ -12,15 +12,7 @@
         </li>
     @endforeach
 
-    @php
-        use App\Support\MemberActivity;
-        $member = auth('member')->user();
-        $act = $member ? MemberActivity::latestForMember($member) : null; // ['comment','post','replies_count']
-        $c = $act['comment'] ?? null;
-        $p = $act['post'] ?? null;
-        $repliesCount = $act['replies_count'] ?? 0;
-        $activityUrl = $c ? route('public.member.activity.comment', $c->id) : route('public.member.activity.comments');
-    @endphp
+
 
     <li>
         <a href="{{ $activityUrl }}" @class(['active' => request()->routeIs('public.member.activity.*')])>
@@ -31,32 +23,7 @@
             @endif
         </a>
 
-        @if ($c)
-            <div class="menu-activity-preview">
-                <div class="small text-muted">
-                    {{ __('On') }}
-                    @if ($p)
-                        <a href="{{ $p->url }}"
-                            target="_blank">{{ \Illuminate\Support\Str::limit($p->name, 40) }}</a>
-                    @else
-                        <em>{{ __('(post removed)') }}</em>
-                    @endif
-                    • {{ $c->created_at->diffForHumans() }}
-                </div>
 
-                <div class="text-truncate-2">
-                    {!! BaseHelper::clean(e(\Illuminate\Support\Str::limit(strip_tags($c->content), 120))) !!}
-                </div>
-
-                <div class="small mt-1">
-                    <a href="{{ $activityUrl }}">{{ __('View replies') }}</a>
-                    @if ($p)
-                        • <a href="{{ $p->url }}#comment-{{ $c->id }}"
-                            target="_blank">{{ __('Open in post') }}</a>
-                    @endif
-                </div>
-            </div>
-        @endif
     </li>
 </ul>
 
