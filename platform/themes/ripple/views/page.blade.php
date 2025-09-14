@@ -1,10 +1,10 @@
 @php
     $adsBackgroundShortCodeRegex = '/<shortcode>\[ads-background.*?\](.*?)\[\/ads-background.*?\]<\/shortcode>/';
-    $content = preg_replace($adsBackgroundShortCodeRegex,'',$page->content)
+    $content = preg_replace($adsBackgroundShortCodeRegex, '', $page->content);
 @endphp
-@if(preg_match($adsBackgroundShortCodeRegex,$page->content,$match) && count($match))
+@if (preg_match($adsBackgroundShortCodeRegex, $page->content, $match) && count($match))
     @php
-        Theme::set('has-ads-background', $match[0])
+        Theme::set('has-ads-background', $match[0]);
     @endphp
 @endif
 
@@ -22,16 +22,26 @@
 
     @endphp
     <article class="post post--single">
-        <div class="post__content">
-            @if (defined('GALLERY_MODULE_SCREEN_NAME') && !empty($galleries = gallery_meta_data($page)))
-                {!! render_object_gallery($galleries) !!}
-            @endif
-                {!! apply_filters(PAGE_FILTER_FRONT_PAGE_CONTENT, Html::tag('div', BaseHelper::clean($content), ['class' => 'ck-content'])->toHtml(), $page) !!}
+        <div class="post__content recent-posts-container">
+            <div class="col-md-12 col-sm-12 col-12">
+                @if (defined('GALLERY_MODULE_SCREEN_NAME') && !empty(($galleries = gallery_meta_data($page))))
+                    {!! render_object_gallery($galleries) !!}
+                @endif
+                {!! apply_filters(
+                    PAGE_FILTER_FRONT_PAGE_CONTENT,
+                    Html::tag('div', BaseHelper::clean($content), ['class' => 'ck-content'])->toHtml(),
+                    $page,
+                ) !!}
+            </div>
         </div>
     </article>
 @else
-    @if (defined('GALLERY_MODULE_SCREEN_NAME') && !empty($galleries = gallery_meta_data($page)))
+    @if (defined('GALLERY_MODULE_SCREEN_NAME') && !empty(($galleries = gallery_meta_data($page))))
         {!! render_object_gallery($galleries) !!}
     @endif
-    {!! apply_filters(PAGE_FILTER_FRONT_PAGE_CONTENT, Html::tag('div', BaseHelper::clean($content), ['class' => 'ck-content'])->toHtml(), $page) !!}
+    {!! apply_filters(
+        PAGE_FILTER_FRONT_PAGE_CONTENT,
+        Html::tag('div', BaseHelper::clean($content), ['class' => 'ck-content'])->toHtml(),
+        $page,
+    ) !!}
 @endif
