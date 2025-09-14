@@ -252,6 +252,7 @@ public function metaStep(Request $request)
         'nextUrl'     => $nextUrl,
     ]);
 }
+
 protected function importFeaturedImage(int $postId, int $attachmentId, bool $debug = false): array
 {
     $ctx = ['postId'=>$postId, 'attachmentId'=>$attachmentId];
@@ -840,112 +841,194 @@ public function deleteTodayImportedPosts()
     }
 }
 
-public function importCategories(){
+public function importCategoriesInit(Request $request)
+{
+    DB::connection()->disableQueryLog();
+    DB::connection('mysql2')->disableQueryLog();
 
-    try{
+    // Only posts that actually have a category_id
+    $minId = (int) Post::where('category_id', '>', 0)->min('id') ?: ((int) Post::min('id') ?: 1);
+    $maxId = (int) Post::where('category_id', '>', 0)->max('id') ?: ((int) Post::max('id') ?: $minId);
 
-        $posts = Post::all();
-        $categoryIds = $posts->pluck('category_id')->unique()->toArray();
-        $categories = DB::connection('mysql2')
-            ->table('frntn_terms')
-            ->whereIn('term_id', $categoryIds)
-            ->get();
+    $startId = (int) $request->query('start_id', $minId);
+    $endId   = (int) $request->query('end_id', $maxId);
 
-        foreach ($categories as $category) {
-            $existingCategory = Category::where('name', $category->name)->first();
-            if (!$existingCategory) {
-                $newCategory = new Category();
-                $newCategory->fill([
-                    'id' => $category->term_id,
-                    'name' => $category->name,
-                    'description' => null,
-                    'parent_id' => 0,
-                    'icon' => null,
-                    'is_featured' => 0,
-                    'order' => $category->term_order ?? 0,
-                    'is_default' => 0,
-                    'status' => 'published',
-                    'author_id' => 1,
-                    'author_type' => 'Botble\ACL\Models\User',
-                ]);
-                $newCategory->save();
+    if ($startId > $endId) {
+        [$startId, $endId] = [$endId, $startId];
+    }
 
-                $slug = new Slug();
-                $slug->fill([
-                    'key' => Str::slug($category->name), // converts "Blog dei Tifosi" to "blog-dei-tifosi"
-                    'reference_id' => $category->term_id,
-                    'reference_type' => 'Botble\Blog\Models\Category',
-                ]);
-                $slug->save();
+    $batch = max(10, (int) $request->query('batch', 50));
+    $debug = (int) $request->query('debug', 0);
+
+    $cursor = $endId + 1; // walk downward like meta
+
+    return redirect()->route('wp.categories.step', compact('startId', 'endId', 'cursor', 'batch', 'debug'));
+}
+
+public function categoriesStep(Request $request)
+{
+    DB::connection()->disableQueryLog();
+    DB::connection('mysql2')->disableQueryLog();
+    @ini_set('max_execution_time', '0');
+    @ini_set('memory_limit', '512M');
+
+    $startId = (int) $request->query('startId');
+    $endId   = (int) $request->query('endId');
+    $cursor  = (int) $request->query('cursor', $endId + 1);
+    $batch   = max(10, (int) $request->query('batch', 50));
+    $debug   = (int) $request->query('debug', 0);
+
+    // Grab next slice of posts (DESC) that already have category_id assigned
+    $posts = Post::query()
+        ->whereBetween('id', [$startId, $endId])
+        ->where('id', '<', $cursor)
+        ->where('category_id', '>', 0)
+        ->orderByDesc('id')
+        ->limit($batch)
+        ->get(['id', 'category_id']);
+
+    if ($posts->isEmpty()) {
+        return $this->progressView([
+            'done'        => true,
+            'startId'     => $startId,
+            'endId'       => $endId,
+            'cursor'      => $cursor,
+            'batch'       => $batch,
+            'debug'       => $debug,
+            'processed'   => 0,
+            'created'     => 0,
+            'attached'    => 0,
+            'errors'      => [],
+            'nextUrl'     => null,
+        ]);
+    }
+
+    $errors = [];
+    $created = 0;
+    $attached = 0;
+
+    // Determine smallest processed id (DESC walk)
+    $lastId = $cursor;
+    if ($posts->isNotEmpty()) {
+        // last() because we ordered DESC
+        $lastId = (int) $posts->last()->id;
+    }
+
+    try {
+        // 1) Ensure needed categories exist (create missing ones from WP terms)
+        $neededCategoryIds = $posts->pluck('category_id')->filter()->unique()->values()->all();
+
+        $existingIds = Category::query()
+            ->whereIn('id', $neededCategoryIds)
+            ->pluck('id')
+            ->all();
+
+        $toCreate = array_values(array_diff($neededCategoryIds, $existingIds));
+
+        if (!empty($toCreate)) {
+            $wpTerms = DB::connection('mysql2')
+                ->table('frntn_terms')
+                ->whereIn('term_id', $toCreate)
+                ->get(['term_id', 'name', 'slug']);
+
+            foreach ($wpTerms as $term) {
+                $catId = (int) $term->term_id;
+                $name  = (string) $term->name;
+
+                // Create Category
+                $cat = new Category();
+                $cat->id          = $catId; // set explicitly to match WP term id
+                $cat->name        = $name;
+                $cat->description = null;
+                $cat->parent_id   = 0;
+                $cat->icon        = null;
+                $cat->is_featured = 0;
+                $cat->order       = 0; // WP may not have term_order reliably
+                $cat->is_default  = 0;
+                $cat->status      = 'published';
+                $cat->author_id   = 1;
+                $cat->author_type = 'Botble\ACL\Models\User';
+                $cat->save();
+
+                // Create/ensure slug
+                $key = Str::slug($name);
+                if (
+                    Slug::where('key', $key)
+                        ->where('reference_type', 'Botble\Blog\Models\Category')
+                        ->where('reference_id', '!=', $catId)
+                        ->exists()
+                ) {
+                    $key = $key . '-' . $catId;
+                }
+
+                Slug::updateOrCreate(
+                    [
+                        'reference_type' => 'Botble\Blog\Models\Category',
+                        'reference_id'   => $catId,
+                    ],
+                    ['key' => $key]
+                );
+
+                $created++;
+            }
+
+            // Any WP term missing?
+            $foundIds = $wpTerms->pluck('term_id')->map(fn ($v) => (int) $v)->all();
+            $missing  = array_values(array_diff($toCreate, $foundIds));
+            foreach ($missing as $missId) {
+                $errors[] = "Missing WP term for category_id={$missId}";
             }
         }
 
-        $posts = Post::where('category_id', '>', 0)->get();
-        foreach ($posts as $post) {
-            DB::table('post_categories')->insert([
-                'post_id' => $post->id,
-                'category_id' => $post->category_id,
+        // 2) Attach categories to posts (pivot), avoiding duplicates
+        foreach ($posts as $p) {
+            // Insert ignore to avoid unique key violation if present
+            $ok = DB::table('post_categories')->insertOrIgnore([
+                'post_id'     => (int) $p->id,
+                'category_id' => (int) $p->category_id,
             ]);
+
+            if ($ok) {
+                $attached++;
+            }
         }
 
-    }
-    catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error importing categories.',
-            'error' => $e->getMessage(),
-        ], 500);
+    } catch (\Throwable $e) {
+        $msg = 'Categories step error: ' . $e->getMessage();
+        $errors[] = $msg;
+        Log::error('[WP Categories Import] ' . $msg, ['trace' => substr($e->getTraceAsString(), 0, 2000)]);
     }
 
+    // Are there more posts left below this cursor?
+    $hasMore = Post::query()
+        ->whereBetween('id', [$startId, $endId])
+        ->where('id', '<', $lastId)
+        ->where('category_id', '>', 0)
+        ->exists();
 
-}
+    $nextUrl = $hasMore
+        ? route('wp.categories.step', [
+            'startId' => $startId,
+            'endId'   => $endId,
+            'cursor'  => $lastId,  // continue walking downward
+            'batch'   => $batch,
+            'debug'   => $debug,
+        ])
+        : null;
 
-
-private function category($primaryCategoryId,$post_id){
-    try{
-
-
-        $term = DB::connection('mysql2')
-            ->table('frntn_terms')
-            ->where('term_id',$primaryCategoryId)
-            ->first();
-        $slug= new Slug();
-        $existingCategory = Category::where('name', $term->name)->first();
-        if (!$existingCategory) {
-            // Create and save the category
-            $category = new Category();
-            $category->fill([
-                'id'=>$term_id,
-                'name' => $term->name,
-                'description' => null, // Set to null or map from another source if available
-                'parent_id' => 0, // Default to no parent (adjust logic for hierarchical categories)
-                'icon' => null, // Default to null or provide logic for icons
-                'is_featured' => 0, // Default to not featured
-                'order' => $term->term_order ?? 0, // Use `term_order` or default to 0
-                'is_default' => 0, // Default to not default
-                'status' => 'published', // Default to published
-                'author_id' => 1, // Set default author or map as needed
-                'author_type' => 'Botble\ACL\Models\User', // Default author type
-            ]);
-            $category->save();
-            $slug->fill([
-                'key'=>'category/news/'.$term->name,
-                'reference_id'=>$primaryCategoryId,
-                'reference_type'=>'Botble\Blog\Models\Category'
-            ]);
-            $slug->save();
-        }
-        DB::table('post_categories')->insert([
-            'post_id' => $post_id,
-            'category_id' => $primaryCategoryId,
-        ]);
-
-
-    }catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error importing category.',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
+    return $this->progressView([
+        'done'        => !$hasMore,
+        'startId'     => $startId,
+        'endId'       => $endId,
+        'cursor'      => $lastId,
+        'batch'       => $batch,
+        'debug'       => $debug,
+        'processed'   => $posts->count(),
+        'created'     => $created,
+        'attached'    => $attached,
+        'errors'      => $errors,
+        'nextUrl'     => $nextUrl,
+    ]);
 }
    private function ensureBackupAndGetPublicUrl($post): string
 {
