@@ -48,9 +48,22 @@ class MemberActivity
         return [
             'comment'       => $comment,
             'post'          => $post,
-            'replies'       => $repliesBase->clone()->limit($limit)->get(),
+            'replies'       => (clone $repliesBase)->limit($limit)->get(),
             'replies_count' => (clone $repliesBase)->count(),
         ];
+    }
+
+    /**
+     * Back-compat: what your Blade is calling.
+     * Same data as latestWithReplies but without the replies list.
+     * @return array{comment:Comment, post:?Post, replies_count:int}|null
+     */
+    public static function latestForMember($member): ?array
+    {
+        $data = self::latestWithReplies($member, 0);
+        if (!$data) return null;
+        unset($data['replies']); // keep it lightweight
+        return $data;
     }
 
     /** Optional: paginate all my comments */
