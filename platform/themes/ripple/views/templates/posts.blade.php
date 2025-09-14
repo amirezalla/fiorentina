@@ -7,7 +7,7 @@
         // very small UA test – good enough for phone / tablet vs desktop
         $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
     @endphp
-    @foreach ($posts as $post)
+    @foreach ($posts->loadMissing('author') as $index => $post)
         <article class="post post__vertical post__vertical--single post-item category-article"
             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
             <!-- Image on the left -->
