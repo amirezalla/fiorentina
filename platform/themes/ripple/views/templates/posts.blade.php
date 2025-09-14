@@ -12,14 +12,17 @@
             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
 
             <!-- Image on the left -->
-            <div class="post__thumbnail" style="width: 48%;">
-                @php
-                    $size = $isMobile ? 'thumb' : 'medium';
-                @endphp
+            @if ($post->image)
+                <div class="post__thumbnail" style="width: 48%;">
+                    @php
+                        $size = $isMobile ? 'thumb' : 'medium';
+                    @endphp
 
-                {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
-                <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
-            </div>
+                    {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
+                    <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
+                </div>
+            @endif
+
 
             <!-- Content (Title and Description) on the right -->
             <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px; margin-top: 5%">
