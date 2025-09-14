@@ -23,10 +23,7 @@ class MemberActivity
 
         $comment = Comment::query()
             ->where(function ($q) use ($memberId) {
-                $q->where('user_id', $memberId)->orWhere('customer_id', $memberId);
-            })
-            ->where(function ($q) use ($memberType) {
-                $q->where('user_type', $memberType)->orWhereNull('user_type');
+                $q->where('customer_id', $memberId);
             })
             ->where('reference_type', Post::class)
             ->orderByDesc('created_at')
@@ -41,7 +38,7 @@ class MemberActivity
             ->where('reference_id', $comment->reference_id)
             ->where('parent_id', $comment->id)
             ->where(function ($q) use ($memberId) {
-                $q->where('user_id', '!=', $memberId)->orWhereNull('user_id');
+                $q->where('customer_id', '!=', $memberId)->orWhereNull('customer_id');
             })
             ->orderBy('created_at', 'asc');
 
@@ -75,10 +72,7 @@ class MemberActivity
 
         return Comment::query()
             ->where(function ($q) use ($memberId) {
-                $q->where('user_id', $memberId)->orWhere('customer_id', $memberId);
-            })
-            ->where(function ($q) use ($memberType) {
-                $q->where('user_type', $memberType)->orWhereNull('user_type');
+                $q->where('customer_id', $memberId);
             })
             ->where('reference_type', Post::class)
             ->orderByDesc('created_at')
