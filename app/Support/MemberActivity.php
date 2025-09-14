@@ -21,11 +21,11 @@ class MemberActivity
         $memberId   = $member->getKey();
         $memberType = get_class($member);
 
+        // Latest comment by this member on a Post
         $comment = Comment::query()
-            ->where(function ($q) use ($memberId) {
-                $q->where('customer_id', $memberId);
-            })
             ->where('reference_type', Post::class)
+            ->where('author_id', $memberId)
+            ->where('author_type', $memberType)
             ->orderByDesc('created_at')
             ->first();
 
@@ -33,12 +33,16 @@ class MemberActivity
 
         $post = Post::find($comment->reference_id);
 
+        // Replies from OTHERS to this specific comment
         $repliesBase = Comment::query()
             ->where('reference_type', $comment->reference_type)
             ->where('reference_id', $comment->reference_id)
-            ->where('parent_id', $comment->id)
-            ->where(function ($q) use ($memberId) {
-                $q->where('customer_id', '!=', $memberId)->orWhereNull('customer_id');
+            ->where('reply_to', $comment->id)
+            ->where(function ($q) use ($memberId, $memberType) {
+                $q->whereNull('author_id') // guests
+                  ->orWhere('author_id', '!=', $memberId)
+                  ->orWhereNull('author_type')
+                  ->orWhere('author_type', '!=', $memberType);
             })
             ->orderBy('created_at', 'asc');
 
@@ -51,7 +55,7 @@ class MemberActivity
     }
 
     /**
-     * Back-compat: what your Blade is calling.
+     * Back-compat with blades calling latestForMember().
      * Same data as latestWithReplies but without the replies list.
      * @return array{comment:Comment, post:?Post, replies_count:int}|null
      */
@@ -59,22 +63,21 @@ class MemberActivity
     {
         $data = self::latestWithReplies($member, 0);
         if (!$data) return null;
-        unset($data['replies']); // keep it lightweight
+        unset($data['replies']);
         return $data;
     }
 
-    /** Optional: paginate all my comments */
+    /** Optional: paginate all my comments on posts */
     public static function myCommentsPaginated(int $perPage = 20): LengthAwarePaginator
     {
         $member = Auth::guard('member')->user();
-        $memberId = $member->getKey();
+        $memberId   = $member->getKey();
         $memberType = get_class($member);
 
         return Comment::query()
-            ->where(function ($q) use ($memberId) {
-                $q->where('customer_id', $memberId);
-            })
             ->where('reference_type', Post::class)
+            ->where('author_id', $memberId)
+            ->where('author_type', $memberType)
             ->orderByDesc('created_at')
             ->paginate($perPage);
     }
