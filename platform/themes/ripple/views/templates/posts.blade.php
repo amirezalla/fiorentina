@@ -1,20 +1,97 @@
 @if ($posts->isNotEmpty())
+    @php
+        $minMainPostsLimit = intval(10);
+        $mainPostsLimit = intval(50);
+        $ua = request()->header('User-Agent', '');
+
+        // very small UA test – good enough for phone / tablet vs desktop
+        $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
+    @endphp
     @foreach ($posts as $post)
-        <article class="post post__horizontal mb-40 clearfix">
-            <div class="post__thumbnail">
-                {{ RvMedia::image($post->image, $post->name, 'medium') }}
+        <article class="post post__vertical post__vertical--single post-item category-article"
+            style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
+            <!-- Image on the left -->
+            <div class="post__thumbnail category_thumbnail" style=" width: 48%; align-self: flex-start;">
+                @php
+
+                    $size = $isMobile ? 'thumb' : 'medium';
+                @endphp
+
+                {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
                 <a class="post__overlay" href="{{ $post->url }}" title="{{ $post->name }}"></a>
             </div>
-            <div class="post__content-wrap">
+
+            <!-- Content (Title and Description) on the right -->
+            <div class="post__content-wrap" style="flex: 2.5; padding-left: 20px;">
                 <header class="post__header">
-                    <h3 class="post__title">
-                        <a href="{{ $post->url }}" title="{{ $post->name }}">{{ $post->name }}</a>
-                    </h3>
+                    @php
+
+                        $date = $post->created_at;
+
+                        if ($date->isToday()) {
+                            // If the post was created today, show only hour and minute
+                            $formattedDate = $date->format('H:i');
+                        } elseif ($date->isYesterday()) {
+                            // If it was yesterday, show "Ieri alle" followed by hour and minute
+                            $formattedDate = 'Ieri alle ' . $date->format('H:i');
+                        } else {
+                            // Otherwise, show the day, abbreviated month (in Italian), and hour:minute
+                            // Set locale to Italian for month names (ensure you have installed the appropriate locale)
+                            $formattedDate = $date->locale('it')->translatedFormat('d M H:i');
+                        }
+                    @endphp
+                    <div class="text-dark mb-1 post-desc">
+
+                        @php
+                            $categoryName = $post->categories->count()
+                                ? strtoupper($post->categories->first()->name)
+                                : 'NOTIZIE';
+                        @endphp
+
+                        <span class=" mb-1">
+                            <span class="post__last4-badge">
+                                {{ $categoryName }}</span> /
+                        </span>
+
+                        <span class="post__date">
+                            {{ $formattedDate }}
+                        </span>
+                        @if ($post->in_aggiornamento)
+                            <span class="post-group__left-red-badge ml-2"><span class='pulse-circle'></span> <span
+                                    class="text-white">In
+                                    Aggiornamento</span>
+                            </span>
+                        @endif
+
+                    </div>
+                    <h4 class="post__title" style="margin: 0;">
+                        <a href="{{ $post->url }}" title="{{ $post->name }}"
+                            style="text-decoration: none; color: inherit;">
+                            {{ $post->name }}
+                        </a>
+                    </h4>
                 </header>
-                <div class="post__content p-0">
-                    <p data-number-line="4">{!! $post->description !!}</p>
+                <div class="post__content">
+                    <p style="margin: 10px 0 0;">{{ $post->description }}</p>
+                    <span class=" text-dark mt-1 d-block"
+                        style="font-family: 'Titillium Web', sans-serif; font-weight: 600; font-size: 16px;color:#888">
+                        @php
+                            $post->comments_count = FriendsOfBotble\Comment\Models\Comment::where(
+                                'reference_id',
+                                $post->id,
+                            )->count();
+                        @endphp
+                        Di <a style="color: #8424e3;font-weight: 700;"
+                            href="/author/{{ $post->author->username }}">{{ $post->author->first_name }}
+                            {{ $post->author->last_name }}</a> /
+                        <a class="fw-bold" href="{{ $post->url }}#comments"
+                            style="color:#8424e3;font-size:0.9rem !important;">
+                            <i class="fa fa-comment" aria-hidden="true"></i>
+                            {{ $post->comments_count > 0 ? $post->comments_count : 'Commenta' }}
+                        </a>
+                    </span>
                 </div>
-            </div>
+
         </article>
 
         {{-- Ads between posts --}}
