@@ -181,7 +181,7 @@ Route::get('/categories/step',  [WpImportController::class, 'categoriesStep'])->
     // Step-by-step slug import
     Route::get('/import-slugs/step', [WpImportController::class, 'slugsStep'])
         ->name('wp.slugs.step');
-Route::get('/import-categories', [WpImportController::class, 'importCategories']);
+
 
 Route::get('/feed', function () {
 
