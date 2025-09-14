@@ -797,16 +797,17 @@ p:empty {
 
 .page-pagination .pagination a,
 .page-pagination .pagination span {
-    background-color: #ddd;
+    background-color: #dddddd76;
     color: #6c757d;
     display: inline-block;
     min-width: 30px;
+    border-radius: 60px !important;
     outline: none !important;
     padding: 10px 15px
 }
 
 .page-pagination .pagination .page-item.disabled .page-link {
-    background-color: #ddd;
+    background-color: #b8b8b800;
     color: #6c757d;
     cursor: not-allowed
 }
@@ -4081,7 +4082,8 @@ body {
 
 .post__content .page-pagination ul {
     list-style: none;
-    padding-left: 0
+    padding-left: 0;
+    margin-left: -15px;
 }
 
 .post__content .page-pagination ul li {
@@ -5032,9 +5034,9 @@ header>.container,
     .black-box span a,
     .black-box span {
         color: #ffffff !important;
-    }s
+    }
 
-    .black-box .post__last4-badge {
+    s .black-box .post__last4-badge {
         color: rgb(95, 95, 95) !important;
     }
 
