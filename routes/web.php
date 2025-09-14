@@ -172,6 +172,9 @@ Route::get('/import-posts', [WpImportController::class, 'importPostsWithoutMeta'
 Route::get('/import-meta', [WpImportController::class, 'importMetaForPosts']);
 Route::get('/meta/step',  [WpImportController::class, 'metaStep'])->name('wp.meta.step');
 
+Route::get('/import-categories', [WpImportController::class, 'importCategoriesInit']);
+Route::get('/categories/step',  [WpImportController::class, 'categoriesStep'])->name('wp.categories.step');
+
     Route::get('/import-slugs', [WpImportController::class, 'importSlugs'])
         ->name('wp.slugs.import');
 
