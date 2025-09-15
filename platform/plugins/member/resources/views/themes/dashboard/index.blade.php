@@ -64,3 +64,26 @@
 
     <activity-log-component></activity-log-component>
 @stop
+<style>
+    .menu .activity-badge {
+        margin-left: .5rem;
+        background: #eee;
+        color: #333;
+        border-radius: 999px;
+        padding: 0 .5rem;
+        font-size: .75rem;
+    }
+
+    .menu-activity-preview {
+        margin: .35rem 0 .5rem .5rem;
+        padding: .5rem;
+        border-left: 2px solid #eee;
+    }
+
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
