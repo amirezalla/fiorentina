@@ -3,39 +3,7 @@
 @section('content')
     {!! apply_filters(MEMBER_TOP_STATISTIC_FILTER, null) !!}
 
-    @php
-        use App\Support\MemberActivity;
-        $member = auth('member')->user();
-        $act = $member ? MemberActivity::latestForMember($member) : null; // ['comment','post','replies_count']
-        $c = $act['comment'] ?? null;
-        $p = $act['post'] ?? null;
-        $repliesCount = $act['replies_count'] ?? 0;
-        $activityUrl = $c ? route('public.member.activity.comment', $c->id) : route('public.member.activity.comments');
-    @endphp
-    @if ($c)
-        <div class="menu-activity-preview">
-            <div class="small text-muted">
-                {{ __('On') }}
-                @if ($p)
-                    <a href="{{ $p->url }}" target="_blank">{{ \Illuminate\Support\Str::limit($p->name, 40) }}</a>
-                @else
-                    <em>{{ __('(post removed)') }}</em>
-                @endif
-                • {{ $c->created_at->diffForHumans() }}
-            </div>
 
-            <div class="text-truncate-2">
-                {!! BaseHelper::clean(e(\Illuminate\Support\Str::limit(strip_tags($c->content), 120))) !!}
-            </div>
-
-            <div class="small mt-1">
-                <a href="{{ $activityUrl }}">{{ __('View replies') }}</a>
-                @if ($p)
-                    • <a href="{{ $p->url }}#comment-{{ $c->id }}" target="_blank">{{ __('Open in post') }}</a>
-                @endif
-            </div>
-        </div>
-    @endif
 
     {{--    @if (is_plugin_active('blog')) --}}
     {{--        <x-core::stat-widget class="mb-3 row-cols-1 row-cols-sm-2 row-cols-md-3"> --}}
@@ -61,10 +29,82 @@
     {{--            /> --}}
     {{--        </x-core::stat-widget> --}}
     {{--    @endif --}}
+    @php
+        use App\Support\MemberActivity;
+        use Illuminate\Support\Str;
 
+        $member = auth('member')->user();
+        $act = $member ? MemberActivity::latestForMember($member) : null; // ['comment','post','replies_count']
+
+        $c = $act['comment'] ?? null;
+        $p = $act['post'] ?? null;
+        $repliesCount = $act['replies_count'] ?? 0;
+
+        // Avoid "route not defined" when the list route isn't present
+$activityUrl = $c
+    ? route('public.member.activity.comment', $c->id)
+    : (Route::has('public.member.activity.comments')
+        ? route('public.member.activity.comments')
+                : null);
+    @endphp
+
+    @if ($c)
+        <div class="card mb-3 activity-card">
+            <div class="card-body py-3">
+                <div class="small text-muted mb-1">
+                    {{ __('On') }}
+                    @if ($p)
+                        <a href="{{ $p->url }}" target="_blank" class="link-secondary">
+                            {{ Str::limit($p->name, 80) }}
+                        </a>
+                    @else
+                        <em>{{ __('(post removed)') }}</em>
+                    @endif
+                    • {{ $c->created_at->diffForHumans() }}
+                </div>
+
+                <div class="mb-2 line-clamp-2 text-body">
+                    {!! BaseHelper::clean(e(Str::limit(strip_tags($c->content), 300))) !!}
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    @if ($activityUrl)
+                        <a href="{{ $activityUrl }}" class="small link-primary">
+                            {{ __('View replies') }}@if ($repliesCount)
+                                ({{ $repliesCount }})
+                            @endif
+                        </a>
+                    @endif
+
+                    @if ($p)
+                        <a href="{{ $p->url }}#comment-{{ $c->id }}" target="_blank"
+                            class="small link-secondary">
+                            {{ __('Open in post') }}
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
     <activity-log-component></activity-log-component>
+
+
 @stop
 <style>
+    /* Card look to match the dashboard widgets */
+    .activity-card {
+        border: 1px solid #e9ecef;
+        border-radius: .5rem;
+    }
+
+    /* Clean two-line clamp for the comment body */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
     .menu .activity-badge {
         margin-left: .5rem;
         background: #eee;
