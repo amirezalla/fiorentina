@@ -14,17 +14,7 @@
 
 
 
-    <li>
-        <a href="{{ $activityUrl }}" @class(['active' => request()->routeIs('public.member.activity.*')])>
-            <x-core::icon name="ti ti-message" />
-            {{ __('Activity') }}
-            @if ($repliesCount)
-                <span class="badge activity-badge">{{ $repliesCount }}</span>
-            @endif
-        </a>
 
-
-    </li>
 </ul>
 
 <style>
