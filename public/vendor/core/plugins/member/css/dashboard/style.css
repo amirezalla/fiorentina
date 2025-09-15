@@ -444,6 +444,10 @@ a:hover {
     transform: translateY(-50%)
 }
 
+.ps-block__action a {
+    color: white !important;
+}
+
 .ps-block--user-wellcome .ps-block__action i {
     color: #666;
     font-size: 20px
@@ -458,14 +462,19 @@ a:hover {
 }
 
 .ps-block--user-wellcome .ps-block__right p {
-    color: #666;
+    color: #ffffff;
     font-size: 14px;
     line-height: 1.4em;
     margin-bottom: 0
 }
 
+.ps-block--user-wellcome .ps-block__right small {
+    color: #cbcbcb;
+
+}
+
 .ps-block--user-wellcome .ps-block__right p a {
-    color: #222;
+    color: #ffffff;
     display: block;
     font-size: 18px;
     font-weight: 600
@@ -991,8 +1000,7 @@ a:hover {
 .ps-sidebar {
     height: 100%;
     padding-bottom: 100px;
-    position: relative;
-
+    position: relative
 }
 
 .ps-sidebar>* {
@@ -1056,13 +1064,10 @@ a:hover {
     }
 
     .ps-main .ps-main__sidebar {
-        background-color: #441274 ;
+        background-color: #f1f2f6;
         display: block;
         max-width: 375px;
         padding: 60px 0 60px 60px
-    }
-    .ps-sidebar__center.menu>li>a{
-        color: #fff !important;
     }
 
     .ps-main .ps-main__wrapper {
@@ -1120,6 +1125,17 @@ a:hover {
 
 .menu>li>a {
     color: #222;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    padding: 10px 0;
+    position: relative;
+    text-transform: capitalize;
+    transform-style: preserve-3d
+}
+
+.ps-sidebar__center.menu>li>a {
+    color: #ffffff;
     font-size: 16px;
     font-weight: 500;
     line-height: 20px;
