@@ -1064,15 +1064,27 @@ a:hover {
     }
 
     .ps-main .ps-main__sidebar {
-        background-color: #f1f2f6;
+        background-color: #441274 !important;
         display: block;
         max-width: 375px;
         padding: 60px 0 60px 60px
     }
 
+    .ps-sidebar__center.menu>li>a.activbe {
+        color: #ffffff;
+    }
+
+    .ps-sidebar__center.menu>li>a.activbe {
+        color: #8f8f8f;
+    }
+
     .ps-main .ps-main__wrapper {
         padding: 30px
     }
+}
+
+.ps-copyright p {
+    color: white !important
 }
 
 @media screen and (min-width:1680px) {
