@@ -1193,11 +1193,11 @@ a:hover {
     z-index: 9999
 }
 
-.ps-sidebar__center.menu>li>a.activbe {
+.ps-sidebar__center .menu>li>a.active {
     color: #ffffff;
 }
 
-.ps-sidebar__center.menu>li>a.activbe {
+.ps-sidebar__center .menu>li>a {
     color: #8f8f8f;
 }
 
