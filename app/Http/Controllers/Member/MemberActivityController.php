@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class MemberActivityController extends Controller
 {
     // Display all comments with pagination and filters
-    public function showComments(Request $request)
+public function showComments(Request $request)
 {
     $member = auth('member')->user();
     $perPage = $request->get('perPage', 10); // Default to 10 comments per page
@@ -29,7 +29,7 @@ class MemberActivityController extends Controller
     if (!empty($searchQuery)) {
         $commentsQuery->where(function ($q) use ($searchQuery) {
             $q->where('content', 'like', '%' . $searchQuery . '%')
-                ->orWhereHas('post', function ($q) use ($searchQuery) {
+                ->orWhereHas('reference', function ($q) use ($searchQuery) {
                     $q->where('name', 'like', '%' . $searchQuery . '%');
                 });
         });
@@ -49,7 +49,7 @@ class MemberActivityController extends Controller
 
     // Preparing comments data for the view
     $commentsData->transform(function ($comment) {
-        $post = Post::find($comment->reference_id);
+        $post = $comment->reference; // Use the reference() method to get the related post
         $repliesCount = $comment->replies()->count(); // Get replies count
 
         return [
