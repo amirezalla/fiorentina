@@ -65,7 +65,7 @@
                     </div>
 
                     <div class="mb-2 line-clamp-2 text-body">
-                        {!! BaseHelper::clean(e(Str::limit(strip_tags($comment->content), 300))) !!}
+                        {!! BaseHelper::clean(e(Str::limit(strip_tags(str_replace('&nbsp;', ' ', $comment->content)), 300))) !!}
                     </div>
 
                     <div class="d-flex align-items-center gap-3">
