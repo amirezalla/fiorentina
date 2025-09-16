@@ -467,5 +467,10 @@ Route::get('/health/wasabi-backup', function () {
 });
 Route::get('/normalize-posts', [PostNormalizeController::class, 'normalize']);
 
-Route::get('/member/activity/comments', [MemberActivityController::class, 'showComments'])
-    ->name('public.member.activity.comments');
+Route::group(['middleware' => ['web', 'member']], function () {
+    Route::get('/member/activity/comments', [MemberActivityController::class, 'showComments'])
+        ->name('public.member.activity.comments');
+
+    Route::get('/member/activity/comment/{comment}', [MemberActivityController::class, 'show'])
+        ->name('public.member.activity.comment');
+});

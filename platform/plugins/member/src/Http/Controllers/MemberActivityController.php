@@ -11,55 +11,47 @@ use Illuminate\Support\Facades\Auth;
 
 class MemberActivityController extends Controller
 {
-    public function index(Request $request)
-{
-    $comments = MemberActivity::myCommentsPaginated(20);
+    // Display all comments with pagination and filters
+    public function showComments(Request $request)
+    {
+        $member = auth('member')->user();
+        $perPage = $request->get('perPage', 10); // Default to 10 comments per page
+        $sortBy = $request->get('sortBy', 'created_at_desc'); // Default sort by most recent
 
-    $rows = '';
-    foreach ($comments as $c) {
-        $post = $c->reference_type === Post::class ? Post::find($c->reference_id) : null;
-        $postLink = $post ? '<a href="'.e($post->url).'" target="_blank">'.e($post->name).'</a>' : '<em>(post removed)</em>';
-        $snippet = e(Str::limit(strip_tags($c->content), 160));
-        $openInPost = $post ? '<a href="'.e($post->url).'#comment-'.$c->id.'" target="_blank">Open</a>' : '';
-        $repliesUrl = route('public.member.activity.comment', $c->id);
+        // Build query for comments by this member
+        $commentsQuery = Comment::query()
+            ->where('author_id', $member->id)
+            ->where('author_type', get_class($member))
+            ->where('reference_type', Post::class);
 
-        $rows .= <<<HTML
-        <tr>
-          <td>{$c->created_at->format('Y-m-d H:i')}</td>
-          <td>{$postLink}</td>
-          <td>{$snippet}</td>
-          <td>{$openInPost} · <a href="{$repliesUrl}">Replies</a></td>
-        </tr>
-        HTML;
+        // Apply sorting
+        if ($sortBy == 'created_at_desc') {
+            $commentsQuery->orderByDesc('created_at');
+        } elseif ($sortBy == 'created_at_asc') {
+            $commentsQuery->orderBy('created_at');
+        } elseif ($sortBy == 'replies_count_desc') {
+            $commentsQuery->orderByDesc('replies_count');
+        }
+
+        // Paginate the results
+        $commentsData = $commentsQuery->paginate($perPage);
+
+        // Prepare data for the view
+        $commentsData->transform(function ($comment) {
+            $post = Post::find($comment->reference_id);
+            $repliesCount = $comment->replies()->count();
+
+            return [
+                'comment' => $comment,
+                'post' => $post,
+                'replies_count' => $repliesCount,
+            ];
+        });
+
+        return view('member.activity.comments', compact('commentsData'));
     }
 
-    $prev = $comments->previousPageUrl() ? '<a class="btn" href="'.e($comments->previousPageUrl()).'">« Prev</a>' : '';
-    $next = $comments->nextPageUrl()     ? '<a class="btn" href="'.e($comments->nextPageUrl()).'">Next »</a>'     : '';
-    $pager = ($prev || $next) ? '<div class="pager">'.$prev.' '.$next.'</div>' : '';
-
-    $html = <<<HTML
-    <!doctype html><html lang="en"><head>
-      <meta charset="utf-8"><title>My comments</title>
-      <style>
-        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:24px;max-width:1000px;margin:0 auto;}
-        .btn{display:inline-block;background:#4b2d7f;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none;margin-right:6px}
-        .btn:visited{color:#fff}
-        table{width:100%;border-collapse:collapse}
-        td,th{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top}
-        .pager{margin-top:12px}
-      </style>
-    </head><body>
-      <h2>My comments</h2>
-      <table>
-        <thead><tr><th>Date</th><th>Post</th><th>Comment</th><th>Actions</th></tr></thead>
-        <tbody>{$rows}</tbody>
-      </table>
-      {$pager}
-    </body></html>
-    HTML;
-
-    return response($html);
-}
+    // Display an individual comment and its replies
     public function show(Request $request, Comment $comment)
     {
         $member = Auth::guard('member')->user();
@@ -67,7 +59,8 @@ class MemberActivityController extends Controller
 
         $post = $comment->reference_type === Post::class ? Post::find($comment->reference_id) : null;
 
-        $replies = \FriendsOfBotble\Comment\Models\Comment::query()
+        // Get replies to the comment
+        $replies = Comment::query()
             ->where('reference_type', $comment->reference_type)
             ->where('reference_id', $comment->reference_id)
             ->where('parent_id', $comment->id)
@@ -77,6 +70,7 @@ class MemberActivityController extends Controller
             ->orderBy('created_at', 'asc')
             ->paginate(30);
 
+        // Prepare the view data
         $postLink = $post ? '<a href="'.e($post->url).'" target="_blank">'.e($post->name).'</a>' : '<em>(post removed)</em>';
         $orig = \BaseHelper::clean($comment->content);
 
@@ -99,6 +93,7 @@ class MemberActivityController extends Controller
 
         $postAnchor = $post ? '<a class="small" href="'.e($post->url).'#comment-'.$comment->id.'" target="_blank">View on post</a>' : '';
 
+        // Return HTML view
         $html = <<<HTML
         <!doctype html><html lang="en"><head>
           <meta charset="utf-8">
@@ -129,43 +124,5 @@ class MemberActivityController extends Controller
         HTML;
 
         return response($html);
-    }
-
-
-    public function showComments(Request $request)
-    {
-        $member = auth('member')->user();
-        $perPage = $request->get('perPage', 10); // Default to 10 comments per page
-        $sortBy = $request->get('sortBy', 'created_at_desc'); // Default sort by most recent
-
-        $commentsQuery = Comment::query()
-            ->where('author_id', $member->id)
-            ->where('author_type', get_class($member))
-            ->where('reference_type', Post::class);
-
-        // Sort based on the selected option
-        if ($sortBy == 'created_at_desc') {
-            $commentsQuery->orderByDesc('created_at');
-        } elseif ($sortBy == 'created_at_asc') {
-            $commentsQuery->orderBy('created_at');
-        } elseif ($sortBy == 'replies_count_desc') {
-            $commentsQuery->orderByDesc('replies_count');
-        }
-
-        $commentsData = $commentsQuery->paginate($perPage);
-
-        // Preparing comments data for the view
-        $commentsData->transform(function ($comment) {
-            $post = Post::find($comment->reference_id);
-            $repliesCount = $comment->replies()->count(); // Get replies count
-
-            return [
-                'comment' => $comment,
-                'post' => $post,
-                'replies_count' => $repliesCount,
-            ];
-        });
-
-        return view('member.activity.comments', compact('commentsData'));
     }
 }
