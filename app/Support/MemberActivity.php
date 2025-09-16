@@ -55,9 +55,9 @@ class MemberActivity
     }
 
 
-    public static function allCommentsWithReplies($member, int $limit = 10): LengthAwarePaginator
+public static function allCommentsWithReplies($member, int $limit = 10): LengthAwarePaginator
 {
-    if (!$member) return collect([]);
+    if (!$member) return Comment::query()->whereRaw('1 = 0')->paginate($limit); // Return empty pagination if no member
 
     $memberId   = $member->getKey();
     $memberType = get_class($member);
@@ -68,10 +68,9 @@ class MemberActivity
         ->where('author_id', $memberId)
         ->where('author_type', $memberType)
         ->orderByDesc('created_at')
-        ->paginate($limit);  // Pagination for comments
+        ->paginate($limit);  // Use paginate() here
 
-    $commentsData = [];
-    foreach ($comments as $comment) {
+    $commentsData = $comments->map(function($comment) use ($memberId, $memberType) {
         $post = Post::find($comment->reference_id);
 
         // Replies from OTHERS to this specific comment
@@ -87,17 +86,17 @@ class MemberActivity
             })
             ->orderBy('created_at', 'asc');
 
-        $commentsData[] = [
+        return [
             'comment'       => $comment,
             'post'          => $post,
-            'replies'       => $repliesBase->limit($limit)->get(),
+            'replies'       => $repliesBase->limit(5)->get(),
             'replies_count' => $repliesBase->count(),
         ];
-    }
+    });
 
-    // Convert the commentsData array to a collection for easier handling
-    return collect($commentsData);
+    return $comments->setCollection($commentsData);  // Set the custom collection with replies data
 }
+
 
 
     /**
