@@ -130,4 +130,42 @@ class MemberActivityController extends Controller
 
         return response($html);
     }
+
+
+    public function showComments(Request $request)
+    {
+        $member = auth('member')->user();
+        $perPage = $request->get('perPage', 10); // Default to 10 comments per page
+        $sortBy = $request->get('sortBy', 'created_at_desc'); // Default sort by most recent
+
+        $commentsQuery = Comment::query()
+            ->where('author_id', $member->id)
+            ->where('author_type', get_class($member))
+            ->where('reference_type', Post::class);
+
+        // Sort based on the selected option
+        if ($sortBy == 'created_at_desc') {
+            $commentsQuery->orderByDesc('created_at');
+        } elseif ($sortBy == 'created_at_asc') {
+            $commentsQuery->orderBy('created_at');
+        } elseif ($sortBy == 'replies_count_desc') {
+            $commentsQuery->orderByDesc('replies_count');
+        }
+
+        $commentsData = $commentsQuery->paginate($perPage);
+
+        // Preparing comments data for the view
+        $commentsData->transform(function ($comment) {
+            $post = Post::find($comment->reference_id);
+            $repliesCount = $comment->replies()->count(); // Get replies count
+
+            return [
+                'comment' => $comment,
+                'post' => $post,
+                'replies_count' => $repliesCount,
+            ];
+        });
+
+        return view('member.activity.comments', compact('commentsData'));
+    }
 }

@@ -38,6 +38,26 @@
     @endphp
 
     @if ($commentsData && $commentsData->isNotEmpty())
+        <!-- Filter Dropdown -->
+        <div class="filters">
+            <form id="filterForm" method="GET">
+                <select name="perPage" id="perPage" onchange="this.form.submit()">
+                    <option value="10" {{ request('perPage') == '10' ? 'selected' : '' }}>10 per page</option>
+                    <option value="50" {{ request('perPage') == '50' ? 'selected' : '' }}>50 per page</option>
+                    <option value="100" {{ request('perPage') == '100' ? 'selected' : '' }}>100 per page</option>
+                    <option value="500" {{ request('perPage') == '500' ? 'selected' : '' }}>500 per page</option>
+                </select>
+
+                <select name="sortBy" id="sortBy" onchange="this.form.submit()">
+                    <option value="created_at_desc" {{ request('sortBy') == 'created_at_desc' ? 'selected' : '' }}>Most
+                        Recent</option>
+                    <option value="created_at_asc" {{ request('sortBy') == 'created_at_asc' ? 'selected' : '' }}>Oldest
+                        First</option>
+                    <option value="replies_count_desc" {{ request('sortBy') == 'replies_count_desc' ? 'selected' : '' }}>
+                        Most Replies</option>
+                </select>
+            </form>
+        </div>
         @foreach ($commentsData as $data)
             @php
                 $comment = $data['comment'];
@@ -90,8 +110,8 @@
 
         <div class="d-flex justify-content-between">
             <div>
-                Showing {{ $commentsData->firstItem() }} to {{ $commentsData->lastItem() }} of
-                {{ $commentsData->total() }} comments.
+                Mostrando {{ $commentsData->firstItem() }} a {{ $commentsData->lastItem() }} di
+                {{ $commentsData->total() }} commenti.
             </div>
             <div>
                 {{ $commentsData->links() }}
@@ -144,3 +164,19 @@
         overflow: hidden;
     }
 </style>
+
+<script>
+    // Update filters on change (AJAX)
+    document.getElementById('filterForm').addEventListener('change', function(event) {
+        event.preventDefault();
+        let formData = new FormData(this);
+        fetch(window.location.href, {
+                method: 'GET',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('commentsContainer').innerHTML = data;
+            });
+    });
+</script>
