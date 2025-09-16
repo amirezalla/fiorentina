@@ -1195,10 +1195,13 @@ a:hover {
 
 .ps-sidebar__center .menu>li>a.active {
     color: #ffffff;
+    background-color: #ffe4c40d;
+    border-radius: 10px;
 }
 
 .ps-sidebar__center .menu>li>a {
     color: #8f8f8f;
+    padding-left: 10px;
 }
 
 .header--mobile>* {
