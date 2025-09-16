@@ -54,6 +54,50 @@ class MemberActivity
         ];
     }
 
+
+    public static function allCommentsWithReplies($member, int $limit = 10): ?array
+{
+    if (!$member) return null;
+
+    $memberId   = $member->getKey();
+    $memberType = get_class($member);
+
+    // Fetch all comments made by this member on a Post
+    $comments = Comment::query()
+        ->where('reference_type', Post::class)
+        ->where('author_id', $memberId)
+        ->where('author_type', $memberType)
+        ->orderByDesc('created_at')
+        ->paginate($limit);  // Pagination for comments
+
+    $commentsData = [];
+    foreach ($comments as $comment) {
+        $post = Post::find($comment->reference_id);
+
+        // Replies from OTHERS to this specific comment
+        $repliesBase = Comment::query()
+            ->where('reference_type', $comment->reference_type)
+            ->where('reference_id', $comment->reference_id)
+            ->where('reply_to', $comment->id)
+            ->where(function ($q) use ($memberId, $memberType) {
+                $q->whereNull('author_id') // guests
+                  ->orWhere('author_id', '!=', $memberId)
+                  ->orWhereNull('author_type')
+                  ->orWhere('author_type', '!=', $memberType);
+            })
+            ->orderBy('created_at', 'asc');
+
+        $commentsData[] = [
+            'comment'       => $comment,
+            'post'          => $post,
+            'replies'       => $repliesBase->limit($limit)->get(),
+            'replies_count' => $repliesBase->count(),
+        ];
+    }
+
+    return $commentsData;
+}
+
     /**
      * Back-compat with blades calling latestForMember().
      * Same data as latestWithReplies but without the replies list.

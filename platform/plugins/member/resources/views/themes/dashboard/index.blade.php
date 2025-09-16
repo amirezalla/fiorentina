@@ -34,58 +34,73 @@
         use Illuminate\Support\Str;
 
         $member = auth('member')->user();
-        $act = $member ? MemberActivity::latestForMember($member) : null; // ['comment','post','replies_count']
-
-        $c = $act['comment'] ?? null;
-        $p = $act['post'] ?? null;
-        $repliesCount = $act['replies_count'] ?? 0;
-
-        // Avoid "route not defined" when the list route isn't present
-$activityUrl = $c
-    ? route('public.member.activity.comment', $c->id)
-    : (Route::has('public.member.activity.comments')
-        ? route('public.member.activity.comments')
-                : null);
+        $commentsData = $member ? MemberActivity::allCommentsWithReplies($member) : null;
     @endphp
 
-    @if ($c)
-        <div class="card mb-3 activity-card">
-            <div class="card-body py-3">
-                <div class="small text-muted mb-1">
-                    {{ __('On') }}
-                    @if ($p)
-                        <a href="{{ $p->url }}" target="_blank" class="link-secondary">
-                            {{ Str::limit($p->name, 80) }}
-                        </a>
-                    @else
-                        <em>{{ __('(post removed)') }}</em>
-                    @endif
-                    • {{ $c->created_at->diffForHumans() }}
-                </div>
+    @if ($commentsData && $commentsData->count() > 0)
+        @foreach ($commentsData as $data)
+            @php
+                $comment = $data['comment'];
+                $post = $data['post'];
+                $repliesCount = $data['replies_count'];
+                $activityUrl = $comment
+                    ? route('public.member.activity.comment', $comment->id)
+                    : (Route::has('public.member.activity.comments')
+                        ? route('public.member.activity.comments')
+                        : null);
+            @endphp
 
-                <div class="mb-2 line-clamp-2 text-body">
-                    {!! BaseHelper::clean(e(Str::limit(strip_tags($c->content), 300))) !!}
-                </div>
+            <div class="card mb-3 activity-card">
+                <div class="card-body py-3">
+                    <div class="small text-muted mb-1">
+                        {{ __('On') }}
+                        @if ($post)
+                            <a href="{{ $post->url }}" target="_blank" class="link-secondary">
+                                {{ Str::limit($post->name, 80) }}
+                            </a>
+                        @else
+                            <em>{{ __('(post removed)') }}</em>
+                        @endif
+                        • {{ $comment->created_at->diffForHumans() }}
+                    </div>
 
-                <div class="d-flex align-items-center gap-3">
-                    @if ($activityUrl)
-                        <a href="{{ $activityUrl }}" class="small link-primary">
-                            {{ __('View replies') }}@if ($repliesCount)
-                                ({{ $repliesCount }})
-                            @endif
-                        </a>
-                    @endif
+                    <div class="mb-2 line-clamp-2 text-body">
+                        {!! BaseHelper::clean(e(Str::limit(strip_tags($comment->content), 300))) !!}
+                    </div>
 
-                    @if ($p)
-                        <a href="{{ $p->url }}#comment-{{ $c->id }}" target="_blank"
-                            class="small link-secondary">
-                            {{ __('Open in post') }}
-                        </a>
-                    @endif
+                    <div class="d-flex align-items-center gap-3">
+                        @if ($activityUrl)
+                            <a href="{{ $activityUrl }}" class="small link-primary">
+                                {{ __('View replies') }} @if ($repliesCount)
+                                    ({{ $repliesCount }})
+                                @endif
+                            </a>
+                        @endif
+
+                        @if ($post)
+                            <a href="{{ $post->url }}#comment-{{ $comment->id }}" target="_blank"
+                                class="small link-secondary">
+                                {{ __('Open in post') }}
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
+        @endforeach
+
+        <div class="d-flex justify-content-between">
+            <div>
+                Showing {{ $commentsData->firstItem() }} to {{ $commentsData->lastItem() }} of
+                {{ $commentsData->total() }} comments.
+            </div>
+            <div>
+                {{ $commentsData->links() }}
+            </div>
         </div>
+    @else
+        <p>{{ __('No comments found.') }}</p>
     @endif
+
     {{-- <activity-log-component></activity-log-component> --}}
 
 
