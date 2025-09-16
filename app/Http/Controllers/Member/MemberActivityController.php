@@ -45,7 +45,7 @@ class MemberActivityController extends Controller
                 'comment' => $comment,
                 'post' => $post,
                 'replies_count' => $repliesCount,
-            ];
+            ]; 
         });
 
         return view('member.activity.comments', compact('commentsData'));
