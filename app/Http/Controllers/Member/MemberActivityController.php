@@ -35,21 +35,32 @@ public function showComments(Request $request)
         });
     }
 
-    // Apply sorting
+    // Apply sorting based on the selected sortBy option
     if ($sortBy == 'created_at_desc') {
         $commentsQuery->orderByDesc('created_at');
     } elseif ($sortBy == 'created_at_asc') {
         $commentsQuery->orderBy('created_at');
     } elseif ($sortBy == 'replies_count_desc') {
-        $commentsQuery->orderByDesc('replies_count');
+        // Join the replies count and order by it
+        $commentsQuery->leftJoinSub(
+            Comment::query()
+                ->selectRaw('reference_id, count(*) as replies_count')
+                ->whereNotNull('parent_id')
+                ->groupBy('reference_id'),
+            'replies_count_subquery',
+            'fob_comments.reference_id',
+            '=',
+            'replies_count_subquery.reference_id'
+        );
+        $commentsQuery->orderByDesc('replies_count_subquery.replies_count');
     }
 
     // Paginate the results
     $commentsData = $commentsQuery->paginate($perPage);
 
-    // Preparing comments data for the view
+    // Prepare comments data for the view (with replies count)
     $commentsData->transform(function ($comment) {
-        $post = $comment->reference; // Use the reference() method to get the related post
+        $post = $comment->reference; // Get the related post
         $repliesCount = $comment->replies()->count(); // Get replies count
 
         return [
@@ -61,6 +72,7 @@ public function showComments(Request $request)
 
     return view('member.activity.comments', compact('commentsData', 'searchQuery', 'sortBy'));
 }
+
 
 
 
