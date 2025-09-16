@@ -86,7 +86,7 @@ $activityUrl = $c
             </div>
         </div>
     @endif
-    <activity-log-component></activity-log-component>
+    {{-- <activity-log-component></activity-log-component> --}}
 
 
 @stop
