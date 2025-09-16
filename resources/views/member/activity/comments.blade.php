@@ -5,14 +5,14 @@
     <!-- Search box -->
     <form method="GET" action="{{ route('public.member.activity.comments') }}" class="mb-4">
         <div class="input-group">
-            <input type="text" class="form-control" name="search" value="{{ request()->get('search') }}"
+            <input type="text" class="form-control" name="search" value="{{ $searchQuery }}"
                 placeholder="{{ __('Cerca tra i commenti o i post') }}" />
             <button class="btn btn-primary" type="submit">{{ __('Search') }}</button>
         </div>
     </form>
 
     <!-- Filters and Sorting -->
-    <div class="filters mb-3">
+    <form method="GET" action="{{ route('public.member.activity.comments') }}" class="mb-3">
         <div class="d-flex justify-content-between">
             <div>
                 <label for="perPage">{{ __('Comments per page') }}:</label>
@@ -37,7 +37,7 @@
                 </select>
             </div>
         </div>
-    </div>
+    </form>
 
     <!-- Comments List -->
     <div class="comments-list">
@@ -90,5 +90,18 @@
     <div class="pagination">
         {{ $commentsData->appends(request()->except('page'))->links() }}
     </div>
-
-@stop
+    <script>
+        // Update filters on change (AJAX)
+        document.getElementById('filterForm').addEventListener('change', function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            fetch(window.location.href, {
+                    method: 'GET',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('commentsContainer').innerHTML = data;
+                });
+        });
+    @stop
