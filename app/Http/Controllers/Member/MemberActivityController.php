@@ -13,43 +13,55 @@ class MemberActivityController extends Controller
 {
     // Display all comments with pagination and filters
     public function showComments(Request $request)
-    {
-        $member = auth('member')->user();
-        $perPage = $request->get('perPage', 10); // Default to 10 comments per page
-        $sortBy = $request->get('sortBy', 'created_at_desc'); // Default sort by most recent
+{
+    $member = auth('member')->user();
+    $perPage = $request->get('perPage', 10); // Default to 10 comments per page
+    $sortBy = $request->get('sortBy', 'created_at_desc'); // Default sort by most recent
+    $searchQuery = $request->get('search', ''); // Search query for comments and posts
 
-        // Build query for comments by this member
-        $commentsQuery = Comment::query()
-            ->where('author_id', $member->id)
-            ->where('author_type', get_class($member))
-            ->where('reference_type', Post::class);
+    // Build the query for comments by this member
+    $commentsQuery = Comment::query()
+        ->where('author_id', $member->id)
+        ->where('author_type', get_class($member))
+        ->where('reference_type', Post::class);
 
-        // Apply sorting
-        if ($sortBy == 'created_at_desc') {
-            $commentsQuery->orderByDesc('created_at');
-        } elseif ($sortBy == 'created_at_asc') {
-            $commentsQuery->orderBy('created_at');
-        } elseif ($sortBy == 'replies_count_desc') {
-            $commentsQuery->orderByDesc('replies_count');
-        }
-
-        // Paginate the results
-        $commentsData = $commentsQuery->paginate($perPage);
-
-        // Prepare data for the view
-        $commentsData->transform(function ($comment) {
-            $post = Post::find($comment->reference_id);
-            $repliesCount = $comment->replies()->count();
-
-            return [
-                'comment' => $comment,
-                'post' => $post,
-                'replies_count' => $repliesCount,
-            ]; 
+    // Apply search if query exists
+    if (!empty($searchQuery)) {
+        $commentsQuery->where(function ($q) use ($searchQuery) {
+            $q->where('content', 'like', '%' . $searchQuery . '%')
+                ->orWhereHas('post', function ($q) use ($searchQuery) {
+                    $q->where('name', 'like', '%' . $searchQuery . '%');
+                });
         });
-
-        return view('member.activity.comments', compact('commentsData'));
     }
+
+    // Apply sorting
+    if ($sortBy == 'created_at_desc') {
+        $commentsQuery->orderByDesc('created_at');
+    } elseif ($sortBy == 'created_at_asc') {
+        $commentsQuery->orderBy('created_at');
+    } elseif ($sortBy == 'replies_count_desc') {
+        $commentsQuery->orderByDesc('replies_count');
+    }
+
+    // Paginate the results
+    $commentsData = $commentsQuery->paginate($perPage);
+
+    // Preparing comments data for the view
+    $commentsData->transform(function ($comment) {
+        $post = Post::find($comment->reference_id);
+        $repliesCount = $comment->replies()->count(); // Get replies count
+
+        return [
+            'comment' => $comment,
+            'post' => $post,
+            'replies_count' => $repliesCount,
+        ];
+    });
+
+    return view('member.activity.comments', compact('commentsData', 'searchQuery', 'sortBy'));
+}
+
 
     // Display an individual comment and its replies
     public function show(Request $request, Comment $comment)

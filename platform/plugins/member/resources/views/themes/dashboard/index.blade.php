@@ -38,25 +38,44 @@
     @endphp
 
     @if ($commentsData && $commentsData->isNotEmpty())
-        <!-- Filter Dropdown -->
-        <div class="filters">
-            <form id="filterForm" method="GET">
-                <select name="perPage" id="perPage" onchange="this.form.submit()">
-                    <option value="10" {{ request('perPage') == '10' ? 'selected' : '' }}>10 per page</option>
-                    <option value="50" {{ request('perPage') == '50' ? 'selected' : '' }}>50 per page</option>
-                    <option value="100" {{ request('perPage') == '100' ? 'selected' : '' }}>100 per page</option>
-                    <option value="500" {{ request('perPage') == '500' ? 'selected' : '' }}>500 per page</option>
-                </select>
 
-                <select name="sortBy" id="sortBy" onchange="this.form.submit()">
-                    <option value="created_at_desc" {{ request('sortBy') == 'created_at_desc' ? 'selected' : '' }}>Most
-                        Recent</option>
-                    <option value="created_at_asc" {{ request('sortBy') == 'created_at_asc' ? 'selected' : '' }}>Oldest
-                        First</option>
-                    <option value="replies_count_desc" {{ request('sortBy') == 'replies_count_desc' ? 'selected' : '' }}>
-                        Most Replies</option>
-                </select>
-            </form>
+        <!-- Search box -->
+        <form method="GET" action="{{ route('public.member.activity.comments') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" value="{{ request()->get('search') }}"
+                    placeholder="{{ __('Cerca tra i commenti o i post') }}" />
+                <button class="btn btn-primary" type="submit">{{ __('Search') }}</button>
+            </div>
+        </form>
+
+        <!-- Filters and Sorting -->
+        <div class="filters mb-3">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label for="perPage">{{ __('Comments per page') }}:</label>
+                    <select name="perPage" id="perPage" class="form-control" onchange="this.form.submit()">
+                        <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ request()->get('perPage') == 20 ? 'selected' : '' }}>20</option>
+                        <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request()->get('perPage') == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="sortBy">{{ __('Sort by') }}:</label>
+                    <select name="sortBy" id="sortBy" class="form-control" onchange="this.form.submit()">
+                        <option value="created_at_desc"
+                            {{ request()->get('sortBy') == 'created_at_desc' ? 'selected' : '' }}>{{ __('Most Recent') }}
+                        </option>
+                        <option value="created_at_asc"
+                            {{ request()->get('sortBy') == 'created_at_asc' ? 'selected' : '' }}>{{ __('Oldest') }}
+                        </option>
+                        <option value="replies_count_desc"
+                            {{ request()->get('sortBy') == 'replies_count_desc' ? 'selected' : '' }}>
+                            {{ __('Most Replied') }}</option>
+                    </select>
+                </div>
+            </div>
         </div>
         @foreach ($commentsData as $data)
             @php
