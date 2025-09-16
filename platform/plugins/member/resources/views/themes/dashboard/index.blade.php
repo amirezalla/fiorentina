@@ -37,7 +37,7 @@
         $commentsData = $member ? MemberActivity::allCommentsWithReplies($member) : null;
     @endphp
 
-    @if ($commentsData && $commentsData->count() > 0)
+    @if ($commentsData && $commentsData->isNotEmpty())
         @foreach ($commentsData as $data)
             @php
                 $comment = $data['comment'];
@@ -100,6 +100,7 @@
     @else
         <p>{{ __('No comments found.') }}</p>
     @endif
+
 
     {{-- <activity-log-component></activity-log-component> --}}
 

@@ -55,9 +55,9 @@ class MemberActivity
     }
 
 
-    public static function allCommentsWithReplies($member, int $limit = 10): ?array
+    public static function allCommentsWithReplies($member, int $limit = 10): LengthAwarePaginator
 {
-    if (!$member) return null;
+    if (!$member) return collect([]);
 
     $memberId   = $member->getKey();
     $memberType = get_class($member);
@@ -95,8 +95,10 @@ class MemberActivity
         ];
     }
 
-    return $commentsData;
+    // Convert the commentsData array to a collection for easier handling
+    return collect($commentsData);
 }
+
 
     /**
      * Back-compat with blades calling latestForMember().
