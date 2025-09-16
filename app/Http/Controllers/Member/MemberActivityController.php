@@ -41,11 +41,12 @@ public function showComments(Request $request)
     } elseif ($sortBy == 'created_at_asc') {
         $commentsQuery->orderBy('created_at');
     } elseif ($sortBy == 'replies_count_desc') {
-        // Join the replies count and order by it
+        // Fix the issue by using a subquery to count replies
         $commentsQuery->leftJoinSub(
             Comment::query()
                 ->selectRaw('reference_id, count(*) as replies_count')
-                ->whereNotNull('parent_id')
+                ->whereNotNull('parent_id') // Ensure replies are counted by parent_id
+                ->whereNull('deleted_at') // Ensure deleted comments are excluded
                 ->groupBy('reference_id'),
             'replies_count_subquery',
             'fob_comments.reference_id',
@@ -72,6 +73,7 @@ public function showComments(Request $request)
 
     return view('member.activity.comments', compact('commentsData', 'searchQuery', 'sortBy'));
 }
+
 
 
 
