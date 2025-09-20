@@ -18,6 +18,17 @@ RUN set -eux; \
 # -----------------------------
 WORKDIR /var/www/html
 
+# after WORKDIR /var/www/html
+COPY preload.php /var/www/html/preload.php
+# ensure web user can read it
+RUN chown www-data:www-data /var/www/html/preload.php
+
+# === PHP OPcache config ===
+# If opcache isn't enabled in the base image, uncomment the next line:
+# RUN docker-php-ext-install -j"$(nproc)" opcache
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/99-opcache.ini
+# (99- prefix ensures it loads after any defaults)
+
 # -----------------------------
 # Copy Dependency Files (cache-friendly)
 # -----------------------------
