@@ -83,16 +83,18 @@
                                         <article class="post post__vertical post__vertical--single post-item"
                                             style="display: {{ $index < $minMainPostsLimit ? 'flex' : 'none' }}; align-items: center; margin-bottom: 5px;">
                                             <!-- Image on the left -->
-                                            <div class="post__thumbnail" style=" width: 48%;">
-                                                @php
+                                            @if ($post->image)
+                                                <div class="post__thumbnail" style=" width: 48%;">
+                                                    @php
 
-                                                    $size = $isMobile ? 'thumb' : 'medium';
-                                                @endphp
+                                                        $size = $isMobile ? 'thumb' : 'medium';
+                                                    @endphp
 
-                                                {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
-                                                <a class="post__overlay" href="{{ $post->url }}"
-                                                    title="{{ $post->name }}"></a>
-                                            </div>
+                                                    {!! RvMedia::image($post->image, $post->name, $size, attributes: ['loading' => 'lazy']) !!}
+                                                    <a class="post__overlay" href="{{ $post->url }}"
+                                                        title="{{ $post->name }}"></a>
+                                                </div>
+                                            @endif
 
                                             <!-- Content (Title and Description) on the right -->
                                             <div class="post__content-wrap"
@@ -297,7 +299,7 @@
                                 #{{ $uniq }} {
                                     position: fixed;
                                     bottom: 20px;
-                                    right: 20px;
+                                    right: 5px;
                                     width: 340px;
                                     /*   16 : 9 — 340 × 192 px   */
                                     z-index: 9999;

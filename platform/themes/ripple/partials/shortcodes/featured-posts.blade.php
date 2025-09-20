@@ -25,7 +25,7 @@
             $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
 
         @endphp
-        <div class="container mb-3" style="max-width: 1200px;">
+        <div class="container mb-2" style="max-width: 1200px;">
             <div class="row justify-content-center" style="padding: 0">
                 @if (!$isMobile)
                     <div class="d-none d-md-block col-6 mx-auto" style="padding: 4px">

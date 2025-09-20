@@ -2303,6 +2303,8 @@ p:empty {
     float: right;
     line-height: 60px;
     /*padding: 0 15px*/
+    margin-left: -7px;
+    margin-top: -10px;
 }
 
 .search-btn i {
@@ -4313,6 +4315,7 @@ body,
 .page-header--light {
     background-color: #441274 !important;
     color: white;
+    display: math !important;
 }
 
 .navigation--light .menu-item>a,
@@ -4338,6 +4341,9 @@ body,
 
 .post__vertical--single {
     background: none !important;
+    margin-top: -25px;
+    margin-bottom: -30px;
+    padding-top: 0;
 }
 
 .post__vertical--single .post__title a {
@@ -4636,7 +4642,7 @@ header>.container {
 }
 
 .page-logo img {
-    max-height: 75px !important;
+    max-height: 65px !important;
 }
 
 li.menu-item a span {
@@ -4664,8 +4670,8 @@ li.menu-item a span {
 
 .social--simple li a i,
 .social--simple li a svg {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
 }
 
 .social--simple li a {
@@ -5905,7 +5911,7 @@ header>.container {
 
 .heading-container {
     /* Full-width gray border at the bottom */
-    border-bottom: 2px solid #ccc;
+    border-bottom: 1.5px solid #eaeaea;
 
     /* Optional spacing below */
     position: relative;
@@ -5918,12 +5924,13 @@ header>.container {
     display: inline-block;
     margin: 0;
     /* Negative bottom margin ensures the purple border merges with the gray line */
-    margin-bottom: -2px;
-    border-bottom: 2px solid #441274;
+    margin-bottom: -1px;
+    border-bottom: 1.5px solid #441274;
     line-height: 1.2;
-    font-size: 1.1rem;
-    padding-bottom: 2px;
-    font-weight: 600;
+    font-size: 1.1rem !important;
+    padding-bottom: 10px;
+    font-weight: 700;
+    font-family: "Titillium Web", sans-serif !important;
     /* Helps the text and border align more tightly */
 }
 

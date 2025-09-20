@@ -51,7 +51,7 @@
                         <li style="margin-right;align-content:center;font-size:smaller"> <span>Seguici</span></li>
                         @foreach ($socialLinks as $socialLink)
                             @continue(!($icon = $socialLink->getIconHtml()))
-                            <li style="margin-right: 10px;">
+                            <li>
                                 <a {{ $socialLink->getAttributes() }}>
                                     {{ $icon }}
                                 </a>
@@ -74,7 +74,8 @@
                 <!-- Mobile Navigation Toggle Button -->
                 <div id="nav-toggle" class="navigation-toggle"><span></span></div>
                 <div>
-                    <ul class="d-flex align-items-center" style="list-style: none; margin: 0; padding: 0;">
+                    <ul class="d-flex align-items-center"
+                        style="list-style: none; margin: 0; padding: 0;margin-top:-10px">
                         @if (is_plugin_active('member'))
                             @if (auth('member')->check())
                                 <li class="d-lg-none d-md-block d-sm-block" style="margin-left: 20px;">

@@ -18,7 +18,7 @@
     }
 </style>
 <footer class="page-footer">
-    <div class="container">
+    <div class="container" style="padding-top: 20px;">
         <div class="row">
             <div class="col-12 col-md-3 mx-auto mb-3">
                 <a href="{{ BaseHelper::getHomepageUrl() }}" class="page-logo">
