@@ -7,7 +7,7 @@
 
         .loading-spinner {
             align-items: center;
-            background: hsla(0, 0%, 100%, 0);
+            background: hsla(0, 0%, 100%, 0.261);
             display: flex;
             height: 100%;
             inset-inline-start: 0;
@@ -45,51 +45,49 @@
     </style>
 
     <script>
+        $('.shortcode-lazy-loading').each(function(index, element) {
+            var $element = $(element);
+            var name = $element.data('name');
+            var attributes = $element.data('attributes');
 
-            $('.shortcode-lazy-loading').each(function(index, element) {
-                var $element = $(element);
-                var name = $element.data('name');
-                var attributes = $element.data('attributes');
-
-                $.ajax({
-                    url: '{{ route('public.ajax.render-ui-block') }}',
-                    type: 'POST',
-                    data: {
-                        name,
-                        attributes: {
-                            ...attributes,
-                        },
+            $.ajax({
+                url: '{{ route('public.ajax.render-ui-block') }}',
+                type: 'POST',
+                data: {
+                    name,
+                    attributes: {
+                        ...attributes,
                     },
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function({
-                        error,
-                        data
-                    }) {
-                        if (error) {
-                            return;
-                        }
+                },
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function({
+                    error,
+                    data
+                }) {
+                    if (error) {
+                        return;
+                    }
 
-                        if (data) {
-                            $element.replaceWith(data);
-                        }
+                    if (data) {
+                        $element.replaceWith(data);
+                    }
 
-                        if (typeof Theme.lazyLoadInstance !== 'undefined') {
-                            Theme.lazyLoadInstance.update()
-                        }
+                    if (typeof Theme.lazyLoadInstance !== 'undefined') {
+                        Theme.lazyLoadInstance.update()
+                    }
 
-                        document.dispatchEvent(new CustomEvent('shortcode.loaded', {
-                            detail: {
-                                name,
-                                attributes,
-                                html: data,
-                            }
-                        }));
-                    },
-                });
+                    document.dispatchEvent(new CustomEvent('shortcode.loaded', {
+                        detail: {
+                            name,
+                            attributes,
+                            html: data,
+                        }
+                    }));
+                },
             });
-
+        });
     </script>
 @endonce
 
