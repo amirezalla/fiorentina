@@ -10,6 +10,7 @@ use Botble\Shortcode\Facades\Shortcode;
 use Botble\Shortcode\Http\Requests\GetShortcodeDataRequest;
 use Botble\Shortcode\Http\Requests\RenderBlockUiRequest;
 use Closure;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Arr;
 
 class ShortcodeController extends BaseController
@@ -54,20 +55,37 @@ class ShortcodeController extends BaseController
             ->setData($data);
     }
 
-    public function ajaxRenderUiBlock(RenderBlockUiRequest $request)
-    {
-        $name = $request->input('name');
+public function ajaxRenderUiBlock(RenderBlockUiRequest $request)
+{
+    $name       = (string) $request->input('name');
+    $attributes = (array)  $request->input('attributes', []);
 
-        if (! in_array($name, array_keys(Shortcode::getAll()))) {
-            return $this
-                ->httpResponse()
-                ->setData(null);
-        }
-
-        $code = Shortcode::generateShortcode($name, $request->input('attributes', []));
-
-        return $this
-            ->httpResponse()
-            ->setData(Shortcode::compile($code, true)->toHtml());
+    if (! array_key_exists($name, Shortcode::getAll())) {
+        return $this->httpResponse()->setData(null);
     }
+
+    // Build a stable cache key (include anything that changes the HTML)
+    $vary = [
+        'attrs'  => $attributes,
+        'locale' => app()->getLocale(),
+        // If output differs by user/role, uncomment the next line:
+        // 'user'   => auth()->id() ?: 'guest',
+    ];
+    $key = 'ui:shortcode:'.$name.':'.md5(json_encode($vary));
+    $ttl = now()->addMinutes(5);
+
+    $render = function () use ($name, $attributes) {
+        $code = Shortcode::generateShortcode($name, $attributes);
+        return Shortcode::compile($code, true)->toHtml();
+    };
+
+    // Use tags if your cache store supports them (e.g., Redis) for easy invalidation
+    if (method_exists(Cache::getStore(), 'tags')) {
+        $html = Cache::tags(['ui-shortcodes', 'shortcode-'.$name])->remember($key, $ttl, $render);
+    } else {
+        $html = Cache::remember($key, $ttl, $render);
+    }
+
+    return $this->httpResponse()->setData($html);
+}
 }
