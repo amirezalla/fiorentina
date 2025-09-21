@@ -15,6 +15,7 @@ class Post extends BaseModel
     use RevisionableTrait;
 
     protected $table = 'posts';
+    protected $appends = []; // leave empty; we’ll ->append() explicitly
 
     protected bool $revisionEnabled = true;
 
@@ -126,4 +127,12 @@ public function scopePublished($q): mixed
                 ->where('published_at', '>', now());
         });
     }
+
+
+public function getFormattedDateAttribute()
+{
+    if (!$this->published_at) return null;
+    Carbon::setLocale('it'); // do this once globally in a service provider in prod
+    return Carbon::parse($this->published_at)->translatedFormat('d M H:i');
+}
 }
