@@ -4,7 +4,8 @@
             background-color: red;
             position: sticky;
             top: 110px;
-            bottom: 17px display: none;
+            bottom: 17px;
+            display: none;
         }
 
         @media only screen and (min-width: 1830px) {
