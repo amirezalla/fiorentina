@@ -7,7 +7,7 @@
 
         .loading-spinner {
             align-items: center;
-            background: hsla(0, 0%, 100%, 0.5);
+            background: hsla(0, 0%, 100%, 0);
             display: flex;
             height: 100%;
             inset-inline-start: 0;
@@ -45,123 +45,51 @@
     </style>
 
     <script>
-        (function() {
-            try {
-                const ENDPOINT = "{{ route('public.ajax.render-ui-block') }}";
-                const CSRF = "{{ csrf_token() }}";
-                const MAX_PARALLEL = 4;
+        window.addEventListener('DOMContentLoaded', function() {
+            $('.shortcode-lazy-loading').each(function(index, element) {
+                var $element = $(element);
+                var name = $element.data('name');
+                var attributes = $element.data('attributes');
 
-                console.log('[ui] endpoint:', ENDPOINT);
-
-                function parseAttrs(v) {
-                    if (!v) return {};
-                    if (typeof v === 'object') return v;
-                    try {
-                        return JSON.parse(v);
-                    } catch (e) {
-                        console.warn('[ui] JSON parse fail', v, e);
-                        return {};
-                    }
-                }
-
-                function run() {
-                    const nodes = Array.from(document.querySelectorAll('.shortcode-lazy-loading'));
-                    console.log('[ui] found nodes:', nodes.length);
-                    if (!nodes.length) return;
-
-                    const jobs = [];
-                    const byKey = new Map();
-
-                    nodes.forEach((el, i) => {
-                        const name = el.dataset.name;
-                        const attrs = parseAttrs(el.dataset.attributes);
-                        const key = name + "::" + JSON.stringify(attrs);
-
-                        if (!name) {
-                            console.warn('[ui] missing data-name on', el);
+                $.ajax({
+                    url: '{{ route('public.ajax.render-ui-block') }}',
+                    type: 'POST',
+                    data: {
+                        name,
+                        attributes: {
+                            ...attributes,
+                        },
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function({
+                        error,
+                        data
+                    }) {
+                        if (error) {
                             return;
                         }
 
-                        if (!byKey.has(key)) byKey.set(key, []);
-                        byKey.get(key).push(el);
-                        if (byKey.get(key).length === 1) jobs.push({
-                            key,
-                            name,
-                            attrs
-                        });
-                    });
-
-                    console.log('[ui] unique jobs:', jobs.length);
-
-                    function applyHtml(key, html) {
-                        (byKey.get(key) || []).forEach(el => el.replaceWith(html));
-                        if (window.Theme?.lazyLoadInstance?.update) Theme.lazyLoadInstance.update();
-                    }
-
-                    let active = 0,
-                        idx = 0;
-
-                    function pump() {
-                        while (active < MAX_PARALLEL && idx < jobs.length) {
-                            const job = jobs[idx++];
-                            active++;
-                            console.log('[ui] fetch:', job.name, job.attrs);
-                            fetch(ENDPOINT, {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        "Accept": "application/json",
-                                        "X-Requested-With": "XMLHttpRequest",
-                                        "X-CSRF-TOKEN": CSRF
-                                    },
-                                    body: JSON.stringify({
-                                        name: job.name,
-                                        attributes: job.attrs
-                                    }),
-                                    credentials: "same-origin"
-                                })
-                                .then(r => {
-                                    if (!r.ok) throw new Error('HTTP ' + r.status);
-                                    return r.json();
-                                })
-                                .then(json => {
-                                    console.log('[ui] response ok:', json);
-                                    if (!json?.error && json?.data) {
-                                        applyHtml(job.key, json.data);
-                                        document.dispatchEvent(new CustomEvent('shortcode.loaded', {
-                                            detail: {
-                                                name: job.name,
-                                                attributes: job.attrs,
-                                                html: json.data
-                                            }
-                                        }));
-                                    }
-                                })
-                                .catch(err => {
-                                    console.error('[ui] request failed:', err);
-                                })
-                                .finally(() => {
-                                    active--;
-                                    pump();
-                                });
+                        if (data) {
+                            $element.replaceWith(data);
                         }
-                    }
 
-                    pump();
-                }
+                        if (typeof Theme.lazyLoadInstance !== 'undefined') {
+                            Theme.lazyLoadInstance.update()
+                        }
 
-                if (document.readyState === "loading") {
-                    document.addEventListener("DOMContentLoaded", run, {
-                        once: true
-                    });
-                } else {
-                    run();
-                }
-            } catch (e) {
-                console.error('[ui] fatal:', e);
-            }
-        })
-        ();
+                        document.dispatchEvent(new CustomEvent('shortcode.loaded', {
+                            detail: {
+                                name,
+                                attributes,
+                                html: data,
+                            }
+                        }));
+                    },
+                });
+            });
+        });
     </script>
 @endonce
 
