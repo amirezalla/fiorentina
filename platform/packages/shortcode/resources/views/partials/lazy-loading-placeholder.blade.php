@@ -105,7 +105,6 @@
                 });
 
                 // 2)
-                Also process any that appear later(e.g., injected by other scripts)
                 const mo = new MutationObserver((mutations) => {
                     for (const m of mutations) {
                         $(m.addedNodes).each(function() {
