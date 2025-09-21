@@ -45,51 +45,135 @@
     </style>
 
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            $('.shortcode-lazy-loading').each(function(index, element) {
-                var $element = $(element);
-                var name = $element.data('name');
-                var attributes = $element.data('attributes');
+        (function() {
+            const ENDPOINT = "{{ route('public.ajax.render-ui-block') }}";
+            const CSRF = "{{ csrf_token() }}";
+            const MAX_PARALLEL = 4; // tune: 4–8 is usually sweet for PHP apps
 
-                $.ajax({
-                    url: '{{ route('public.ajax.render-ui-block') }}',
-                    type: 'POST',
-                    data: {
+            // Collect blocks
+            const nodes = Array.from(document.querySelectorAll('.shortcode-lazy-loading'));
+            if (!nodes.length) return;
+
+            // Build jobs, dedupe by key (name+attributes)
+            const jobs = [];
+            const byKey = new Map(); // key -> array of nodes that want the same payload
+
+            nodes.forEach((el, i) => {
+                const name = el.dataset.name;
+                const attrs = parseAttrs(el.dataset.attributes);
+                const key = name + "::" + JSON.stringify(attrs);
+
+                if (!byKey.has(key)) byKey.set(key, []);
+                byKey.get(key).push(el);
+
+                // Create one job per unique key
+                if (byKey.get(key).length === 1) {
+                    jobs.push({
+                        key,
                         name,
-                        attributes: {
-                            ...attributes,
-                        },
-                    },
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function({
-                        error,
-                        data
-                    }) {
-                        if (error) {
-                            return;
-                        }
-
-                        if (data) {
-                            $element.replaceWith(data);
-                        }
-
-                        if (typeof Theme.lazyLoadInstance !== 'undefined') {
-                            Theme.lazyLoadInstance.update()
-                        }
-
-                        document.dispatchEvent(new CustomEvent('shortcode.loaded', {
-                            detail: {
-                                name,
-                                attributes,
-                                html: data,
-                            }
-                        }));
-                    },
-                });
+                        attrs
+                    });
+                }
             });
-        });
+
+            // Replace all nodes for a given key with HTML
+            function applyHtmlToNodes(key, html) {
+                const list = byKey.get(key) || [];
+                list.forEach(el => {
+                    el.replaceWith(html);
+                });
+                if (window.Theme?.lazyLoadInstance?.update) Theme.lazyLoadInstance.update();
+            }
+
+            // Session cache
+            function cacheGet(key) {
+                try {
+                    return sessionStorage.getItem("ui:" + key);
+                } catch {
+                    return null;
+                }
+            }
+
+            function cacheSet(key, v) {
+                try {
+                    sessionStorage.setItem("ui:" + key, v);
+                } catch {}
+            }
+
+            // Worker to process jobs with concurrency cap
+            let active = 0,
+                idx = 0;
+
+            function pump() {
+                while (active < MAX_PARALLEL && idx < jobs.length) {
+                    const job = jobs[idx++];
+                    const cached = cacheGet(job.key);
+                    if (cached) {
+                        applyHtmlToNodes(job.key, cached);
+                        continue;
+                    }
+                    active++;
+                    fetch(ENDPOINT, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                                "X-Requested-With": "XMLHttpRequest",
+                                "X-CSRF-TOKEN": CSRF
+                            },
+                            body: JSON.stringify({
+                                name: job.name,
+                                attributes: job.attrs
+                            }),
+                            credentials: "same-origin"
+                        })
+                        .then(async (res) => {
+                            if (!res.ok) throw new Error("HTTP " + res.status);
+                            return res.json();
+                        })
+                        .then((json) => {
+                            if (!json?.error && json?.data) {
+                                cacheSet(job.key, json.data);
+                                applyHtmlToNodes(job.key, json.data);
+                                document.dispatchEvent(new CustomEvent('shortcode.loaded', {
+                                    detail: {
+                                        name: job.name,
+                                        attributes: job.attrs,
+                                        html: json.data
+                                    }
+                                }));
+                            }
+                        })
+                        .catch((e) => {
+                            console.warn("ui-block request failed", e);
+                        })
+                        .finally(() => {
+                            active--;
+                            pump();
+                        });
+                }
+            }
+
+            // Start immediately after DOM is ready (no lazy-loading)
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", pump, {
+                    once: true
+                });
+            } else {
+                pump();
+            }
+
+            function parseAttrs(v) {
+                if (!v) return {};
+                if (typeof v === 'object') return v;
+                try {
+                    return JSON.parse(v);
+                } catch {
+                    return {};
+                }
+            }
+        })
+        ();
     </script>
 @endonce
 
