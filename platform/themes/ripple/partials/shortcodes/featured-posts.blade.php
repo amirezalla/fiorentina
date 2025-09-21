@@ -4,6 +4,7 @@
     use Carbon\Carbon;
     use Illuminate\Support\Facades\Cache;
     use FriendsOfBotble\Comment\Models\Comment;
+    use App\Support\HeroSection;
 
 @endphp
 @if ($posts->isNotEmpty())
