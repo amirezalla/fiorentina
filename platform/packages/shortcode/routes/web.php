@@ -20,10 +20,7 @@ Route::group(['namespace' => 'Botble\Shortcode\Http\Controllers'], function () {
 
 
 
-    Route::middleware(RequiresJsonRequestMiddleware::class)->group(function () {
-        Theme::registerRoutes(function () {
-            Route::post('ajax/render-ui-blocks', [ShortcodeController::class, 'ajaxRenderUiBlock'])
-                ->name('public.ajax.render-ui-block');
-        });
-    });
+Route::post('ajax/render-ui-blocks', [ShortcodeController::class, 'ajaxRenderUiBlock'])
+    ->middleware([RequiresJsonRequestMiddleware::class])
+    ->name('public.ajax.render-ui-block');
 
