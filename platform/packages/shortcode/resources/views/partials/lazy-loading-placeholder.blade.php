@@ -45,51 +45,85 @@
     </style>
 
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            $('.shortcode-lazy-loading').each(function(index, element) {
-                var $element = $(element);
-                var name = $element.data('name');
-                var attributes = $element.data('attributes');
+        (function waitForJQ() {
+            if (!window.jQuery) return setTimeout(waitForJQ, 20);
+            (function($) {
 
-                $.ajax({
-                    url: '{{ route('public.ajax.render-ui-block') }}',
-                    type: 'POST',
-                    data: {
-                        name,
-                        attributes: {
-                            ...attributes,
-                        },
-                    },
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function({
-                        error,
-                        data
-                    }) {
-                        if (error) {
-                            return;
+                const ENDPOINT = "{{ route('public.ajax.render-ui-block') }}";
+                const CSRF = "{{ csrf_token() }}";
+
+                function process($el) {
+                    if (!$el.length || $el.data('uiLoaded')) return;
+                    $el.data('uiLoaded', 1);
+
+                    const name = $el.data('name');
+                    let attrs = $el.data('attributes');
+                    if (typeof attrs === 'string') {
+                        try {
+                            attrs = JSON.parse(attrs);
+                        } catch {
+                            attrs = {};
                         }
+                    }
 
-                        if (data) {
-                            $element.replaceWith(data);
-                        }
-
-                        if (typeof Theme.lazyLoadInstance !== 'undefined') {
-                            Theme.lazyLoadInstance.update()
-                        }
-
-                        document.dispatchEvent(new CustomEvent('shortcode.loaded', {
-                            detail: {
-                                name,
-                                attributes,
-                                html: data,
+                    $.ajax({
+                        url: ENDPOINT,
+                        type: 'POST',
+                        data: {
+                            name,
+                            attributes: {
+                                ...(attrs || {})
                             }
-                        }));
-                    },
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': CSRF,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function({
+                            error,
+                            data
+                        }) {
+                            if (!error && data) {
+                                $el.replaceWith(data);
+                                if (window.Theme?.lazyLoadInstance?.update) Theme.lazyLoadInstance
+                                    .update();
+                                document.dispatchEvent(new CustomEvent('shortcode.loaded', {
+                                    detail: {
+                                        name,
+                                        attributes: attrs || {},
+                                        html: data
+                                    }
+                                }));
+                            }
+                        }
+                    });
+                }
+
+                // 1) Run immediately on whatever is already in the DOM (no DOMContentLoaded needed)
+                $('.shortcode-lazy-loading').each(function() {
+                    process($(this));
                 });
-            });
-        });
+
+                // 2)
+                Also process any that appear later(e.g., injected by other scripts)
+                const mo = new MutationObserver((mutations) => {
+                    for (const m of mutations) {
+                        $(m.addedNodes).each(function() {
+                            const $n = $(this);
+                            if ($n.is && $n.is('.shortcode-lazy-loading')) process($n);
+                            if ($n.find) $n.find('.shortcode-lazy-loading').each(function() {
+                                process($(this));
+                            });
+                        });
+                    }
+                });
+                mo.observe(document.documentElement, {
+                    childList: true,
+                    subtree: true
+                });
+
+            })(jQuery);
+        })();
     </script>
 @endonce
 
