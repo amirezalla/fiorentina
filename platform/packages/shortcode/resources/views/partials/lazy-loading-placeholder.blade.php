@@ -45,17 +45,13 @@
     </style>
 
     <script>
-        (function waitForJQ() {
-            if (!window.jQuery) return setTimeout(waitForJQ, 20);
-            (function($) {
-
+        (function() {
+            function run($) {
                 const ENDPOINT = "{{ route('public.ajax.render-ui-block') }}";
                 const CSRF = "{{ csrf_token() }}";
 
-                function process($el) {
-                    if (!$el.length || $el.data('uiLoaded')) return;
-                    $el.data('uiLoaded', 1);
-
+                $('.shortcode-lazy-loading').each(function(_, el) {
+                    const $el = $(el);
                     const name = $el.data('name');
                     let attrs = $el.data('attributes');
                     if (typeof attrs === 'string') {
@@ -66,63 +62,77 @@
                         }
                     }
 
-                    $.ajax({
-                        url: ENDPOINT,
-                        type: 'POST',
-                        data: {
-                            name,
-                            attributes: {
-                                ...(attrs || {})
-                            }
-                        },
-                        headers: {
-                            'X-CSRF-TOKEN': CSRF,
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        success: function({
+                    function onOk(res) {
+                        const {
                             error,
                             data
-                        }) {
-                            if (!error && data) {
-                                $el.replaceWith(data);
-                                if (window.Theme?.lazyLoadInstance?.update) Theme.lazyLoadInstance
-                                    .update();
-                                document.dispatchEvent(new CustomEvent('shortcode.loaded', {
-                                    detail: {
-                                        name,
-                                        attributes: attrs || {},
-                                        html: data
-                                    }
-                                }));
-                            }
+                        } = res || {};
+                        if (!error && data) {
+                            $el.replaceWith(data);
+                            if (window.Theme?.lazyLoadInstance?.update) Theme.lazyLoadInstance.update();
+                            document.dispatchEvent(new CustomEvent('shortcode.loaded', {
+                                detail: {
+                                    name,
+                                    attributes: attrs || {},
+                                    html: data
+                                }
+                            }));
                         }
-                    });
-                }
+                    }
 
-                // 1) Run immediately on whatever is already in the DOM (no DOMContentLoaded needed)
-                $('.shortcode-lazy-loading').each(function() {
-                    process($(this));
-                });
-
-                // 2)
-                const mo = new MutationObserver((mutations) => {
-                    for (const m of mutations) {
-                        $(m.addedNodes).each(function() {
-                            const $n = $(this);
-                            if ($n.is && $n.is('.shortcode-lazy-loading')) process($n);
-                            if ($n.find) $n.find('.shortcode-lazy-loading').each(function() {
-                                process($(this));
-                            });
+                    if ($ && $.ajax) {
+                        // jQuery path
+                        $.ajax({
+                            url: ENDPOINT,
+                            type: 'POST',
+                            data: JSON.stringify({
+                                name,
+                                attributes: {
+                                    ...(attrs || {})
+                                }
+                            }),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            headers: {
+                                'X-CSRF-TOKEN': CSRF,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            success: onOk
                         });
+                    } else {
+                        // Fallback (no jQuery AJAX, e.g. slim build)
+                        fetch(ENDPOINT, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'X-CSRF-TOKEN': CSRF
+                                },
+                                credentials: 'same-origin',
+                                body: JSON.stringify({
+                                    name,
+                                    attributes: {
+                                        ...(attrs || {})
+                                    }
+                                })
+                            })
+                            .then(r => r.json())
+                            .then(onOk)
+                            .catch(console.warn);
                     }
                 });
-                mo.observe(document.documentElement, {
-                    childList: true,
-                    subtree: true
-                });
+            }
 
-            })(jQuery);
-        })();
+            // Run as soon as jQuery is available; otherwise fallback still runs
+            if (window.jQuery) run(window.jQuery);
+            else if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => run(window.jQuery || null));
+            } else {
+                run(window.jQuery || null);
+            }
+        })
+        ();
     </script>
 @endonce
 
