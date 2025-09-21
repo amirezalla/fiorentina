@@ -45,7 +45,7 @@
     </style>
 
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
+
             $('.shortcode-lazy-loading').each(function(index, element) {
                 var $element = $(element);
                 var name = $element.data('name');
@@ -89,7 +89,7 @@
                     },
                 });
             });
-        });
+
     </script>
 @endonce
 
