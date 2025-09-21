@@ -1184,6 +1184,15 @@ p:empty {
 
 @media screen and (max-width: 767px) {
 
+
+    .social li {
+        margin-right: -8px;
+    }
+
+    .page-logo img {
+        max-width: 65px;
+    }
+
     .post__horizontal .post__content-wrap,
     .post__horizontal .post__thumbnail {
         float: none;
