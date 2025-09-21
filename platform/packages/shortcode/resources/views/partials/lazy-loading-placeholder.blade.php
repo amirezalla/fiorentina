@@ -46,131 +46,119 @@
 
     <script>
         (function() {
-            const ENDPOINT = "{{ route('public.ajax.render-ui-block') }}";
-            const CSRF = "{{ csrf_token() }}";
-            const MAX_PARALLEL = 4; // tune: 4–8 is usually sweet for PHP apps
+            try {
+                const ENDPOINT = "{{ route('public.ajax.render-ui-block') }}";
+                const CSRF = "{{ csrf_token() }}";
+                const MAX_PARALLEL = 4;
 
-            // Collect blocks
-            const nodes = Array.from(document.querySelectorAll('.shortcode-lazy-loading'));
-            if (!nodes.length) return;
+                console.log('[ui] endpoint:', ENDPOINT);
 
-            // Build jobs, dedupe by key (name+attributes)
-            const jobs = [];
-            const byKey = new Map(); // key -> array of nodes that want the same payload
-
-            nodes.forEach((el, i) => {
-                const name = el.dataset.name;
-                const attrs = parseAttrs(el.dataset.attributes);
-                const key = name + "::" + JSON.stringify(attrs);
-
-                if (!byKey.has(key)) byKey.set(key, []);
-                byKey.get(key).push(el);
-
-                // Create one job per unique key
-                if (byKey.get(key).length === 1) {
-                    jobs.push({
-                        key,
-                        name,
-                        attrs
-                    });
-                }
-            });
-
-            // Replace all nodes for a given key with HTML
-            function applyHtmlToNodes(key, html) {
-                const list = byKey.get(key) || [];
-                list.forEach(el => {
-                    el.replaceWith(html);
-                });
-                if (window.Theme?.lazyLoadInstance?.update) Theme.lazyLoadInstance.update();
-            }
-
-            // Session cache
-            function cacheGet(key) {
-                try {
-                    return sessionStorage.getItem("ui:" + key);
-                } catch {
-                    return null;
-                }
-            }
-
-            function cacheSet(key, v) {
-                try {
-                    sessionStorage.setItem("ui:" + key, v);
-                } catch {}
-            }
-
-            // Worker to process jobs with concurrency cap
-            let active = 0,
-                idx = 0;
-
-            function pump() {
-                while (active < MAX_PARALLEL && idx < jobs.length) {
-                    const job = jobs[idx++];
-                    const cached = cacheGet(job.key);
-                    if (cached) {
-                        applyHtmlToNodes(job.key, cached);
-                        continue;
+                function parseAttrs(v) {
+                    if (!v) return {};
+                    if (typeof v === 'object') return v;
+                    try {
+                        return JSON.parse(v);
+                    } catch (e) {
+                        console.warn('[ui] JSON parse fail', v, e);
+                        return {};
                     }
-                    active++;
-                    fetch(ENDPOINT, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Accept": "application/json",
-                                "X-Requested-With": "XMLHttpRequest",
-                                "X-CSRF-TOKEN": CSRF
-                            },
-                            body: JSON.stringify({
-                                name: job.name,
-                                attributes: job.attrs
-                            }),
-                            credentials: "same-origin"
-                        })
-                        .then(async (res) => {
-                            if (!res.ok) throw new Error("HTTP " + res.status);
-                            return res.json();
-                        })
-                        .then((json) => {
-                            if (!json?.error && json?.data) {
-                                cacheSet(job.key, json.data);
-                                applyHtmlToNodes(job.key, json.data);
-                                document.dispatchEvent(new CustomEvent('shortcode.loaded', {
-                                    detail: {
-                                        name: job.name,
-                                        attributes: job.attrs,
-                                        html: json.data
-                                    }
-                                }));
-                            }
-                        })
-                        .catch((e) => {
-                            console.warn("ui-block request failed", e);
-                        })
-                        .finally(() => {
-                            active--;
-                            pump();
+                }
+
+                function run() {
+                    const nodes = Array.from(document.querySelectorAll('.shortcode-lazy-loading'));
+                    console.log('[ui] found nodes:', nodes.length);
+                    if (!nodes.length) return;
+
+                    const jobs = [];
+                    const byKey = new Map();
+
+                    nodes.forEach((el, i) => {
+                        const name = el.dataset.name;
+                        const attrs = parseAttrs(el.dataset.attributes);
+                        const key = name + "::" + JSON.stringify(attrs);
+
+                        if (!name) {
+                            console.warn('[ui] missing data-name on', el);
+                            return;
+                        }
+
+                        if (!byKey.has(key)) byKey.set(key, []);
+                        byKey.get(key).push(el);
+                        if (byKey.get(key).length === 1) jobs.push({
+                            key,
+                            name,
+                            attrs
                         });
-                }
-            }
+                    });
 
-            // Start immediately after DOM is ready (no lazy-loading)
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", pump, {
-                    once: true
-                });
-            } else {
-                pump();
-            }
+                    console.log('[ui] unique jobs:', jobs.length);
 
-            function parseAttrs(v) {
-                if (!v) return {};
-                if (typeof v === 'object') return v;
-                try {
-                    return JSON.parse(v);
-                } catch {
-                    return {};
+                    function applyHtml(key, html) {
+                        (byKey.get(key) || []).forEach(el => el.replaceWith(html));
+                        if (window.Theme?.lazyLoadInstance?.update) Theme.lazyLoadInstance.update();
+                    }
+
+                    let active = 0,
+                        idx = 0;
+
+                    function pump() {
+                        while (active < MAX_PARALLEL && idx < jobs.length) {
+                            const job = jobs[idx++];
+                            active++;
+                            console.log('[ui] fetch:', job.name, job.attrs);
+                            fetch(ENDPOINT, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Accept": "application/json",
+                                        "X-Requested-With": "XMLHttpRequest",
+                                        "X-CSRF-TOKEN": CSRF
+                                    },
+                                    body: JSON.stringify({
+                                        name: job.name,
+                                        attributes: job.attrs
+                                    }),
+                                    credentials: "same-origin"
+                                })
+                                .then(r => {
+                                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                                    return r.json();
+                                })
+                                .then(json => {
+                                    console.log('[ui] response ok:', json);
+                                    if (!json?.error && json?.data) {
+                                        applyHtml(job.key, json.data);
+                                        document.dispatchEvent(new CustomEvent('shortcode.loaded', {
+                                            detail: {
+                                                name: job.name,
+                                                attributes: job.attrs,
+                                                html: json.data
+                                            }
+                                        }));
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('[ui] request failed:', err);
+                                })
+                                .finally(() => {
+                                    active--;
+                                    pump();
+                                });
+                        }
+                    }
+
+                    pump();
                 }
+
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", run, {
+                        once: true
+                    });
+                } else {
+                    run();
+                }
+            } catch (e) {
+                console.error('[ui] fatal:', e);
             }
         })
         ();
