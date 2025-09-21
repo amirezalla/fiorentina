@@ -18,11 +18,12 @@ Route::group(['namespace' => 'Botble\Shortcode\Http\Controllers'], function () {
     });
 });
 
-app()->booted(function () {
+
+
     Route::middleware(RequiresJsonRequestMiddleware::class)->group(function () {
         Theme::registerRoutes(function () {
             Route::post('ajax/render-ui-blocks', [ShortcodeController::class, 'ajaxRenderUiBlock'])
                 ->name('public.ajax.render-ui-block');
         });
     });
-});
+
