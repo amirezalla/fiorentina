@@ -1190,7 +1190,7 @@ p:empty {
     }
 
     .page-logo img {
-        max-width: 65px;
+        max-width: 100%;
     }
 
     .post__horizontal .post__content-wrap,
