@@ -5131,8 +5131,21 @@ header>.container,
         font-size: 1.1rem !important;
     }
 
+    .post__inside--feature .post__title a {
+        font-size: 1.3rem !important;
+    }
+
+    .post__inside {
+        margin-bottom: 0 !important;
+    }
+
     .post-group__content {
         margin-top: 20px !important;
+    }
+
+    .post__inside--feature .post__thumbnail img {
+        width: 400px !important;
+        height: 250px !important;
     }
 
     .category-article .post__title a {
