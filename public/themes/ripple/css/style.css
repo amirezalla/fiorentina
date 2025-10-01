@@ -1439,7 +1439,7 @@ p:empty {
 }
 
 .post__vertical--single .post__content {
-    padding-bottom: 15px
+    padding-bottom: 20px
 }
 
 .post__vertical--single .post__content p {
@@ -5128,7 +5128,11 @@ header>.container,
     }
 
     .post__vertical .post__title a {
-        font-size: 1rem !important;
+        font-size: 1.1rem !important;
+    }
+
+    .post-group__content {
+        margin-top: 20px !important;
     }
 
     .category-article .post__title a {
