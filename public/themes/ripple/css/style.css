@@ -5144,7 +5144,7 @@ header>.container,
     }
 
     .post__inside--feature .post__thumbnail img {
-        width: 400px !important;
+        width: 100% !important;
         height: 250px !important;
     }
 
@@ -5193,9 +5193,6 @@ header>.container,
         font-size: 0.7em !important;
     }
 
-    .post__inside--feature span {
-        font-size: x-small !important;
-    }
 
     .post__thumbnail {
         width: 100% !important;
