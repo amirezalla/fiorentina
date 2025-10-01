@@ -79,8 +79,8 @@
                                                     'loading' => 'eager',
                                                     'fetchpriority' => 'high',
                                                     'decoding' => 'async',
-                                                    'width' => 565,
-                                                    'height' => 375,
+                                                    'width' => 400,
+                                                    'height' => 240,
                                                 ],
                                             ) }}
                                             <a class="post__overlay" href="{{ $post->url }}"
@@ -145,8 +145,8 @@
                                                     attributes: [
                                                         'loading' => 'lazy',
                                                         'decoding' => 'async',
-                                                        'width' => 375,
-                                                        'height' => 250,
+                                                        'width' => 400,
+                                                        'height' => 240,
                                                     ],
                                                 ) }}
                                                 <a class="post__overlay" href="{{ $post->url }}"
