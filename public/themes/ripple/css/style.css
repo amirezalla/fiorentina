@@ -5040,9 +5040,9 @@ header>.container,
     line-height: 1.78rem;
 }
 
-.category-article{
-    margin-top: 0  !important;
-    margin-bottom: 0 !important;
+.category-article {
+    margin-top: inherit !important;
+    margin-bottom: inherit !important;
 }
 
 
