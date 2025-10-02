@@ -5045,6 +5045,10 @@ header>.container,
     margin-bottom: inherit !important;
 }
 
+.post__inside--feature.category-article {
+    margin-bottom: 20px !important;
+}
+
 
 @media (max-width: 538px) {
 
