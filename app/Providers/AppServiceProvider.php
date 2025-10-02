@@ -220,7 +220,7 @@ class AppServiceProvider extends ServiceProvider
                     })
                     ->get();
                 $video_files = $mediaFiles->map(function ($item) {
-                    return \Illuminate\Support\Facades\Storage::disk("laviolas3")->url($item->url);
+                    return \Illuminate\Support\Facades\Storage::disk("wasabi")->url($item->url);
                 });
                 $video_file_urls = $mediaFiles->map(function ($item) {
                     return $item->pivot->url;

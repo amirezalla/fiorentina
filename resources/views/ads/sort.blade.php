@@ -39,9 +39,9 @@
                                 // helper that always returns a usable URL
                                 $resolve = function ($path) {
                                     try {
-                                        return Storage::disk('laviolas3')->url($path);
+                                        return Storage::disk('wasabi')->url($path);
                                     } catch (\Throwable $e) {
-                                        return Storage::disk('laviolas3')->url($path);
+                                        return Storage::disk('wasabi')->url($path);
                                     }
                                 };
                             @endphp

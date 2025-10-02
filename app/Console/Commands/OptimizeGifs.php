@@ -13,13 +13,13 @@ class OptimizeGifs extends Command
     public function handle()
     {
         // Get files from the "wasabi" disk (adjust the path if needed)
-        $files = Storage::disk('laviolas3')->files('ads-images');
+        $files = Storage::disk('wasabi')->files('ads-images');
         foreach ($files as $file) {
             if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'gif') {
                 $this->info("Processing: {$file}");
 
                 // Download the file from Wasabi
-                $fileContent = Storage::disk('laviolas3')->get($file);
+                $fileContent = Storage::disk('wasabi')->get($file);
                 if (!$fileContent) {
                     $this->error("Could not read file: {$file}");
                     continue;

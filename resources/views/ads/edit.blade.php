@@ -72,7 +72,7 @@
                                         <button type="button" title="Rimuovi"
                                             class="btn-close position-absolute top-0 end-0 m-2 remove-btn"></button>
 
-                                        <img src="{{ Storage::disk('laviolas3')->url($img->image_url) ?: Storage::disk('laviolas3')->url($img->image_url) }}"
+                                        <img src="{{ Storage::disk('wasabi')->url($img->image_url) ?: Storage::disk('wasabi')->url($img->image_url) }}"
                                             style="max-width:100%;height:auto" class="d-block mb-2">
 
                                         <input name="urls_existing[{{ $img->id ?? 'single' }}]" type="url"
