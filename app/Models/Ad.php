@@ -206,10 +206,41 @@ class Ad extends BaseModel
     public function getImageUrl()
     {
         if ($this->type == 1) {
+            
+        // 1) Prefer images from the relation (rotated by display_count)
+            $imgs = $this->images; // eager-loaded or lazy
+            if ($imgs && $imgs->count() > 0) {
+                $idx = $this->display_count % max(1, $imgs->count());
+                $key = $imgs[$idx]->image_url ?? null; // column holding the path/key or full URL
 
-            return Storage::disk('wasabi')->url($this->image);
-        }
-        return $this->image;
+                if ($key) {
+                    // If it's already a full URL, return as-is; otherwise build Wasabi URL
+                    if (preg_match('~^https?://~i', $key)) {
+                        return $key;
+                    }
+                    return Storage::disk('wasabi')->url($key);
+                }
+            }
+
+            // 2) Legacy fallback (if the old 'image' column still exists & is set)
+            $legacy = $this->getAttribute('image');
+            if ($legacy) {
+                if ((int) $this->type === self::TYPE_ANNUNCIO_IMMAGINE) {
+                    // wasabi key -> build URL
+                    if (!preg_match('~^https?://~i', $legacy)) {
+                        return Storage::disk('wasabi')->url($legacy);
+                    }
+                }
+                // external absolute URL or already a full path
+                return $legacy;
+            }
+
+            // 3) Nothing to show
+            return null;        
+}else{
+return $this->image;
+}
+        
 
     }
 
@@ -219,15 +250,18 @@ class Ad extends BaseModel
 
     $path = parse_url($url, PHP_URL_PATH); // "/ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
     if (stripos($path, '.gif') !== false) {
-        $fileKey = ltrim($path, '/'); // "ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
-    
-        // To remove the ".gif" extension while keeping the folder, use:
-        $dir = pathinfo($fileKey, PATHINFO_DIRNAME);      // "ads-images"
-        $filenameWithoutExt = pathinfo($fileKey, PATHINFO_FILENAME); // "TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979"
-        $fileKeyWithoutExtension = $dir . '/' . $filenameWithoutExt;
-        $op= $fileKeyWithoutExtension . '-optimized.gif';
-    
-        return Storage::disk('wasabi')->url($op);
+            $fileKey = ltrim($path, '/'); // e.g. "ads-images/abc.gif" OR a long CDN path
+    $dir = pathinfo($fileKey, PATHINFO_DIRNAME);
+    $filenameWithoutExt = pathinfo($fileKey, PATHINFO_FILENAME);
+
+    if (!$dir || !$filenameWithoutExt) {
+        return $url; // safety fallback
+    }
+
+    $optimizedKey = $dir . '/' . $filenameWithoutExt . '-optimized.gif';
+
+    // If original was absolute URL (CDN), still try Wasabi key (common in your flow).
+    return Storage::disk('wasabi')->url($optimizedKey);
     }else{
         return $url;
     }        // Remove the leading slash to get the storage key
