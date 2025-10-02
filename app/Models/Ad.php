@@ -247,24 +247,24 @@ return $this->image;
     public function getOptimizedImageUrlAttribute()
 {
     $url = $this->getImageUrl();
+return $url;
+    // $path = parse_url($url, PHP_URL_PATH); // "/ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
+    // if (stripos($path, '.gif') !== false) {
+    //         $fileKey = ltrim($path, '/'); // e.g. "ads-images/abc.gif" OR a long CDN path
+    // $dir = pathinfo($fileKey, PATHINFO_DIRNAME);
+    // $filenameWithoutExt = pathinfo($fileKey, PATHINFO_FILENAME);
 
-    $path = parse_url($url, PHP_URL_PATH); // "/ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
-    if (stripos($path, '.gif') !== false) {
-            $fileKey = ltrim($path, '/'); // e.g. "ads-images/abc.gif" OR a long CDN path
-    $dir = pathinfo($fileKey, PATHINFO_DIRNAME);
-    $filenameWithoutExt = pathinfo($fileKey, PATHINFO_FILENAME);
+    // if (!$dir || !$filenameWithoutExt) {
+    //     return $url; // safety fallback
+    // }
 
-    if (!$dir || !$filenameWithoutExt) {
-        return $url; // safety fallback
-    }
+    // $optimizedKey = $dir . '/' . $filenameWithoutExt . '-optimized.gif';
 
-    $optimizedKey = $dir . '/' . $filenameWithoutExt . '-optimized.gif';
-
-    // If original was absolute URL (CDN), still try Wasabi key (common in your flow).
-    return Storage::disk('wasabi')->url($optimizedKey);
-    }else{
-        return $url;
-    }        // Remove the leading slash to get the storage key
+    // // If original was absolute URL (CDN), still try Wasabi key (common in your flow).
+    // return Storage::disk('wasabi')->url($optimizedKey);
+    // }else{
+        
+    // }        // Remove the leading slash to get the storage key
 
 
 }
