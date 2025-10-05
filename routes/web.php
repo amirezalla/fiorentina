@@ -132,6 +132,19 @@ Route::get('/ads/click/{id}', [\App\Http\Controllers\AdController::class, 'track
     ->name('ads.click');
 
 
+    // Groups
+Route::get('admin/ad-groups',                 [AdGroupController::class, 'index'])->name('adgroups.index');
+Route::get('admin/ad-groups/create',          [AdGroupController::class, 'create'])->name('adgroups.create');
+Route::post('admin/ad-groups',                [AdGroupController::class, 'store'])->name('adgroups.store');
+Route::get('admin/ad-groups/{group}/edit',    [AdGroupController::class, 'edit'])->name('adgroups.edit');
+Route::put('admin/ad-groups/{group}',         [AdGroupController::class, 'update'])->name('adgroups.update');
+Route::delete('admin/ad-groups/{group}',      [AdGroupController::class, 'destroy'])->name('adgroups.destroy');
+
+// Group images
+Route::post('admin/ad-groups/{group}/images',           [AdGroupImageController::class, 'store'])->name('adgroups.images.store');
+Route::delete('admin/ad-groups/{group}/images/{image}', [AdGroupImageController::class, 'destroy'])->name('adgroups.images.destroy');
+Route::post('admin/ad-groups/{group}/images/sort',      [AdGroupImageController::class, 'sort'])->name('adgroups.images.sort');
+
 Route::get('/admin/players', [PlayerController::class, 'index'])->name('players.index');
 Route::get('/admin/players/create', [PlayerController::class, 'create'])->name('players.create');
 Route::post('/admin/players', [PlayerController::class, 'store'])->name('players.store');
