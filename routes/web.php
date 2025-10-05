@@ -18,6 +18,9 @@ use App\Http\Controllers\MatchSummaryController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Member\MemberActivityController;
 use App\Http\Controllers\AdLabelController;
+use App\Http\Controllers\AdGroupController;
+use App\Http\Controllers\AdGroupImageController;
+
 
 
 use Botble\Base\Facades\AdminHelper;
