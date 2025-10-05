@@ -6,6 +6,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
 
+    @php
+        $groups = \App\Models\AdGroup::orderBy('name')->get();
+    @endphp
     <form action="{{ route('ads.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <!-- Display general errors -->
