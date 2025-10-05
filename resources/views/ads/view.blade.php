@@ -25,7 +25,6 @@
                     <label for="search-status" class="form-label">Status</label>
                     <select class="form-select" name="status" id="search-status">
                         <option value="">All</option>
-                        {{-- NOTE: If your DB uses 0/1 for Draft/Published, adjust these values accordingly --}}
                         <option value="1" @if (request()->filled('status') && request('status') == 1) selected @endif>Published</option>
                         <option value="2" @if (request()->filled('status') && request('status') == 2) selected @endif>Draft</option>
                     </select>
@@ -53,11 +52,11 @@
         <table class="table table-striped table-ads-list">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    {{-- <th>ID</th>  ← removed as requested --}}
                     <th>Title</th>
                     <th>Type</th>
                     <th>Group</th>
-                    <th>Preview</th> {{-- NEW COLUMN --}}
+                    <th>Preview</th> {{-- Collage + hover panel --}}
                     <th>Weight</th>
                     <th>Status</th>
                     <th>
@@ -96,17 +95,21 @@
                         }
 
                         $imgCount = $imgs->count();
-                        // convenience fn for signed/unsigned URL
+
+                        // convenience fn for URL (supports absolute URLs too)
                         $resolveImg = function ($path) {
+                            if (preg_match('~^https?://~i', $path ?? '')) {
+                                return $path;
+                            }
                             try {
                                 return Storage::disk('wasabi')->url($path);
                             } catch (\Throwable $e) {
-                                return Storage::disk('wasabi')->url($path);
+                                return $path; // last-resort fallback
                             }
                         };
                     @endphp
                     <tr>
-                        <td class="align-middle">{{ $ad->id }}</td>
+                        {{-- <td class="align-middle">{{ $ad->id }}</td>  ← removed --}}
                         <td class="align-middle">{{ $ad->title }}</td>
                         <td class="align-middle">
                             @if ($ad->type == \App\Models\Ad::TYPE_ANNUNCIO_IMMAGINE)
@@ -120,13 +123,26 @@
                         {{-- PREVIEW COL --}}
                         <td class="align-middle">
                             @if ($imgCount)
-                                <div class="ad-collage" data-count="{{ $imgCount }}">
-                                    @foreach ($imgs as $img)
-                                        @php $src = $resolveImg($img->image_url); @endphp
-                                        <span class="ad-collage-piece">
-                                            <img src="{{ $src }}" alt="{{ $ad->title }}">
-                                        </span>
-                                    @endforeach
+                                <div class="ad-preview">
+                                    {{-- small collage --}}
+                                    <div class="ad-collage" data-count="{{ $imgCount }}">
+                                        @foreach ($imgs as $img)
+                                            @php $src = $resolveImg($img->image_url); @endphp
+                                            <span class="ad-collage-piece">
+                                                <img src="{{ $src }}" alt="{{ $ad->title }}">
+                                            </span>
+                                        @endforeach
+                                    </div>
+
+                                    {{-- hover panel with big thumbnails (stacked rows) --}}
+                                    <div class="ad-hover-panel">
+                                        @foreach ($imgs as $img)
+                                            @php $src = $resolveImg($img->image_url); @endphp
+                                            <div class="ad-hover-row">
+                                                <img src="{{ $src }}" alt="{{ $ad->title }}">
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @else
                                 <span class="text-muted small">—</span>
@@ -195,7 +211,56 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* visually cropped, not actually */
+        }
+
+        /* --- preview wrapper + hover panel ------------------------------- */
+        .ad-preview {
+            position: relative;
+            display: inline-block;
+        }
+
+        .ad-hover-panel {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 60px;
+            /* sits right of the small collage */
+            z-index: 10;
+            min-width: 260px;
+            max-width: 420px;
+            max-height: 320px;
+            overflow: auto;
+            padding: 8px;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, .15);
+            border-radius: .25rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+        }
+
+        .ad-preview:hover .ad-hover-panel {
+            display: block;
+        }
+
+        .ad-hover-row {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .ad-hover-row img {
+            display: block;
+            width: 100%;
+            height: auto;
+            /* keep aspect; each row its own image */
+            border-radius: .25rem;
+        }
+
+        /* optional: keep panel within viewport horizontally */
+        @media (max-width: 768px) {
+            .ad-hover-panel {
+                left: 0;
+                top: 60px;
+            }
         }
     </style>
 @endpush
