@@ -144,6 +144,8 @@ Route::delete('admin/ad-groups/{group}',      [AdGroupController::class, 'destro
 Route::post('admin/ad-groups/{group}/images',           [AdGroupImageController::class, 'store'])->name('adgroups.images.store');
 Route::delete('admin/ad-groups/{group}/images/{image}', [AdGroupImageController::class, 'destroy'])->name('adgroups.images.destroy');
 Route::post('admin/ad-groups/{group}/images/sort',      [AdGroupImageController::class, 'sort'])->name('adgroups.images.sort');
+Route::post('admin/ad-groups/{group}/images/links', [AdGroupImageController::class, 'updateLinks'])
+    ->name('adgroups.images.update-links');
 
 Route::get('/admin/players', [PlayerController::class, 'index'])->name('players.index');
 Route::get('/admin/players/create', [PlayerController::class, 'create'])->name('players.create');
