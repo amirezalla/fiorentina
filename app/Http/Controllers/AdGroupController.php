@@ -34,7 +34,7 @@ class AdGroupController extends Controller
             'status'    => 'required|boolean',
         ]);
 
-        AdGroup::create($data);
+    $group = AdGroup::create($data);
 
     return redirect()
         ->route('adgroups.edit', $group)
