@@ -748,6 +748,7 @@ public function getDisplayImageUrl(): ?string
 {
     // 1) Prefer images from the assigned group
     $group = $this->groupRef()->with('images')->first();
+    dd($group); 
     if ($group && $group->images->count() > 0) {
         $count = $group->images->count();
         $idx   = ((int) ($this->display_count ?? 0)) % $count;
