@@ -136,7 +136,7 @@ class AdController extends BaseController
     $ad->status                 = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
 $ad->label  = $validated['label'] ?? null;
 // ... rest unchanged
-$ad->save();
+
 
 // upsert the label into ad_labels
 if (!empty($ad->label)) {
@@ -145,7 +145,7 @@ if (!empty($ad->label)) {
 
     if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
     $request->validate(['ad_group_id' => 'required|exists:ad_groups,id']);
-
+$ad->ad_group_id = $validated['ad_group_id'];
         $ad->save();
     } elseif ($ad->type == Ad::TYPE_GOOGLE_ADS) {
         $ad->save();
