@@ -113,8 +113,11 @@ class AdController extends BaseController
         'urls'             => 'nullable|array',
         'urls.*'           => 'nullable|url|max:255',
         'placement'        => ['nullable','in:homepage,article,both'],
-            'label' => 'nullable|string|max:100',
-
+'label' => 'nullable|string|max:100',
+'ad_group_id' => [
+    'nullable',
+    'exists:ad_groups,id',
+],
     ]);
 
     $ad = new Ad();
@@ -141,27 +144,8 @@ if (!empty($ad->label)) {
 }
 
     if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
-        $files   = $request->file('images', []);
-        $targets = $request->input('urls', []);
-        if (count($files) !== count($targets)) {
-            return back()->withInput()->withErrors(['urls' => 'Devi fornire un URL per ogni immagine caricata.']);
-        }
-        $storedUrls = [];
-        foreach ($files as $i => $file) {
-            if (!$file->isValid() || strtolower($file->getClientOriginalExtension()) === 'webp') {
-                return back()->withInput()->withErrors(['images' => 'File non valido o formato non consentito.']);
-            }
-            $name = Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
-            $img  = ImageManager::gd()->read($file);
-            if ($ad->width && $ad->height) $img = $img->resize($ad->width, $ad->height);
-            $tmp  = sys_get_temp_dir() . "/$name";
-            $img->encode()->save($tmp);
-            $up   = $this->rvMedia->uploadFromPath($tmp, 0, 'ads-images/');
-            unlink($tmp);
-            $ad->images()->create(['image_url' => $up['data']->url]);
-            $storedUrls[] = $targets[$i] ?? '';
-        }
-        $ad->url = json_encode($storedUrls);
+    $request->validate(['ad_group_id' => 'required|exists:ad_groups,id']);
+
         $ad->save();
     } elseif ($ad->type == Ad::TYPE_GOOGLE_ADS) {
         $ad->save();

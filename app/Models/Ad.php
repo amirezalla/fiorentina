@@ -203,71 +203,65 @@ class Ad extends BaseModel
     /**
      * @return string
      */
-    public function getImageUrl()
-    {
-        if ($this->type == 1) {
-            
-        // 1) Prefer images from the relation (rotated by display_count)
-            $imgs = $this->images; // eager-loaded or lazy
-            if ($imgs && $imgs->count() > 0) {
-                $idx = $this->display_count % max(1, $imgs->count());
-                $key = $imgs[$idx]->image_url ?? null; // column holding the path/key or full URL
+    // in App\Models\Ad
+public function groupRef() { return $this->belongsTo(\App\Models\AdGroup::class, 'ad_group_id'); }
 
-                if ($key) {
-                    // If it's already a full URL, return as-is; otherwise build Wasabi URL
-                    if (preg_match('~^https?://~i', $key)) {
-                        return $key;
-                    }
-                    return Storage::disk('wasabi')->url($key);
-                }
-            }
-
-            // 2) Legacy fallback (if the old 'image' column still exists & is set)
-            $legacy = $this->getAttribute('image');
-            if ($legacy) {
-                if ((int) $this->type === self::TYPE_ANNUNCIO_IMMAGINE) {
-                    // wasabi key -> build URL
-                    if (!preg_match('~^https?://~i', $legacy)) {
-                        return Storage::disk('wasabi')->url($legacy);
-                    }
-                }
-                // external absolute URL or already a full path
-                return $legacy;
-            }
-
-            // 3) Nothing to show
-            return null;        
-}else{
-return $this->image;
-}
-        
-
-    }
-
-    public function getOptimizedImageUrlAttribute()
+/** Use group images for display */
+public function getImageUrl()
 {
-    $url = $this->getImageUrl();
-return $url;
-    // $path = parse_url($url, PHP_URL_PATH); // "/ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
-    // if (stripos($path, '.gif') !== false) {
-    //         $fileKey = ltrim($path, '/'); // e.g. "ads-images/abc.gif" OR a long CDN path
-    // $dir = pathinfo($fileKey, PATHINFO_DIRNAME);
-    // $filenameWithoutExt = pathinfo($fileKey, PATHINFO_FILENAME);
-
-    // if (!$dir || !$filenameWithoutExt) {
-    //     return $url; // safety fallback
-    // }
-
-    // $optimizedKey = $dir . '/' . $filenameWithoutExt . '-optimized.gif';
-
-    // // If original was absolute URL (CDN), still try Wasabi key (common in your flow).
-    // return Storage::disk('wasabi')->url($optimizedKey);
-    // }else{
-        
-    // }        // Remove the leading slash to get the storage key
-
-
+    if ((int)$this->type === self::TYPE_ANNUNCIO_IMMAGINE) {
+        $g = $this->groupRef()->with('images')->first();
+        if ($g && $g->images->count()) {
+            $idx = $this->display_count % max(1, $g->images->count());
+            $key = $g->images[$idx]->image_url ?? null;
+            if ($key) {
+                return preg_match('~^https?://~i', $key) ? $key : \Storage::disk('wasabi')->url($key);
+            }
+        }
+        // legacy fallback (single image on ad)
+        if ($this->image) {
+            return preg_match('~^https?://~i', $this->image)
+                ? $this->image
+                : \Storage::disk('wasabi')->url($this->image);
+        }
+        return null;
+    }
+    return $this->image; // for Google/AMP ads, it's code or external
 }
+
+public function getOptimizedImageUrlAttribute()
+{
+    return $this->getImageUrl(); // keep simple; your GIF -optimized logic can be added back
+}
+
+        
+
+
+
+//     public function getOptimizedImageUrlAttribute()
+// {
+//     $url = $this->getImageUrl();
+// return $url;
+//     // $path = parse_url($url, PHP_URL_PATH); // "/ads-images/TdxJ32Y4H4rSpfRdthpL53GVvN7EqhW11732631979.gif"
+//     // if (stripos($path, '.gif') !== false) {
+//     //         $fileKey = ltrim($path, '/'); // e.g. "ads-images/abc.gif" OR a long CDN path
+//     // $dir = pathinfo($fileKey, PATHINFO_DIRNAME);
+//     // $filenameWithoutExt = pathinfo($fileKey, PATHINFO_FILENAME);
+
+//     // if (!$dir || !$filenameWithoutExt) {
+//     //     return $url; // safety fallback
+//     // }
+
+//     // $optimizedKey = $dir . '/' . $filenameWithoutExt . '-optimized.gif';
+
+//     // // If original was absolute URL (CDN), still try Wasabi key (common in your flow).
+//     // return Storage::disk('wasabi')->url($optimizedKey);
+//     // }else{
+        
+//     // }        // Remove the leading slash to get the storage key
+
+
+// }
 
 
 

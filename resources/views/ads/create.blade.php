@@ -65,10 +65,18 @@
 
                             <!-- Image Upload Section -->
                             <div class="row mt-3 mb-3" id="imageUploadSection">
-                                <input type="file" class="form-control mb-2" id="imageUpload" name="images[]" multiple
-                                    accept="image/*">
-
-                                <div id="previewWrapper" class="d-flex flex-column gap-3"></div>
+                                <div id="imageGroupSection">
+                                    <label class="form-label">Image Group</label>
+                                    <select class="form-select" name="ad_group_id" id="ad_group_id">
+                                        <option value="">— Select image group —</option>
+                                        @foreach ($groups as $g)
+                                            <option value="{{ $g->id }}" @selected(old('ad_group_id', $ad->ad_group_id ?? null) == $g->id)>
+                                                {{ $g->name }} ({{ $g->width }}×{{ $g->height }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">Images are managed in “Ad Groups”.</small>
+                                </div>
                             </div>
 
                             <!-- Image Name Section for Google Ad Manager -->
