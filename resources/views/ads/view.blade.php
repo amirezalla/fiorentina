@@ -78,22 +78,9 @@
 
                 @foreach ($ads as $ad)
                     @php
-                        // Gather image paths: relation first, legacy fallback
-                        $imgs = $ad->images ?? collect();
-                        if (
-                            $imgs instanceof \Illuminate\Database\Eloquent\Collection &&
-                            $imgs->isEmpty() &&
-                            $ad->image
-                        ) {
-                            $imgs = collect([(object) ['image_url' => $ad->image]]);
-                        } elseif (!($imgs instanceof \Illuminate\Support\Collection)) {
-                            // ensure collection
-                            $imgs = collect($imgs ?: []);
-                            if ($imgs->isEmpty() && $ad->image) {
-                                $imgs = collect([(object) ['image_url' => $ad->image]]);
-                            }
-                        }
-
+                        // Use images defined on the assigned AdGroup
+                        $group = $ad->groupRef ?? null; // relation: Ad belongsTo AdGroup
+                        $imgs = $group && $group->images ? $group->images : collect();
                         $imgCount = $imgs->count();
 
                         // convenience fn for URL (supports absolute URLs too)
@@ -102,11 +89,17 @@
                                 return $path;
                             }
                             try {
-                                return Storage::disk('wasabi')->url($path);
+                                return Storage::disk('wasabi')->url(ltrim($path ?? '', '/'));
                             } catch (\Throwable $e) {
                                 return $path; // last-resort fallback
                             }
                         };
+
+                        // Legacy fallback if needed (optional; remove if you don't want it)
+if ($imgCount === 0 && !empty($ad->image)) {
+    $imgs = collect([(object) ['image_url' => $ad->image]]);
+                            $imgCount = 1;
+                        }
                     @endphp
                     <tr>
                         {{-- <td class="align-middle">{{ $ad->id }}</td>  ← removed --}}
