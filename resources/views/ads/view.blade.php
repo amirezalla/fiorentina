@@ -216,7 +216,7 @@ if ($imgCount === 0 && !empty($ad->image)) {
             display: none;
             position: absolute;
             top: 0;
-            left: 60px;
+            left: 50px;
             /* sits right of the small collage */
             z-index: 10;
             min-width: 260px;
