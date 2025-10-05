@@ -746,19 +746,34 @@ public function images()
 
 public function getDisplayImageUrl(): ?string
 {
-    $images = $this->images;
-    $count = $images->count();
-    
-    if ($count > 0) {
-        // Calculate index using the display_count field.
-        // Ensure display_count is incremented externally (see next section).
-        $index = $this->display_count % $count;
-        return Storage::disk('wasabi')->url($images[$index]->image_url);
+    // 1) Prefer images from the assigned group
+    $group = $this->groupRef()->with('images')->first();
+    if ($group && $group->images->count() > 0) {
+        $count = $group->images->count();
+        $idx   = ((int) ($this->display_count ?? 0)) % $count;
+
+        $key = $group->images[$idx]->image_url ?? null;
+
+        if (is_string($key) && $key !== '') {
+            // Absolute URL? return as-is. Otherwise build Wasabi URL.
+            return preg_match('~^https?://~i', $key)
+                ? $key
+                : \Storage::disk('wasabi')->url(ltrim($key, '/'));
+        }
     }
 
-    // Fallback: return the single stored image (if present).
-    return Storage::disk("wasabi")->url($this->image);
+    // 2) Legacy fallback: single image stored on ads.image
+    $legacy = $this->getAttribute('image');
+    if (is_string($legacy) && $legacy !== '') {
+        return preg_match('~^https?://~i', $legacy)
+            ? $legacy
+            : \Storage::disk('wasabi')->url(ltrim($legacy, '/'));
+    }
+
+    // 3) Nothing to show
+    return null;
 }
+
 
 // Optionally, to compute effective weight per image:
 public function getEffectiveWeightPerImage(): ?float
