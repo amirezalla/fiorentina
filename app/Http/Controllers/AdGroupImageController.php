@@ -16,38 +16,41 @@ class AdGroupImageController extends Controller
     public function store(Request $request, AdGroup $group)
     {
         $request->validate([
-            'images'   => 'required|array|min:1',
-            'images.*' => 'file|mimes:jpeg,png,jpg,gif,bmp|max:4096',
-        ]);
+        'images'   => 'required|array|min:1',
+        'images.*' => 'file|mimes:jpeg,png,jpg,gif,bmp|max:4096',
+        'urls'     => 'nullable|array',
+        'urls.*'   => 'nullable|url|max:1024',
+    ]);
 
-        $width  = $group->width;
-        $height = $group->height;
+    $width  = $group->width;
+    $height = $group->height;
 
-        foreach ($request->file('images', []) as $file) {
-            if (!$file->isValid()) continue;
+    $urls = $request->input('urls', []); // same order as files
 
-            $name = Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
+    foreach ($request->file('images', []) as $i => $file) {
+        if (!$file->isValid()) continue;
 
-            // Resize (optional: only if width/height set)
-            $img = ImageManager::gd()->read($file);
-            if ($width && $height) {
-                $img = $img->resize($width, $height);
-            }
+        $name = \Illuminate\Support\Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
 
-            $tmp = sys_get_temp_dir() . "/$name";
-            $img->encode()->save($tmp);
+        $img = \Intervention\Image\ImageManager::gd()->read($file);
+        if ($width && $height) $img = $img->resize($width, $height);
 
-            // Upload via Botble Media to Wasabi (same as your Ads flow)
-            $up = $this->rvMedia->uploadFromPath($tmp, 0, 'ad-group-images/');
-            @unlink($tmp);
+        $tmp = sys_get_temp_dir() . "/$name";
+        $img->encode()->save($tmp);
 
-            $url = $up['data']->url ?? null;
-            if ($url) {
-                $group->images()->create(['image_url' => $url]);
-            }
+        $up = $this->rvMedia->uploadFromPath($tmp, 0, 'ad-group-images/');
+        @unlink($tmp);
+
+        $url = $up['data']->url ?? null;
+        if ($url) {
+            $group->images()->create([
+                'image_url'  => $url,
+                'target_url' => $urls[$i] ?? null,   // ← pair file i with url i
+            ]);
         }
+    }
 
-        return back()->with('success','Images uploaded.');
+    return back()->with('success','Images uploaded.');
     }
 
     public function destroy(AdGroup $group, AdGroupImage $image)
@@ -76,4 +79,27 @@ class AdGroupImageController extends Controller
 
         return response()->json(['ok' => true]);
     }
+
+    public function updateLinks(Request $request, AdGroup $group)
+{
+    $data = $request->validate([
+        'image_urls'   => 'required|array',
+        'image_urls.*' => 'nullable|url|max:1024',
+    ]);
+
+    $pairs = $data['image_urls']; // [image_id => url]
+
+    // Only update images in this group
+    $images = AdGroupImage::where('group_id', $group->id)
+                ->whereIn('id', array_keys($pairs))
+                ->get();
+
+    foreach ($images as $img) {
+        $img->target_url = $pairs[$img->id] ?: null;
+        $img->save();
+    }
+
+    return back()->with('success', 'Image links updated.');
+}
+
 }
