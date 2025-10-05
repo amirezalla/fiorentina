@@ -204,7 +204,7 @@ class Ad extends BaseModel
      * @return string
      */
     // in App\Models\Ad
-public function groupRef() { return $this->belongsTo(\App\Models\AdGroup::class, 'ad_group_id'); }
+public function groupRef() { return $this->belongsTo(\App\Models\AdGroup::class, 'group'); }
 
 /** Use group images for display */
 public function getImageUrl()
