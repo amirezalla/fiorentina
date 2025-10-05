@@ -80,6 +80,20 @@
                             </div>
 
                             <div class="mt-3 mb-3">
+                                <div class="post-body-content">
+
+                                    <label for="ad-label" class="form-label">Label (facoltativo)</label>
+                                    <input type="text" class="form-control" name="label" id="ad-label"
+                                        value="{{ old('label') }}" autocomplete="off"
+                                        placeholder="es. sponsor1, home-top, food-brand">
+                                    <div id="label-suggestions" class="list-group mt-1"
+                                        style="display:none; position:absolute; z-index:9999; width: 50%"></div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="mt-3 mb-3">
                                 <label for="vis_cond_type" class="form-label">Condizione per Visitatori</label>
                                 <select id="vis_cond_type" name="vis_cond_type" class="form-select">
                                     <option value="">— Nessuna —</option>
@@ -242,6 +256,73 @@
 
 @push('footer')
     <script>
+        (function() {
+            const input = document.getElementById('ad-label');
+            const box = document.getElementById('label-suggestions');
+            if (!input || !box) return;
+
+            let controller = null;
+            let last = '';
+
+            function hideBox() {
+                box.style.display = 'none';
+                box.innerHTML = '';
+            }
+
+            function showBox() {
+                box.style.display = 'block';
+            }
+
+            input.addEventListener('input', async (e) => {
+                const q = e.target.value.trim();
+                if (q === last) return;
+                last = q;
+
+                if (controller) controller.abort();
+                controller = new AbortController();
+
+                try {
+                    const url = new URL('{{ route('adlabels.suggest') }}', window.location.origin);
+                    if (q) url.searchParams.set('q', q);
+                    const resp = await fetch(url.toString(), {
+                        signal: controller.signal
+                    });
+                    const data = await resp.json();
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        hideBox();
+                        return;
+                    }
+
+                    box.innerHTML = '';
+                    data.forEach(name => {
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.className = 'list-group-item list-group-item-action';
+                        a.textContent = name;
+                        a.onclick = (ev) => {
+                            ev.preventDefault();
+                            input.value = name;
+                            hideBox();
+                        };
+                        box.appendChild(a);
+                    });
+                    // Position box under input
+                    const rect = input.getBoundingClientRect();
+                    box.style.left = rect.left + 'px';
+                    box.style.top = (rect.bottom + window.scrollY) + 'px';
+                    box.style.width = rect.width + 'px';
+
+                    showBox();
+                } catch (err) {
+                    hideBox();
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (e.target !== input && !box.contains(e.target)) hideBox();
+            });
+        })();
         // Switch between ad types to hide/show image upload or AMP code section.
         document.getElementById('advanced-ad-type').addEventListener('change', function(e) {
             const selectedAdType = e.target.value;

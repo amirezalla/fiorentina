@@ -17,6 +17,7 @@ use App\Http\Controllers\MatchStaticsController;
 use App\Http\Controllers\MatchSummaryController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Member\MemberActivityController;
+use App\Http\Controllers\AdLabelController;
 
 
 use Botble\Base\Facades\AdminHelper;
@@ -104,6 +105,9 @@ Route::get('/ads/sort', [AdController::class, 'sortAds'])
     ->name('ads.sort');
 Route::get('/ads/sort', [AdController::class, 'sortAds'])->name('ads.sort');
 Route::post('/ads/sort/update', [AdController::class, 'updateSortAds'])->name('ads.sort.update');
+
+Route::get('admin/ad-labels/suggest', [AdLabelController::class, 'suggest'])
+    ->name('adlabels.suggest');
 
 
 

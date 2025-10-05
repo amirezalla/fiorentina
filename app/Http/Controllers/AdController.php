@@ -113,6 +113,8 @@ class AdController extends BaseController
         'urls'             => 'nullable|array',
         'urls.*'           => 'nullable|url|max:255',
         'placement'        => ['nullable','in:homepage,article,both'],
+            'label' => 'nullable|string|max:100',
+
     ]);
 
     $ad = new Ad();
@@ -127,8 +129,16 @@ class AdController extends BaseController
     $ad->placement              = $request->input('placement');
     $ad->start_date             = $validated['start_date']  ?? date('Y-m-d');
     $ad->expiry_date            = $validated['expiry_date'] ?? null;
+    
     $ad->status                 = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
-    $ad->save();
+$ad->label  = $validated['label'] ?? null;
+// ... rest unchanged
+$ad->save();
+
+// upsert the label into ad_labels
+if (!empty($ad->label)) {
+    \App\Models\AdLabel::firstOrCreate(['name' => $ad->label]);
+}
 
     if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
         $files   = $request->file('images', []);
@@ -235,6 +245,8 @@ public function update(Request $request, Ad $ad)
         'start_date'      => 'nullable|date',
         'expiry_date'     => 'nullable|date',
         'placement'       => ['nullable','in:homepage,article,both'],
+            'label' => 'nullable|string|max:100',
+
     ];
 
     if ($isImageAd) {
@@ -260,8 +272,13 @@ public function update(Request $request, Ad $ad)
         'status'                 => $request->boolean('status') ? 1 : 0,
         'visualization_condition'=> $this->packVisualizationCondition($request),
         'placement'              => $request->input('placement'),
+            'label' => $validated['label'] ?? null,
+
     ])->save();
 
+    if (!empty($ad->label)) {
+    \App\Models\AdLabel::firstOrCreate(['name' => $ad->label]);
+}
     if ($isImageAd) {
         $deleteIds = array_filter(explode(',', $request->input('deleted_images', '')));
         if ($deleteIds) $ad->images()->whereIn('id', $deleteIds)->delete();
@@ -344,32 +361,121 @@ public function update(Request $request, Ad $ad)
     return view('ads.sort', compact('ads', 'groupId', 'groupName'));
 }
 
+// In AdController@updateSortAds
+
 public function updateSortAds(Request $request)
 {
-    // Validate the incoming data
     $validated = $request->validate([
-        'group'   => 'required|numeric',
-        'weights' => 'required|array',
+        'group' => 'required|numeric',
+        'mode'  => 'nullable|in:ads,labels',
+        // ads-mode payload:
+        'weights' => 'sometimes|array',
+        // labels-mode payload:
+        'label_weights' => 'sometimes|array',
     ]);
 
-    $groupId = $validated['group'];
-    $weights = $validated['weights'];
+    $groupId = (int) $validated['group'];
+    $mode    = $validated['mode'] ?? 'ads';
 
     try {
-        // Loop through each ad id and update the ad weight accordingly
-        foreach ($weights as $adId => $newWeight) {
-            $ad = Ad::find($adId);
-            if ($ad) {
-                $ad->weight = $newWeight;
-                $ad->save();
+        if ($mode === 'labels') {
+            // New: Adjust sums per label, scale contained ads
+            $labelTargets = $validated['label_weights'] ?? [];
+
+            // Fetch all ads in group once
+            $ads = \App\Models\Ad::where('group', $groupId)->get()
+                   ->groupBy(fn($ad) => $ad->label ?: '(no label)');
+
+            foreach ($labelTargets as $label => $targetSum) {
+                $target = max(0, (int) $targetSum); // allow 0 to mute a label entirely
+                $bucket = $ads->get($label, collect());
+
+                if ($bucket->isEmpty()) continue;
+
+                $currentSum = (int) $bucket->sum('weight');
+                if ($currentSum <= 0) {
+                    // If current is zero, distribute evenly with weight=1 if target > 0
+                    if ($target > 0) {
+                        $per = max(1, (int) floor($target / max(1, $bucket->count())));
+                        foreach ($bucket as $ad) {
+                            $ad->weight = $per;
+                            $ad->save();
+                        }
+                        // If there is remainder, add +1 to first N ads
+                        $remainder = $target - ($per * $bucket->count());
+                        foreach ($bucket->take($remainder) as $ad) {
+                            $ad->weight += 1;
+                            $ad->save();
+                        }
+                    } else {
+                        // target == 0 → set all to 0
+                        foreach ($bucket as $ad) {
+                            $ad->weight = 0;
+                            $ad->save();
+                        }
+                    }
+                    continue;
+                }
+
+                // Scale proportionally
+                $factor = $target / $currentSum;
+
+                // First pass: compute new weights (rounded), ensure non-negative
+                $newWeights = [];
+                $sumRounded = 0;
+                foreach ($bucket as $ad) {
+                    $nw = (int) round($ad->weight * $factor);
+                    if ($target > 0) $nw = max(1, $nw); // keep at least 1 if target>0
+                    else $nw = 0;                       // if target 0, everyone 0
+                    $newWeights[$ad->id] = $nw;
+                    $sumRounded += $nw;
+                }
+
+                // Adjust rounding drift to hit exact target sum
+                $diff = $target - $sumRounded;
+                if ($diff !== 0 && $bucket->count() > 0) {
+                    // Sort ads descending by current weight to spread remainders sensibly
+                    $ordered = $bucket->sortByDesc('weight')->values();
+                    $i = 0;
+                    while ($diff !== 0 && $i < $ordered->count()) {
+                        $id = $ordered[$i]->id;
+                        if ($diff > 0) {
+                            $newWeights[$id] += 1; $diff -= 1;
+                        } else { // diff < 0
+                            if ($newWeights[$id] > 0) { $newWeights[$id] -= 1; $diff += 1; }
+                        }
+                        $i = ($i + 1) % $ordered->count();
+                    }
+                }
+
+                // Persist
+                foreach ($bucket as $ad) {
+                    $ad->weight = $newWeights[$ad->id];
+                    $ad->save();
+                }
             }
+
+            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'labels'])
+                             ->with('success', 'Label weights updated successfully.');
+
+        } else {
+            // Existing per-ad sliders
+            foreach (($validated['weights'] ?? []) as $adId => $newWeight) {
+                $ad = \App\Models\Ad::where('group', $groupId)->find($adId);
+                if ($ad) {
+                    $ad->weight = (int) $newWeight;
+                    $ad->save();
+                }
+            }
+            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'ads'])
+                             ->with('success', 'Ad weights updated successfully.');
         }
-        return redirect()->route('ads.sort', ['group' => $groupId])
-                         ->with('success', 'Ad weights updated successfully.');
-    } catch (\Exception $e) {
-        \Log::error('Error updating ad weights: ' . $e->getMessage());
-        return redirect()->route('ads.sort', ['group' => $groupId])
-                         ->with('error', 'Failed to update ad weights. Please try again.');
+
+    } catch (\Throwable $e) {
+        \Log::error('Error updating weights: ' . $e->getMessage());
+        return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => $mode])
+                         ->with('error', 'Failed to update weights. Please try again.');
     }
 }
+
 }
