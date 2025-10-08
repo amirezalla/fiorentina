@@ -194,10 +194,10 @@
                         {{-- Status pill (Published / Draft / Expired) --}}
                         <td>
                             @if ($isExpired)
-                                <span class="badge bg-danger">Expired</span>
+                                <span class="badge bg-danger text-white">Expired</span>
                             @else
                                 @if ($ad->status)
-                                    <span class="badge bg-success">Published</span>
+                                    <span class="badge bg-success text-white">Published</span>
                                 @else
                                     <span class="badge bg-warning text-dark">Draft</span>
                                 @endif
