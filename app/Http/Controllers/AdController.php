@@ -3,503 +3,403 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ad;
+use App\Models\AdGroup;
+use App\Models\AdGroupImage;
+use App\Models\AdLabel;
 use App\Models\AdStatistic;
-
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Botble\Base\Supports\Breadcrumb;
 use Botble\Base\Http\Controllers\BaseController;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Intervention\Image\ImageManager;
-use Botble\Media\RvMedia;
-use Illuminate\Support\Facades\DB;
-
 
 class AdController extends BaseController
 {
-    public function __construct(protected RvMedia $rvMedia)
-    {
-    }
-
     protected function breadcrumb(): Breadcrumb
     {
-        return parent::breadcrumb()->add("Advertisements");
+        return parent::breadcrumb()->add('Advertisements');
     }
+
+    /* -----------------------------------------------------------
+     | Index
+     * ----------------------------------------------------------*/
     public function index(Request $request)
-{
-    $this->pageTitle('Ads List');
+    {
+        $this->pageTitle('Ads List');
 
-    /* -----------------------------------------------------------------
-     | 1.  Resolve the selected time‑frame into a date window
-     * ----------------------------------------------------------------*/
-    $range = match ($request->input('tf')) {
-        'today' => [now()->toDateString(), now()->toDateString()],
-        '7'     => [now()->subDays(6)->toDateString(),  now()->toDateString()],
-        '30'    => [now()->subDays(29)->toDateString(), now()->toDateString()],
-        '90'    => [now()->subDays(89)->toDateString(), now()->toDateString()],
-        default => null,   // “all time”
-    };
+        $range = match ($request->input('tf')) {
+            'today' => [now()->toDateString(), now()->toDateString()],
+            '7'     => [now()->subDays(6)->toDateString(),  now()->toDateString()],
+            '30'    => [now()->subDays(29)->toDateString(), now()->toDateString()],
+            '90'    => [now()->subDays(89)->toDateString(), now()->toDateString()],
+            default => null,
+        };
 
-    /* -----------------------------------------------------------------
-     | 2.  Build the query
-     * ----------------------------------------------------------------*/
-    $ads = Ad::query()
+        $ads = Ad::query()
+            ->when(
+                $range,
+                fn ($q) => $q->withSum(['adStatistics as total_impressions' => fn ($s) => $s->whereBetween('date', $range)], 'impressions')
+                             ->withSum(['adStatistics as total_clicks'       => fn ($s) => $s->whereBetween('date', $range)], 'clicks'),
+                fn ($q) => $q->withSum('adStatistics as total_impressions', 'impressions')
+                             ->withSum('adStatistics as total_clicks',       'clicks')
+            )
+            ->where(function ($q) use ($request) {
+                $q->when(
+                    $request->filled('group') && is_numeric($request->group),
+                    fn ($q) => $q->where('group', (int) $request->group)
+                )->when(
+                    $request->filled('q'),
+                    fn ($q) => $q->where('title', 'LIKE', '%' . $request->q . '%')
+                )->when(
+                    $request->filled('status') && in_array((int) $request->status, [1, 2], true),
+                    fn ($q) => $q->where('status', (int) $request->status === 1 ? 1 : 0)
+                );
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
-        /* ---- 2‑a  add the sums for impressions & clicks ------------ */
-        ->when($range,
-            /* windowed sums (selected tf) */
-            fn($q) => $q->withSum(
-                        ['adStatistics as total_impressions' => fn($s)
-                            => $s->whereBetween('date', $range)], 'impressions')
-                        ->withSum(
-                        ['adStatistics as total_clicks' => fn($s)
-                            => $s->whereBetween('date', $range)], 'clicks'),
-            /* fallback: all‑time sums */
-            fn($q) => $q->withSum('adStatistics as total_impressions', 'impressions')
-                        ->withSum('adStatistics as total_clicks',       'clicks')
-        )
+        return view('ads.view', [
+            'ads' => $ads,
+            'tf'  => $request->input('tf', 'all'),
+        ]);
+    }
 
-        /* ---- 2‑b  existing filters -------------------------------- */
-        ->where(function ($q) use ($request) {
-            $q->when(
-                $request->filled('group') && in_array($request->group, array_keys(Ad::GROUPS)),
-                fn($q) => $q->where('group', $request->group)
-            )->when(
-                $request->filled('q'),
-                fn($q) => $q->where('title', 'LIKE', '%' . $request->q . '%')
-            )->when(
-                $request->filled('status') && in_array((int) $request->status, [1, 2]),
-                fn($q)   => $q->where('status', $request->status == 1 ? 1 : 0)
-            );
-        })
-
-        ->latest()
-        ->paginate(20)
-        ->withQueryString();   // keep the tf key during pagination
-
-    /* -----------------------------------------------------------------
-     | 3.  Render view – also pass the tf key so the <select> keeps state
-     * ----------------------------------------------------------------*/
-    return view('ads.view', [
-        'ads' => $ads,
-        'tf'  => $request->input('tf', 'all'),
-    ]);
-}
-
-
+    /* -----------------------------------------------------------
+     | Create
+     * ----------------------------------------------------------*/
     public function create()
     {
-        $this->pageTitle("Create Ad");
+        $this->pageTitle('Create Ad');
         return view('ads.create');
     }
 
+    /* -----------------------------------------------------------
+     | Store
+     * ----------------------------------------------------------*/
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'post_title'       => 'required|string|max:255',
-        'width'            => 'nullable|numeric|min:0',
-        'height'           => 'nullable|numeric|min:0',
-        'weight'           => 'required|numeric|min:1',
-        'type'             => ['required', Rule::in(array_keys(Ad::TYPES))],
-        'group'            => ['required', Rule::in(array_keys(Ad::GROUPS))],
-        'start_date'       => 'nullable|date',
-        'expiry_date'      => 'nullable|date',
-        'images'           => 'nullable|array',
-        'images.*'         => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
-        'urls'             => 'nullable|array',
-        'urls.*'           => 'nullable|url|max:255',
-        'placement'        => ['nullable','in:homepage,article,both'],
-'label' => 'nullable|string|max:100',
-'ad_group_id' => [
-    'nullable',
-    'exists:ad_groups,id',
-],
-    ]);
+    {
+        // common rules
+        $rules = [
+            'post_title'  => 'required|string|max:255',
+            'weight'      => 'required|integer|min:0|max:10',
+            'type'        => ['required', Rule::in(array_keys(Ad::TYPES))],
+            'group'       => ['nullable', 'integer', 'exists:ad_groups,id'],
+            'width'       => 'nullable|integer|min:0',
+            'height'      => 'nullable|integer|min:0',
+            'start_date'  => 'nullable|date',
+            'expiry_date' => 'nullable|date|after_or_equal:start_date',
+            'placement'   => ['nullable', 'in:homepage,article,both'],
+            'label'       => 'nullable|string|max:100',
+        ];
 
-    $ad = new Ad();
-    $ad->title                  = $validated['post_title'];
-    $ad->group                  = $validated['group'];
-    $ad->weight                 = $validated['weight'];
-    $ad->type                   = $validated['type'];
-    $ad->width                  = $validated['width']  ?? null;
-    $ad->height                 = $validated['height'] ?? null;
-    $ad->amp                    = $request->amp;
-    $ad->visualization_condition= $this->packVisualizationCondition($request);
-    $ad->placement              = $request->input('placement');
-    $ad->start_date             = $validated['start_date']  ?? date('Y-m-d');
-    $ad->expiry_date            = $validated['expiry_date'] ?? null;
-    
-    $ad->status                 = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
-$ad->label  = $validated['label'] ?? null;
-// ... rest unchanged
-
-
-// upsert the label into ad_labels
-if (!empty($ad->label)) {
-    \App\Models\AdLabel::firstOrCreate(['name' => $ad->label]);
-}
-
-    if ($ad->type == Ad::TYPE_ANNUNCIO_IMMAGINE) {
-    $request->validate(['ad_group_id' => 'required|exists:ad_groups,id']);
-$ad->ad_group_id = $validated['ad_group_id'];
-        $ad->save();
-    } elseif ($ad->type == Ad::TYPE_GOOGLE_ADS) {
-        $ad->save();
-    }
-
-    if ($ad->start_date !== date('Y-m-d')) {
-        $delay = \Carbon\Carbon::parse($ad->start_date)->diffInSeconds(now());
-        if ($delay > 0) dispatch(new \App\Jobs\ActivateAdJob($ad))->delay($delay);
-    }
-
-    return redirect()->route('ads.index')->with('success', 'Advertisement created successfully!');
-}
-
-
-    private function packVisualizationCondition(Request $r): ?string
-{
-    switch ($r->input('vis_cond_type')) {
-        case 'page_impressions':
-            return json_encode([
-                'type' => 'page',
-                'max'  => (int) $r->input('vis_page_value'),
-            ]);
-
-        case 'ad_impressions':
-            return json_encode([
-                'type'    => 'ad',
-                'max'     => (int) $r->input('vis_ad_max'),
-                'seconds' => (int) $r->input('vis_ad_seconds'),
-            ]);
-
-        default:
-            return null;
-    }
-} 
-
-public function groupsIndex()
-{
-    // 1) Retrieve all groups from the Ad model
-    $allGroups = Ad::GROUPS;  // an associative array: [groupId => "Group Name", ...]
-
-    // 2) Retrieve counts of ads per group in a single query, grouped by 'group' column
-    $counts = Ad::select('group', DB::raw('COUNT(*) as total'))
-        ->groupBy('group')
-        ->pluck('total', 'group')
-        ->toArray();
-    // $counts will look like [3 => 5, 4 => 2, ...] meaning group 3 has 5 ads, group 4 has 2 ads, etc.
-
-    // 3) Separate groups into desktop or mobile
-    //    We'll define "mobile" if the name has "MOBILE" in it. Otherwise it’s desktop.
-    $desktopGroups = [];
-    $mobileGroups = [];
-
-    foreach ($allGroups as $groupId => $groupName) {
-        if (Str::contains(Str::upper($groupName), 'MOBILE')) {
-            $mobileGroups[$groupId] = $groupName;
+        // conditional rules
+        if ((int) $request->input('type') === Ad::TYPE_ANNUNCIO_IMMAGINE) {
+            // With “groups” approach, images are not uploaded per ad.
+            $rules['group'] = ['required', 'integer', 'exists:ad_groups,id'];
         } else {
-            $desktopGroups[$groupId] = $groupName;
+            $rules['amp'] = 'required|string';
         }
+
+        $validated = $request->validate($rules);
+
+        $ad = new Ad();
+        $ad->title       = $validated['post_title'];
+        $ad->type        = (int) $validated['type'];
+        $ad->group       = $validated['group'] ?? null;  // nullable FK to ad_groups
+        $ad->weight      = (int) $validated['weight'];
+        $ad->width       = $validated['width']  ?? null;
+        $ad->height      = $validated['height'] ?? null;
+        $ad->amp         = $request->input('amp');       // only for Google ads
+        $ad->placement   = $validated['placement'] ?? null;
+        $ad->label       = $validated['label'] ? trim($validated['label']) : null;
+
+        $ad->visualization_condition = $this->packVisualizationCondition($request);
+        $ad->start_date   = $validated['start_date']  ?? date('Y-m-d');
+        $ad->expiry_date  = $validated['expiry_date'] ?? null;
+        $ad->status       = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
+
+        $ad->save();
+
+        if (!empty($ad->label)) {
+            AdLabel::firstOrCreate([
+                'name' => $ad->label,
+            ], [
+                'slug' => Str::slug($ad->label),
+            ]);
+        }
+
+        if ($ad->start_date !== date('Y-m-d')) {
+            $delay = \Carbon\Carbon::parse($ad->start_date)->diffInSeconds(now());
+            if ($delay > 0) dispatch(new \App\Jobs\ActivateAdJob($ad))->delay($delay);
+        }
+
+        return redirect()->route('ads.index')->with('success', 'Advertisement created successfully!');
     }
 
-    return view('ads.groups', compact('desktopGroups', 'mobileGroups', 'counts'));
-}
-
-
+    /* -----------------------------------------------------------
+     | Edit
+     * ----------------------------------------------------------*/
     public function edit(Ad $ad)
     {
         return view('ads.edit', compact('ad'));
     }
 
-public function update(Request $request, Ad $ad)
-{
-    $isImageAd = $request->input('type') == Ad::TYPE_ANNUNCIO_IMMAGINE;
+    /* -----------------------------------------------------------
+     | Update
+     * ----------------------------------------------------------*/
+    public function update(Request $request, Ad $ad)
+    {
+        $isImageAd = (int) $request->input('type') === Ad::TYPE_ANNUNCIO_IMMAGINE;
 
-    $rules = [
-        'post_title'      => 'required|string|max:255',
-        'width'           => 'nullable|numeric|min:0',
-        'height'          => 'nullable|numeric|min:0',
-        'weight'          => 'required|numeric|min:1',
-        'type'            => ['required', Rule::in(array_keys(Ad::TYPES))],
-        'group'           => ['required', Rule::in(array_keys(Ad::GROUPS))],
-        'start_date'      => 'nullable|date',
-        'expiry_date'     => 'nullable|date',
-        'placement'       => ['nullable','in:homepage,article,both'],
-            'label' => 'nullable|string|max:100',
+        $rules = [
+            'post_title'  => 'required|string|max:255',
+            'weight'      => 'required|integer|min:0|max:10',
+            'type'        => ['required', Rule::in(array_keys(Ad::TYPES))],
+            'group'       => ['nullable', 'integer', 'exists:ad_groups,id'],
+            'width'       => 'nullable|integer|min:0',
+            'height'      => 'nullable|integer|min:0',
+            'start_date'  => 'nullable|date',
+            'expiry_date' => 'nullable|date|after_or_equal:start_date',
+            'placement'   => ['nullable', 'in:homepage,article,both'],
+            'label'       => 'nullable|string|max:100',
+            'status'      => ['nullable', Rule::in(['0', '1'])],
+        ];
 
-    ];
-
-    if ($isImageAd) {
-        $rules['images.*']        = 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048';
-        $rules['urls_existing.*'] = 'nullable|url|max:255';
-        $rules['urls_new.*']      = 'nullable|url|max:255';
-    } else {
-        $rules['amp']             = 'required|string';
-    }
-
-    $validated = $request->validate($rules);
-
-    $ad->fill([
-        'title'                  => $validated['post_title'],
-        'group'                  => $validated['group'],
-        'type'                   => $validated['type'],
-        'weight'                 => $validated['weight'],
-        'width'                  => $validated['width']  ?? null,
-        'height'                 => $validated['height'] ?? null,
-        'amp'                    => $request->amp,
-        'start_date'             => $validated['start_date']  ?? date('Y-m-d'),
-        'expiry_date'            => $validated['expiry_date'] ?? null,
-        'status'                 => $request->boolean('status') ? 1 : 0,
-        'visualization_condition'=> $this->packVisualizationCondition($request),
-        'placement'              => $request->input('placement'),
-            'label' => $validated['label'] ?? null,
-
-    ])->save();
-
-    if (!empty($ad->label)) {
-    \App\Models\AdLabel::firstOrCreate(['name' => $ad->label]);
-}
-    if ($isImageAd) {
-        $deleteIds = array_filter(explode(',', $request->input('deleted_images', '')));
-        if ($deleteIds) $ad->images()->whereIn('id', $deleteIds)->delete();
-
-        $urlsExisting = $request->input('urls_existing', []);
-        $newFiles     = $request->file('images', []);
-        $urlsNew      = $request->input('urls_new', []);
-
-        if (count($newFiles) !== count($urlsNew)) {
-            return back()->withInput()->withErrors(['urls_new' => 'Devi fornire un URL per ogni immagine caricata.']);
+        if ($isImageAd) {
+            $rules['group'] = ['required', 'integer', 'exists:ad_groups,id'];
+        } else {
+            $rules['amp'] = 'required|string';
         }
 
-        $storedUrlMap = [];
-        foreach ($newFiles as $i => $file) {
-            if (!$file || !$file->isValid() || strtolower($file->getClientOriginalExtension()) === 'webp') {
-                return back()->withInput()->withErrors(['images' => 'File non valido o formato non consentito.']);
-            }
-            $name = Str::random(32) . time() . '.' . $file->getClientOriginalExtension();
-            $img  = \Intervention\Image\Facades\Image::make($file);
-            if ($ad->width && $ad->height) $img->resize($ad->width, $ad->height);
-            $tmp  = sys_get_temp_dir() . "/$name";
-            $img->save($tmp);
-            $up   = $this->rvMedia->uploadFromPath($tmp, 0, 'ads-images/');
-            unlink($tmp);
-            $newImg = $ad->images()->create(['image_url' => $up['data']->url]);
-            $storedUrlMap[$newImg->id] = $urlsNew[$i] ?? '';
-        }
+        $validated = $request->validate($rules);
 
-        $finalUrls = [];
-        $ad->load('images');
-        foreach ($ad->images()->orderBy('id')->get() as $img) {
-            $finalUrls[] = $urlsExisting[$img->id] ?? $storedUrlMap[$img->id] ?? '';
-        }
-        $ad->url = json_encode($finalUrls);
+        $ad->fill([
+            'title'        => $validated['post_title'],
+            'type'         => (int) $validated['type'],
+            'group'        => $validated['group'] ?? null,
+            'weight'       => (int) $validated['weight'],
+            'width'        => $validated['width']  ?? null,
+            'height'       => $validated['height'] ?? null,
+            'amp'          => $request->input('amp'),
+            'start_date'   => $validated['start_date']  ?? date('Y-m-d'),
+            'expiry_date'  => $validated['expiry_date'] ?? null,
+            'status'       => $request->boolean('status') ? 1 : 0,
+            'placement'    => $validated['placement'] ?? null,
+            'label'        => $validated['label'] ? trim($validated['label']) : null,
+        ]);
+
+        $ad->visualization_condition = $this->packVisualizationCondition($request);
         $ad->save();
+
+        if (!empty($ad->label)) {
+            AdLabel::firstOrCreate([
+                'name' => $ad->label,
+            ], [
+                'slug' => Str::slug($ad->label),
+            ]);
+        }
+
+        return back()->with('success', 'Advertisement updated successfully!');
     }
 
-    return back()->with('success','Advertisement updated successfully!');
-}
-
-
+    /* -----------------------------------------------------------
+     | Destroy
+     * ----------------------------------------------------------*/
     public function destroy(Ad $ad)
     {
         $ad->delete();
         return redirect()->route('ads.index')->with('success', 'Ad deleted successfully.');
     }
 
+    /* -----------------------------------------------------------
+     | Click tracking
+     * ----------------------------------------------------------*/
     public function trackClick(int $id)
     {
         $ad = Ad::findOrFail($id);
-    
-        // 1. add +1 to today’s click counter
+
         AdStatistic::trackClick($ad->id);
-    
-        // 2. pick the right redirect
-        //    – uses getRedirectUrl() you already placed in the model
-        //    – falls back to the legacy single‑url column if needed
+
         $target = $ad->getRedirectUrl() ?: $ad->url ?: '/';
-    
-        // 3. send the user on her way
+
         return redirect()->away($target);
     }
 
-
-public function sortAds(Request $request)
-{
-    $groupId = (int) $request->query('group');
-    if (!$groupId) {
-        return redirect()->route('ads.groups.index')->with('error', 'No group specified.');
-    }
-
-    $allGroups = \App\Models\Ad::GROUPS;
-    $groupName = $allGroups[$groupId] ?? 'Unknown Group';
-
-    // Load ads in this group (with their group + images)
-    $ads = \App\Models\Ad::where('group', $groupId)
-        ->with(['groupRef.images'])   // needs Ad::groupRef() belongsTo AdGroup
-        ->orderBy('id')
-        ->get();
-
-    $adsCount = $ads->count();
-
-    // Load the group with images (for single-ad case)
-    $adGroup = \App\Models\AdGroup::with('images')->find($groupId);
-
-    // Labels aggregation (kept if you already use it)
-    $labels = [];
-    foreach ($ads as $ad) {
-        $lbl = trim((string) ($ad->label ?? ''));
-        if ($lbl !== '') {
-            if (!isset($labels[$lbl])) $labels[$lbl] = ['count' => 0, 'weight' => 0];
-            $labels[$lbl]['count']  += 1;
-            $labels[$lbl]['weight'] += (int) $ad->weight;
-        }
-    }
-
-    // Decide default mode
-    //  - single ad  → images mode
-    //  - multiple   → group (equalize) mode by default; you can still go "ads" or "labels"
-    $mode = $request->query('mode');
-    if (!$mode) {
-        $mode = ($adsCount === 1) ? 'images' : 'group'; // 'group' is the equalize tab
-    }
-
-    return view('ads.sort', compact('ads', 'groupId', 'groupName', 'labels', 'mode', 'adsCount', 'adGroup'));
-}
-
-// In AdController@updateSortAds
-
-public function updateSortAds(Request $request)
-{
-    $validated = $request->validate([
-        'group' => 'required|integer',
-        'mode'  => 'required|string|in:ads,labels,images,group',
-    ]);
-
-    $groupId = (int) $validated['group'];
-    $mode    = $validated['mode'];
-
-    if ($mode === 'images') {
-        // Update weights on ad_group_images (single-ad case)
-        $data = $request->validate([
-            'image_weights'   => 'required|array',
-            'image_weights.*' => 'required|integer|min:0|max:1000',
-        ]);
-
-        $group = \App\Models\AdGroup::findOrFail($groupId);
-        $images = \App\Models\AdGroupImage::where('group_id', $group->id)
-                    ->whereIn('id', array_keys($data['image_weights']))
-                    ->get();
-
-        foreach ($images as $img) {
-            $img->weight = (int) $data['image_weights'][$img->id];
-            $img->save();
+    /* -----------------------------------------------------------
+     | Sort weights (by ads / equalize group / by images)
+     * ----------------------------------------------------------*/
+    public function sortAds(Request $request)
+    {
+        $groupId = (int) $request->query('group');
+        if (!$groupId) {
+            return redirect()->route('ads.groups.index')->with('error', 'No group specified.');
         }
 
-        return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'images'])
-            ->with('success', 'Image weights updated.');
-    }
+        // you may still keep your constants for naming; otherwise fetch from ad_groups
+        $grp = AdGroup::find($groupId);
+        $groupName = $grp?->name ?? 'Unknown Group';
 
-    if ($mode === 'group') {
-        // Equalize total across all ads in this group
-        $data = $request->validate([
-            'total_weight' => 'required|integer|min:0|max:100000',
-        ]);
+        $ads = Ad::where('group', $groupId)
+            ->with(['groupRef.images']) // define Ad::groupRef()->belongsTo(AdGroup::class,'group')
+            ->orderBy('id')
+            ->get();
 
-        $total = (int) $data['total_weight'];
+        $adsCount = $ads->count();
 
-        $ads = \App\Models\Ad::where('group', $groupId)->orderBy('id')->get();
-        $n   = max(1, $ads->count());
+        $adGroup = AdGroup::with('images')->find($groupId);
 
-        $base = intdiv($total, $n);
-        $rem  = $total % $n;
-
-        foreach ($ads as $i => $ad) {
-            $ad->weight = $base + ($i < $rem ? 1 : 0);
-            $ad->save();
-        }
-
-        return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'group'])
-            ->with('success', 'Group total distributed equally across ads.');
-    }
-
-    if ($mode === 'labels') {
-        // Scale each label’s sum and proportionally update underlying ads
-        $data = $request->validate([
-            'label_weights'   => 'required|array',
-            'label_weights.*' => 'required|integer|min:0|max:100000',
-        ]);
-
-        // collect all ads in group keyed by label
-        $ads = \App\Models\Ad::where('group', $groupId)->orderBy('id')->get()->groupBy(function($ad) {
-            return trim((string) ($ad->label ?? ''));
-        });
-
-        foreach ($data['label_weights'] as $label => $newSum) {
-            $bag = $ads->get($label, collect());
-            if ($bag->isEmpty()) continue;
-
-            $oldSum = (int) $bag->sum('weight');
-            $newSum = (int) $newSum;
-
-            if ($oldSum === 0) {
-                // If old sum is 0: set equally
-                $n = $bag->count();
-                $base = intdiv($newSum, $n);
-                $rem  = $newSum % $n;
-                foreach ($bag->values() as $i => $ad) {
-                    $ad->weight = $base + ($i < $rem ? 1 : 0);
-                    $ad->save();
-                }
-            } else {
-                // Scale proportionally, then fix rounding to hit exact total
-                $scaled = [];
-                $sumScaled = 0;
-                foreach ($bag as $ad) {
-                    $w = (int) round($ad->weight * ($newSum / $oldSum));
-                    $scaled[$ad->id] = $w;
-                    $sumScaled += $w;
-                }
-                // Fix rounding diff
-                $diff = $newSum - $sumScaled;
-                if ($diff !== 0) {
-                    // add/subtract 1 to the first |diff| items
-                    foreach ($bag as $ad) {
-                        if ($diff === 0) break;
-                        $scaled[$ad->id] += ($diff > 0 ? 1 : -1);
-                        $diff += ($diff > 0 ? -1 : 1);
-                    }
-                }
-                // save
-                foreach ($bag as $ad) {
-                    $ad->weight = max(0, (int) $scaled[$ad->id]);
-                    $ad->save();
-                }
+        $labels = [];
+        foreach ($ads as $item) {
+            $lbl = trim((string) ($item->label ?? ''));
+            if ($lbl !== '') {
+                if (!isset($labels[$lbl])) $labels[$lbl] = ['count' => 0, 'weight' => 0];
+                $labels[$lbl]['count']  += 1;
+                $labels[$lbl]['weight'] += (int) $item->weight;
             }
         }
 
-        return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'labels'])
-            ->with('success', 'Label weights updated.');
+        $mode = $request->query('mode') ?: (($adsCount === 1) ? 'images' : 'ads');
+
+        return view('ads.sort', compact('ads', 'groupId', 'groupName', 'labels', 'mode', 'adsCount', 'adGroup'));
     }
 
-    // Fallback: manual per-ad sliders (your previous behavior)
-    $data = $request->validate([
-        'weights'   => 'required|array',
-        'weights.*' => 'required|integer|min:0|max:100000',
-    ]);
+    public function updateSortAds(Request $request)
+    {
+        $validated = $request->validate([
+            'group' => 'required|integer|exists:ad_groups,id',
+            'mode'  => 'required|string|in:ads,labels,images,group',
+        ]);
 
-    foreach ($data['weights'] as $adId => $w) {
-        if ($ad = \App\Models\Ad::find($adId)) {
-            $ad->weight = (int) $w;
-            $ad->save();
+        $groupId = (int) $validated['group'];
+        $mode    = $validated['mode'];
+
+        if ($mode === 'images') {
+            $data = $request->validate([
+                'image_weights'   => 'required|array',
+                'image_weights.*' => 'required|integer|min:0|max:10',
+            ]);
+
+            $images = AdGroupImage::where('group_id', $groupId)
+                ->whereIn('id', array_keys($data['image_weights']))
+                ->get();
+
+            foreach ($images as $img) {
+                $img->weight = (int) $data['image_weights'][$img->id];
+                $img->save();
+            }
+
+            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'images'])
+                ->with('success', 'Image weights updated.');
         }
+
+        if ($mode === 'group') {
+            $data = $request->validate([
+                'total_weight' => 'required|integer|min:0|max:100000',
+            ]);
+
+            $total = (int) $data['total_weight'];
+
+            $ads = Ad::where('group', $groupId)->orderBy('id')->get();
+            $n   = max(1, $ads->count());
+
+            $base = intdiv($total, $n);
+            $rem  = $total % $n;
+
+            foreach ($ads as $i => $ad) {
+                $ad->weight = $base + ($i < $rem ? 1 : 0);
+                $ad->save();
+            }
+
+            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'group'])
+                ->with('success', 'Group total distributed equally across ads.');
+        }
+
+        if ($mode === 'labels') {
+            $data = $request->validate([
+                'label_weights'   => 'required|array',
+                'label_weights.*' => 'required|integer|min:0|max:100000',
+            ]);
+
+            $adsGrouped = Ad::where('group', $groupId)->orderBy('id')->get()
+                ->groupBy(fn ($ad) => trim((string) ($ad->label ?? '')));
+
+            foreach ($data['label_weights'] as $label => $newSum) {
+                $bag = $adsGrouped->get($label, collect());
+                if ($bag->isEmpty()) continue;
+
+                $oldSum = (int) $bag->sum('weight');
+                $newSum = (int) $newSum;
+
+                if ($oldSum === 0) {
+                    $n = $bag->count();
+                    $base = intdiv($newSum, $n);
+                    $rem  = $newSum % $n;
+                    foreach ($bag->values() as $i => $ad) {
+                        $ad->weight = $base + ($i < $rem ? 1 : 0);
+                        $ad->save();
+                    }
+                } else {
+                    $scaled = [];
+                    $sumScaled = 0;
+                    foreach ($bag as $ad) {
+                        $w = (int) round($ad->weight * ($newSum / $oldSum));
+                        $scaled[$ad->id] = $w;
+                        $sumScaled += $w;
+                    }
+                    $diff = $newSum - $sumScaled;
+                    if ($diff !== 0) {
+                        foreach ($bag as $ad) {
+                            if ($diff === 0) break;
+                            $scaled[$ad->id] += ($diff > 0 ? 1 : -1);
+                            $diff += ($diff > 0 ? -1 : 1);
+                        }
+                    }
+                    foreach ($bag as $ad) {
+                        $ad->weight = max(0, (int) $scaled[$ad->id]);
+                        $ad->save();
+                    }
+                }
+            }
+
+            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'labels'])
+                ->with('success', 'Label weights updated.');
+        }
+
+        // default: per-ad sliders
+        $data = $request->validate([
+            'weights'   => 'required|array',
+            'weights.*' => 'required|integer|min:0|max:10',
+        ]);
+
+        foreach ($data['weights'] as $adId => $w) {
+            if ($ad = Ad::find($adId)) {
+                $ad->weight = (int) $w;
+                $ad->save();
+            }
+        }
+
+        return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'ads'])
+            ->with('success', 'Ad weights updated.');
     }
 
-    return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'ads'])
-        ->with('success', 'Ad weights updated.');
-}
-
+    /* -----------------------------------------------------------
+     | Helpers
+     * ----------------------------------------------------------*/
+    private function packVisualizationCondition(Request $r): ?string
+    {
+        return match ($r->input('vis_cond_type')) {
+            'page_impressions' => json_encode([
+                'type' => 'page',
+                'max'  => (int) $r->input('vis_page_value'),
+            ]),
+            'ad_impressions' => json_encode([
+                'type'    => 'ad',
+                'max'     => (int) $r->input('vis_ad_max'),
+                'seconds' => (int) $r->input('vis_ad_seconds'),
+            ]),
+            default => null,
+        };
+    }
 }
