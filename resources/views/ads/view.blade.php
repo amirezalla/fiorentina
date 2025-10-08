@@ -144,16 +144,11 @@
                                         style="width:{{ $thumbW }}px;height:{{ $thumbH }}px">
                                         <span class="text-muted small"><i class="fa-brands fa-google me-1"></i>
                                             Google</span>
-                                        <span class="text-truncate d-block small"
-                                            title="{{ $slot }}">{{ $slot }}</span>
-                                        <span class="text-muted xsmall">{{ $w }}×{{ $h }}</span>
                                     </div>
 
                                     {{-- Hover button that reveals a panel with an iframe live preview --}}
                                     <div class="mt-1">
-                                        <span class="btn btn-sm btn-outline-secondary hover-preview-trigger">
-                                            Live preview
-                                        </span>
+
                                         <div class="hover-preview-panel">
                                             <div class="ratio ratio-16x9 mb-2" style="min-width: 360px; max-width: 560px;">
                                                 <iframe src="{{ route('ads.ampPreview', $ad) }}" loading="lazy"
