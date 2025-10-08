@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <h1 class="mb-4">Ads Groups</h1>
+        <h1 class="mb-4">Ads Positions</h1>
 
         <!-- Nav Tabs -->
         <ul class="nav nav-tabs" id="groupTabs" role="tablist">

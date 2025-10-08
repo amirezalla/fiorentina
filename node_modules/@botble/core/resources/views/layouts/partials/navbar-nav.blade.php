@@ -28,24 +28,59 @@
             <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fa fa-link"></i></span>
             <span class="nav-link-title text-truncate">Ads</span>
         </a>
+
         <ul class="dropdown-menu" aria-labelledby="adsDropdown">
+            {{-- Ads --}}
+            <li class="dropdown-header">Ads</li>
             <li>
                 <a class="dropdown-item" href="{{ route('ads.create') }}" aria-label="Create Ad">
-                    Create
+                    Create ad
                 </a>
             </li>
             <li>
                 <a class="dropdown-item" href="{{ route('ads.index') }}" aria-label="List Ads">
-                    List
+                    List ads
+                </a>
+            </li>
+
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+
+            {{-- Positions (formerly Groups) --}}
+            <li class="dropdown-header">Positions</li>
+            <li>
+                <a class="dropdown-item" href="{{ route('adgroups.create') }}" aria-label="Create Position">
+                    Create position
                 </a>
             </li>
             <li>
-                <a class="dropdown-item" href="{{ route('ads.groups.index') }}" aria-label="Groups">
-                    Groups
+                <a class="dropdown-item" href="{{ route('adgroups.index') }}" aria-label="List Positions">
+                    List positions
+                </a>
+            </li>
+
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+
+            {{-- Weights (child links) --}}
+            <li class="dropdown-header">Weights</li>
+            <li>
+                {{-- Goes to ads list where you can adjust per-ad weights (by group filter inside) --}}
+                <a class="dropdown-item" href="{{ route('ads.index') }}" aria-label="Manage Weights by Ads">
+                    By ads
+                </a>
+            </li>
+            <li>
+                {{-- Send user to positions list first; from there they can click "Sort" per position --}}
+                <a class="dropdown-item" href="{{ route('adgroups.index') }}" aria-label="Manage Weights by Position">
+                    By position
                 </a>
             </li>
         </ul>
     </li>
+
 
     <li class="nav-item dropdown">
         <a href="{{ route('players.index') }}" class="nav-link dropdown-toggle nav-priority-3000" id="ads"
