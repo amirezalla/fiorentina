@@ -340,4 +340,57 @@ class AdController extends BaseController
             default => null,
         };
     }
+
+
+    // App/Http/Controllers/AdController.php
+
+public function ampPreview(\App\Models\Ad $ad)
+{
+    abort_unless($ad->type == \App\Models\Ad::TYPE_GOOGLE_ADS && $ad->amp, 404);
+
+    // Optional: guard size or sanitize the amp snippet.
+    $amp = $ad->amp;
+
+    // Standard AMP boilerplate + amp-ad component
+    $html = <<<AMP
+<!doctype html>
+<html amp lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ad Preview #{$ad->id}</title>
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+  <style amp-boilerplate>
+    body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;
+         -moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;
+         -ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;
+         animation:-amp-start 8s steps(1,end) 0s 1 normal both}
+    @-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+    @-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+    @-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+    @-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+    @keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+  </style>
+  <noscript>
+    <style amp-boilerplate>
+      body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}
+    </style>
+  </noscript>
+  <style amp-custom>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:20px;}
+    .frame{max-width:1024px;margin:0 auto;}
+  </style>
+</head>
+<body>
+  <div class="frame">
+    {$amp}
+  </div>
+</body>
+</html>
+AMP;
+
+    return response($html)->header('Content-Type', 'text/html; charset=utf-8');
+}
+
 }

@@ -1,10 +1,6 @@
 {{-- resources/views/ads/index.blade.php --}}
 @extends(BaseHelper::getAdminMasterLayoutTemplate())
 
-@php
-    use Carbon\Carbon;
-
-@endphp
 @section('content')
 
     <div class="w-100">
@@ -53,17 +49,16 @@
             </div>
         </form>
 
-        <table class="table table-striped table-ads-list">
+        <table class="table table-striped table-ads-list align-middle">
             <thead>
                 <tr>
-                    {{-- <th>ID</th>  ← removed as requested --}}
+                    {{-- ID removed --}}
                     <th>Title</th>
                     <th>Type</th>
                     <th>Group</th>
                     <th>Preview</th>
                     <th>Weight</th>
                     <th>Status</th>
-                    <th>Expiry</th>
                     <th>
                         Impr.
                         @if ($tf != 'all')
@@ -76,6 +71,7 @@
                             <span class="text-muted small">({{ $tf == 'today' ? '1' : $tf }} d)</span>
                         @endif
                     </th>
+                    <th>Expiry</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -83,13 +79,27 @@
 
                 @foreach ($ads as $ad)
                     @php
+                        // Compute status pill (including Expired)
+                        $now = \Carbon\Carbon::today();
+                        $expiry = $ad->expiry_date ? \Carbon\Carbon::parse($ad->expiry_date) : null;
+                        $isExpired = $expiry && $expiry->lt($now);
 
-                        // group images (preferred)
-                        $group = $ad->groupRef ?? null; // relation: Ad belongsTo AdGroup
+                        // icons
+                        $isGoogle = $ad->type == \App\Models\Ad::TYPE_GOOGLE_ADS;
+                        $typeIconHtml = $isGoogle
+                            ? '<i class="fa-brands fa-google me-1"></i> Google Ads'
+                            : '<i class="fa-regular fa-image me-1"></i> Image/URL';
+
+                        // For image ads, get images from group (shared) or legacy fallback
+                        $group = $ad->groupRef ?? null; // define belongsTo AdGroup in model (groupRef)
                         $imgs = $group && $group->images ? $group->images : collect();
                         $imgCount = $imgs->count();
 
-                        // URL resolver (absolute or storage path)
+                        if ($imgCount === 0 && !empty($ad->image)) {
+                            $imgs = collect([(object) ['image_url' => $ad->image]]);
+                            $imgCount = 1;
+                        }
+
                         $resolveImg = function ($path) {
                             if (preg_match('~^https?://~i', $path ?? '')) {
                                 return $path;
@@ -100,95 +110,120 @@
                                 return $path ?: '';
                             }
                         };
-
-                        // Legacy fallback if nothing in group but ad->image exists
-                        if ($imgCount === 0 && !empty($ad->image)) {
-                            $imgs = collect([(object) ['image_url' => $ad->image]]);
-                            $imgCount = 1;
-                        }
-
-                        // Expiry detection
-                        $expiry = $ad->expiry_date ? Carbon::parse($ad->expiry_date) : null;
-                        $isExpired = $expiry ? $expiry->isPast() : false;
                     @endphp
                     <tr>
-                        {{-- <td class="align-middle">{{ $ad->id }}</td> --}}
-                        <td class="align-middle">{{ $ad->title }}</td>
+                        <td>{{ $ad->title }}</td>
 
-                        <td class="align-middle">
-                            @if ($ad->type == \App\Models\Ad::TYPE_GOOGLE_ADS)
-                                <span class="text-muted" title="Google Ads">
-                                    <i class="fa-brands fa-google me-1"></i> Google Ads
-                                </span>
-                            @else
-                                <span class="text-muted" title="Image / URL">
-                                    <i class="fa-regular fa-image me-1"></i> IMAGE/URL
-                                </span>
-                            @endif
-                        </td>
+                        {{-- Type with icon --}}
+                        <td>{!! $typeIconHtml !!}</td>
 
-                        <td class="align-middle">{{ $ad->group_name }}</td>
+                        <td>{{ $ad->group_name }}</td>
 
-                        {{-- PREVIEW COL --}}
-                        <td class="align-middle">
-                            @if ($imgCount)
-                                <div class="ad-preview">
-                                    {{-- small collage --}}
-                                    <div class="ad-collage" data-count="{{ $imgCount }}">
-                                        @foreach ($imgs as $img)
-                                            @php $src = $resolveImg($img->image_url); @endphp
-                                            <span class="ad-collage-piece">
-                                                <img src="{{ $src }}" alt="{{ $ad->title }}">
-                                            </span>
-                                        @endforeach
+                        {{-- PREVIEW --}}
+                        <td>
+                            @if ($isGoogle && $ad->amp)
+                                @php
+                                    $amp = $ad->amp ?? '';
+                                    $w =
+                                        $ad->width ?:
+                                        (preg_match('/\bwidth\s*=\s*"(\d+)"/i', $amp, $m)
+                                            ? (int) $m[1]
+                                            : 300);
+                                    $h =
+                                        $ad->height ?:
+                                        (preg_match('/\bheight\s*=\s*"(\d+)"/i', $amp, $m)
+                                            ? (int) $m[1]
+                                            : 250);
+                                    $slot = preg_match('/data-slot\s*=\s*"([^"]+)"/i', $amp, $m) ? $m[1] : '—';
+                                    $thumbW = min($w, 160);
+                                    $thumbH = (int) round($h * ($thumbW / max(1, $w)));
+                                @endphp
+
+                                <div class="preview-wrapper d-inline-block">
+                                    <div class="gam-thumb d-inline-flex align-items-center justify-content-center flex-column"
+                                        style="width:{{ $thumbW }}px;height:{{ $thumbH }}px">
+                                        <span class="text-muted small"><i class="fa-brands fa-google me-1"></i>
+                                            Google</span>
+                                        <span class="text-truncate d-block small"
+                                            title="{{ $slot }}">{{ $slot }}</span>
+                                        <span class="text-muted xsmall">{{ $w }}×{{ $h }}</span>
                                     </div>
 
-                                    {{-- hover panel with big thumbnails (stacked rows) --}}
-                                    <div class="ad-hover-panel">
-                                        @foreach ($imgs as $img)
-                                            @php $src = $resolveImg($img->image_url); @endphp
-                                            <div class="ad-hover-row">
-                                                <img src="{{ $src }}" alt="{{ $ad->title }}">
+                                    {{-- Hover button that reveals a panel with an iframe live preview --}}
+                                    <div class="mt-1">
+                                        <span class="btn btn-sm btn-outline-secondary hover-preview-trigger">
+                                            Live preview
+                                        </span>
+                                        <div class="hover-preview-panel">
+                                            <div class="ratio ratio-16x9 mb-2" style="min-width: 360px; max-width: 560px;">
+                                                <iframe src="{{ route('ads.ampPreview', $ad) }}" loading="lazy"
+                                                    referrerpolicy="no-referrer-when-downgrade"
+                                                    style="border:0;border-radius:.25rem;"></iframe>
                                             </div>
-                                        @endforeach
+                                            <div class="text-muted xsmall">
+                                                Preview may not always render an actual ad
+                                                (depends on GAM setup / domain allowlist / blockers).
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             @else
-                                <span class="text-muted small">—</span>
+                                {{-- IMAGE/URL ads → collage + hover panel --}}
+                                @if ($imgCount)
+                                    <div class="ad-preview">
+                                        <div class="ad-collage" data-count="{{ $imgCount }}">
+                                            @foreach ($imgs as $img)
+                                                @php $src = $resolveImg($img->image_url); @endphp
+                                                <span class="ad-collage-piece">
+                                                    <img src="{{ $src }}" alt="{{ $ad->title }}">
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                        <div class="ad-hover-panel">
+                                            @foreach ($imgs as $img)
+                                                @php $src = $resolveImg($img->image_url); @endphp
+                                                <div class="ad-hover-row">
+                                                    <img src="{{ $src }}" alt="{{ $ad->title }}">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-muted small">—</span>
+                                @endif
                             @endif
                         </td>
 
-                        <td class="align-middle">{{ $ad->getWeightPercentage() }}%</td>
+                        <td>{{ $ad->getWeightPercentage() }}%</td>
 
-                        {{-- STATUS with badges and Expired state --}}
-                        <td class="align-middle">
+                        {{-- Status pill (Published / Draft / Expired) --}}
+                        <td>
                             @if ($isExpired)
                                 <span class="badge bg-danger">Expired</span>
-                            @elseif ($ad->status)
-                                <span class="badge bg-success">Published</span>
                             @else
-                                <span class="badge bg-warning text-dark">Draft</span>
+                                @if ($ad->status)
+                                    <span class="badge bg-success">Published</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">Draft</span>
+                                @endif
                             @endif
                         </td>
 
-                        {{-- EXPIRY date --}}
-                        <td class="align-middle">
-                            @if ($expiry)
-                                <span class="{{ $isExpired ? 'text-danger fw-semibold' : '' }}">
-                                    {{ $expiry->format('Y-m-d') }}
+                        <td>{{ $ad->total_impressions ?? 0 }}</td>
+                        <td>{{ $ad->total_clicks ?? 0 }}</td>
+
+                        {{-- Expiry column --}}
+                        <td>
+                            @if ($ad->expiry_date)
+                                <span class="{{ $isExpired ? 'text-danger' : '' }}">
+                                    {{ \Carbon\Carbon::parse($ad->expiry_date)->toDateString() }}
                                 </span>
                             @else
-                                <span class="text-muted small">—</span>
+                                <span class="text-muted">—</span>
                             @endif
                         </td>
 
-                        <td class="align-middle">
-                            {{ $ad->total_impressions ?? 0 }}
-                        </td>
-                        <td class="align-middle">
-                            {{ $ad->total_clicks ?? 0 }}
-                        </td>
-                        <td class="align-middle">
+                        <td>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('ads.edit', $ad->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                 <form action="{{ route('ads.destroy', $ad->id) }}" method="post"
@@ -238,7 +273,7 @@
             object-fit: cover;
         }
 
-        /* --- preview wrapper + hover panel ------------------------------- */
+        /* --- image preview hover panel ---------------------------------- */
         .ad-preview {
             position: relative;
             display: inline-block;
@@ -248,8 +283,7 @@
             display: none;
             position: absolute;
             top: 0;
-            left: 50px;
-            /* sits right of the small collage */
+            left: 60px;
             z-index: 10;
             min-width: 260px;
             max-width: 420px;
@@ -279,10 +313,53 @@
             border-radius: .25rem;
         }
 
+        /* --- GAM thumb + hover preview panel ----------------------------- */
+        .gam-thumb {
+            border: 1px dashed rgba(0, 0, 0, .2);
+            border-radius: .25rem;
+            background: #fafafa;
+            padding: .25rem .5rem;
+            text-align: center;
+        }
+
+        .gam-thumb .xsmall {
+            font-size: .7rem;
+        }
+
+        .preview-wrapper {
+            position: relative;
+        }
+
+        .hover-preview-trigger {
+            position: relative;
+        }
+
+        .hover-preview-panel {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: calc(100% + 6px);
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, .15);
+            border-radius: .25rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+            padding: 10px;
+            z-index: 20;
+        }
+
+        .preview-wrapper:hover .hover-preview-panel {
+            display: block;
+        }
+
+        /* Keep panel within viewport on narrow screens */
         @media (max-width: 768px) {
             .ad-hover-panel {
                 left: 0;
                 top: 60px;
+            }
+
+            .hover-preview-panel {
+                max-width: 90vw;
             }
         }
     </style>

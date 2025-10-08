@@ -147,6 +147,12 @@ Route::post('admin/ad-groups/{group}/images/sort',      [AdGroupImageController:
 Route::post('admin/ad-groups/{group}/images/links', [AdGroupImageController::class, 'updateLinks'])
     ->name('adgroups.images.update-links');
 
+
+    // routes/web.php
+Route::get('admin/ads/{ad}/preview', [\App\Http\Controllers\AdController::class, 'ampPreview'])
+    ->name('ads.ampPreview');
+
+
 Route::get('/admin/players', [PlayerController::class, 'index'])->name('players.index');
 Route::get('/admin/players/create', [PlayerController::class, 'create'])->name('players.create');
 Route::post('/admin/players', [PlayerController::class, 'store'])->name('players.store');
