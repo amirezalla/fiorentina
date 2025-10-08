@@ -52,7 +52,7 @@
             {{-- POSITION (list only) --}}
             <li class="dropdown-header">Position</li>
             <li>
-                <a class="dropdown-item" href="{{ route('adgroups.index') }}" aria-label="List Positions">
+                <a class="dropdown-item" href="{{ route('ads.sort') }}" aria-label="List Positions">
                     List positions
                 </a>
             </li>
@@ -68,16 +68,11 @@
                     Create group
                 </a>
             </li>
-            <li>
-                {{-- “By ads” = the sort page --}}
-                <a class="dropdown-item" href="{{ route('ads.sort') }}" aria-label="Sort by Ads">
-                    By ads (sort)
-                </a>
-            </li>
+
             <li>
                 {{-- “By position” = list groups created --}}
                 <a class="dropdown-item" href="{{ route('adgroups.index') }}" aria-label="Groups List">
-                    By position (groups)
+                    List Groups
                 </a>
             </li>
         </ul>
