@@ -393,4 +393,37 @@ AMP;
     return response($html)->header('Content-Type', 'text/html; charset=utf-8');
 }
 
+public function groupsIndex()
+{
+    // 1) All legacy “positions” (constants on the Ad model)
+    $allGroups = Ad::GROUPS; // [id => "Name", ...]
+
+    // 2) How many ads exist per position (legacy `group` column)
+    $counts = Ad::select('group')
+        ->selectRaw('COUNT(*) as total')
+        ->groupBy('group')
+        ->pluck('total', 'group')        // [groupId => total]
+        ->toArray();
+
+    // 3) Split into desktop vs mobile by name
+    $desktopGroups = [];
+    $mobileGroups  = [];
+
+    foreach ($allGroups as $id => $name) {
+        if (Str::contains(Str::upper($name), 'MOBILE')) {
+            $mobileGroups[$id] = $name;
+        } else {
+            $desktopGroups[$id] = $name;
+        }
+    }
+
+    // 4) Render the list view
+    return view('ads.groups', [
+        'desktopGroups' => $desktopGroups,
+        'mobileGroups'  => $mobileGroups,
+        'counts'        => $counts,
+    ]);
+}
+
+
 }
