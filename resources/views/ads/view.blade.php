@@ -37,7 +37,7 @@
                     <label for="search-tf" class="form-label">Statistics timeframe</label>
                     <select class="form-select" name="tf" id="search-tf">
                         <option value="all" @selected($tf == 'all')>All time</option>
-                        <option value="today"@selected($tf == 'today')>Today</option>
+                        <option value="today" @selected($tf == 'today')>Today</option>
                         <option value="7" @selected($tf == '7')>Last 7 days</option>
                         <option value="30" @selected($tf == '30')>Last 30 days</option>
                         <option value="90" @selected($tf == '90')>Last 90 days</option>
@@ -56,9 +56,10 @@
                     <th>Title</th>
                     <th>Type</th>
                     <th>Group</th>
-                    <th>Preview</th> {{-- Collage + hover panel --}}
+                    <th>Preview</th>
                     <th>Weight</th>
                     <th>Status</th>
+                    <th>Expiry</th>
                     <th>
                         Impr.
                         @if ($tf != 'all')
@@ -78,12 +79,14 @@
 
                 @foreach ($ads as $ad)
                     @php
-                        // Use images defined on the assigned AdGroup
+                        use Carbon\Carbon;
+
+                        // group images (preferred)
                         $group = $ad->groupRef ?? null; // relation: Ad belongsTo AdGroup
                         $imgs = $group && $group->images ? $group->images : collect();
                         $imgCount = $imgs->count();
 
-                        // convenience fn for URL (supports absolute URLs too)
+                        // URL resolver (absolute or storage path)
                         $resolveImg = function ($path) {
                             if (preg_match('~^https?://~i', $path ?? '')) {
                                 return $path;
@@ -91,26 +94,36 @@
                             try {
                                 return Storage::disk('wasabi')->url(ltrim($path ?? '', '/'));
                             } catch (\Throwable $e) {
-                                return $path; // last-resort fallback
+                                return $path ?: '';
                             }
                         };
 
-                        // Legacy fallback if needed (optional; remove if you don't want it)
-if ($imgCount === 0 && !empty($ad->image)) {
-    $imgs = collect([(object) ['image_url' => $ad->image]]);
+                        // Legacy fallback if nothing in group but ad->image exists
+                        if ($imgCount === 0 && !empty($ad->image)) {
+                            $imgs = collect([(object) ['image_url' => $ad->image]]);
                             $imgCount = 1;
                         }
+
+                        // Expiry detection
+                        $expiry = $ad->expiry_date ? Carbon::parse($ad->expiry_date) : null;
+                        $isExpired = $expiry ? $expiry->isPast() : false;
                     @endphp
                     <tr>
-                        {{-- <td class="align-middle">{{ $ad->id }}</td>  ← removed --}}
+                        {{-- <td class="align-middle">{{ $ad->id }}</td> --}}
                         <td class="align-middle">{{ $ad->title }}</td>
+
                         <td class="align-middle">
-                            @if ($ad->type == \App\Models\Ad::TYPE_ANNUNCIO_IMMAGINE)
-                                IMAGE/URL
+                            @if ($ad->type == \App\Models\Ad::TYPE_GOOGLE_ADS)
+                                <span class="text-muted" title="Google Ads">
+                                    <i class="fa-brands fa-google me-1"></i> Google Ads
+                                </span>
                             @else
-                                GOOGLE ADS
+                                <span class="text-muted" title="Image / URL">
+                                    <i class="fa-regular fa-image me-1"></i> IMAGE/URL
+                                </span>
                             @endif
                         </td>
+
                         <td class="align-middle">{{ $ad->group_name }}</td>
 
                         {{-- PREVIEW COL --}}
@@ -143,13 +156,29 @@ if ($imgCount === 0 && !empty($ad->image)) {
                         </td>
 
                         <td class="align-middle">{{ $ad->getWeightPercentage() }}%</td>
+
+                        {{-- STATUS with badges and Expired state --}}
                         <td class="align-middle">
-                            @if ($ad->status)
-                                Published
+                            @if ($isExpired)
+                                <span class="badge bg-danger">Expired</span>
+                            @elseif ($ad->status)
+                                <span class="badge bg-success">Published</span>
                             @else
-                                Draft
+                                <span class="badge bg-warning text-dark">Draft</span>
                             @endif
                         </td>
+
+                        {{-- EXPIRY date --}}
+                        <td class="align-middle">
+                            @if ($expiry)
+                                <span class="{{ $isExpired ? 'text-danger fw-semibold' : '' }}">
+                                    {{ $expiry->format('Y-m-d') }}
+                                </span>
+                            @else
+                                <span class="text-muted small">—</span>
+                            @endif
+                        </td>
+
                         <td class="align-middle">
                             {{ $ad->total_impressions ?? 0 }}
                         </td>
@@ -158,12 +187,12 @@ if ($imgCount === 0 && !empty($ad->image)) {
                         </td>
                         <td class="align-middle">
                             <div class="d-flex gap-2">
-                                <a href="{{ route('ads.edit', $ad->id) }}" class="btn btn-primary">Edit</a>
+                                <a href="{{ route('ads.edit', $ad->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                 <form action="{{ route('ads.destroy', $ad->id) }}" method="post"
                                     onsubmit="return confirm('Delete this ad?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
                             </div>
                         </td>
@@ -244,11 +273,9 @@ if ($imgCount === 0 && !empty($ad->image)) {
             display: block;
             width: 100%;
             height: auto;
-            /* keep aspect; each row its own image */
             border-radius: .25rem;
         }
 
-        /* optional: keep panel within viewport horizontally */
         @media (max-width: 768px) {
             .ad-hover-panel {
                 left: 0;

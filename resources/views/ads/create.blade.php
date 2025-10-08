@@ -90,19 +90,6 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3 mb-3">
-                                <div class="post-body-content">
-
-                                    <label for="ad-label" class="form-label">Label (facoltativo)</label>
-                                    <input type="text" class="form-control" name="label" id="ad-label"
-                                        value="{{ old('label') }}" autocomplete="off"
-                                        placeholder="es. sponsor1, home-top, food-brand">
-                                    <div id="label-suggestions" class="list-group mt-1"
-                                        style="display:none; position:absolute; z-index:9999; width: 50%"></div>
-
-                                </div>
-
-                            </div>
 
                             <div class="mt-3 mb-3">
                                 <label for="vis_cond_type" class="form-label">Condizione per Visitatori</label>
