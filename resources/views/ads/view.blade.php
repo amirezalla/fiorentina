@@ -1,6 +1,10 @@
 {{-- resources/views/ads/index.blade.php --}}
 @extends(BaseHelper::getAdminMasterLayoutTemplate())
 
+@php
+    use Carbon\Carbon;
+
+@endphp
 @section('content')
 
     <div class="w-100">
@@ -79,7 +83,6 @@
 
                 @foreach ($ads as $ad)
                     @php
-                        use Carbon\Carbon;
 
                         // group images (preferred)
                         $group = $ad->groupRef ?? null; // relation: Ad belongsTo AdGroup
