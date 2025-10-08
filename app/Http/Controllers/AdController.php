@@ -10,7 +10,6 @@ use App\Models\AdStatistic;
 use Illuminate\Http\Request;
 use Botble\Base\Supports\Breadcrumb;
 use Botble\Base\Http\Controllers\BaseController;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -80,47 +79,46 @@ class AdController extends BaseController
      * ----------------------------------------------------------*/
     public function store(Request $request)
     {
-        // Base rules
+        // Base rules (we keep legacy `group` as a simple integer; you can restrict with Rule::in(array_keys(Ad::GROUPS)))
         $rules = [
-            'post_title'  => 'required|string|max:255',
-            'weight'      => 'required|integer|min:0|max:10',
-            'type'        => ['required', Rule::in(array_keys(Ad::TYPES))],
-            'width'       => 'nullable|integer|min:0',
-            'height'      => 'nullable|integer|min:0',
-            'start_date'  => 'nullable|date',
-            'expiry_date' => 'nullable|date|after_or_equal:start_date',
-            'placement'   => ['nullable','in:homepage,article,both'],
-            'label'       => 'nullable|string|max:100',
-            // IMPORTANT: we validate ad_group_id (not legacy group constants)
-            'ad_group_id' => 'nullable|integer|exists:ad_groups,id',
+            'post_title'   => 'required|string|max:255',
+            'weight'       => 'required|integer|min:0|max:10',
+            'type'         => ['required', Rule::in(array_keys(Ad::TYPES))],
+            'group'        => 'nullable|integer',                  // legacy position constant
+            'ad_group_id'  => 'nullable|integer|exists:ad_groups,id', // FK to image group
+            'width'        => 'nullable|integer|min:0',
+            'height'       => 'nullable|integer|min:0',
+            'start_date'   => 'nullable|date',
+            'expiry_date'  => 'nullable|date|after_or_equal:start_date',
+            'placement'    => ['nullable','in:homepage,article,both'],
+            'label'        => 'nullable|string|max:100',
         ];
 
         // Conditional rules
         if ((int) $request->input('type') === Ad::TYPE_ANNUNCIO_IMMAGINE) {
-            // For image ads, a real ad_groups row is required
             $rules['ad_group_id'] = 'required|integer|exists:ad_groups,id';
         } else {
-            // Google ads: require amp, group remains nullable
             $rules['amp'] = 'required|string';
         }
 
         $validated = $request->validate($rules);
 
         $ad = new Ad();
-        $ad->title     = $validated['post_title'];
-        $ad->type      = (int) $validated['type'];
-        $ad->group     = $validated['ad_group_id'] ?? null;   // write FK here
-        $ad->weight    = (int) $validated['weight'];
-        $ad->width     = $validated['width']  ?? null;
-        $ad->height    = $validated['height'] ?? null;
-        $ad->amp       = $request->input('amp');               // only for Google ads
-        $ad->placement = $validated['placement'] ?? null;
-        $ad->label     = $validated['label'] ? trim($validated['label']) : null;
+        $ad->title        = $validated['post_title'];
+        $ad->type         = (int) $validated['type'];
+        $ad->group        = $validated['group'] ?? null;          // legacy position
+        $ad->ad_group_id  = $validated['ad_group_id'] ?? null;    // FK to ad_groups
+        $ad->weight       = (int) $validated['weight'];
+        $ad->width        = $validated['width']  ?? null;
+        $ad->height       = $validated['height'] ?? null;
+        $ad->amp          = $request->input('amp');               // only for Google ads
+        $ad->placement    = $validated['placement'] ?? null;
+        $ad->label        = $validated['label'] ? trim($validated['label']) : null;
 
         $ad->visualization_condition = $this->packVisualizationCondition($request);
-        $ad->start_date  = $validated['start_date']  ?? date('Y-m-d');
-        $ad->expiry_date = $validated['expiry_date'] ?? null;
-        $ad->status      = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
+        $ad->start_date   = $validated['start_date']  ?? date('Y-m-d');
+        $ad->expiry_date  = $validated['expiry_date'] ?? null;
+        $ad->status       = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
 
         $ad->save();
 
@@ -155,18 +153,18 @@ class AdController extends BaseController
         $isImageAd = (int) $request->input('type') === Ad::TYPE_ANNUNCIO_IMMAGINE;
 
         $rules = [
-            'post_title'  => 'required|string|max:255',
-            'weight'      => 'required|integer|min:0|max:10',
-            'type'        => ['required', Rule::in(array_keys(Ad::TYPES))],
-            'width'       => 'nullable|integer|min:0',
-            'height'      => 'nullable|integer|min:0',
-            'start_date'  => 'nullable|date',
-            'expiry_date' => 'nullable|date|after_or_equal:start_date',
-            'placement'   => ['nullable','in:homepage,article,both'],
-            'label'       => 'nullable|string|max:100',
-            'status'      => ['nullable', Rule::in(['0','1'])],
-            // Align on ad_group_id
-            'ad_group_id' => 'nullable|integer|exists:ad_groups,id',
+            'post_title'   => 'required|string|max:255',
+            'weight'       => 'required|integer|min:0|max:10',
+            'type'         => ['required', Rule::in(array_keys(Ad::TYPES))],
+            'group'        => 'nullable|integer',                  // legacy position constant
+            'ad_group_id'  => 'nullable|integer|exists:ad_groups,id',
+            'width'        => 'nullable|integer|min:0',
+            'height'       => 'nullable|integer|min:0',
+            'start_date'   => 'nullable|date',
+            'expiry_date'  => 'nullable|date|after_or_equal:start_date',
+            'placement'    => ['nullable','in:homepage,article,both'],
+            'label'        => 'nullable|string|max:100',
+            'status'       => ['nullable', Rule::in(['0','1'])],
         ];
 
         if ($isImageAd) {
@@ -178,18 +176,19 @@ class AdController extends BaseController
         $validated = $request->validate($rules);
 
         $ad->fill([
-            'title'      => $validated['post_title'],
-            'type'       => (int) $validated['type'],
-            'group'      => $validated['ad_group_id'] ?? null, // FK goes here
-            'weight'     => (int) $validated['weight'],
-            'width'      => $validated['width']  ?? null,
-            'height'     => $validated['height'] ?? null,
-            'amp'        => $request->input('amp'),
-            'start_date' => $validated['start_date']  ?? date('Y-m-d'),
-            'expiry_date'=> $validated['expiry_date'] ?? null,
-            'status'     => $request->boolean('status') ? 1 : 0,
-            'placement'  => $validated['placement'] ?? null,
-            'label'      => $validated['label'] ? trim($validated['label']) : null,
+            'title'       => $validated['post_title'],
+            'type'        => (int) $validated['type'],
+            'group'       => $validated['group'] ?? null,
+            'ad_group_id' => $validated['ad_group_id'] ?? null,
+            'weight'      => (int) $validated['weight'],
+            'width'       => $validated['width']  ?? null,
+            'height'      => $validated['height'] ?? null,
+            'amp'         => $request->input('amp'),
+            'start_date'  => $validated['start_date']  ?? date('Y-m-d'),
+            'expiry_date' => $validated['expiry_date'] ?? null,
+            'status'      => $request->boolean('status') ? 1 : 0,
+            'placement'   => $validated['placement'] ?? null,
+            'label'       => $validated['label'] ? trim($validated['label']) : null,
         ]);
 
         $ad->visualization_condition = $this->packVisualizationCondition($request);
@@ -227,26 +226,34 @@ class AdController extends BaseController
     }
 
     /* -----------------------------------------------------------
-     | Sort weights (by ads / equalize group / by images)
+     | Sort weights (by ads / images for single ad)
      * ----------------------------------------------------------*/
     public function sortAds(Request $request)
     {
-        $groupId = (int) $request->query('group');
-        if (!$groupId) {
+        $positionGroupId = (int) $request->query('group'); // legacy position
+        if (!$positionGroupId) {
             return redirect()->route('ads.groups.index')->with('error', 'No group specified.');
         }
 
-        $grp = AdGroup::find($groupId);
-        $groupName = $grp?->name ?? 'Unknown Group';
+        $groupName = Ad::GROUPS[$positionGroupId] ?? 'Unknown Group';
 
-        $ads = Ad::where('group', $groupId)
-            ->with(['groupRef.images'])
+        $ads = Ad::where('group', $positionGroupId)
+            ->with(['groupRef.images']) // if you kept this relation
             ->orderBy('id')
             ->get();
 
         $adsCount = $ads->count();
-        $adGroup  = AdGroup::with('images')->find($groupId);
 
+        // If exactly one ad, we edit its image group
+        $adGroupForImages = null;
+        if ($adsCount === 1) {
+            $only = $ads->first();
+            if ($only && $only->ad_group_id) {
+                $adGroupForImages = AdGroup::with('images')->find($only->ad_group_id);
+            }
+        }
+
+        // labels (kept in case you still use it elsewhere)
         $labels = [];
         foreach ($ads as $item) {
             $lbl = trim((string) ($item->label ?? ''));
@@ -259,125 +266,63 @@ class AdController extends BaseController
 
         $mode = $request->query('mode') ?: (($adsCount === 1) ? 'images' : 'ads');
 
-        return view('ads.sort', compact('ads', 'groupId', 'groupName', 'labels', 'mode', 'adsCount', 'adGroup'));
+        return view('ads.sort', [
+            'ads'       => $ads,
+            'groupId'   => $positionGroupId,
+            'groupName' => $groupName,
+            'labels'    => $labels,
+            'mode'      => $mode,
+            'adsCount'  => $adsCount,
+            'adGroup'   => $adGroupForImages,   // note: this is an image group when single ad
+        ]);
     }
 
     public function updateSortAds(Request $request)
     {
         $validated = $request->validate([
-            'group' => 'required|integer|exists:ad_groups,id',
-            'mode'  => 'required|string|in:ads,labels,images,group',
+            'group' => 'required|integer',                 // legacy position id in the URL
+            'mode'  => 'required|string|in:ads,images',
         ]);
 
-        $groupId = (int) $validated['group'];
-        $mode    = $validated['mode'];
+        $positionGroupId = (int) $validated['group'];
+        $mode = $validated['mode'];
 
         if ($mode === 'images') {
-            $data = $request->validate([
+            // We need the concrete image group id (ad_group_id of the only ad)
+            $imgForm = $request->validate([
+                'ad_group_id'     => 'required|integer|exists:ad_groups,id',
                 'image_weights'   => 'required|array',
                 'image_weights.*' => 'required|integer|min:0|max:10',
             ]);
 
-            $images = AdGroupImage::where('group_id', $groupId)
-                ->whereIn('id', array_keys($data['image_weights']))
+            $images = AdGroupImage::where('group_id', $imgForm['ad_group_id'])
+                ->whereIn('id', array_keys($imgForm['image_weights']))
                 ->get();
 
             foreach ($images as $img) {
-                $img->weight = (int) $data['image_weights'][$img->id];
+                $img->weight = (int) $imgForm['image_weights'][$img->id];
                 $img->save();
             }
 
-            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'images'])
+            return redirect()->route('ads.sort', ['group' => $positionGroupId, 'mode' => 'images'])
                 ->with('success', 'Image weights updated.');
         }
 
-        if ($mode === 'group') {
-            $data = $request->validate([
-                'total_weight' => 'required|integer|min:0|max:100000',
-            ]);
-
-            $total = (int) $data['total_weight'];
-
-            $ads = Ad::where('group', $groupId)->orderBy('id')->get();
-            $n   = max(1, $ads->count());
-
-            $base = intdiv($total, $n);
-            $rem  = $total % $n;
-
-            foreach ($ads as $i => $ad) {
-                $ad->weight = $base + ($i < $rem ? 1 : 0);
-                $ad->save();
-            }
-
-            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'group'])
-                ->with('success', 'Group total distributed equally across ads.');
-        }
-
-        if ($mode === 'labels') {
-            $data = $request->validate([
-                'label_weights'   => 'required|array',
-                'label_weights.*' => 'required|integer|min:0|max:100000',
-            ]);
-
-            $adsGrouped = Ad::where('group', $groupId)->orderBy('id')->get()
-                ->groupBy(fn ($ad) => trim((string) ($ad->label ?? '')));
-
-            foreach ($data['label_weights'] as $label => $newSum) {
-                $bag = $adsGrouped->get($label, collect());
-                if ($bag->isEmpty()) continue;
-
-                $oldSum = (int) $bag->sum('weight');
-                $newSum = (int) $newSum;
-
-                if ($oldSum === 0) {
-                    $n = $bag->count();
-                    $base = intdiv($newSum, $n);
-                    $rem  = $newSum % $n;
-                    foreach ($bag->values() as $i => $ad) {
-                        $ad->weight = $base + ($i < $rem ? 1 : 0);
-                        $ad->save();
-                    }
-                } else {
-                    $scaled = [];
-                    $sumScaled = 0;
-                    foreach ($bag as $ad) {
-                        $w = (int) round($ad->weight * ($newSum / $oldSum));
-                        $scaled[$ad->id] = $w;
-                        $sumScaled += $w;
-                    }
-                    $diff = $newSum - $sumScaled;
-                    if ($diff !== 0) {
-                        foreach ($bag as $ad) {
-                            if ($diff === 0) break;
-                            $scaled[$ad->id] += ($diff > 0 ? 1 : -1);
-                            $diff += ($diff > 0 ? -1 : 1);
-                        }
-                    }
-                    foreach ($bag as $ad) {
-                        $ad->weight = max(0, (int) $scaled[$ad->id]);
-                        $ad->save();
-                    }
-                }
-            }
-
-            return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'labels'])
-                ->with('success', 'Label weights updated.');
-        }
-
-        // default: per-ad sliders
+        // default: by ads in this legacy position
         $data = $request->validate([
             'weights'   => 'required|array',
             'weights.*' => 'required|integer|min:0|max:10',
         ]);
 
+        $ads = Ad::where('group', $positionGroupId)->get()->keyBy('id');
         foreach ($data['weights'] as $adId => $w) {
-            if ($ad = Ad::find($adId)) {
-                $ad->weight = (int) $w;
-                $ad->save();
+            if (isset($ads[$adId])) {
+                $ads[$adId]->weight = (int) $w;
+                $ads[$adId]->save();
             }
         }
 
-        return redirect()->route('ads.sort', ['group' => $groupId, 'mode' => 'ads'])
+        return redirect()->route('ads.sort', ['group' => $positionGroupId, 'mode' => 'ads'])
             ->with('success', 'Ad weights updated.');
     }
 
