@@ -141,7 +141,7 @@
 
                                 <div class="preview-wrapper d-inline-block">
                                     <div class="gam-thumb d-inline-flex align-items-center justify-content-center flex-column"
-                                        style="width:{{ $thumbW }}px;height:{{ $thumbH }}px">
+                                        style="width:50px;height:50px">
                                         <span class="text-muted small"><i class="fa-brands fa-google me-1"></i>
                                             Google</span>
                                     </div>
