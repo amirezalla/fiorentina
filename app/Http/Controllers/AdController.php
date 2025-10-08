@@ -91,7 +91,6 @@ class AdController extends BaseController
             'start_date'   => 'nullable|date',
             'expiry_date'  => 'nullable|date|after_or_equal:start_date',
             'placement'    => ['nullable','in:homepage,article,both'],
-            'label'        => 'nullable|string|max:100',
         ];
 
         // Conditional rules
@@ -113,7 +112,6 @@ class AdController extends BaseController
         $ad->height       = $validated['height'] ?? null;
         $ad->amp          = $request->input('amp');               // only for Google ads
         $ad->placement    = $validated['placement'] ?? null;
-        $ad->label        = $validated['label'] ? trim($validated['label']) : null;
 
         $ad->visualization_condition = $this->packVisualizationCondition($request);
         $ad->start_date   = $validated['start_date']  ?? date('Y-m-d');
@@ -163,7 +161,6 @@ class AdController extends BaseController
             'start_date'   => 'nullable|date',
             'expiry_date'  => 'nullable|date|after_or_equal:start_date',
             'placement'    => ['nullable','in:homepage,article,both'],
-            'label'        => 'nullable|string|max:100',
             'status'       => ['nullable', Rule::in(['0','1'])],
         ];
 
@@ -188,7 +185,6 @@ class AdController extends BaseController
             'expiry_date' => $validated['expiry_date'] ?? null,
             'status'      => $request->boolean('status') ? 1 : 0,
             'placement'   => $validated['placement'] ?? null,
-            'label'       => $validated['label'] ? trim($validated['label']) : null,
         ]);
 
         $ad->visualization_condition = $this->packVisualizationCondition($request);
