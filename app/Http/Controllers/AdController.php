@@ -30,7 +30,7 @@ class AdController extends BaseController
 
         $range = match ($request->input('tf')) {
             'today' => [now()->toDateString(), now()->toDateString()],
-            '7'     => [now()->subDays(6)->toDateString(),  now()->toDateString()],
+            '7'     => [now()->subDays(6)->toDateString(), now()->toDateString()],
             '30'    => [now()->subDays(29)->toDateString(), now()->toDateString()],
             '90'    => [now()->subDays(89)->toDateString(), now()->toDateString()],
             default => null,
@@ -80,54 +80,55 @@ class AdController extends BaseController
      * ----------------------------------------------------------*/
     public function store(Request $request)
     {
-        // common rules
+        // Base rules
         $rules = [
             'post_title'  => 'required|string|max:255',
             'weight'      => 'required|integer|min:0|max:10',
             'type'        => ['required', Rule::in(array_keys(Ad::TYPES))],
-            'group'       => ['nullable', 'integer', 'exists:ad_groups,id'],
             'width'       => 'nullable|integer|min:0',
             'height'      => 'nullable|integer|min:0',
             'start_date'  => 'nullable|date',
             'expiry_date' => 'nullable|date|after_or_equal:start_date',
-            'placement'   => ['nullable', 'in:homepage,article,both'],
+            'placement'   => ['nullable','in:homepage,article,both'],
             'label'       => 'nullable|string|max:100',
+            // IMPORTANT: we validate ad_group_id (not legacy group constants)
+            'ad_group_id' => 'nullable|integer|exists:ad_groups,id',
         ];
 
-        // conditional rules
+        // Conditional rules
         if ((int) $request->input('type') === Ad::TYPE_ANNUNCIO_IMMAGINE) {
-            // With “groups” approach, images are not uploaded per ad.
-            $rules['group'] = ['required', 'integer', 'exists:ad_groups,id'];
+            // For image ads, a real ad_groups row is required
+            $rules['ad_group_id'] = 'required|integer|exists:ad_groups,id';
         } else {
+            // Google ads: require amp, group remains nullable
             $rules['amp'] = 'required|string';
         }
 
         $validated = $request->validate($rules);
 
         $ad = new Ad();
-        $ad->title       = $validated['post_title'];
-        $ad->type        = (int) $validated['type'];
-        $ad->group       = $validated['group'] ?? null;  // nullable FK to ad_groups
-        $ad->weight      = (int) $validated['weight'];
-        $ad->width       = $validated['width']  ?? null;
-        $ad->height      = $validated['height'] ?? null;
-        $ad->amp         = $request->input('amp');       // only for Google ads
-        $ad->placement   = $validated['placement'] ?? null;
-        $ad->label       = $validated['label'] ? trim($validated['label']) : null;
+        $ad->title     = $validated['post_title'];
+        $ad->type      = (int) $validated['type'];
+        $ad->group     = $validated['ad_group_id'] ?? null;   // write FK here
+        $ad->weight    = (int) $validated['weight'];
+        $ad->width     = $validated['width']  ?? null;
+        $ad->height    = $validated['height'] ?? null;
+        $ad->amp       = $request->input('amp');               // only for Google ads
+        $ad->placement = $validated['placement'] ?? null;
+        $ad->label     = $validated['label'] ? trim($validated['label']) : null;
 
         $ad->visualization_condition = $this->packVisualizationCondition($request);
-        $ad->start_date   = $validated['start_date']  ?? date('Y-m-d');
-        $ad->expiry_date  = $validated['expiry_date'] ?? null;
-        $ad->status       = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
+        $ad->start_date  = $validated['start_date']  ?? date('Y-m-d');
+        $ad->expiry_date = $validated['expiry_date'] ?? null;
+        $ad->status      = ($ad->start_date !== date('Y-m-d')) ? 0 : 1;
 
         $ad->save();
 
         if (!empty($ad->label)) {
-            AdLabel::firstOrCreate([
-                'name' => $ad->label,
-            ], [
-                'slug' => Str::slug($ad->label),
-            ]);
+            AdLabel::firstOrCreate(
+                ['name' => $ad->label],
+                ['slug' => Str::slug($ad->label)]
+            );
         }
 
         if ($ad->start_date !== date('Y-m-d')) {
@@ -157,18 +158,19 @@ class AdController extends BaseController
             'post_title'  => 'required|string|max:255',
             'weight'      => 'required|integer|min:0|max:10',
             'type'        => ['required', Rule::in(array_keys(Ad::TYPES))],
-            'group'       => ['nullable', 'integer', 'exists:ad_groups,id'],
             'width'       => 'nullable|integer|min:0',
             'height'      => 'nullable|integer|min:0',
             'start_date'  => 'nullable|date',
             'expiry_date' => 'nullable|date|after_or_equal:start_date',
-            'placement'   => ['nullable', 'in:homepage,article,both'],
+            'placement'   => ['nullable','in:homepage,article,both'],
             'label'       => 'nullable|string|max:100',
-            'status'      => ['nullable', Rule::in(['0', '1'])],
+            'status'      => ['nullable', Rule::in(['0','1'])],
+            // Align on ad_group_id
+            'ad_group_id' => 'nullable|integer|exists:ad_groups,id',
         ];
 
         if ($isImageAd) {
-            $rules['group'] = ['required', 'integer', 'exists:ad_groups,id'];
+            $rules['ad_group_id'] = 'required|integer|exists:ad_groups,id';
         } else {
             $rules['amp'] = 'required|string';
         }
@@ -176,29 +178,28 @@ class AdController extends BaseController
         $validated = $request->validate($rules);
 
         $ad->fill([
-            'title'        => $validated['post_title'],
-            'type'         => (int) $validated['type'],
-            'group'        => $validated['group'] ?? null,
-            'weight'       => (int) $validated['weight'],
-            'width'        => $validated['width']  ?? null,
-            'height'       => $validated['height'] ?? null,
-            'amp'          => $request->input('amp'),
-            'start_date'   => $validated['start_date']  ?? date('Y-m-d'),
-            'expiry_date'  => $validated['expiry_date'] ?? null,
-            'status'       => $request->boolean('status') ? 1 : 0,
-            'placement'    => $validated['placement'] ?? null,
-            'label'        => $validated['label'] ? trim($validated['label']) : null,
+            'title'      => $validated['post_title'],
+            'type'       => (int) $validated['type'],
+            'group'      => $validated['ad_group_id'] ?? null, // FK goes here
+            'weight'     => (int) $validated['weight'],
+            'width'      => $validated['width']  ?? null,
+            'height'     => $validated['height'] ?? null,
+            'amp'        => $request->input('amp'),
+            'start_date' => $validated['start_date']  ?? date('Y-m-d'),
+            'expiry_date'=> $validated['expiry_date'] ?? null,
+            'status'     => $request->boolean('status') ? 1 : 0,
+            'placement'  => $validated['placement'] ?? null,
+            'label'      => $validated['label'] ? trim($validated['label']) : null,
         ]);
 
         $ad->visualization_condition = $this->packVisualizationCondition($request);
         $ad->save();
 
         if (!empty($ad->label)) {
-            AdLabel::firstOrCreate([
-                'name' => $ad->label,
-            ], [
-                'slug' => Str::slug($ad->label),
-            ]);
+            AdLabel::firstOrCreate(
+                ['name' => $ad->label],
+                ['slug' => Str::slug($ad->label)]
+            );
         }
 
         return back()->with('success', 'Advertisement updated successfully!');
@@ -219,11 +220,9 @@ class AdController extends BaseController
     public function trackClick(int $id)
     {
         $ad = Ad::findOrFail($id);
-
         AdStatistic::trackClick($ad->id);
 
         $target = $ad->getRedirectUrl() ?: $ad->url ?: '/';
-
         return redirect()->away($target);
     }
 
@@ -237,18 +236,16 @@ class AdController extends BaseController
             return redirect()->route('ads.groups.index')->with('error', 'No group specified.');
         }
 
-        // you may still keep your constants for naming; otherwise fetch from ad_groups
         $grp = AdGroup::find($groupId);
         $groupName = $grp?->name ?? 'Unknown Group';
 
         $ads = Ad::where('group', $groupId)
-            ->with(['groupRef.images']) // define Ad::groupRef()->belongsTo(AdGroup::class,'group')
+            ->with(['groupRef.images'])
             ->orderBy('id')
             ->get();
 
         $adsCount = $ads->count();
-
-        $adGroup = AdGroup::with('images')->find($groupId);
+        $adGroup  = AdGroup::with('images')->find($groupId);
 
         $labels = [];
         foreach ($ads as $item) {
