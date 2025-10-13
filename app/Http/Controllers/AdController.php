@@ -20,27 +20,68 @@ class AdController extends BaseController
         return parent::breadcrumb()->add('Advertisements');
     }
 
-    public function click(Request $request)
-{
+public function click(Request $request)
+    {
+        // 1) Destination the user should land on (required)
         $dest = (string) $request->query('url', '');
-        dd($dest);
 
-        // Bump click if we know the image id
+        // 2) Optional id (if you sometimes pass it)
+        $id = (int) $request->query('id', 0);
 
-            if ($img = AdGroupImage::where('url', $dest)->first()) {
-                $img->bumpClick();
-            }
-
-
-        // Very defensive fallback
+        // Safety: must be an http(s) URL
         if ($dest === '' || !preg_match('~^https?://~i', $dest)) {
-            $dest = url('/'); // home as a safe default
+            return redirect()->to('/'); // fallback
+        }
+
+        // Try 1: by id (fast path, if you pass it)
+        if ($id > 0 && ($img = AdGroupImage::find($id))) {
+            $img->bumpClick();
+            return redirect()->away($dest);
+        }
+
+        // Try 2: by URL
+        $normalized = $this->normalizeUrl($dest);
+
+        // Exact match first
+        $img = AdGroupImage::where('target_url', $normalized)->first();
+
+        // If no luck, try a few forgiving variants
+        if (!$img) {
+            $variants = array_unique([
+                $normalized,
+                rtrim($normalized, '/'),
+                rtrim($normalized, '/') . '/',
+                urldecode($normalized),
+                urlencode(urldecode($normalized)),
+            ]);
+
+            $img = AdGroupImage::whereIn('target_url', $variants)->first();
+        }
+
+        if ($img) {
+            $img->bumpClick();
         }
 
         return redirect()->away($dest);
+    }
 
-}
+    private function normalizeUrl(string $url): string
+    {
+        // Lower-case scheme/host + trim spaces; keep path/query as-is
+        $parts = parse_url($url);
+        if (!$parts || empty($parts['scheme']) || empty($parts['host'])) {
+            return trim($url);
+        }
 
+        $scheme = strtolower($parts['scheme']);
+        $host   = strtolower($parts['host']);
+        $port   = isset($parts['port']) ? ':' . $parts['port'] : '';
+        $path   = $parts['path'] ?? '';
+        $query  = isset($parts['query']) ? '?' . $parts['query'] : '';
+        $frag   = isset($parts['fragment']) ? '#' . $parts['fragment'] : '';
+
+        return trim("{$scheme}://{$host}{$port}{$path}{$query}{$frag}");
+    }
 
     /* -----------------------------------------------------------
      | Index
