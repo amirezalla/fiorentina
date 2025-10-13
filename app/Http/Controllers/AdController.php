@@ -20,7 +20,7 @@ class AdController extends BaseController
         return parent::breadcrumb()->add('Advertisements');
     }
 
-    public function click(int $groupId)
+    public function click(Request $request)
 {
         $dest = (string) $request->query('url', '');
         $id   = (int) $request->query('id', 0);
