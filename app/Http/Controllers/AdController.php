@@ -28,7 +28,7 @@ class AdController extends BaseController
         // Bump click if we know the image id
         if ($id > 0) {
             if ($img = AdGroupImage::find($id)) {
-                $img->increment('clicks');
+                $img->BumpClick();
             }
         }
 
