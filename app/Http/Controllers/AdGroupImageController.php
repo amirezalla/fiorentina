@@ -44,6 +44,7 @@ class AdGroupImageController extends Controller
         if ($id !== null) {
             $query['id'] = (string) $id;
         }
+        dd($trackerBase . '?' . http_build_query($query));
         return $trackerBase . '?' . http_build_query($query);
     }
 
