@@ -20,6 +20,28 @@ class AdController extends BaseController
         return parent::breadcrumb()->add('Advertisements');
     }
 
+    public function click(int $groupId)
+{
+        $dest = (string) $request->query('url', '');
+        $id   = (int) $request->query('id', 0);
+
+        // Bump click if we know the image id
+        if ($id > 0) {
+            if ($img = AdGroupImage::find($id)) {
+                $img->increment('clicks');
+            }
+        }
+
+        // Very defensive fallback
+        if ($dest === '' || !preg_match('~^https?://~i', $dest)) {
+            $dest = url('/'); // home as a safe default
+        }
+
+        return redirect()->away($dest);
+
+}
+
+
     /* -----------------------------------------------------------
      | Index
      * ----------------------------------------------------------*/
@@ -424,6 +446,7 @@ public function groupsIndex()
         'counts'        => $counts,
     ]);
 }
+
 
 
 }
