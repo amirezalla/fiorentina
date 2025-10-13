@@ -239,24 +239,24 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-        // Retrieve the SendGrid API key from the database
-        $sendgridApiKey = env("MAIL_PASSWORD");
+    //     // Retrieve the SendGrid API key from the database
+    //     $sendgridApiKey = env("MAIL_PASSWORD");
 
-    // Override the mail configuration for SMTP
-    Config::set('mail.mailers.smtp.username', 'apikey');  
-    Config::set('mail.mailers.smtp.password', $sendgridApiKey);
-    putenv("MAIL_PASSWORD=".$sendgridApiKey);
+    // // Override the mail configuration for SMTP
+    // Config::set('mail.mailers.smtp.username', 'apikey');  
+    // Config::set('mail.mailers.smtp.password', $sendgridApiKey);
+    // putenv("MAIL_PASSWORD=".$sendgridApiKey);
 
-    $manager->extend('sendgrid', function () {
-        // Retrieve your API key from config or DB
-        $apiKey = config('mail.mailers.smtp.password'); // Make sure this is set
-        // Create an HTTP client instance (or inject one via the service container)
-        $client = HttpClient::create();
-        return new SendGridTransport($apiKey, $client);
-    });
-    $this->app->booted(function () {
-        config()->set('mail.default', "sendgrid");
-    });
+    // $manager->extend('sendgrid', function () {
+    //     // Retrieve your API key from config or DB
+    //     $apiKey = config('mail.mailers.smtp.password'); // Make sure this is set
+    //     // Create an HTTP client instance (or inject one via the service container)
+    //     $client = HttpClient::create();
+    //     return new SendGridTransport($apiKey, $client);
+    // });
+    // $this->app->booted(function () {
+    //     config()->set('mail.default', "sendgrid");
+    // });
 
     }
 }
