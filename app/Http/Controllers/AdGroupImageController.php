@@ -14,16 +14,37 @@ class AdGroupImageController extends Controller
     public function __construct(protected RvMedia $rvMedia) {}
 
     /** Normalize a target URL to your click tracker once (no double-wrap). */
-    protected function wrapTracker(?string $url): ?string
+    protected function wrapTracker(?string $url, ?int $id = null): ?string
     {
         if (!$url) return null;
 
-        // already tracked?
         $trackerBase = url('/adsclicktracker');
+
+        // If it's already one of our tracker URLs, merge query params
         if (str_starts_with($url, $trackerBase)) {
-            return $url;
+            $parts  = parse_url($url);
+            $query  = [];
+            if (!empty($parts['query'])) {
+                parse_str($parts['query'], $query);
+            }
+            // Ensure 'url' is preserved; add/replace id
+            if (!isset($query['url']) || $query['url'] === '') {
+                // nothing to do: malformed tracker link without url param
+                // leave as-is but we can still add id
+            }
+            if ($id !== null) {
+                $query['id'] = (string) $id;
+            }
+            $rebuilt = $trackerBase . '?' . http_build_query($query);
+            return $rebuilt;
         }
-        return $trackerBase . '?url=' . urlencode($url);
+
+        // Plain destination → build fresh tracker
+        $query = ['url' => rawurlencode($url)];
+        if ($id !== null) {
+            $query['id'] = (string) $id;
+        }
+        return $trackerBase . '?' . http_build_query($query);
     }
 
     public function store(Request $request, AdGroup $group)
