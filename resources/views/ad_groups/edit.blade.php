@@ -22,13 +22,11 @@
             </div>
         @endif
 
-        {{-- ================== GROUP META ================== --}}
         <form method="POST" action="{{ route('adgroups.update', $group) }}" class="mb-4">
             @csrf @method('PUT')
-
             <div class="row">
-                <div class="col-lg-8">
-
+                {{-- LEFT: main details --}}
+                <div class="col-lg-9">
                     <div class="card mb-3">
                         <div class="card-header">
                             <h4 class="card-title mb-0">Group details</h4>
@@ -57,142 +55,192 @@
                                         value="{{ old('height', $group->height) }}">
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="mt-3">
-                                <label class="form-label d-block">Placement</label>
-                                <select name="placement" class="form-select">
-                                    <option value="" @selected(old('placement', $group->placement) == '')>—</option>
-                                    <option value="homepage" @selected(old('placement', $group->placement) == 'homepage')>Homepage</option>
-                                    <option value="article" @selected(old('placement', $group->placement) == 'article')>Article</option>
-                                    <option value="both" @selected(old('placement', $group->placement) == 'both')>Both</option>
-                                </select>
+                    {{-- Upload images + optional per-file URL/expiry (by order) --}}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Add images to this group
+                                ({{ $group->width ?: 'auto' }}×{{ $group->height ?: 'auto' }})</h4>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('adgroups.images.store', $group) }}" method="POST"
+                                enctype="multipart/form-data" id="uploadForm">
+                                @csrf
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-12 col-xl-5">
+                                        <label class="form-label">Images</label>
+                                        <input type="file" class="form-control" name="images[]" id="imagesInput" multiple
+                                            accept="image/*">
+                                        <small class="text-muted d-block">Images will be resized to the group size if
+                                            width/height are set.</small>
+                                    </div>
+                                    <div class="col-12 col-xl-7">
+                                        <div class="row g-2" id="urlExpiryInputs">
+                                            {{-- JS will create rows: [#] URL | Expiry --}}
+                                        </div>
+                                        <small class="text-muted">Optional. URLs & expiries will be matched by the file
+                                            order.</small>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-primary">Add Images</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Current images --}}
+                    @php
+                        $resolve = fn($path) => preg_match('~^https?://~', $path)
+                            ? $path
+                            : Storage::disk('wasabi')->url($path);
+                    @endphp
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Current images ({{ $group->images->count() }})</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="images-grid" class="row g-3">
+                                @forelse ($group->images as $img)
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" data-id="{{ $img->id }}">
+                                        <div class="border rounded p-2 h-100 position-relative">
+                                            <img src="{{ $resolve($img->image_url) }}" alt=""
+                                                class="img-fluid w-100" style="aspect-ratio: 1.5/1; object-fit: cover;">
+
+                                            <div class="small mt-2">
+                                                <div class="text-truncate">
+                                                    <span class="text-muted">Link:</span>
+                                                    @if ($img->target_url)
+                                                        <a href="{{ $img->target_url }}" target="_blank"
+                                                            rel="noopener">{{ $img->target_url }}</a>
+                                                    @else
+                                                        <em class="text-muted">—</em>
+                                                    @endif
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-1">
+                                                    <span class="badge bg-light text-dark">Views:
+                                                        {{ number_format($img->views) }}</span>
+                                                    <span class="badge bg-light text-dark">Clicks:
+                                                        {{ number_format($img->clicks) }}</span>
+                                                </div>
+                                                <div class="mt-1">
+                                                    <span class="text-muted">Expires:</span>
+                                                    @if ($img->expires_at)
+                                                        @php $expired = \Illuminate\Support\Carbon::parse($img->expires_at)->isPast(); @endphp
+                                                        <span
+                                                            class="{{ $expired ? 'text-danger' : '' }}">{{ $img->expires_at->format('Y-m-d') }}</span>
+                                                    @else
+                                                        <em class="text-muted">—</em>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <form action="{{ route('adgroups.images.destroy', [$group, $img]) }}"
+                                                method="POST" onsubmit="return confirm('Remove this image?');"
+                                                class="position-absolute top-0 end-0 m-2">
+                                                @csrf @method('DELETE')
+                                                <button class="btn btn-sm btn-danger" type="submit"
+                                                    title="Delete">&times;</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="col-12"><em class="text-muted">No images yet.</em></div>
+                                @endforelse
                             </div>
 
-                            <div class="mt-3">
-                                <label class="form-label d-block">Status</label>
-                                <select name="status" class="form-select">
-                                    <option value="1" @selected(old('status', $group->status) == 1)>Active</option>
-                                    <option value="0" @selected(old('status', $group->status) == 0)>Disabled</option>
-                                </select>
+                            {{-- Bulk update links + expiry --}}
+                            @if ($group->images->count())
+                                <hr class="my-4">
+                                <h5>Update links & expiry for existing images</h5>
+
+                                <form action="{{ route('adgroups.images.update-links', $group) }}" method="POST">
+                                    @csrf
+                                    <div class="row g-3">
+                                        @foreach ($group->images as $img)
+                                            <div class="col-12 col-md-6">
+                                                <div class="border rounded p-2 h-100">
+                                                    <div class="d-flex gap-2 align-items-start">
+                                                        <img src="{{ $resolve($img->image_url) }}" alt=""
+                                                            style="width:120px;height:120px;object-fit:cover;border-radius:.25rem;">
+                                                        <div class="flex-grow-1">
+                                                            <label class="form-label">Target URL</label>
+                                                            <input type="url" class="form-control"
+                                                                name="image_urls[{{ $img->id }}]"
+                                                                value="{{ old('image_urls.' . $img->id, $img->target_url) }}"
+                                                                placeholder="https://example.com">
+                                                            <div class="row g-2 mt-2">
+                                                                <div class="col">
+                                                                    <label class="form-label">Expiry</label>
+                                                                    <input type="date" class="form-control"
+                                                                        name="image_expiry[{{ $img->id }}]"
+                                                                        value="{{ old('image_expiry.' . $img->id, optional($img->expires_at)->format('Y-m-d')) }}">
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-muted d-block mt-1">Image
+                                                                #{{ $img->id }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <button class="btn btn-primary">Save Links & Expiry</button>
+                                    </div>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- RIGHT: sidebar --}}
+                <div class="col-lg-3 d-flex flex-column gap-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Publish</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="btn-list">
+                                <button class="btn btn-primary" type="submit" form="uploadForm"
+                                    formaction="{{ route('adgroups.update', $group) }}" formmethod="POST"
+                                    onclick="event.preventDefault(); this.closest('div.container-fluid').querySelector('form[action=\'{{ route('adgroups.update', $group) }}\']').submit();">Save</button>
+                                <a class="btn" href="{{ route('adgroups.index') }}">Back</a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary">Save</button>
-                        <a class="btn btn-secondary" href="{{ route('adgroups.index') }}">Back</a>
+                    <div class="card meta-boxes">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Placement</h4>
+                        </div>
+                        <div class="card-body">
+                            <select class="form-select" name="placement" form="{{ $attributes['form'] ?? '' }}">
+                                <option value="" @selected(old('placement', $group->placement) == '')>—</option>
+                                <option value="homepage" @selected(old('placement', $group->placement) == 'homepage')>Homepage</option>
+                                <option value="article" @selected(old('placement', $group->placement) == 'article')>Article</option>
+                                <option value="both" @selected(old('placement', $group->placement) == 'both')>Both</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card meta-boxes">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Status</h4>
+                        </div>
+                        <div class="card-body">
+                            <select class="form-select" name="status" form="{{ $attributes['form'] ?? '' }}">
+                                <option value="1" @selected(old('status', $group->status) == 1)>Active</option>
+                                <option value="0" @selected(old('status', $group->status) == 0)>Disabled</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
         </form>
-
-        {{-- ================== UPLOAD IMAGES + LINKS ================== --}}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4 class="card-title mb-0">Add images to this group
-                    ({{ $group->width ?: 'auto' }}×{{ $group->height ?: 'auto' }})</h4>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('adgroups.images.store', $group) }}" method="POST" enctype="multipart/form-data"
-                    id="uploadForm">
-                    @csrf
-                    <div class="row g-3 align-items-end">
-                        <div class="col-12 col-lg-6">
-                            <label class="form-label">Images</label>
-                            <input type="file" class="form-control" name="images[]" id="imagesInput" multiple
-                                accept="image/*">
-                            <small class="text-muted d-block">
-                                Images will be resized to the group size if width/height are set.
-                            </small>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <label class="form-label">Target links (matched by order)</label>
-                            <div id="urlInputs" class="d-flex flex-column gap-2"></div>
-                            <small class="text-muted">Optional. If provided, each link will be attached to the corresponding
-                                image.</small>
-                        </div>
-                        <div class="col-12">
-                            <button class="btn btn-primary">Add Images</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        {{-- ================== CURRENT IMAGES GRID ================== --}}
-        @php
-            $resolve = fn($path) => preg_match('~^https?://~', $path) ? $path : Storage::disk('wasabi')->url($path);
-        @endphp
-
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">Current images ({{ $group->images->count() }})</h4>
-            </div>
-            <div class="card-body">
-
-                <div id="images-grid" class="row g-3">
-                    @forelse ($group->images as $img)
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3" data-id="{{ $img->id }}">
-                            <div class="border rounded p-2 h-100 position-relative">
-                                <img src="{{ $resolve($img->image_url) }}" alt="" class="img-fluid w-100"
-                                    style="aspect-ratio: 1.5/1; object-fit: cover;">
-                                <div class="mt-2 small text-truncate">
-                                    <span class="text-muted">Link: </span>
-                                    @if ($img->target_url)
-                                        <a href="{{ $img->target_url }}" target="_blank"
-                                            rel="noopener">{{ $img->target_url }}</a>
-                                    @else
-                                        <em class="text-muted">—</em>
-                                    @endif
-                                </div>
-                                <form action="{{ route('adgroups.images.destroy', [$group, $img]) }}" method="POST"
-                                    onsubmit="return confirm('Remove this image?');"
-                                    class="position-absolute top-0 end-0 m-2">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-sm btn-danger" type="submit" title="Delete">&times;</button>
-                                </form>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="col-12"><em class="text-muted">No images yet.</em></div>
-                    @endforelse
-                </div>
-
-                {{-- ================== EDIT LINKS INLINE ================== --}}
-                @if ($group->images->count())
-                    <hr class="my-4">
-                    <h5>Update links for existing images</h5>
-
-                    <form action="{{ route('adgroups.images.update-links', $group) }}" method="POST">
-                        @csrf
-                        <div class="row g-3">
-                            @foreach ($group->images as $img)
-                                <div class="col-12 col-md-6">
-                                    <div class="border rounded p-2 h-100">
-                                        <div class="d-flex gap-2 align-items-start">
-                                            <img src="{{ $resolve($img->image_url) }}" alt=""
-                                                style="width:120px;height:120px;object-fit:cover;border-radius:.25rem;">
-                                            <div class="flex-grow-1">
-                                                <label class="form-label">Target URL</label>
-                                                <input type="url" class="form-control"
-                                                    name="image_urls[{{ $img->id }}]"
-                                                    value="{{ old('image_urls.' . $img->id, $img->target_url) }}"
-                                                    placeholder="https://example.com">
-                                                <small class="text-muted">Image #{{ $img->id }}</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <div class="mt-3">
-                            <button class="btn btn-primary">Save Links</button>
-                        </div>
-                    </form>
-                @endif
-            </div>
-        </div>
     </div>
 @endsection
 
@@ -200,30 +248,26 @@
     <script>
         (function() {
             const fileInput = document.getElementById('imagesInput');
-            const urlInputs = document.getElementById('urlInputs');
+            const holder = document.getElementById('urlExpiryInputs');
+
+            function makeRow(i) {
+                const wrap = document.createElement('div');
+                wrap.className = 'col-12';
+
+                wrap.innerHTML = `
+            <div class="row g-2">
+                <div class="col-auto">
+                    <div class="input-group-text">${i+1}.</div>
+                </div>
+            </div>
+        `;
+                return wrap;
+            }
 
             fileInput?.addEventListener('change', () => {
-                urlInputs.innerHTML = '';
+                holder.innerHTML = '';
                 const files = [...fileInput.files];
-
-                files.forEach((f, i) => {
-                    const group = document.createElement('div');
-                    group.className = 'input-group';
-
-                    const pref = document.createElement('span');
-                    pref.className = 'input-group-text';
-                    pref.textContent = (i + 1) + '.';
-                    group.appendChild(pref);
-
-                    const input = document.createElement('input');
-                    input.type = 'url';
-                    input.name = 'urls[' + i + ']';
-                    input.placeholder = 'https://example.com (optional)';
-                    input.className = 'form-control';
-                    group.appendChild(input);
-
-                    urlInputs.appendChild(group);
-                });
+                files.forEach((_, i) => holder.appendChild(makeRow(i)));
             });
         })();
     </script>
