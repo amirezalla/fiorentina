@@ -152,9 +152,9 @@ Route::post('admin/ad-groups/{group}/images/links', [AdGroupImageController::cla
 Route::get('admin/ads/{ad}/preview', [\App\Http\Controllers\AdController::class, 'ampPreview'])
     ->name('ads.ampPreview');
 
-Route::get('/adsclicktracker', [AdTrackingController::class, 'click'])
+Route::get('/adsclicktracker', [AdController::class, 'click'])
     ->name('ads.click');
-    
+
 Route::get('/admin/players', [PlayerController::class, 'index'])->name('players.index');
 Route::get('/admin/players/create', [PlayerController::class, 'create'])->name('players.create');
 Route::post('/admin/players', [PlayerController::class, 'store'])->name('players.store');
