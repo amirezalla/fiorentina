@@ -41,7 +41,7 @@ public function click(Request $request)
 
         // Try 2: by URL
         $normalized = $this->normalizeUrl($dest);
-
+        dd($normalized);
         // Exact match first
         $img = AdGroupImage::where('target_url', $normalized)->first();
 
