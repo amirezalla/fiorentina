@@ -23,14 +23,14 @@ class AdController extends BaseController
     public function click(Request $request)
 {
         $dest = (string) $request->query('url', '');
-        $id   = (int) $request->query('id', 0);
+        dd($dest);
 
         // Bump click if we know the image id
-        if ($id > 0) {
-            if ($img = AdGroupImage::find($id)) {
-                $img->BumpClick();
+
+            if ($img = AdGroupImage::where('url', $dest)->first()) {
+                $img->bumpClick();
             }
-        }
+
 
         // Very defensive fallback
         if ($dest === '' || !preg_match('~^https?://~i', $dest)) {
