@@ -18,12 +18,13 @@ Route::group(['namespace' => 'Botble\ACL\Http\Controllers'], function () {
             Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])
                 ->name('access.password.email');
 
-        });
-    }, ['web', 'core']);
             Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])
                 ->name('access.password.reset');
             Route::post('password/reset', [ResetPasswordController::class, 'reset'])
                 ->name('access.password.reset.post');
+        });
+    }, ['web', 'core']);
+
     AdminHelper::registerRoutes(function () {
         Route::get('logout', [
             'as' => 'access.logout',

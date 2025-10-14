@@ -34,7 +34,7 @@ class ResetPasswordNotification extends Notification
     {
         try {
             // Generate the password reset link
-            $resetLink = route('access.password.reset', ['token' => $this->token]);
+            $resetLink = route('password.reset', ['token' => $this->token]);
             
             // Define a simple subject and message body
             $subject = "Reimposta la tua password su Laviola";
