@@ -258,9 +258,12 @@ class AppServiceProvider extends ServiceProvider
 
         $domain = trim($domain ?: '');
 
+        // Region/endpoint: US default; use EU if you store a flag or endpoint
+        $endpoint = (string) DB::table('settings')
+            ->where('key', 'email_mail_gun_endpoint') // e.g. https://api.eu.mailgun.net
+            ->value('value');
 
-
-        $endpoint ='https://api.mailgun.net';
+        $endpoint = $endpoint ? trim($endpoint) : 'https://api.mailgun.net';
 
         if ($secret === '' || $domain === '') {
             // Fail fast with a clear error so you notice misconfigurations early
