@@ -15,6 +15,11 @@ use App\Mail\Transport\SendGridTransport;
 use App\Mail\Transport\MailgunTransport;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\HttpClient\HttpClient;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Mail\Events\MessageFailed;
 
 
 

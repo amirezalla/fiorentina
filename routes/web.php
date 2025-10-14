@@ -502,11 +502,11 @@ Route::get('/normalize-posts', [PostNormalizeController::class, 'normalize']);
 
     Route::get('/member/activity/comment/{comment}', [MemberActivityController::class, 'show'])
         ->name('public.member.activity.comment');
-        
+
 Route::get('/test-mailgun', function () {
     // Change these to your test recipient and verified-from address
-    $to   = request('to', 'recipient@example.com');
-    $from = request('from', config('mail.from.address', 'noreply@mg.yourdomain.com'));
+    $to   = request('to', 'a.allahverdi@icoa.it');
+    $from = request('from', config('mail.from.address', 'redsport@laviola.collaudo.biz'));
 
     Mail::raw('Hello from custom MailgunTransport! ' . now(), function ($m) use ($to, $from) {
         $m->to($to)
