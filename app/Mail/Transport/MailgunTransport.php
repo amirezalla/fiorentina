@@ -2,6 +2,8 @@
 
 namespace App\Mail\Transport;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\SentMessage;
@@ -18,23 +20,29 @@ class MailgunTransport extends AbstractTransport
     private HttpClientInterface $client;
 
     /**
-     * @param string $apiKey   Mailgun private API key (starting with "key-...")
-     * @param string $domain   Mailgun sending domain, e.g. "mg.example.com"
+     * @param string $apiKey   Mailgun private API key (starts with "key-...")
+     * @param string $domain   Your Mailgun sending domain, e.g. "mg.example.com"
      * @param HttpClientInterface $client
      * @param EventDispatcherInterface|null $dispatcher
-     * @param string $endpoint Mailgun API base (US: api.mailgun.net, EU: api.eu.mailgun.net)
+     * @param string $endpoint Mailgun API base (US: https://api.mailgun.net, EU: https://api.eu.mailgun.net)
      */
     public function __construct(
         string $apiKey,
         string $domain,
         HttpClientInterface $client,
         ?EventDispatcherInterface $dispatcher = null,
-        string $endpoint = 'https://api.mailgun.net'
+        string $endpoint = 'https://api/mailgun.net'
     ) {
-        $this->apiKey  = $apiKey;
-        $this->domain  = $domain;
-        $this->client  = $client;
+        // little guard in case someone passes api.mailgun.net without scheme
+        if (!str_starts_with($endpoint, 'http')) {
+            $endpoint = 'https://' . ltrim($endpoint, '/');
+        }
+
+        $this->apiKey   = $apiKey;
+        $this->domain   = $domain;
+        $this->client   = $client;
         $this->endpoint = rtrim($endpoint, '/');
+
         parent::__construct($dispatcher);
     }
 
@@ -43,18 +51,18 @@ class MailgunTransport extends AbstractTransport
         /** @var Email $email */
         $email = $message->getOriginalMessage();
 
-        // Required fields
+        // Basic validations
         $from = $email->getFrom()[0] ?? null;
         if (!$from) {
             throw new TransportException('MailgunTransport: Missing "From" address.');
         }
 
-        $to   = $email->getTo();
+        $to = $email->getTo();
         if (empty($to)) {
             throw new TransportException('MailgunTransport: Missing "To" recipients.');
         }
 
-        // Build form-data payload (Mailgun uses multipart/form-data)
+        // Build multipart form fields (Mailgun expects multipart/form-data)
         $form = [
             'from'    => $this->formatAddress($from),
             'to'      => array_map(fn($a) => $this->formatAddress($a), $to),
@@ -69,7 +77,6 @@ class MailgunTransport extends AbstractTransport
             $form['bcc'] = array_map(fn($a) => $this->formatAddress($a), $bcc);
         }
         if ($replyTo = $email->getReplyTo()) {
-            // Mailgun supports a single Reply-To header string
             $form['h:Reply-To'] = $this->formatAddress($replyTo[0]);
         }
 
@@ -83,7 +90,6 @@ class MailgunTransport extends AbstractTransport
         if ($text) {
             $form['text'] = $text;
         }
-
         if (!$html && !$text) {
             $form['text'] = '';
         }
@@ -92,11 +98,13 @@ class MailgunTransport extends AbstractTransport
         $files = [];
         foreach ($email->getAttachments() as $part) {
             /** @var DataPart $part */
-            $filename = $part->getPreparedHeaders()->getHeaderParameter('Content-Disposition', 'filename') ?? $part->getFilename() ?? 'attachment';
+            $filename    = $part->getPreparedHeaders()->getHeaderParameter('Content-Disposition', 'filename')
+                ?? $part->getFilename()
+                ?? 'attachment';
             $disposition = $part->asInline() ? 'inline' : 'attachment';
 
             $files[] = [
-                'name'     => $disposition,          // 'attachment' OR 'inline'
+                'name'     => $disposition,          // 'attachment' or 'inline'
                 'filename' => $filename,
                 'content'  => $part->getBody(),
                 'headers'  => [
@@ -104,27 +112,61 @@ class MailgunTransport extends AbstractTransport
                 ],
             ];
 
-            // For inline attachments, Mailgun needs the CID to match the Content-ID
+            // For inline attachments, Mailgun uses CID referenced in HTML like <img src="cid:...">
             if ($part->asInline() && $part->getContentId()) {
-                $form['cid'][] = $part->getContentId();
+                // Mailgun auto-maps inline parts by Content-ID; nothing else required here.
+                // If you want, you can capture them in $form['cid'][] = $part->getContentId();
             }
         }
 
-        // Endpoint
         $url = "{$this->endpoint}/v3/{$this->domain}/messages";
+
+        // Log outgoing request (with bodies redacted/limited)
+        $safeForm = $form;
+        if (isset($safeForm['html'])) {
+            $safeForm['html'] = '[redacted:html]';
+        }
+        if (isset($safeForm['text'])) {
+            $safeForm['text'] = Str::limit((string) $safeForm['text'], 400);
+        }
+
+        Log::debug('Mailgun request', [
+            'url'   => $url,
+            'form'  => $safeForm,
+            'files' => array_map(fn($f) => ['name' => $f['name'], 'filename' => $f['filename']], $files),
+        ]);
 
         try {
             $response = $this->client->request('POST', $url, [
                 'auth_basic' => ['api', $this->apiKey],
                 'body'       => $form,
-                'files'      => $files, // Symfony HttpClient supports 'files' for multipart
+                'files'      => $files, // Symfony HttpClient uses this for multipart parts
             ]);
 
-            if ($response->getStatusCode() >= 400) {
-                $payload = $response->getContent(false);
-                throw new TransportException("Mailgun send failed ({$response->getStatusCode()}): " . $payload);
+            $status  = $response->getStatusCode();
+            $bodyRaw = $response->getContent(false); // get body without throwing
+            $headers = $response->getHeaders(false);
+
+            Log::info('Mailgun response', [
+                'status'  => $status,
+                'headers' => $headers,
+                'body'    => $bodyRaw,
+            ]);
+
+            if ($status >= 400) {
+                throw new TransportException("Mailgun send failed ({$status}): " . $bodyRaw);
+            }
+
+            // expected success: {"id":"<...>","message":"Queued. Thank you."}
+            $decoded = json_decode($bodyRaw, true);
+            if (!is_array($decoded) || empty($decoded['id'])) {
+                Log::warning('Mailgun success without id field', ['body' => $bodyRaw]);
             }
         } catch (\Throwable $e) {
+            Log::error('Mailgun transport exception', [
+                'exception' => get_class($e),
+                'message'   => $e->getMessage(),
+            ]);
             throw new TransportException('Error sending via Mailgun: ' . $e->getMessage(), 0, $e);
         }
     }

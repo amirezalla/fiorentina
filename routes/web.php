@@ -502,3 +502,17 @@ Route::get('/normalize-posts', [PostNormalizeController::class, 'normalize']);
 
     Route::get('/member/activity/comment/{comment}', [MemberActivityController::class, 'show'])
         ->name('public.member.activity.comment');
+        
+Route::get('/test-mailgun', function () {
+    // Change these to your test recipient and verified-from address
+    $to   = request('to', 'recipient@example.com');
+    $from = request('from', config('mail.from.address', 'noreply@mg.yourdomain.com'));
+
+    Mail::raw('Hello from custom MailgunTransport! ' . now(), function ($m) use ($to, $from) {
+        $m->to($to)
+          ->from($from, 'Mailgun Tester')
+          ->subject('Test via MailgunTransport');
+    });
+
+    return 'Sent (check logs & Mailgun dashboard).';
+});

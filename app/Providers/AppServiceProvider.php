@@ -306,6 +306,27 @@ class AppServiceProvider extends ServiceProvider
     // $this->app->booted(function () {
     //     config()->set('mail.default', "sendgrid");
     // });
+Event::listen(MessageSending::class, function (MessageSending $event) {
+        Log::debug('Mail: sending', [
+            'to'      => array_map(fn($a) => $a->getAddress(), $event->message->getTo() ?? []),
+            'subject' => $event->message->getSubject(),
+        ]);
+    });
 
+    Event::listen(MessageSent::class, function (MessageSent $event) {
+        Log::info('Mail: sent (accepted by provider)', [
+            'to'      => array_map(fn($a) => $a->getAddress(), $event->message->getTo() ?? []),
+            'subject' => $event->message->getSubject(),
+        ]);
+    });
+
+    Event::listen(MessageFailed::class, function (MessageFailed $event) {
+        Log::error('Mail: failed', [
+            'to'      => method_exists($event->message, 'getTo') ? array_map(fn($a) => $a->getAddress(), $event->message->getTo() ?? []) : [],
+            'subject' => method_exists($event->message, 'getSubject') ? $event->message->getSubject() : null,
+            'error'   => $event->exception?->getMessage(),
+            'class'   => $event->exception ? get_class($event->exception) : null,
+        ]);
+    });
     }
 }
