@@ -244,55 +244,55 @@ class AppServiceProvider extends ServiceProvider
             $view->with('last_post',$last_post);
         });
 
-// 1) Read secret (and domain/region) from DB settings
-        $secret = (string) DB::table('settings')
-            ->where('key', 'email_mail_gun_secret')
-            ->value('value');
+// // 1) Read secret (and domain/region) from DB settings
+//         $secret = (string) DB::table('settings')
+//             ->where('key', 'email_mail_gun_secret')
+//             ->value('value');
 
-        // Optional helpers & sane defaults
-        $secret = trim($secret);
+//         // Optional helpers & sane defaults
+//         $secret = trim($secret);
 
-        $domain = (string) DB::table('settings')
-            ->where('key', 'email_mail_gun_domain')
-            ->value('value');
+//         $domain = (string) DB::table('settings')
+//             ->where('key', 'email_mail_gun_domain')
+//             ->value('value');
 
-        $domain = trim($domain ?: '');
+//         $domain = trim($domain ?: '');
 
-        // Region/endpoint: US default; use EU if you store a flag or endpoint
-        $endpoint = (string) DB::table('settings')
-            ->where('key', 'email_mail_gun_endpoint') // e.g. https://api.eu.mailgun.net
-            ->value('value');
+//         // Region/endpoint: US default; use EU if you store a flag or endpoint
+//         $endpoint = (string) DB::table('settings')
+//             ->where('key', 'email_mail_gun_endpoint') // e.g. https://api.eu.mailgun.net
+//             ->value('value');
 
-        $endpoint = $endpoint ? trim($endpoint) : 'https://api.mailgun.net';
+//         $endpoint = $endpoint ? trim($endpoint) : 'https://api.mailgun.net';
 
-        if ($secret === '' || $domain === '') {
-            // Fail fast with a clear error so you notice misconfigurations early
-            throw new \RuntimeException('MailgunTransport: missing DB settings. Please set "email_mail_gun_secret" and "email_mail_gun_domain".');
-        }
+//         if ($secret === '' || $domain === '') {
+//             // Fail fast with a clear error so you notice misconfigurations early
+//             throw new \RuntimeException('MailgunTransport: missing DB settings. Please set "email_mail_gun_secret" and "email_mail_gun_domain".');
+//         }
 
-        // 2) Register a custom mailer driver "mailgun-api"
-        $manager->extend('mailgun-api', function () use ($secret, $domain, $endpoint) {
-            $client = HttpClient::create(); // or inject via container
-            return new MailgunTransport($secret, $domain, $client, dispatcher: null, endpoint: $endpoint);
-        });
+//         // 2) Register a custom mailer driver "mailgun-api"
+//         $manager->extend('mailgun-api', function () use ($secret, $domain, $endpoint) {
+//             $client = HttpClient::create(); // or inject via container
+//             return new MailgunTransport($secret, $domain, $client, dispatcher: null, endpoint: $endpoint);
+//         });
 
-        // 3) Make it the default mailer
-        Config::set('mail.default', 'mailgun-api');
+//         // 3) Make it the default mailer
+//         Config::set('mail.default', 'mailgun-api');
 
-        // (Optional) keep from address centralized (fallback)
-        // You can also keep using config/mail.php 'from' if you prefer
-        if (!config('mail.from.address')) {
-            // Pull a default 'from' from DB if you store one
-            $fromAddress = (string) DB::table('settings')->where('key', 'email_from_address')->value('value');
-            $fromName    = (string) DB::table('settings')->where('key', 'email_from_name')->value('value');
+//         // (Optional) keep from address centralized (fallback)
+//         // You can also keep using config/mail.php 'from' if you prefer
+//         if (!config('mail.from.address')) {
+//             // Pull a default 'from' from DB if you store one
+//             $fromAddress = (string) DB::table('settings')->where('key', 'email_from_address')->value('value');
+//             $fromName    = (string) DB::table('settings')->where('key', 'email_from_name')->value('value');
 
-            if ($fromAddress) {
-                Config::set('mail.from.address', trim($fromAddress));
-                if ($fromName) {
-                    Config::set('mail.from.name', trim($fromName));
-                }
-            }
-        }
+//             if ($fromAddress) {
+//                 Config::set('mail.from.address', trim($fromAddress));
+//                 if ($fromName) {
+//                     Config::set('mail.from.name', trim($fromName));
+//                 }
+//             }
+//         }
     //     // Retrieve the SendGrid API key from the database
     //     $sendgridApiKey = env("MAIL_PASSWORD");
 
