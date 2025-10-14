@@ -45,7 +45,7 @@ class ConfirmEmailNotification extends Notification implements ShouldQueue
             
             // Build and return the mail message, forcing the SendGrid mailer
             return (new MailMessage())
-                ->mailer('sendgrid') // Force using your custom SendGrid transport
+                 // Force using your custom SendGrid transport
                 ->subject($subject)
                 ->view('emails.template', [
                     'subject' => $subject,
