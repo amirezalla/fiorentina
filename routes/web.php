@@ -523,25 +523,33 @@ Route::get('/test-mailgun', function () {
 Route::post('/formazione-store', [FormazioneController::class, 'store'])->name('formazione.store');
 
 Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
-    $q = trim($request->get('q', ''));
-    $user = $request->user(); // utente loggato, per escluderlo
+    $q  = trim((string) $request->get('q', ''));
+    $me = $request->user();
+
     $users = \Botble\ACL\Models\User::query()
-        ->when($q, function ($qq) use ($q) {
-            $qq->where('username', 'like', "%$q%")
-               ->orWhere('email', 'like', "%$q%")
-               ->orWhere('id', $q);
+        ->when($q !== '', function ($query) use ($q) {
+            $query->where(function ($qq) use ($q) {
+                $qq->where('username', 'like', "%{$q}%")
+                   ->orWhere('email', 'like', "%{$q}%");
+
+                if (ctype_digit($q)) {
+                    $qq->orWhere('id', (int) $q);
+                }
+            });
         })
         ->orderBy('username')
         ->limit(20)
-        ->get(['id', 'username', 'email']);
-    if ($user) {
-        $users = $users->reject(fn($u) => $u->email === $user->email);
-    }
-    return response()->json([
-        'results' => $users->map(fn($u) => [
-            'id'   => $u->id,
-            'text' => trim(($u->name ?: 'Utente') . " ({$u->email})"), // ✅ fix: nome + email
-        ]),
-    ]);
+        ->get(['id', 'username', 'email'])
+
+        // 🔎 exclude the requester using Collection::reject()
+        ->reject(fn ($u) => $me && (int) $u->id === (int) $me->id)
+        ->values(); // reindex 0..N so JSON encodes as an array
+
+    $results = $users->map(function ($u) {
+        $label = trim(($u->username ?: 'Utente') . " ({$u->email})");
+        return ['id' => (int) $u->id, 'text' => $label];
+    });
+
+    return response()->json(['results' => $results]);
 })->name('users.search')->middleware(['web', 'auth']);
 
