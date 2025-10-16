@@ -527,13 +527,13 @@ Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
     $q = trim($request->get('q', ''));
     $users = \Botble\ACL\Models\User::query()
         ->when($q, function ($qq) use ($q) {
-            $qq->where('name', 'like', "%$q%")
+            $qq->where('username', 'like', "%$q%")
                ->orWhere('email', 'like', "%$q%")
                ->orWhere('id', $q);
         })
-        ->orderBy('name')
+        ->orderBy('username')
         ->limit(20)
-        ->get(['id','name','email']);
+        ->get(['id','username','email']);
 
     return response()->json([
         'results' => $users->map(fn($u) => [
