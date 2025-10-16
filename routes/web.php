@@ -552,4 +552,32 @@ Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
 
     return response()->json(['results' => $results]);
 })->name('users.search')->middleware(['web', 'auth']);
+Route::get('/admin/author/search', function (\Illuminate\Http\Request $request) {
+    $q  = trim((string) $request->get('q', ''));
+
+    $users = \Botble\ACL\Models\User::query()
+        ->when($q !== '', function ($query) use ($q) {
+            $query->where(function ($qq) use ($q) {
+                $qq->where('username', 'like', "%{$q}%")
+                   ->orWhere('email', 'like', "%{$q}%");
+
+                if (ctype_digit($q)) {
+                    $qq->orWhere('id', (int) $q);
+                }
+            });
+        })
+        ->orderBy('username')
+        ->limit(20)
+        ->get(['id', 'username', 'email'])
+
+        // 🔎 exclude the requester using Collection::reject()
+        ->values(); // reindex 0..N so JSON encodes as an array
+
+    $results = $users->map(function ($u) {
+        $label = trim(($u->username ?: 'Utente') . " ({$u->email})");
+        return ['id' => (int) $u->id, 'text' => $label];
+    });
+
+    return response()->json(['results' => $results]);
+})->name('author.search')->middleware(['web', 'auth']);
 
