@@ -62,86 +62,44 @@
     @endif
 
 
-    {{-- LAST FINISHED RESULT --}}
-    <div class="card mb-4">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <div>
-                <strong>Ultimo risultato votazione</strong>
-                @if ($lastFinished)
-                    @php
-                        $home = $teamLogo($lastFinished->home_team);
-                        $away = $teamLogo($lastFinished->away_team);
-                    @endphp
-                    <span class="ml-2 text-muted">
-                        {{ $home['name'] }} – {{ $away['name'] }} • {{ $fmtDate($lastFinished->match_date) }}
-                    </span>
-                @else
-                    <span class="ml-2 text-muted">Nessuna partita terminata</span>
-                @endif
-            </div>
-            @if (($aggregate['totalVotes'] ?? 0) > 0 && $aggregate['topFormation'])
-                <span class="badge badge-pill badge-primary">Formazione più votata:
-                    {{ $aggregate['topFormation'] }}</span>
-            @endif
+    {{-- ULTIMO RISULTATO VOTAZIONE (compact panel) --}}
+    <div class="card mb-4" style="border:0;">
+        <div class="card-header" style="border:0; background:#fff;">
+            <strong>Ultimo risultato votazione</strong>
         </div>
 
-        <div class="card-body">
-            @if (!$lastFinished)
-                <div class="text-muted">Nessun dato disponibile.</div>
-            @elseif (($aggregate['totalVotes'] ?? 0) === 0)
-                <div class="text-muted">Nessun voto registrato per questa partita.</div>
-            @else
-                <div class="row">
-                    @php
-                        // Render in lines: GK, DF*, MF*, FW* based on slot keys
-                        $slots = collect($aggregate['slots']);
-                        $rows = [
-                            'GK' => $slots->filter(fn($v, $k) => $k === 'GK'),
-                            'DF' => $slots->filter(fn($v, $k) => str_starts_with($k, 'DF')),
-                            'MF' => $slots->filter(fn($v, $k) => str_starts_with($k, 'MF')),
-                            'FW' => $slots->filter(fn($v, $k) => str_starts_with($k, 'FW')),
-                        ];
-                    @endphp
+        <div class="card-body p-0">
+            @if ($lastFinished)
+                @php
+                    $home = $teamLogo($lastFinished->home_team);
+                    $away = $teamLogo($lastFinished->away_team);
+                    $when = $fmtDate($lastFinished->match_date);
+                @endphp
 
-                    @foreach (['GK', 'DF', 'MF', 'FW'] as $line)
-                        @if ($rows[$line]->count())
-                            <div class="col-12 mb-3">
-                                <div class="d-flex justify-content-center flex-wrap">
-                                    @foreach ($rows[$line] as $slot => $info)
-                                        @php
-                                            $p = $info['player'];
-                                            $photo = $imgUrl($p);
-                                        @endphp
-                                        <div class="mx-2 my-1 p-2 text-center"
-                                            style="width:110px;border:1px solid #eee;border-radius:10px;">
-                                            @if ($photo)
-                                                <img src="{{ $photo }}" alt="{{ $p->name }}"
-                                                    style="width:64px;height:64px;object-fit:cover;border-radius:50%;border:2px solid #8424e3;">
-                                            @else
-                                                <div
-                                                    style="width:64px;height:64px;border-radius:50%;background:#f0f0f0;margin:auto">
-                                                </div>
-                                            @endif
-                                            <div class="mt-2 font-weight-bold" style="font-size:.9rem">
-                                                {{ $p->name ?? '—' }}</div>
-                                            <div class="mt-1">
-                                                <span class="badge badge-pill" style="background:#8424e3;color:#fff;">
-                                                    #{{ $p->jersey_number ?? '—' }}
-                                                </span>
-                                                <span class="badge badge-light ml-1">{{ $info['perc'] }}%</span>
-                                            </div>
-                                            <div class="text-muted" style="font-size:.75rem">{{ $slot }}</div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
+                <div class="d-flex align-items-center justify-content-between"
+                    style="border:1px solid #e4d8fb;background:#f3eefc;color:#151515;border-radius:.5rem;padding:.8rem 1rem;">
+                    <div class="d-flex align-items-center">
+                        @if ($home['logo'])
+                            <img src="{{ $home['logo'] }}" style="height:28px" class="mr-2" alt="">
                         @endif
-                    @endforeach
-                </div>
+                        <strong class="mr-2">{{ $home['name'] }}</strong>
+                        <span class="mx-1">vs</span>
+                        @if ($away['logo'])
+                            <img src="{{ $away['logo'] }}" style="height:28px" class="mx-2" alt="">
+                        @endif
+                        <strong>{{ $away['name'] }}</strong>
+                    </div>
 
-                <div class="small text-muted">
-                    Voti raccolti: <strong>{{ $aggregate['totalVotes'] }}</strong>
+                    <div class="d-flex align-items-center">
+                        <span class="mr-3" style="opacity:.9">{{ $when }}</span>
+                        <a href="{{ url('risultati?match_id=' . ($lastFinished->match_id ?? '4I6uQ5ll')) }}"
+                            class="lv-btn-ghost" style="background:#fff;color:#4b2d7f;border:0;">
+                            Vedi risultato
+                        </a>
+                    </div>
                 </div>
+            @else
+                <div class="p-3 text-muted">Nessuna partita terminata.</div>
             @endif
         </div>
     </div>
