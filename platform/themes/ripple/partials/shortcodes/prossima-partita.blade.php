@@ -1,0 +1,390 @@
+@php
+    use Illuminate\Support\Str;
+    $uid = 'nxm-' . uniqid(); // scope everything to this instance
+
+    function playerImageUrl($p)
+    {
+        if (!empty($p->image) && Str::startsWith($p->image, ['http://', 'https://'])) {
+            return $p->image;
+        }
+        try {
+            return \Storage::disk('wasabi')->url($p->image);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+@endphp
+
+<div id="{{ $uid }}" class="container my-4">
+    @if (session('ok'))
+        <div class="alert alert-success mb-3">{{ session('ok') }}</div>
+    @endif
+
+    <h2 class="mb-2">Vota la tua formazione</h2>
+
+    @if (!$match)
+        <div class="alert alert-info">Nessuna partita imminente disponibile per la votazione.</div>
+    @else
+        @php
+            $home_team = json_decode($match->home_team ?? '{}', true);
+            $away_team = json_decode($match->away_team ?? '{}', true);
+        @endphp
+
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <img src="{{ $home_team['logo'] ?? '' }}" alt="" style="height:30px">
+            <strong class="mx-1">{{ $home_team['name'] ?? '' }}</strong>
+            <span class="mx-2">vs</span>
+            <img src="{{ $away_team['logo'] ?? '' }}" alt="" style="height:30px">
+            <strong class="mx-1">{{ $away_team['name'] ?? '' }}</strong>
+            <span class="ml-3 text-muted">
+                {{ \Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm') }}
+            </span>
+        </div>
+
+        <form method="POST" action="{{ route('formazione.store') }}" id="{{ $uid }}-form">
+            @csrf
+            <input type="hidden" name="team" value="{{ $team }}">
+
+            <div class="form-group">
+                <label for="{{ $uid }}-formation">Scegli la formazione</label>
+                <select class="form-control w-auto" id="{{ $uid }}-formation" name="formation" required>
+                    <option value="" selected disabled>— Seleziona —</option>
+                    @foreach ($formations as $f)
+                        <option value="{{ $f }}">{{ $f }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="{{ $uid }}-pitch my-4"
+                style="position:relative;background:#0b7a3b;border-radius:12px;padding:18px;">
+                <div class="{{ $uid }}-lines"
+                    style="position:absolute;inset:8px;border:2px solid rgba(255,255,255,.65);border-radius:8px;"></div>
+
+                <div class="container-fluid position-relative" style="z-index:2;">
+                    <div class="row justify-content-center mb-3" id="{{ $uid }}-row-GK"></div>
+                    <div class="row justify-content-around mb-3" id="{{ $uid }}-row-DF"></div>
+                    <div class="row justify-content-around mb-3" id="{{ $uid }}-row-MF"></div>
+                    <div class="row justify-content-around" id="{{ $uid }}-row-FW"></div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary" id="{{ $uid }}-submit" disabled>Salva la
+                    formazione</button>
+                <button type="button" class="btn btn-outline-secondary" id="{{ $uid }}-clear">Svuota</button>
+            </div>
+
+            <div id="{{ $uid }}-hidden"></div>
+        </form>
+
+        {{-- Modal --}}
+        <div class="modal fade" id="{{ $uid }}-modal" tabindex="-1" role="dialog"
+            aria-labelledby="{{ $uid }}-label" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="{{ $uid }}-label">
+                            Seleziona un giocatore (<span id="{{ $uid }}-role"></span>)
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="{{ $uid }}-search" class="form-control mb-3"
+                            placeholder="Cerca...">
+                        <div id="{{ $uid }}-grid" class="row"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
+
+<style>
+    #{{ $uid }} .slot {
+        width: 96px;
+        height: 96px;
+        background: rgba(255, 255, 255, .12);
+        border: 2px dashed rgba(255, 255, 255, .6);
+        border-radius: 12px;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        transition: transform .05s ease-in;
+    }
+
+    #{{ $uid }} .slot:hover {
+        transform: scale(1.02);
+    }
+
+    #{{ $uid }} .slot .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+    }
+
+    #{{ $uid }} .slot .label {
+        font-size: .8rem;
+        margin-top: .25rem;
+    }
+
+    #{{ $uid }} .badge-number {
+        position: absolute;
+        bottom: -10px;
+        right: -10px;
+        background: #8424e3;
+        color: #fff;
+        border-radius: 999px;
+        padding: .25rem .45rem;
+        font-weight: 700;
+    }
+
+    #{{ $uid }} .player-card {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: .5rem;
+        text-align: center;
+        margin-bottom: 12px;
+        cursor: pointer;
+    }
+
+    #{{ $uid }} .player-card img {
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #8424e3;
+    }
+
+    #{{ $uid }} .player-card .name {
+        margin-top: .35rem;
+        font-weight: 600;
+    }
+
+    #{{ $uid }} .player-card .jersey {
+        margin-top: .15rem;
+        display: inline-block;
+        background: #8424e3;
+        color: #fff;
+        border-radius: 999px;
+        padding: .1rem .5rem;
+        font-size: .8rem;
+    }
+
+    /* pitch helper lines */
+    #{{ $uid }} .{{ $uid }}-lines:before,
+    #{{ $uid }} .{{ $uid }}-lines:after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70%;
+        height: 2px;
+        background: rgba(255, 255, 255, .45);
+    }
+
+    #{{ $uid }} .{{ $uid }}-lines:before {
+        top: 25%;
+    }
+
+    #{{ $uid }} .{{ $uid }}-lines:after {
+        bottom: 25%;
+    }
+</style>
+
+<script>
+    (function() {
+        const formations = @json($formations);
+        const playersByRole = @json($playersByRole->map->values()); // {GK:[], DF:[], MF:[], FW:[]}
+        const UID = @json($uid);
+
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
+        const byId = (id) => document.getElementById(id);
+
+        const formationSelect = byId(UID + '-formation');
+        const hiddenInputs = byId(UID + '-hidden');
+        const submitBtn = byId(UID + '-submit');
+        const clearBtn = byId(UID + '-clear');
+
+        const modalId = '#' + UID + '-modal';
+        const modalRole = byId(UID + '-role');
+        const playersGrid = byId(UID + '-grid');
+        const playerSearch = byId(UID + '-search');
+
+        let currentSlot = null;
+        let expectedSlots = {};
+        let selected = {}; // slot => {id,name,jersey_number,image}
+
+        function buildExpectedSlots(f) {
+            const parts = f.split('-').map(n => parseInt(n, 10));
+            const mk = (pfx, n) => Object.fromEntries(Array.from({
+                length: n
+            }, (_, i) => [pfx + (i + 1), pfx === 'DF' ? 'DF' : pfx === 'MF' ? 'MF' : 'FW']));
+            if (parts.length === 3) {
+                const [d, m, f] = parts;
+                return Object.assign({
+                    'GK': 'GK'
+                }, mk('DF', d), mk('MF', m), mk('FW', f));
+            } else {
+                const [d, m1, m2, f] = parts;
+                const m = m1 + m2;
+                return Object.assign({
+                    'GK': 'GK'
+                }, mk('DF', d), mk('MF', m), mk('FW', f));
+            }
+        }
+
+        function rowEl(role) {
+            return byId(UID + '-row-' + role);
+        }
+
+        function renderSlots() {
+            ['GK', 'DF', 'MF', 'FW'].forEach(r => rowEl(r).innerHTML = '');
+
+            Object.entries(expectedSlots).forEach(([slot, role]) => {
+                const col = document.createElement('div');
+                col.className = 'col-auto mb-2';
+
+                const div = document.createElement('div');
+                div.className = 'slot';
+                div.dataset.slot = slot;
+                div.dataset.role = role;
+
+                if (selected[slot]) {
+                    const img = document.createElement('img');
+                    img.className = 'avatar';
+                    img.src = selected[slot].image || '';
+                    img.alt = selected[slot].name;
+                    div.appendChild(img);
+
+                    const name = document.createElement('div');
+                    name.className = 'label';
+                    name.textContent = selected[slot].name;
+                    div.appendChild(name);
+
+                    const num = document.createElement('div');
+                    num.className = 'badge-number';
+                    num.textContent = selected[slot].jersey_number ?? '-';
+                    div.appendChild(num);
+                } else {
+                    const label = document.createElement('div');
+                    label.className = 'label';
+                    label.textContent = slot;
+                    div.appendChild(label);
+                }
+
+                div.addEventListener('click', () => openModal(slot, role));
+                col.appendChild(div);
+                rowEl(role).appendChild(col);
+            });
+
+            syncHiddenInputs();
+            updateSubmitState();
+        }
+
+        function syncHiddenInputs() {
+            hiddenInputs.innerHTML = '';
+            Object.entries(selected).forEach(([slot, p]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `positions[${slot}]`;
+                input.value = p.id;
+                hiddenInputs.appendChild(input);
+            });
+        }
+
+        function updateSubmitState() {
+            submitBtn.disabled = (Object.keys(selected).length !== Object.keys(expectedSlots).length);
+        }
+
+        function openModal(slot, role) {
+            currentSlot = slot;
+            modalRole.textContent = role;
+            playerSearch.value = '';
+            renderPlayersGrid(playersByRole[role] || []);
+            // open bootstrap modal
+            if (window.jQuery) {
+                jQuery(modalId).modal('show');
+            } else {
+                // fallback minimal open
+                byId(UID + '-modal').style.display = 'block';
+            }
+        }
+
+        function renderPlayersGrid(list) {
+            playersGrid.innerHTML = '';
+            list.forEach(p => {
+                const col = document.createElement('div');
+                col.className = 'col-6 col-md-4 col-lg-3';
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.dataset.playerId = p.id;
+
+                const img = document.createElement('img');
+                img.src = p._resolved_image || p.image || '';
+
+                const name = document.createElement('div');
+                name.className = 'name';
+                name.textContent = p.name;
+
+                const jersey = document.createElement('div');
+                jersey.className = 'jersey';
+                jersey.textContent = (p.jersey_number ?? '-') + '';
+
+                card.append(img, name, jersey);
+                card.addEventListener('click', () => choosePlayer(p));
+                col.appendChild(card);
+                playersGrid.appendChild(col);
+            });
+        }
+
+        function choosePlayer(p) {
+            if (!currentSlot) return;
+            Object.entries(selected).forEach(([slot, sp]) => {
+                if (sp.id === p.id) delete selected[slot];
+            });
+
+            selected[currentSlot] = {
+                id: p.id,
+                name: p.name,
+                jersey_number: p.jersey_number,
+                image: p._resolved_image || p.image || ''
+            };
+
+            if (window.jQuery) {
+                jQuery(modalId).modal('hide');
+            } else {
+                byId(UID + '-modal').style.display = 'none';
+            }
+            renderSlots();
+        }
+
+        // events
+        byId(UID + '-clear').addEventListener('click', () => {
+            selected = {};
+            renderSlots();
+        });
+
+        byId(UID + '-formation').addEventListener('change', (e) => {
+            selected = {};
+            expectedSlots = buildExpectedSlots(e.target.value);
+            renderSlots();
+        });
+
+        // resolve image URLs if needed (no-op here but kept for parity)
+        (function hydrateImages() {
+            Object.keys(playersByRole).forEach(r => {
+                playersByRole[r] = (playersByRole[r] || []).map(p => (p._resolved_image = p
+                    ._resolved_image || p.image || '', p));
+            });
+        })();
+    })();
+</script>

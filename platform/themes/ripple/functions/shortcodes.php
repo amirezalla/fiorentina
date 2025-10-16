@@ -149,7 +149,7 @@ Shortcode::register(
     __('Mostra il widget di votazione per la prossima partita (SCHEDULED/LIVE).'),
     function (ShortcodeCompiler $sc) {
         $team       = $sc->team ?: 'fiorentina';
-        $formsCsv   = $sc->formations ?: '4-3-3,4-2-3-1,3-5-2,4-4-2,5-3-2';
+        $formsCsv   = $sc->formations ?:'3-4-3,3-4-2-1,3-4-1-2,3-5-2 ,4-3-3,4-3-1-2,4-3-2-1,4-4-2,4-5-1,5-3-2,5-4-1';
         $formations = collect(explode(',', $formsCsv))
             ->map(fn($s) => trim($s))
             ->filter()->values()->all();
@@ -173,7 +173,7 @@ Shortcode::register(
         });
 
         // Riusa lo stesso partial del voto (il form post a route('formazione.store'))
-        return Theme::partial('shortcodes.formazione-voto', [
+        return Theme::partial('shortcodes.prossima-partita', [
             'match'         => $match,
             'team'          => $team,
             'formations'    => $formations,
