@@ -63,6 +63,8 @@ class Post extends BaseModel
         'status' => BaseStatusEnum::class,
         'name' => SafeContent::class,
         'description' => SafeContent::class,
+            'inviati' => 'array'
+
     ];
 
     public function tags(): BelongsToMany

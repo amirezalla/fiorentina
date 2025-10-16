@@ -67,11 +67,18 @@ class PostController extends BaseController
                 ->getModel()
                 ->fill([
                     ...$request->input(),
-                    'author_id' => Auth::guard()->id(),
+                    'author_id' => (int) $request->input('author_id', auth()->id()),
                     'author_type' => User::class,
                     'published_at' => $published_at ?? null,
                 ])
                 ->save();
+$post->inviati = collect(explode(',', (string) $request->input('inviati', '')))
+    ->map(fn($n) => trim($n))
+    ->filter()
+    ->unique()
+    ->values()
+    ->all();
+    $post->save();
 
             $post = $form->getModel();
 
@@ -129,6 +136,14 @@ class PostController extends BaseController
                 $post = $form->getModel();
                 
                 $post->fill($request->input());
+                $post->author_id = (int) $request->input('author_id', auth()->id());
+
+                $post->inviati = collect(explode(',', (string) $request->input('inviati', '')))
+    ->map(fn($n) => trim($n))
+    ->filter()
+    ->unique()
+    ->values()
+    ->all();
                 $post->save();
                        $ids = collect(\Illuminate\Support\Arr::wrap($request->input('collaborators', [])))
             ->filter()

@@ -114,7 +114,32 @@ class PostForm extends FormAbstract
                             ->all());
                     })
                     ->toArray()
-            )
+            )->add(
+    'author_id',
+    SelectField::class,
+    SelectFieldOption::make()
+        ->label('Autore')
+        ->attributes([
+            'class'            => 'form-control select-search-full', // o select-search-ajax
+            'multiple'         => false,
+            'data-ajax--url'   => route('author.search'), // <-- CORRETTO per Select2 AJAX
+            'data-ajax--cache' => 'true',
+            'data-placeholder' => 'Cerca per nome, email o ID…',
+            'data-allow-clear' => 'true',
+        ])
+        ->choices($this->getModel()->getKey()
+            ? $this->getModel()->collaborators
+                ->mapWithKeys(fn($u) => [$u->id => "{$u->username} ({$u->email})"])
+                ->toArray()
+            : []
+        )
+        ->selected($this->getModel()->getKey()
+            ? $this->getModel()->collaborators->pluck('id')->all()
+            : []
+        )
+        ->toArray()
+)
+            
 ->add(
     'collaborators',
     SelectField::class,
@@ -140,6 +165,17 @@ class PostForm extends FormAbstract
         )
         ->toArray()
 )
+->add('inviati', \Botble\Base\Forms\Fields\TagField::class, [
+    'label' => 'Inviati speciali',
+    'attr'  => [
+        'data-role' => 'tagsinput',
+        'placeholder' => 'Scrivi un nome e premi Invio...',
+    ],
+    'value' => $this->getModel()->inviati
+        ? implode(',', (array) $this->getModel()->inviati)
+        : '',
+])
+
 
             ->add('image', MediaImageField::class)
             ->add(
