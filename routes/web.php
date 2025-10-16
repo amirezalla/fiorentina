@@ -580,7 +580,7 @@ Route::get('/admin/author/search', function (Request $request) {
         $label = trim("{$u->first_name} {$u->last_name}");
         return [
             'id'   => (int) $u->id,
-            'text' => $u->username,
+            'text' => $label,
         ];
     });
 
