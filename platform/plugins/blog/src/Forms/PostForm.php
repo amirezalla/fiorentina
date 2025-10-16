@@ -122,7 +122,7 @@ class PostForm extends FormAbstract
         ->attributes([
             'class'            => 'form-control select-search-ajax',
             'multiple'         => false,
-            'data-url'         => route('author.search'),  // AJAX endpoint
+            'data-url'         => route('users.search'),  // AJAX endpoint
             'data-placeholder' => 'Cerca per nome, email o ID…',
             'data-allow-clear' => 'true',
         ])
