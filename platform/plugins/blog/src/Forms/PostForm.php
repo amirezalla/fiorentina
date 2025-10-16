@@ -120,25 +120,29 @@ class PostForm extends FormAbstract
     SelectFieldOption::make()
         ->label('Autore principale')
         ->attributes([
-            'class'             => 'form-control select-search-ajax',
-            'data-ajax--url'    => route('author.search'),   // ✅ correct key for Select2 AJAX
-            'data-ajax--cache'  => 'true',
-            'data-placeholder'  => 'Cerca per nome, email o ID…',
-            'data-allow-clear'  => 'true',
+            'class'                     => 'form-control select-search-ajax',
+            'data-ajax--url'            => route('author.search'),
+            'data-ajax--cache'          => 'true',
+            'data-placeholder'          => 'Cerca per nome, email o ID…',
+            'data-allow-clear'          => 'true',
             'data-minimum-input-length' => 1,
         ])
         ->choices(
-            $this->getModel()->getKey() && $this->getModel()->author
-                ? [
-                    $this->getModel()->author->id =>
-                        trim("{$this->getModel()->author->first_name} {$this->getModel()->author->last_name}")
-                        ?: $this->getModel()->author->email,
-                ]
-                : []
+            ['' => '— Nessun autore selezionato —'] + // ✅ makes unselect possible
+            (
+                $this->getModel()->getKey() && $this->getModel()->author
+                    ? [
+                        $this->getModel()->author->id =>
+                            trim("{$this->getModel()->author->first_name} {$this->getModel()->author->last_name}")
+                            ?: $this->getModel()->author->email,
+                    ]
+                    : []
+            )
         )
-        ->selected($this->getModel()->getKey() ? $this->getModel()->author_id : auth()->id())
+        ->selected($this->getModel()->getKey() ? $this->getModel()->author_id : '')
         ->toArray()
 )
+
 
 
             
