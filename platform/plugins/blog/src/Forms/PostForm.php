@@ -130,7 +130,7 @@ class PostForm extends FormAbstract
         // Precarica i selezionati in edit:
         ->choices($this->getModel()->getKey()
             ? $this->getModel()->collaborators
-                ->mapWithKeys(fn ($u) => [$u->id => $u->name . ' (' . $u->email . ')'])
+                ->mapWithKeys(fn ($u) => [$u->id => $u->username . ' (' . $u->email . ')'])
                 ->toArray()
             : []
         )
