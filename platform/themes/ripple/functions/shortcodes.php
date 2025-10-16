@@ -118,7 +118,7 @@ Shortcode::register(
                 ];
             });
 
-        return Theme::partial('shortcodes.formazione-risultato', [
+        return Theme::partial('shortcodes.formazione-risultati', [
             'team'         => $team,
             'nextMatch'    => $nextMatch,
             'lastFinished' => $lastFinished,
@@ -226,7 +226,7 @@ Shortcode::register(
         $match = Calendario::where('match_id', $matchId)->first();
         $data  = FormationStats::aggregate($matchId);
 
-        return Theme::partial('shortcodes.formazioni-risultati', compact('match', 'data', 'matchId'));
+        return Theme::partial('shortcodes.formazione-risultato', compact('match', 'data', 'matchId'));
     }
 );
 
