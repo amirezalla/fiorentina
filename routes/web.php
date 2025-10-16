@@ -522,23 +522,28 @@ Route::get('/test-mailgun', function () {
 
 Route::post('/formazione-store', [FormazioneController::class, 'store'])->name('formazione.store');
 
-// routes/web.php (o routes/admin.php se preferisci)
 Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
     $q = trim($request->get('q', ''));
+    $user = $request->user(); // utente loggato, per escluderlo
+
     $users = \Botble\ACL\Models\User::query()
         ->when($q, function ($qq) use ($q) {
             $qq->where('username', 'like', "%$q%")
                ->orWhere('email', 'like', "%$q%")
                ->orWhere('id', $q);
         })
+        ->when($user, function ($qq) use ($user) {
+            $qq->where('id', '!=', $user->id); // ⛔ escludi chi sta facendo la richiesta
+        })
         ->orderBy('username')
         ->limit(20)
-        ->get(['id','username','email']);
+        ->get(['id', 'username', 'email']);
 
     return response()->json([
         'results' => $users->map(fn($u) => [
             'id'   => $u->id,
-            'text' => "{$u->name} ({$u->email})",
+            'text' => trim(($u->name ?: 'Utente') . " ({$u->email})"), // ✅ fix: nome + email
         ]),
     ]);
-})->name('users.search')->middleware(['web','auth']);
+})->name('users.search')->middleware(['web', 'auth']);
+
