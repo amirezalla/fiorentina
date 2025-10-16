@@ -53,7 +53,7 @@
             </div>
 
             <div class="lv-next-right">
-                <span class="lv-next-date mr-3">{{ $fmtDate($nextMatch->match_date) }}</span>
+                <span class="lv-next-date mr-5">{{ $fmtDate($nextMatch->match_date) }}</span>
                 <a href="/prossima-partita-formazione-dei-tifosi" class="lv-btn-white-sm">
                     Vota formazione
                 </a>
