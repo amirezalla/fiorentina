@@ -52,7 +52,7 @@
                     <strong>{{ $away['name'] }}</strong>
                     <span class="ml-3" style="opacity:.9">{{ $fmtDate($nextMatch->match_date) }}</span>
                 </div>
-                <a href="{{ route('formazione.index') }}" class="btn btn-light btn-sm font-weight-bold">
+                <a href="/prossima-partita-formazione-dei-tifosi" class="btn btn-light btn-sm font-weight-bold">
                     Vota formazione
                 </a>
             </div>
