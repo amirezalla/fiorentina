@@ -116,7 +116,7 @@ class PostForm extends FormAbstract
                     ->toArray()
             )
 ->add(
-    'collaborators',
+    'collaborators[]',
     SelectField::class,
     SelectFieldOption::make()
         ->label('Collaboratori')

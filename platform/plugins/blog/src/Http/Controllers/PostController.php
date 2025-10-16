@@ -75,11 +75,14 @@ class PostController extends BaseController
 
             $post = $form->getModel();
 
-       $ids = collect(\Illuminate\Support\Arr::wrap($request->input('collaborators', [])))
-            ->filter()
-            ->map(fn ($id) => (int) $id)
-            ->unique()
-            ->all();
+$ids = collect(Arr::wrap($request->input('collaborators', [])))
+    ->flatten()                // flattens [['25131'], ['7']] => ['25131', '7']
+    ->filter(fn ($v) => $v !== null && $v !== '' && is_numeric($v))
+    ->map(fn ($v) => (int) $v)
+    ->reject(fn ($id) => $id === Auth::id())  // extra safety
+    ->unique()
+    ->values()
+    ->all();
 
         $post->collaborators()->sync($ids);
 
@@ -130,11 +133,14 @@ class PostController extends BaseController
                 
                 $post->fill($request->input());
                 $post->save();
-                       $ids = collect(\Illuminate\Support\Arr::wrap($request->input('collaborators', [])))
-            ->filter()
-            ->map(fn ($id) => (int) $id)
-            ->unique()
-            ->all();
+$ids = collect(Arr::wrap($request->input('collaborators', [])))
+    ->flatten()                // flattens [['25131'], ['7']] => ['25131', '7']
+    ->filter(fn ($v) => $v !== null && $v !== '' && is_numeric($v))
+    ->map(fn ($v) => (int) $v)
+    ->reject(fn ($id) => $id === Auth::id())  // extra safety
+    ->unique()
+    ->values()
+    ->all();
         $post->collaborators()->sync($ids);
 
                 if ($published_at) {
