@@ -119,7 +119,7 @@ class PostForm extends FormAbstract
     SelectField::class,
     SelectFieldOption::make()
         ->label('Autore principale')
-        ->attr([
+        ->attributes([
             'class'             => 'form-control select-search-ajax',
             'data-ajax--url'    => route('author.search'),   // ✅ correct key for Select2 AJAX
             'data-ajax--cache'  => 'true',
