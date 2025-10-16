@@ -171,7 +171,7 @@
     }
 
     .avatar-initial.is-lg {
-        width: 72px;
+        margin: auto width: 72px;
         height: 72px;
         font-size: 26px;
         border-color: #8424e3;
