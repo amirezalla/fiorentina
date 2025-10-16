@@ -1,7 +1,13 @@
 {{-- ======= Formazione più votata (layout driven by $data['topFormation']) ======= --}}
 @php
+    use App\Support\FormationStats;
     use Illuminate\Support\Str;
 
+    $fmtDate = fn($d) => Str::of(
+        \Carbon\Carbon::parse($d)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM H:mm'),
+    )
+        ->replace(' ore ', ' ')
+        ->toString();
     // Parse the winning formation and compute how many per role
     $parts = array_map('intval', explode('-', $data['topFormation'] ?? ''));
     // supports both 3-part (D-M-F) and 4-part (D-M1-M2-F)
