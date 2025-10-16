@@ -143,30 +143,88 @@
         </div>
     </div>
 
-    {{-- ARCHIVE --}}
-    <div class="card">
-        <div class="card-header">
-            <strong>Archivio votazioni (recenti)</strong>
-        </div>
-        <div class="list-group list-group-flush">
+    {{-- ===================== ARCHIVIO ===================== --}}
+    <div class="archivio-formazioni mb-4">
+        <h3 class="mb-3" style="font-weight:700;">Formazioni in archivio</h3>
+
+        <ul class="archivio-list list-unstyled m-0 p-0">
             @forelse ($archive as $m)
-                <div class="list-group-item d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted mr-2">{{ \Carbon\Carbon::parse($m['date'])->format('d/m/Y') }}</span>
-                        <strong>{{ $m['home'] }}</strong>
-                        <span class="mx-1">–</span>
-                        <strong>{{ $m['away'] }}</strong>
-                        <span class="ml-2 text-muted">Voti: {{ $m['votes'] }}</span>
-                    </div>
-                    <a class="btn btn-outline-primary btn-sm"
-                        href="{{ url('/formazione/risultati?match_id=' . $m['match_id']) }}">
-                        Vedi risultato
+                @php
+                    $url = url('/formazione/risultati?match_id=' . $m['match_id']);
+                    $date = \Carbon\Carbon::parse($m['date'])->format('d/m/Y');
+                @endphp
+
+                <li class="archivio-row">
+                    <a class="archivio-title" href="{{ $url }}">
+                        <span class="chevron">▸</span>
+                        {{ $m['home'] }} vs {{ $m['away'] }}
                     </a>
-                </div>
+
+                    <a class="archivio-date" href="{{ $url }}">
+                        {{ $date }}
+                    </a>
+                </li>
             @empty
-                <div class="list-group-item text-muted">Nessuna partita in archivio.</div>
+                <li class="archivio-row empty">
+                    <span class="archivio-title">
+                        Nessuna partita in archivio.
+                    </span>
+                </li>
             @endforelse
-        </div>
+        </ul>
     </div>
+
+    <style>
+        /* container */
+        .archivio-formazioni h3 {
+            margin-bottom: .75rem;
+        }
+
+        /* rows */
+        .archivio-list .archivio-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .6rem .75rem;
+            background: #f4f4f6;
+            /* light grey */
+        }
+
+        .archivio-list .archivio-row:nth-child(even) {
+            background: #ececf0;
+            /* alternate stripe */
+        }
+
+        /* links + colors */
+        .archivio-title,
+        .archivio-date {
+            color: #8424e3;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .archivio-title:hover,
+        .archivio-date:hover {
+            text-decoration: underline;
+        }
+
+        /* left chevron */
+        .archivio-title .chevron {
+            display: inline-block;
+            margin-right: .45rem;
+            color: #8424e3;
+        }
+
+        /* mobile wrap */
+        @media (max-width:576px) {
+            .archivio-list .archivio-row {
+                flex-wrap: wrap;
+            }
+
+            .archivio-date {
+                margin-top: .25rem;
+            }
+        }
+    </style>
 
 </div>
