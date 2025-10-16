@@ -33,9 +33,18 @@
 @endphp
 
 <div id="{{ $uid }}" class="container my-4">
+    {{-- messaggi flash --}}
     @if (session('ok'))
         <div class="alert alert-success mb-3">{{ session('ok') }}</div>
     @endif
+    @if (session('error'))
+        <div class="alert alert-warning mb-3">{{ session('error') }}</div>
+    @endif
+
+    <h2 class="mb-2">Vota la tua formazione</h2>
+    <p class="text-muted" style="margin-top:-4px">
+        <strong>Nota:</strong> puoi esprimere <strong>un solo voto</strong> per partita.
+    </p>
 
     <h2 class="mb-2">Vota la tua formazione</h2>
 

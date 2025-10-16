@@ -51,81 +51,54 @@ class FormazioneController extends Controller
         ]);
     }
 
-    /** POST /formazione (store the vote) */
-    public function store(Request $request)
+public function store(Request $request)
     {
-        // Ensure match still valid
+        // partita prossima (o live)
         $match = Calendario::where('status', 'SCHEDULED')
             ->orWhere('status', 'LIVE')
             ->orderBy('match_date', 'asc')
             ->first();
 
         if (!$match) {
-            throw ValidationException::withMessages([
-                'match' => 'Nessuna partita imminente disponibile per la votazione.',
-            ]);
+            return redirect('/prossima-partita-formazione-dei-tifosi')
+                ->with('error', 'Nessuna partita disponibile per la votazione.');
         }
 
-        // Validate
+        // validazione base
         $data = $request->validate([
-            'team'      => ['required','string','in:fiorentina,another'],
-            'formation' => ['required','string','regex:/^\d-\d-\d(-\d)?$/'], // supports 4-3-3, 4-2-3-1
-            'positions' => ['required','array'], // slot => player_id
-            'positions.*' => ['integer','exists:players,id'],
+            'team'                  => 'required|string|max:50',
+            'formation'             => 'required|string|max:10', // es: 4-3-3
+            'positions'             => 'required|array|min:1',
+            'positions.*'           => 'integer',                 // id giocatore
         ]);
 
-        // Make sure number of slots matches the chosen formation (GK + D + M + F [+ AM etc. for 4-2-3-1])
-        $expectedSlots = $this->expectedSlotsFromFormation($data['formation']);
-        if (count($data['positions']) !== count($expectedSlots)) {
-            throw ValidationException::withMessages([
-                'positions' => 'I giocatori selezionati non corrispondono alla formazione scelta.',
-            ]);
-        }
+        $ip         = $request->ip();
+        $sessionId  = $request->session()->getId();
 
-        // Ensure roles are consistent: slot type GK/DF/MF/FW must match player position
-        $players = Player::whereIn('id', array_values($data['positions']))->get()->keyBy('id');
-        foreach ($expectedSlots as $slot => $role) {
-            $playerId = $data['positions'][$slot] ?? null;
-            if (!$playerId) {
-                throw ValidationException::withMessages([
-                    'positions' => "Manca un giocatore per lo slot {$slot}.",
-                ]);
-            }
-            $p = $players[$playerId] ?? null;
-            if (!$p || $this->normalizeRole($p->position) !== $role) {
-                throw ValidationException::withMessages([
-                    'positions' => "Giocatore non valido per lo slot {$slot} ({$role}).",
-                ]);
-            }
-        }
-
-        // Prevent duplicate vote from the same session for this match/team
-        $sessionId = $request->session()->getId();
-        $already = FormationVote::where([
-            'match_id' => $match->match_id, // NB: Calendario has match_id field
-            'team'     => $data['team'],
-            'session_id' => $sessionId,
-        ])->exists();
+        // evita doppio voto sulla stessa partita (stesso IP o stessa sessione)
+        $already = FormationVote::where('match_id', $match->match_id)
+            ->where(function ($q) use ($ip, $sessionId) {
+                $q->where('ip', $ip)->orWhere('session_id', $sessionId);
+            })
+            ->exists();
 
         if ($already) {
-            throw ValidationException::withMessages([
-                'vote' => 'Hai già espresso la tua formazione per questa partita da questa sessione.',
-            ]);
+            return redirect('/prossima-partita-formazione-dei-tifosi')
+                ->with('error', 'Hai già votato per questa partita. È consentito un solo voto.');
         }
 
-        // Store vote
         FormationVote::create([
             'match_id'   => $match->match_id,
             'team'       => $data['team'],
             'formation'  => $data['formation'],
-            'positions'  => $data['positions'],
-            'ip'         => $request->ip(),
-            'user_agent' => (string) $request->header('User-Agent'),
+            'positions'  => $data['positions'], // cast array->json nel Model
+            'ip'         => $ip,
+            'user_agent' => (string) $request->header('User-Agent', ''),
             'session_id' => $sessionId,
         ]);
 
-        return redirect()->route('formazione.index')
-            ->with('ok', 'Voto registrato! Grazie per aver scelto la tua formazione.');
+        return redirect('/prossima-partita-formazione-dei-tifosi')
+            ->with('ok', 'Voto registrato! Grazie per aver scelto la tua formazione. Puoi esprimere un solo voto per partita.');
     }
 
     /** Available formations displayed in the select */
