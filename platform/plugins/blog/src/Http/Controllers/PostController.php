@@ -75,6 +75,14 @@ class PostController extends BaseController
 
             $post = $form->getModel();
 
+       $ids = collect(\Illuminate\Support\Arr::wrap($request->input('collaborators', [])))
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->all();
+
+        $post->collaborators()->sync($ids);
+
             if ($published_at) {
                 PostPublishingJob::dispatch($post->id, $post->published_at)->delay($published_at);
             }
@@ -119,8 +127,16 @@ class PostController extends BaseController
                 ]);
 
                 $post = $form->getModel();
+                
                 $post->fill($request->input());
                 $post->save();
+                       $ids = collect(\Illuminate\Support\Arr::wrap($request->input('collaborators', [])))
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->all();
+
+        $post->collaborators()->sync($ids);
 
                 if ($published_at) {
                     PostPublishingJob::dispatch($post->id, $post->published_at)->delay($published_at);

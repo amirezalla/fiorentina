@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Carbon\Carbon;
+use Botble\ACL\Models\User;
+
 
 
 class Post extends BaseModel
@@ -136,5 +138,11 @@ public function getFormattedDateAttribute()
     if (!$this->published_at) return null;
     Carbon::setLocale('it'); // do this once globally in a service provider in prod
     return Carbon::parse($this->published_at)->translatedFormat('d M H:i');
+}
+
+
+public function collaborators()
+{
+    return $this->belongsToMany(User::class, 'post_collaborators', 'post_id', 'user_id');
 }
 }

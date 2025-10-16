@@ -23,6 +23,7 @@ use App\Http\Controllers\AdGroupImageController;
 use App\Http\Controllers\FormazioneController;
 
 
+use App\Http\Controllers\Admin\UserSearchController;
 
 
 use Botble\Base\Facades\AdminHelper;
@@ -520,3 +521,7 @@ Route::get('/test-mailgun', function () {
 });
 
 Route::post('/formazione-store', [FormazioneController::class, 'store'])->name('formazione.store');
+
+Route::get('admin/users/search', [UserSearchController::class, 'search'])
+    ->name('users.search')
+    ->middleware('auth');

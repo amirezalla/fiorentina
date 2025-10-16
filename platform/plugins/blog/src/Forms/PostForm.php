@@ -115,6 +115,32 @@ class PostForm extends FormAbstract
                     })
                     ->toArray()
             )
+            ->add(
+    'collaborators[]',
+    SelectField::class,
+    SelectFieldOption::make()
+        ->label('Collaboratori')
+        ->attr([
+            'class'             => 'form-control select-search-full', // Select2 + AJAX stile Botble
+            'multiple'          => true,
+            'data-ajax--url'    => route('users.search'),
+            'data-ajax--cache'  => 'true',
+            'data-placeholder'  => 'Cerca per nome, email o ID…',
+            'data-allow-clear'  => 'true',
+        ])
+        // Pre-carica i selezionati in edit:
+        ->choices($this->getModel()->getKey()
+            ? $this->getModel()->collaborators
+                ->mapWithKeys(fn ($u) => [$u->id => $u->name . ' (' . $u->email . ')'])
+                ->toArray()
+            : []
+        )
+        ->selected($this->getModel()->getKey()
+            ? $this->getModel()->collaborators->pluck('id')->all()
+            : []
+        )
+        ->toArray()
+)
             ->add('image', MediaImageField::class)
             ->add(
                 'tag',
