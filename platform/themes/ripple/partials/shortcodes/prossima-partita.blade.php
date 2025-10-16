@@ -46,7 +46,6 @@
         <strong>Nota:</strong> puoi esprimere <strong>un solo voto</strong> per partita.
     </p>
 
-    <h2 class="mb-2">Vota la tua formazione</h2>
 
     @if (!$match)
         <div class="alert alert-info">Nessuna partita imminente disponibile per la votazione.</div>
@@ -54,18 +53,27 @@
         @php
             $home_team = json_decode($match->home_team ?? '{}', true);
             $away_team = json_decode($match->away_team ?? '{}', true);
+            // Italian, Europe/Rome, without the word "ore"
+            $dateStr = \Carbon\Carbon::parse($match->match_date)
+                ->locale('it')
+                ->timezone('Europe/Rome')
+                ->isoFormat('dddd D MMMM HH:mm'); // (no "ore")
         @endphp
 
-        <div class="d-flex align-items-center gap-3 mb-3">
-            <img src="{{ $home_team['logo'] ?? '' }}" alt="" style="height:30px">
-            <strong class="mx-1">{{ $home_team['name'] ?? '' }}</strong>
-            <span class="mx-2">vs</span>
-            <img src="{{ $away_team['logo'] ?? '' }}" alt="" style="height:30px">
-            <strong class="mx-1">{{ $away_team['name'] ?? '' }}</strong>
-            <span class="ml-3 text-muted">
-                {{ \Carbon\Carbon::parse($match->match_date)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM [ore] H:mm') }}
-            </span>
+        <div class="lv-match-banner mb-3">
+            <div class="lv-match-sides">
+                <img src="{{ $home_team['logo'] ?? '' }}" alt="" class="lv-team-logo">
+                <strong class="ml-1">{{ $home_team['name'] ?? '' }}</strong>
+                <span class="mx-2 text-muted">vs</span>
+                <img src="{{ $away_team['logo'] ?? '' }}" alt="" class="lv-team-logo">
+                <strong class="ml-1">{{ $away_team['name'] ?? '' }}</strong>
+            </div>
+
+            <div class="lv-match-date">
+                {{ $dateStr }}
+            </div>
         </div>
+
 
         <form method="POST" action="{{ route('formazione.store') }}" id="{{ $uid }}-form">
             @csrf
@@ -280,6 +288,52 @@
 
     #{{ $uid }} .{{ $uid }}-lines:after {
         bottom: 25%;
+    }
+
+    /* Banner container */
+    .lv-match-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f3eefc;
+        /* soft viola */
+        border: 1px solid #e4d8fb;
+        padding: .6rem .9rem;
+        border-radius: 0;
+        /* sharp edges to match theme */
+    }
+
+    /* Left side (teams) */
+    .lv-match-sides {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .lv-team-logo {
+        height: 30px;
+        width: auto;
+        display: inline-block;
+    }
+
+    /* Right side (date) */
+    .lv-match-date {
+        color: #4b2d7f;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* On small screens, put date on its own line below */
+    @media (max-width: 576px) {
+        .lv-match-banner {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: .35rem;
+        }
+
+        .lv-match-date {
+            white-space: normal;
+        }
     }
 </style>
 
