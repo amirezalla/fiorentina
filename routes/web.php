@@ -525,7 +525,6 @@ Route::post('/formazione-store', [FormazioneController::class, 'store'])->name('
 Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
     $q = trim($request->get('q', ''));
     $user = $request->user(); // utente loggato, per escluderlo
-    dd($user);
     $users = \Botble\ACL\Models\User::query()
         ->when($q, function ($qq) use ($q) {
             $qq->where('username', 'like', "%$q%")
