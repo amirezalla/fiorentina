@@ -118,27 +118,23 @@ class PostForm extends FormAbstract
     'author_id',
     SelectField::class,
     SelectFieldOption::make()
-        ->label('Autore')
+        ->label('Autore principale')
         ->attributes([
-            'class'            => 'form-control select-search-full', // o select-search-ajax
+            'class'            => 'form-control select-search-ajax',
             'multiple'         => false,
-            'data-ajax--url'   => route('author.search'), // <-- CORRETTO per Select2 AJAX
-            'data-ajax--cache' => 'true',
+            'data-url'         => route('author.search'),  // AJAX endpoint
             'data-placeholder' => 'Cerca per nome, email o ID…',
             'data-allow-clear' => 'true',
         ])
-        ->choices($this->getModel()->getKey()
-            ? $this->getModel()->collaborators
-                ->mapWithKeys(fn($u) => [$u->id => "{$u->username} ({$u->email})"])
-                ->toArray()
-            : []
+        ->choices(
+            $this->getModel()->getKey() && $this->getModel()->author
+                ? [$this->getModel()->author->id => "{$this->getModel()->author->first_name} {$this->getModel()->author->last_name} ({$this->getModel()->author->email})"]
+                : []
         )
-        ->selected($this->getModel()->getKey()
-            ? $this->getModel()->collaborators->pluck('id')->all()
-            : []
-        )
+        ->selected($this->getModel()->getKey() ? $this->getModel()->author_id : auth()->id())
         ->toArray()
 )
+
             
 ->add(
     'collaborators',

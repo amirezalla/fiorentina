@@ -546,7 +546,7 @@ Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
         ->values(); // reindex 0..N so JSON encodes as an array
 
     $results = $users->map(function ($u) {
-        $label = trim(($u->username ?: 'Utente') . " ({$u->email})");
+        $label = "{$u->first_name} {$u->last_name}";
         return ['id' => (int) $u->id, 'text' => $label];
     });
 
@@ -574,7 +574,7 @@ Route::get('/admin/author/search', function (\Illuminate\Http\Request $request) 
         ->values(); // reindex 0..N so JSON encodes as an array
 
     $results = $users->map(function ($u) {
-        $label = trim(($u->username ?: 'Utente') . " ({$u->email})");
+        $label = "{$u->first_name} {$u->last_name}";
         return ['id' => (int) $u->id, 'text' => $label];
     });
 
