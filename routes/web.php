@@ -20,6 +20,8 @@ use App\Http\Controllers\Member\MemberActivityController;
 use App\Http\Controllers\AdLabelController;
 use App\Http\Controllers\AdGroupController;
 use App\Http\Controllers\AdGroupImageController;
+use App\Http\Controllers\FormazioneController;
+
 
 
 
@@ -516,3 +518,6 @@ Route::get('/test-mailgun', function () {
 
     return 'Sent (check logs & Mailgun dashboard).';
 });
+
+Route::get('/formazione', [FormazioneController::class, 'index'])->name('formazione.index');
+Route::post('/formazione', [FormazioneController::class, 'store'])->name('formazione.store');
