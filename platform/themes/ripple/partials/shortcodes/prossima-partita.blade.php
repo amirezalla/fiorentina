@@ -1,19 +1,30 @@
 @php
     use Illuminate\Support\Str;
-    $uid = 'nxm-' . uniqid(); // scope everything to this instance
 
-    function playerImageUrl($p)
-    {
-        if (!empty($p->image) && Str::startsWith($p->image, ['http://', 'https://'])) {
-            return $p->image;
-        }
-        try {
-            return \Storage::disk('wasabi')->url($p->image);
-        } catch (\Throwable $e) {
-            return null;
-        }
-    }
+    $uid = 'nxm-' . uniqid();
+
+    // Build a JS-friendly structure and sign Wasabi URLs for ~20 minutes
+    $playersForJs = collect($playersByRole)->map(function ($group) {
+        return collect($group)
+            ->map(function ($p) {
+                $img = $p->image ?? '';
+                $abs = Str::startsWith($img, ['http://', 'https://']);
+                try {
+                    $resolved = $abs ? $img : \Storage::disk('wasabi')->temporaryUrl($img, now()->addMinutes(20));
+                } catch (\Throwable $e) {
+                    $resolved = $abs ? $img : '';
+                }
+                return [
+                    'id' => $p->id,
+                    'name' => $p->name,
+                    'jersey_number' => $p->jersey_number,
+                    '_resolved_image' => $resolved,
+                ];
+            })
+            ->values();
+    });
 @endphp
+
 
 <div id="{{ $uid }}" class="container my-4">
     @if (session('ok'))
@@ -55,11 +66,10 @@
                 </select>
             </div>
 
-            <div class="{{ $uid }}-pitch my-4"
-                style="position:relative;background:#0b7a3b;border-radius:12px;padding:18px;">
+            <div id="{{ $uid }}-pitchwrap" class="{{ $uid }}-pitch my-4"
+                style="display:none; position:relative;background:#0b7a3b;border-radius:12px;padding:18px;">
                 <div class="{{ $uid }}-lines"
                     style="position:absolute;inset:8px;border:2px solid rgba(255,255,255,.65);border-radius:8px;"></div>
-
                 <div class="container-fluid position-relative" style="z-index:2;">
                     <div class="row justify-content-center mb-3" id="{{ $uid }}-row-GK"></div>
                     <div class="row justify-content-around mb-3" id="{{ $uid }}-row-DF"></div>
@@ -67,6 +77,7 @@
                     <div class="row justify-content-around" id="{{ $uid }}-row-FW"></div>
                 </div>
             </div>
+
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary" id="{{ $uid }}-submit" disabled>Salva la
@@ -202,7 +213,7 @@
 <script>
     (function() {
         const formations = @json($formations);
-        const playersByRole = @json($playersByRole->map->values()); // {GK:[], DF:[], MF:[], FW:[]}
+        const playersByRole = @json($playersForJs);
         const UID = @json($uid);
 
         const $ = (sel) => document.querySelector(sel);
@@ -310,13 +321,7 @@
             modalRole.textContent = role;
             playerSearch.value = '';
             renderPlayersGrid(playersByRole[role] || []);
-            // open bootstrap modal
-            if (window.jQuery) {
-                jQuery(modalId).modal('show');
-            } else {
-                // fallback minimal open
-                byId(UID + '-modal').style.display = 'block';
-            }
+            showModal(); // <-- instead of jQuery(...).modal('show')
         }
 
         function renderPlayersGrid(list) {
@@ -351,19 +356,13 @@
             Object.entries(selected).forEach(([slot, sp]) => {
                 if (sp.id === p.id) delete selected[slot];
             });
-
             selected[currentSlot] = {
                 id: p.id,
                 name: p.name,
                 jersey_number: p.jersey_number,
-                image: p._resolved_image || p.image || ''
+                image: p._resolved_image || ''
             };
-
-            if (window.jQuery) {
-                jQuery(modalId).modal('hide');
-            } else {
-                byId(UID + '-modal').style.display = 'none';
-            }
+            hideModal(); // <-- instead of jQuery(...).modal('hide')
             renderSlots();
         }
 
@@ -373,11 +372,46 @@
             renderSlots();
         });
 
+        const pitchWrap = document.getElementById(UID + '-pitchwrap');
+
         byId(UID + '-formation').addEventListener('change', (e) => {
             selected = {};
             expectedSlots = buildExpectedSlots(e.target.value);
+            pitchWrap.style.display = 'block'; // <-- show pitch now
             renderSlots();
         });
+
+        const modalElement = byId(UID + '-modal');
+        let bsInstance = null;
+
+        function showModal() {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                bsInstance = bsInstance || new bootstrap.Modal(modalElement);
+                bsInstance.show();
+            } else if (window.jQuery && jQuery.fn && jQuery(modalElement).modal) {
+                jQuery(modalElement).modal('show');
+            } else {
+                // tiny fallback
+                modalElement.classList.add('show');
+                modalElement.style.display = 'block';
+                modalElement.removeAttribute('aria-hidden');
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        function hideModal() {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                (bsInstance || new bootstrap.Modal(modalElement)).hide();
+            } else if (window.jQuery && jQuery.fn && jQuery(modalElement).modal) {
+                jQuery(modalElement).modal('hide');
+            } else {
+                modalElement.classList.remove('show');
+                modalElement.style.display = 'none';
+                modalElement.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('modal-open');
+            }
+        }
+
 
         // resolve image URLs if needed (no-op here but kept for parity)
         (function hydrateImages() {
