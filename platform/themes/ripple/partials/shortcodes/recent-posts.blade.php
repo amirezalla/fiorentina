@@ -254,208 +254,203 @@
                 @endphp
                 <div class="col-lg-4">
                     <div class="page-sidebar">
-                        @php
-                            $widget = \App\Models\YtWidget::first();
-                        @endphp
                         @if ($widget)
-                            @php
-                                $uniq = 'ytwidget-' . uniqid();
-                            @endphp
-                            <style>
-                                #{{ $uniq }}-deck {
-                                    background: black;
-                                    position: relative;
-                                }
+    @php
+        $uniq = 'ytwidget-' . uniqid();
+    @endphp
+    <style>
+        #{{ $uniq }}-deck { background:black; position:relative; }
 
-                                /* arrow buttons */
-                                #{{ $uniq }} .yt-nav {
-                                    position: absolute;
-                                    top: 55%;
-                                    /* centre vertically          */
-                                    transform: translateY(-50%);
-                                    width: 34px;
-                                    height: 34px;
-                                    border: 0;
-                                    border-radius: 50%;
-                                    background: rgba(75, 45, 127, .65);
-                                    /* violet @ 65 % opacity      */
-                                    color: #fff;
-                                    font-size: 1rem;
-                                    /* ▲ / ▼ characters           */
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    cursor: pointer;
-                                    transition: background .15s;
-                                }
+        /* arrows */
+        #{{ $uniq }} .yt-nav {
+            position:absolute; top:55%; transform:translateY(-50%);
+            width:34px; height:34px; border:0; border-radius:50%;
+            background:rgba(75,45,127,.65); color:#fff; font-size:1rem;
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; transition:background .15s;
+        }
+        #{{ $uniq }} .yt-nav:hover { background:rgba(75,45,127,.9); }
+        #{{ $uniq }} .yt-prev { left:8px; }  #{{ $uniq }} .yt-next { right:8px; }
 
-                                #{{ $uniq }} .yt-nav:hover {
-                                    background: rgba(75, 45, 127, .9);
-                                }
+        /* container */
+        #{{ $uniq }} {
+            position:fixed; bottom:20px; right:5px; width:340px; z-index:9999;
+            border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,.25); overflow:hidden;
+        }
+        #{{ $uniq }} .yt-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:.4rem .75rem; background:#fff; color:#4b2d7f; font-weight:600;
+            border-bottom:1px solid #e4e4e8;
+        }
+        #{{ $uniq }} .yt-header .left { display:flex; align-items:center; gap:.4rem; }
+        #{{ $uniq }} .yt-header .yt-icon { width:20px; height:20px; fill:#4b2d7f; }
+        #{{ $uniq }} .yt-header a { color:#4b2d7f; text-decoration:none; font-size:.875rem;
+            padding:.2rem .6rem; border:1px solid #4b2d7f; border-radius:6px; transition:.2s; }
+        #{{ $uniq }} iframe { width:100%; height:200px; border:0; }
 
-                                /* left / right placement */
-                                #{{ $uniq }} .yt-prev {
-                                    left: 8px;
-                                }
+        #{{ $uniq }} .yt-controls {
+            display:flex; justify-content:space-between; align-items:center;
+            gap:.5rem; padding:.35rem .5rem; background:#4b2d7f; color:#fff;
+        }
+        #{{ $uniq }} .yt-controls .right { display:flex; gap:.25rem; }
+        #{{ $uniq }} .yt-controls button { color:#fff; border:0; background:none; padding:.5rem; }
 
-                                #{{ $uniq }} .yt-next {
-                                    right: 8px;
-                                }
+        /* close button */
+        #{{ $uniq }} .yt-close {
+            background:transparent; border:0; color:#4b2d7f; font-size:1.1rem;
+            width:28px; height:28px; border-radius:6px; cursor:pointer;
+        }
+        #{{ $uniq }} .yt-close:hover { background:#f3eefc; }
 
-                                /* hide arrows on tiny screens if you prefer */
-                                @media(max-width: 480px) {
-                                    #{{ $uniq }} .yt-nav {
-                                        display: none;
-                                    }
-                                }
+        /* launcher (riapri) */
+        #{{ $uniq }}-launcher {
+            display:none; position:fixed; bottom:20px; right:5px; z-index:9998;
+        }
+        #{{ $uniq }}-launcher button {
+            background:#4b2d7f; color:#fff; border:0; padding:.55rem .8rem;
+            border-radius:999px; box-shadow:0 4px 14px rgba(0,0,0,.2); cursor:pointer;
+        }
+        #{{ $uniq }}-launcher button:hover { background:#37235c; }
 
-                                /* === desktop / ≥ 576 px (unchanged) === */
-                                #{{ $uniq }} {
-                                    position: fixed;
-                                    bottom: 20px;
-                                    right: 5px;
-                                    width: 340px;
-                                    /*   16 : 9 — 340 × 192 px   */
-                                    z-index: 9999;
-                                    border-radius: 10px;
-                                    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
-                                    overflow: hidden;
-                                }
+        @media(max-width:480px){ #{{ $uniq }} .yt-nav{ display:none; } }
+        @media (max-width:575.98px) {
+            #{{ $uniq }} { position:static; width:100%; margin:0 0 1rem; bottom:auto; right:auto; box-shadow:none; }
+            #{{ $uniq }}-launcher { position:static; display:none; }
+        }
+    </style>
 
-                                #{{ $uniq }} .yt-header {
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: space-between;
-                                    padding: .4rem .75rem;
-                                    background: #fff;
-                                    color: #4b2d7f;
-                                    font-weight: 600;
-                                    border-bottom: 1px solid #e4e4e8;
-                                }
+    <div id="{{ $uniq }}">
+        <div class="yt-header">
+            <div class="left">
+                <svg class="yt-icon" viewBox="0 0 24 24">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19 3.5 12 3.5 12 3.5s-7 0-9.4.6a3 3 0 0 0-2.1 2.1A31.7 31.7 0 0 0 0 12a31.7 31.7 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2.4.6 9.4.6 9.4.6s7 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.7 31.7 0 0 0 24 12a31.7 31.7 0 0 0-.5-5.8zM9.6 15.5V8.5l6 3.5-6 3.5z"/>
+                </svg>
+                YouTube
+            </div>
+            <div class="right">
+                <a href="https://www.youtube.com/@laviola_it" target="_blank" rel="noopener">Seguici</a>
+                <button class="yt-close" id="close-{{ $uniq }}" aria-label="Chiudi">✕</button>
+            </div>
+        </div>
 
-                                #{{ $uniq }} .yt-header .yt-icon {
-                                    width: 20px;
-                                    height: 20px;
-                                    fill: #4b2d7f;
-                                    margin-right: .4rem;
-                                }
+        @if ($widget->type === 'live')
+            {{-- LIVE: iframe singolo, con opzione Autoplay --}}
+            <iframe id="{{ $uniq }}-liveframe"
+                src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?rel=0"
+                allow="autoplay"
+                allowfullscreen></iframe>
 
-                                #{{ $uniq }} .yt-header a {
-                                    color: #4b2d7f;
-                                    text-decoration: none;
-                                    font-size: .875rem;
-                                    padding: .2rem .6rem;
-                                    border: 1px solid #4b2d7f;
-                                    border-radius: 6px;
-                                    transition: all .2s;
-                                }
+            <div class="yt-controls">
+                <label style="display:flex; align-items:center; gap:.35rem; font-size:.9rem;">
+                    <input type="checkbox" id="{{ $uniq }}-autoplay" />
+                    Autoplay LIVE
+                </label>
+            </div>
+        @else
+            {{-- PLAYLIST: carosello come prima (già con autoplay) --}}
+            @php
+                $ids = collect($widget->playlist_urls)
+                    ->map(fn($u) => \App\Models\YtWidget::extractId($u))
+                    ->values();
+            @endphp
 
-                                #{{ $uniq }} iframe {
-                                    width: 100%;
-                                    height: 200px;
-                                    border: 0;
-                                }
+            <div id="{{ $uniq }}-deck"></div>
+            <button class="yt-nav yt-prev" id="prev-{{ $uniq }}">&#9664;</button>
+            <button class="yt-nav yt-next" id="next-{{ $uniq }}">&#9654;</button>
+        @endif
+    </div>
 
-                                #{{ $uniq }} .yt-controls {
-                                    display: flex;
-                                    margin-top: -7px;
-                                    justify-content: space-between;
-                                    background: #4b2d7f;
-                                }
+    {{-- Launcher per riaprire --}}
+    <div id="{{ $uniq }}-launcher">
+        <button id="open-{{ $uniq }}">Apri YouTube</button>
+    </div>
 
-                                #{{ $uniq }} .yt-controls button {
-                                    flex: 1;
-                                    color: #fff;
-                                    border: 0;
-                                    background: none;
-                                    padding: .5rem;
-                                }
+    <script>
+        (function(){
+            const WRAP_ID = '{{ $uniq }}';
+            const wrap = document.getElementById(WRAP_ID);
+            const launcher = document.getElementById(WRAP_ID + '-launcher');
+            const closeBtn = document.getElementById('close-{{ $uniq }}');
+            const openBtn = document.getElementById('open-{{ $uniq }}');
+            const LS_CLOSED = WRAP_ID + ':closed';
 
-                                #{{ $uniq }} .yt-controls button:hover {
-                                    background: #37235c;
-                                }
+            function hideWidget(){
+                wrap.style.display = 'none';
+                launcher.style.display = 'block';
+                try { localStorage.setItem(LS_CLOSED, '1'); } catch(e){}
+            }
+            function showWidget(){
+                wrap.style.display = 'block';
+                launcher.style.display = 'none';
+                try { localStorage.removeItem(LS_CLOSED); } catch(e){}
+            }
 
-                                /* === phones / tablets (< 576 px) — stop floating === */
-                                @media (max-width: 575.98px) {
-                                    #{{ $uniq }} {
-                                        position: static;
-                                        /* back to normal flow  */
-                                        width: 100%;
-                                        /* full-width card      */
-                                        margin: 0 0 1rem;
-                                        /* bottom spacing       */
-                                        bottom: auto;
-                                        right: auto;
-                                        box-shadow: none;
-                                        /* optional: flatter    */
-                                    }
-                                }
-                            </style>
+            // stato iniziale
+            try {
+                if (localStorage.getItem(LS_CLOSED) === '1') {
+                    hideWidget();
+                }
+            } catch(e){}
 
-                            <div id="{{ $uniq }}">
-                                <div class="yt-header">
-                                    <div class="d-flex align-items-center">
-                                        <svg class="yt-icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19 3.5 12 3.5 12 3.5s-7 0-9.4.6a3 3 0 0 0-2.1 2.1A31.7 31.7 0 0 0 0 12a31.7 31.7 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2.4.6 9.4.6 9.4.6s7 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.7 31.7 0 0 0 24 12a31.7 31.7 0 0 0-.5-5.8zM9.6 15.5V8.5l6 3.5-6 3.5z" />
-                                        </svg>
-                                        YouTube
-                                    </div>
-                                    <a href="https://www.youtube.com/@laviola_it" target="_blank"
-                                        rel="noopener">Seguici</a>
-                                </div>
-                                @if ($widget->type === 'live')
-                                    <iframe
-                                        src="https://www.youtube.com/embed/{{ \App\Models\YtWidget::extractId($widget->live_url) }}?rel=0"
-                                        allowfullscreen></iframe>
-                                @else
-                                    {{-- ======= PLAYLIST with multiple iframes =============== --}}
-                                    @php
-                                        $ids = collect($widget->playlist_urls)
-                                            ->map(fn($u) => \App\Models\YtWidget::extractId($u))
-                                            ->values();
-                                    @endphp
+            if (closeBtn) closeBtn.addEventListener('click', hideWidget);
+            if (openBtn) openBtn.addEventListener('click', showWidget);
 
-                                    <div id="{{ $uniq }}-deck"></div>
+            @if ($widget->type === 'live')
+                // === LIVE: gestisci Autoplay (muted per compatibilità browser) ===
+                const frame = document.getElementById('{{ $uniq }}-liveframe');
+                const autoCb = document.getElementById('{{ $uniq }}-autoplay');
+                const LS_AUTO = WRAP_ID + ':autoplay-live';
+                const baseId = @json(\App\Models\YtWidget::extractId($widget->live_url));
 
-                                    <button class="yt-nav yt-prev" id="prev-{{ $uniq }}">&#9664;</button>
-                                    <button class="yt-nav yt-next" id="next-{{ $uniq }}">&#9654;</button>
+                function buildSrc(){
+                    const wantAuto = !!autoCb.checked;
+                    const params = new URLSearchParams({ rel:'0' });
+                    if (wantAuto) {
+                        params.set('autoplay','1');
+                        params.set('mute','1'); // richiesto dai browser per l’autoplay
+                    }
+                    return `https://www.youtube.com/embed/${baseId}?${params.toString()}`;
+                }
 
-                                    <script>
-                                        (function() {
-                                            const deck = document.getElementById('{{ $uniq }}-deck');
-                                            const ids = @json($ids);
-                                            if (!ids.length) return;
+                // init checkbox da localStorage
+                try { autoCb.checked = localStorage.getItem(LS_AUTO) === '1'; } catch(e){}
+                frame.src = buildSrc();
 
-                                            let idx = 0;
+                autoCb.addEventListener('change', () => {
+                    try { localStorage.setItem(LS_AUTO, autoCb.checked ? '1':'0'); } catch(e){}
+                    frame.src = buildSrc();
+                });
+            @else
+                // === PLAYLIST: carosello (come tuo codice) ===
+                const deck = document.getElementById('{{ $uniq }}-deck');
+                const ids = @json($ids);
+                if (ids.length) {
+                    let idx = 0;
+                    function render() {
+                        deck.innerHTML = '';
+                        const ifr = document.createElement('iframe');
+                        ifr.className = 'yt-frame';
+                        ifr.allowFullscreen = true;
+                        // autoplay=1 + mute=1 per evitare blocchi
+                        ifr.src = `https://www.youtube.com/embed/${ids[idx]}?rel=0&autoplay=1&mute=1`;
+                        deck.appendChild(ifr);
+                    }
+                    render();
 
-                                            /* ---------- helper: build a fresh iframe ---------- */
-                                            function render() {
-                                                deck.innerHTML = ''; // zap any existing frame
-                                                const ifr = document.createElement('iframe');
-                                                ifr.className = 'yt-frame';
-                                                ifr.allowFullscreen = true;
-                                                ifr.src = `https://www.youtube.com/embed/${ids[idx]}?rel=0&autoplay=1`;
-                                                deck.appendChild(ifr);
-                                            }
+                    document.getElementById('prev-{{ $uniq }}').onclick = () => {
+                        idx = (idx - 1 + ids.length) % ids.length;
+                        render();
+                    };
+                    document.getElementById('next-{{ $uniq }}').onclick = () => {
+                        idx = (idx + 1) % ids.length;
+                        render();
+                    };
+                }
+            @endif
+        })();
+    </script>
+@endif
 
-                                            /* ---------- first load ---------- */
-                                            render();
-
-                                            /* ---------- controls ---------- */
-                                            document.getElementById('prev-{{ $uniq }}').onclick = () => {
-                                                idx = (idx - 1 + ids.length) % ids.length;
-                                                render();
-                                            };
-                                            document.getElementById('next-{{ $uniq }}').onclick = () => {
-                                                idx = (idx + 1) % ids.length;
-                                                render();
-                                            };
-                                        })();
-                                    </script>
-                                @endif
-                            </div>
-                        @endif
 
 
                         <section>
