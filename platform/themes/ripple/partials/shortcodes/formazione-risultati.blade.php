@@ -91,9 +91,9 @@
                     </div>
 
                     <div class="d-flex align-items-center">
-                        <span class="mr-3" style="opacity:.9">{{ $when }}</span>
+                        <span class="mr-5" style="opacity:.9">{{ $when }}</span>
                         <a href="{{ url('risultati?match_id=' . ($lastFinished->match_id ?? '4I6uQ5ll')) }}"
-                            class="lv-btn-ghost" style="background:#fff;color:#4b2d7f;border:0;">
+                            class="lv-btn-white-sm">
                             Vedi risultato
                         </a>
                     </div>
