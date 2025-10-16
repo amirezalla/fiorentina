@@ -128,7 +128,7 @@ class PostForm extends FormAbstract
         ])
         ->choices(
             $this->getModel()->getKey() && $this->getModel()->author
-                ? [$this->getModel()->author->id => "{$this->getModel()->author->first_name} {$this->getModel()->author->last_name} ({$this->getModel()->author->email})"]
+                ? [$this->getModel()->author->id => "{$this->getModel()->author->username}"]
                 : []
         )
         ->selected($this->getModel()->getKey() ? $this->getModel()->author_id : auth()->id())
