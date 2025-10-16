@@ -92,7 +92,7 @@
 
                     <div class="d-flex align-items-center">
                         <span class="mr-5" style="opacity:.9">{{ $when }}</span>
-                        <a href="{{ url('/formazioni-risultati?match_id=' . ($lastFinished->match_id ?? '4I6uQ5ll')) }}"
+                        <a href="{{ url('/formazione-risultati?match_id=' . ($lastFinished->match_id ?? '4I6uQ5ll')) }}"
                             class="lv-btn-white-sm">
                             Vedi risultato
                         </a>
@@ -111,7 +111,7 @@
         <ul class="archivio-list list-unstyled m-0 p-0">
             @forelse ($archive as $m)
                 @php
-                    $url = url('/formazioni-risultati?match_id=' . $m['match_id']);
+                    $url = url('/formazione-risultati?match_id=' . $m['match_id']);
                     $date = \Carbon\Carbon::parse($m['date'])->format('d/m/Y');
                 @endphp
 

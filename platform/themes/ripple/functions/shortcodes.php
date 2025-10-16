@@ -118,7 +118,7 @@ Shortcode::register(
                 ];
             });
 
-        return Theme::partial('shortcodes.formazione-risultati', [
+        return Theme::partial('shortcodes.formazione-risultato', [
             'team'         => $team,
             'nextMatch'    => $nextMatch,
             'lastFinished' => $lastFinished,
