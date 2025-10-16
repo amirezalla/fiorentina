@@ -3,35 +3,34 @@
 
     $uid = 'nxm-' . uniqid();
 
-    // Build a JS-friendly structure and sign Wasabi URLs for ~20 minutes
-$playersForJs = collect($playersByRole)->map(function ($group) {
-    return collect($group)->map(function ($p) {
-        // temporary Wasabi URL (20 min)
-        $img = $p->image ?? '';
-        $abs = Str::startsWith($img, ['http://','https://']);
-        try {
-            $resolved = $abs ? $img : (\Storage::disk('wasabi')->temporaryUrl($img, now()->addMinutes(20)));
-        } catch (\Throwable $e) {
-            $resolved = $abs ? $img : '';
-        }
+    // Sign Wasabi URLs for ~20 minutes and compute last-name initial
+    $playersForJs = collect($playersByRole)->map(function ($group) {
+        return collect($group)
+            ->map(function ($p) {
+                $img = $p->image ?? '';
+                $abs = Str::startsWith($img, ['http://', 'https://']);
+                try {
+                    $resolved = $abs ? $img : \Storage::disk('wasabi')->temporaryUrl($img, now()->addMinutes(20));
+                } catch (\Throwable $e) {
+                    $resolved = $abs ? $img : '';
+                }
 
-        // initial from LAST NAME
-        $name  = trim($p->name ?? '');
-        $parts = preg_split('/\s+/', $name);
-        $last  = $parts ? end($parts) : $name;
-        $initial = Str::upper(Str::substr($last, 0, 1) ?: '?');
+                $name = trim($p->name ?? '');
+                $parts = preg_split('/\s+/', $name);
+                $last = $parts ? end($parts) : $name;
+                $initial = Str::upper(Str::substr($last, 0, 1) ?: '?');
 
-        return [
-            'id'              => $p->id,
-            'name'            => $p->name,
-            'jersey_number'   => $p->jersey_number,
-            '_resolved_image' => $resolved,
-            'initial'         => $initial,
-        ];
-    })->values();
-});
+                return [
+                    'id' => $p->id,
+                    'name' => $p->name,
+                    'jersey_number' => $p->jersey_number,
+                    '_resolved_image' => $resolved,
+                    'initial' => $initial,
+                ];
+            })
+            ->values();
+    });
 @endphp
-
 
 <div id="{{ $uid }}" class="container my-4">
     @if (session('ok'))
@@ -73,6 +72,7 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
                 </select>
             </div>
 
+            <!-- Pitch (hidden until formation selected) -->
             <div id="{{ $uid }}-pitchwrap" class="{{ $uid }}-pitch my-4"
                 style="display:none; position:relative;background:#0b7a3b;border-radius:12px;padding:18px;">
                 <div class="{{ $uid }}-lines"
@@ -85,16 +85,16 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
                 </div>
             </div>
 
-
             <div class="d-flex gap-2 mt-1">
-                <button type="submit" class="lv-btn" id="{{ $uid }}-submit" disabled>Salva la formazione</button>
-  <button type="button" class="lv-btn-ghost" id="{{ $uid }}-clear">Svuota</button>
+                <button type="submit" class="lv-btn" id="{{ $uid }}-submit" disabled>Salva la
+                    formazione</button>
+                <button type="button" class="lv-btn-ghost" id="{{ $uid }}-clear">Svuota</button>
             </div>
 
             <div id="{{ $uid }}-hidden"></div>
         </form>
 
-        {{-- Modal --}}
+        <!-- Modal -->
         <div class="modal fade" id="{{ $uid }}-modal" tabindex="-1" role="dialog"
             aria-labelledby="{{ $uid }}-label" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -108,6 +108,12 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
                         </button>
                     </div>
 
+                    <!-- This body was missing -> playersGrid was null -->
+                    <div class="modal-body">
+                        <input type="text" id="{{ $uid }}-search" class="form-control mb-3"
+                            placeholder="Cerca nome o numero...">
+                        <div id="{{ $uid }}-grid" class="row"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -115,32 +121,63 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
 </div>
 
 <style>
-.lv-btn{
-  background:#8424e3; color:#fff; border:0; border-radius:0;
-  text-transform:uppercase; letter-spacing:.3px; font-weight:700;
-  padding:.55rem 1rem; display:inline-flex; align-items:center; gap:.35rem;
-}
-.lv-btn:hover{ background:#6d18c4; color:#fff; }
+    /* Theme buttons (sharp borders) */
+    .lv-btn {
+        background: #8424e3;
+        color: #fff;
+        border: 0;
+        border-radius: 0;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        font-weight: 700;
+        padding: .55rem 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+    }
 
-.lv-btn-ghost{
-  background:transparent; color:#444; border:1px solid #cfcfd4; border-radius:0;
-  text-transform:uppercase; font-weight:600; padding:.55rem 1rem;
-}
-.lv-btn-ghost:hover{ background:#f6f6f9; }
+    .lv-btn:hover {
+        background: #6d18c4;
+        color: #fff;
+    }
 
-/* full-width CTA (e.g., “Più notizie”) */
-.lv-btn-block{ width:100%; justify-content:center; }
+    .lv-btn-ghost {
+        background: transparent;
+        color: #444;
+        border: 1px solid #cfcfd4;
+        border-radius: 0;
+        text-transform: uppercase;
+        font-weight: 600;
+        padding: .55rem 1rem;
+    }
 
-/* ===== Fallback avatar (purple circle w/ initial) ===== */
-.avatar-initial{
-  width:64px; height:64px; border-radius:50%;
-  background:#8424e3; color:#fff; display:flex; align-items:center; justify-content:center;
-  font-weight:800; font-size:24px; border:2px solid #fff;
-}
-.avatar-initial.is-lg{
-  width:72px; height:72px; font-size:26px; border-color:#8424e3;   /* modal cards */
-}
+    .lv-btn-ghost:hover {
+        background: #f6f6f9;
+    }
 
+    /* Fallback avatar (purple initial) */
+    .avatar-initial {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #8424e3;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 24px;
+        border: 2px solid #fff;
+    }
+
+    .avatar-initial.is-lg {
+        width: 72px;
+        height: 72px;
+        font-size: 26px;
+        border-color: #8424e3;
+    }
+
+    /* Slots + pitch */
     #{{ $uid }} .slot {
         width: 96px;
         height: 96px;
@@ -217,7 +254,6 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
         font-size: .8rem;
     }
 
-    /* pitch helper lines */
     #{{ $uid }} .{{ $uid }}-lines:before,
     #{{ $uid }} .{{ $uid }}-lines:after {
         content: '';
@@ -244,8 +280,6 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
         const playersByRole = @json($playersForJs);
         const UID = @json($uid);
 
-        const $ = (sel) => document.querySelector(sel);
-        const $$ = (sel) => document.querySelectorAll(sel);
         const byId = (id) => document.getElementById(id);
 
         const formationSelect = byId(UID + '-formation');
@@ -253,30 +287,62 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
         const submitBtn = byId(UID + '-submit');
         const clearBtn = byId(UID + '-clear');
 
-        const modalId = '#' + UID + '-modal';
+        const modalElement = byId(UID + '-modal');
         const modalRole = byId(UID + '-role');
-        const playersGrid = byId(UID + '-grid');
+        const playerSearch = byId(UID + '-search');
+        const playersGrid = byId(UID + '-grid'); // <-- now exists
+        const pitchWrap = byId(UID + '-pitchwrap');
 
         let currentSlot = null;
         let expectedSlots = {};
-        let selected = {}; // slot => {id,name,jersey_number,image}
+        let selected = {}; // slot => {id,name,jersey_number,image,initial}
+
+        // Modal helpers (no jQuery required)
+        let bsInstance = null;
+
+        function showModal() {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                bsInstance = bsInstance || new bootstrap.Modal(modalElement);
+                bsInstance.show();
+            } else if (window.jQuery && jQuery.fn && jQuery(modalElement).modal) {
+                jQuery(modalElement).modal('show');
+            } else {
+                modalElement.classList.add('show');
+                modalElement.style.display = 'block';
+                modalElement.removeAttribute('aria-hidden');
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        function hideModal() {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                (bsInstance || new bootstrap.Modal(modalElement)).hide();
+            } else if (window.jQuery && jQuery.fn && jQuery(modalElement).modal) {
+                jQuery(modalElement).modal('hide');
+            } else {
+                modalElement.classList.remove('show');
+                modalElement.style.display = 'none';
+                modalElement.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('modal-open');
+            }
+        }
 
         function buildExpectedSlots(f) {
             const parts = f.split('-').map(n => parseInt(n, 10));
             const mk = (pfx, n) => Object.fromEntries(Array.from({
                 length: n
-            }, (_, i) => [pfx + (i + 1), pfx === 'DF' ? 'DF' : pfx === 'MF' ? 'MF' : 'FW']));
+            }, (_, i) => [pfx + (i + 1), pfx]));
             if (parts.length === 3) {
-                const [d, m, f] = parts;
+                const [d, m, fw] = parts;
                 return Object.assign({
                     'GK': 'GK'
-                }, mk('DF', d), mk('MF', m), mk('FW', f));
+                }, mk('DF', d), mk('MF', m), mk('FW', fw));
             } else {
-                const [d, m1, m2, f] = parts;
+                const [d, m1, m2, fw] = parts;
                 const m = m1 + m2;
                 return Object.assign({
                     'GK': 'GK'
-                }, mk('DF', d), mk('MF', m), mk('FW', f));
+                }, mk('DF', d), mk('MF', m), mk('FW', fw));
             }
         }
 
@@ -297,28 +363,28 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
                 div.dataset.role = role;
 
                 if (selected[slot]) {
-const s = selected[slot];
-  if (s.image) {
-    const img = document.createElement('img');
-    img.className = 'avatar';
-    img.src = s.image;
-    img.alt = s.name;
-    div.appendChild(img);
-  } else {
-    const ph = document.createElement('div');
-    ph.className = 'avatar-initial';
-    ph.textContent = (s.initial || '?');
-    div.appendChild(ph);
-  }
+                    const s = selected[slot];
+                    if (s.image) {
+                        const img = document.createElement('img');
+                        img.className = 'avatar';
+                        img.src = s.image;
+                        img.alt = s.name;
+                        div.appendChild(img);
+                    } else {
+                        const ph = document.createElement('div');
+                        ph.className = 'avatar-initial';
+                        ph.textContent = s.initial || '?';
+                        div.appendChild(ph);
+                    }
 
                     const name = document.createElement('div');
                     name.className = 'label';
-                    name.textContent = selected[slot].name;
+                    name.textContent = s.name;
                     div.appendChild(name);
 
                     const num = document.createElement('div');
                     num.className = 'badge-number';
-                    num.textContent = selected[slot].jersey_number ?? '-';
+                    num.textContent = s.jersey_number ?? '-';
                     div.appendChild(num);
                 } else {
                     const label = document.createElement('div');
@@ -354,41 +420,48 @@ const s = selected[slot];
         function openModal(slot, role) {
             currentSlot = slot;
             modalRole.textContent = role;
+            playerSearch.value = '';
             renderPlayersGrid(playersByRole[role] || []);
-            showModal(); // <-- instead of jQuery(...).modal('show')
+            showModal();
         }
 
         function renderPlayersGrid(list) {
             playersGrid.innerHTML = '';
-            list.forEach(p => {
+            const q = (playerSearch.value || '').toLowerCase().trim();
+            const filtered = q ?
+                list.filter(p => (p.name || '').toLowerCase().includes(q) || String(p.jersey_number || '').includes(
+                    q)) :
+                list;
+
+            filtered.forEach(p => {
                 const col = document.createElement('div');
                 col.className = 'col-6 col-md-4 col-lg-3';
+
                 const card = document.createElement('div');
                 card.className = 'player-card';
                 card.dataset.playerId = p.id;
 
-const hasImg = !!p._resolved_image;
-if (hasImg) {
-  const img = document.createElement('img');
-  img.src = p._resolved_image;
-  card.appendChild(img);
-} else {
-  const ph = document.createElement('div');
-  ph.className = 'avatar-initial is-lg';
-  ph.textContent = (p.initial || '?');
-  card.appendChild(ph);
-}
-
+                if (p._resolved_image) {
+                    const img = document.createElement('img');
+                    img.src = p._resolved_image;
+                    card.appendChild(img);
+                } else {
+                    const ph = document.createElement('div');
+                    ph.className = 'avatar-initial is-lg';
+                    ph.textContent = p.initial || '?';
+                    card.appendChild(ph);
+                }
 
                 const name = document.createElement('div');
                 name.className = 'name';
                 name.textContent = p.name;
+                card.appendChild(name);
 
                 const jersey = document.createElement('div');
                 jersey.className = 'jersey';
                 jersey.textContent = (p.jersey_number ?? '-') + '';
+                card.appendChild(jersey);
 
-                card.append(img, name, jersey);
                 card.addEventListener('click', () => choosePlayer(p));
                 col.appendChild(card);
                 playersGrid.appendChild(col);
@@ -397,72 +470,39 @@ if (hasImg) {
 
         function choosePlayer(p) {
             if (!currentSlot) return;
+            // prevent duplicates
             Object.entries(selected).forEach(([slot, sp]) => {
                 if (sp.id === p.id) delete selected[slot];
             });
+
             selected[currentSlot] = {
                 id: p.id,
                 name: p.name,
                 jersey_number: p.jersey_number,
-                image: p._resolved_image || ''
+                image: p._resolved_image || '',
+                initial: p.initial || '?'
             };
-            hideModal(); // <-- instead of jQuery(...).modal('hide')
+            hideModal();
             renderSlots();
         }
 
-        // events
-        byId(UID + '-clear').addEventListener('click', () => {
+        // Events
+        clearBtn.addEventListener('click', () => {
             selected = {};
             renderSlots();
         });
 
-        const pitchWrap = document.getElementById(UID + '-pitchwrap');
-
-        byId(UID + '-formation').addEventListener('change', (e) => {
+        formationSelect.addEventListener('change', (e) => {
             selected = {};
             expectedSlots = buildExpectedSlots(e.target.value);
-            pitchWrap.style.display = 'block'; // <-- show pitch now
+            pitchWrap.style.display = 'block';
             renderSlots();
         });
 
-        const modalElement = byId(UID + '-modal');
-        let bsInstance = null;
+        playerSearch && playerSearch.addEventListener('input', () => {
+            const role = modalRole.textContent || 'GK';
+            renderPlayersGrid(playersByRole[role] || []);
+        });
 
-        function showModal() {
-            if (window.bootstrap && window.bootstrap.Modal) {
-                bsInstance = bsInstance || new bootstrap.Modal(modalElement);
-                bsInstance.show();
-            } else if (window.jQuery && jQuery.fn && jQuery(modalElement).modal) {
-                jQuery(modalElement).modal('show');
-            } else {
-                // tiny fallback
-                modalElement.classList.add('show');
-                modalElement.style.display = 'block';
-                modalElement.removeAttribute('aria-hidden');
-                document.body.classList.add('modal-open');
-            }
-        }
-
-        function hideModal() {
-            if (window.bootstrap && window.bootstrap.Modal) {
-                (bsInstance || new bootstrap.Modal(modalElement)).hide();
-            } else if (window.jQuery && jQuery.fn && jQuery(modalElement).modal) {
-                jQuery(modalElement).modal('hide');
-            } else {
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-                modalElement.setAttribute('aria-hidden', 'true');
-                document.body.classList.remove('modal-open');
-            }
-        }
-
-
-        // resolve image URLs if needed (no-op here but kept for parity)
-        (function hydrateImages() {
-            Object.keys(playersByRole).forEach(r => {
-                playersByRole[r] = (playersByRole[r] || []).map(p => (p._resolved_image = p
-                    ._resolved_image || p.image || '', p));
-            });
-        })();
     })();
 </script>
