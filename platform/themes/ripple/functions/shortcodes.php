@@ -19,6 +19,7 @@ use Illuminate\Support\Arr;
 use App\Models\Calendario;
 use App\Models\FormationVote;
 use App\Models\Player;
+use App\Support\FormationStats;
 
 app('events')->listen(RouteMatched::class, function () {
     ThemeSupport::registerGoogleMapsShortcode();
@@ -206,6 +207,52 @@ Shortcode::setAdminConfig('nextmatch-votazione', function (array $attrs) {
         );
 });
     
+
+
+Shortcode::register(
+    'formazioni-risultati',
+    __('Formazioni – Risultati'),
+    __('Mostra i risultati della votazione formazione per una partita'),
+    function (ShortcodeCompiler $sc) {
+        // 1) resolve match_id priority: shortcode attr > route param > query string
+        $matchId = trim((string) ($sc->match_id ?? ''));
+        if (!$matchId) {
+            $matchId = optional(request()->route())->parameter('match_id') ?: request('match_id');
+        }
+        if (!$matchId) {
+            return null; // nothing to render
+        }
+
+        $match = Calendario::where('match_id', $matchId)->first();
+        $data  = FormationStats::aggregate($matchId);
+
+        return Theme::partial('shortcodes.formazioni-risultati', compact('match', 'data', 'matchId'));
+    }
+);
+
+Shortcode::setAdminConfig('formazioni-risultati', function (array $attrs) {
+    $choices = ['' => __('(Auto da URL)')];
+    Calendario::query()
+        ->orderByDesc('match_date')
+        ->get()
+        ->each(function (Calendario $m) use (&$choices) {
+            $home = Arr::get(json_decode($m->home_team, true), 'name', '—');
+            $away = Arr::get(json_decode($m->away_team, true), 'name', '—');
+            $choices[$m->match_id] = "$home – $away";
+        });
+
+    return ShortcodeForm::createFromArray($attrs)
+        ->withLazyLoading()
+        ->add(
+            'match_id',
+            SelectField::class,
+            SelectFieldOption::make()
+                ->label(__('Partita'))
+                ->choices($choices)
+                ->defaultValue('')
+                ->toArray()
+        );
+});
 
     // 2️⃣  Register the frontend renderer
     Shortcode::register(
