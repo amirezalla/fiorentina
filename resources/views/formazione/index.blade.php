@@ -1,5 +1,3 @@
-@extends('plugins/blog::themes.templates.master')
-
 @php
     // $match (or null), $playersByRole (collection), $formations (array), $team = 'fiorentina'
     use Illuminate\Support\Str;
