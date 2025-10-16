@@ -552,14 +552,15 @@ Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
 
     return response()->json(['results' => $results]);
 })->name('users.search')->middleware(['web', 'auth']);
-Route::get('/admin/author/search', function (\Illuminate\Http\Request $request) {
-    $q  = trim((string) $request->get('q', ''));
+Route::get('/admin/author/search', function (Request $request) {
+    $q = trim((string) $request->get('q', ''));
 
-    $users = \Botble\ACL\Models\User::query()
+    $users = User::query()
         ->when($q !== '', function ($query) use ($q) {
             $query->where(function ($qq) use ($q) {
                 $qq->where('username', 'like', "%{$q}%")
-                   ->orWhere('email', 'like', "%{$q}%");
+                   ->orWhere('email', 'like', "%{$q}%")
+                   ->orWhereRaw('CONCAT(first_name, " ", last_name) LIKE ?', ["%{$q}%"]);
 
                 if (ctype_digit($q)) {
                     $qq->orWhere('id', (int) $q);
@@ -569,13 +570,14 @@ Route::get('/admin/author/search', function (\Illuminate\Http\Request $request) 
         ->orderBy('username')
         ->limit(20)
         ->get(['id', 'username', 'email', 'first_name', 'last_name'])
-
-        // 🔎 exclude the requester using Collection::reject()
-        ->values(); // reindex 0..N so JSON encodes as an array
+        ->values(); // ensure numeric array for JSON
 
     $results = $users->map(function ($u) {
-        $label = "{$u->first_name} {$u->last_name}";
-        return ['id' => (int) $u->id, 'text' => $label];
+        $label = trim("{$u->first_name} {$u->last_name}");
+        return [
+            'id'   => (int) $u->id,
+            'text' => $label !== '' ? "{$label} ({$u->email})" : $u->email,
+        ];
     });
 
     return response()->json(['results' => $results]);
