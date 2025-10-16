@@ -121,14 +121,13 @@ class PostForm extends FormAbstract
     SelectFieldOption::make()
         ->label('Collaboratori')
         ->attr([
-            'class'             => 'form-control select-search-full', // Select2 + AJAX stile Botble
-            'multiple'          => true,
-            'data-ajax--url'    => route('users.search'),
-            'data-ajax--cache'  => 'true',
-            'data-placeholder'  => 'Cerca per nome, email o ID…',
-            'data-allow-clear'  => 'true',
+            'class'            => 'form-control select-search-ajax', // <-- AJAX
+            'multiple'         => true,
+            'data-url'         => route('users.search'),             // <-- corretto
+            'data-placeholder' => 'Cerca per nome, email o ID…',
+            'data-allow-clear' => 'true',
         ])
-        // Pre-carica i selezionati in edit:
+        // Precarica i selezionati in edit:
         ->choices($this->getModel()->getKey()
             ? $this->getModel()->collaborators
                 ->mapWithKeys(fn ($u) => [$u->id => $u->name . ' (' . $u->email . ')'])

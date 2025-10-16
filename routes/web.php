@@ -522,6 +522,23 @@ Route::get('/test-mailgun', function () {
 
 Route::post('/formazione-store', [FormazioneController::class, 'store'])->name('formazione.store');
 
-Route::get('admin/users/search', [UserSearchController::class, 'search'])
-    ->name('users.search')
-    ->middleware('auth');
+// routes/web.php (o routes/admin.php se preferisci)
+Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
+    $q = trim($request->get('q', ''));
+    $users = \Botble\ACL\Models\User::query()
+        ->when($q, function ($qq) use ($q) {
+            $qq->where('name', 'like', "%$q%")
+               ->orWhere('email', 'like', "%$q%")
+               ->orWhere('id', $q);
+        })
+        ->orderBy('name')
+        ->limit(20)
+        ->get(['id','name','email']);
+
+    return response()->json([
+        'results' => $users->map(fn($u) => [
+            'id'   => $u->id,
+            'text' => "{$u->name} ({$u->email})",
+        ]),
+    ]);
+})->name('users.search')->middleware(['web','auth']);
