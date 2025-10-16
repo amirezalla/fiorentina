@@ -524,26 +524,21 @@ Route::post('/formazione-store', [FormazioneController::class, 'store'])->name('
 
 Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
     $q = trim($request->get('q', ''));
-    $user = $request->user(); // utente loggato, per escluderlo
+    $user = $request->user();
 
     $users = \Botble\ACL\Models\User::query()
         ->when($q, function ($qq) use ($q) {
             $qq->where('username', 'like', "%$q%")
-               ->orWhere('email', 'like', "%$q%")
+               ->orWhere('username', 'like', "%$q%")
                ->orWhere('id', $q);
         })
-        ->when($user, function ($qq) use ($user) {
-            $qq->where('id', '!=', $user->id); // ⛔ escludi chi sta facendo la richiesta
-        })
+        ->when($user, fn($qq) => $qq->where('id', '!=', $user->id))
         ->orderBy('username')
         ->limit(20)
         ->get(['id', 'username', 'email']);
 
-    return response()->json([
-        'results' => $users->map(fn($u) => [
-            'id'   => $u->id,
-            'text' => trim(($u->name ?: 'Utente') . " ({$u->email})"), // ✅ fix: nome + email
-        ]),
-    ]);
+    // 👉 ritorna un semplice array
+    return $users->map(fn($u) => trim(($u->name ?: 'Utente') . " ({$u->email})"));
 })->name('users.search')->middleware(['web', 'auth']);
+
 
