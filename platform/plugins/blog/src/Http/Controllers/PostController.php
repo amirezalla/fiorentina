@@ -80,7 +80,6 @@ class PostController extends BaseController
             ->map(fn ($id) => (int) $id)
             ->unique()
             ->all();
-        dd($ids);
 
         $post->collaborators()->sync($ids);
 
@@ -136,7 +135,6 @@ class PostController extends BaseController
             ->map(fn ($id) => (int) $id)
             ->unique()
             ->all();
-        dd($ids);
         $post->collaborators()->sync($ids);
 
                 if ($published_at) {
