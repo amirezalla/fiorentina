@@ -519,4 +519,3 @@ Route::get('/test-mailgun', function () {
     return 'Sent (check logs & Mailgun dashboard).';
 });
 
-Route::get('/formazione-nextmatch', [FormazioneController::class, 'index'])->name('formazione.index');

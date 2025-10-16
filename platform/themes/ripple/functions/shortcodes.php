@@ -141,6 +141,70 @@ Shortcode::setAdminConfig('formazione-risultati', function (array $attrs) {
                 ->toArray()
         );
 });
+
+
+Shortcode::register(
+    'nextmatch-votazione',
+    __('Formazione – Votazione (prossima partita)'),
+    __('Mostra il widget di votazione per la prossima partita (SCHEDULED/LIVE).'),
+    function (ShortcodeCompiler $sc) {
+        $team       = $sc->team ?: 'fiorentina';
+        $formsCsv   = $sc->formations ?: '4-3-3,4-2-3-1,3-5-2,4-4-2,5-3-2';
+        $formations = collect(explode(',', $formsCsv))
+            ->map(fn($s) => trim($s))
+            ->filter()->values()->all();
+
+        // Prossima partita (SCHEDULED o LIVE)
+        $match = Calendario::whereIn('status', ['SCHEDULED','LIVE'])
+            ->orderBy('match_date', 'asc')
+            ->first();
+
+        // Giocatori raggruppati per ruolo (GK/DF/MF/FW)
+        $players = Player::query()->orderBy('jersey_number')->get();
+        $playersByRole = $players->groupBy(function ($p) {
+            $pos = strtoupper(trim($p->position ?? ''));
+            return match (true) {
+                str_starts_with($pos, 'GK') || $pos === 'PORTIERE' || $pos === 'GOALKEEPER' => 'GK',
+                str_starts_with($pos, 'DF') || $pos === 'DIFENSORE' || $pos === 'DEFENDER' => 'DF',
+                str_starts_with($pos, 'MF') || $pos === 'CENTROCAMPISTA' || $pos === 'MIDFIELDER' => 'MF',
+                str_starts_with($pos, 'FW') || $pos === 'ATTACCANTE' || $pos === 'FORWARD' => 'FW',
+                default => 'MF',
+            };
+        });
+
+        // Riusa lo stesso partial del voto (il form post a route('formazione.store'))
+        return Theme::partial('shortcodes.formazione-voto', [
+            'match'         => $match,
+            'team'          => $team,
+            'formations'    => $formations,
+            'playersByRole' => $playersByRole,
+        ]);
+    }
+);
+
+// Pannello admin del shortcode
+Shortcode::setAdminConfig('nextmatch-votazione', function (array $attrs) {
+    return ShortcodeForm::createFromArray($attrs)
+        ->withLazyLoading()
+        ->add(
+            'team',
+            SelectField::class,
+            SelectFieldOption::make()
+                ->label(__('Squadra'))
+                ->choices(['fiorentina' => 'Fiorentina', 'another' => 'Altro'])
+                ->defaultValue('fiorentina')
+                ->toArray()
+        )
+        ->add(
+            'formations',
+            TextField::class,
+            TextFieldOption::make()
+                ->label(__('Formazioni disponibili (CSV)'))
+                ->placeholder('4-3-3,4-2-3-1,3-5-2,4-4-2,5-3-2')
+                ->defaultValue('4-3-3,4-2-3-1,3-5-2,4-4-2,5-3-2')
+                ->toArray()
+        );
+});
     
 
     // 2️⃣  Register the frontend renderer
