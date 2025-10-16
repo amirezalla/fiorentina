@@ -120,7 +120,7 @@ class PostForm extends FormAbstract
     SelectField::class,
     SelectFieldOption::make()
         ->label('Collaboratori')
-        ->attr([
+        ->attributes([
             'class'            => 'form-control select-search-ajax', // <-- AJAX
             'multiple'         => true,
             'data-url'         => route('users.search'),             // <-- corretto
