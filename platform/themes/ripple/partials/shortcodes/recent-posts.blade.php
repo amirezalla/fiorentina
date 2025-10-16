@@ -897,9 +897,9 @@
     document.addEventListener('DOMContentLoaded', () => {
 
         /* ---------- settings ---------- */
-        const BATCH = {{ $minMainPostsLimit }}; // 5
+        const BATCH = {{ $minMainPostsLimit }};
         const MAX = document.querySelectorAll('.post-item').length;
-        let visible = {{ $minMainPostsLimit }}; // start with 5
+        let visible = {{ $minMainPostsLimit }};
 
         /* ---------- helper to toggle visibility ---------- */
         function showUpTo(limit) {
@@ -923,6 +923,20 @@
             color: '#8424e3'
         });
 
+        /* ---------- “view all” footer (hidden until end) ---------- */
+        const viewAll = document.createElement('div');
+        viewAll.className = 'text-center py-2';
+        viewAll.style.background = '#8424e3';
+        viewAll.innerHTML = `
+    <a href="/blog" class="fw-semibold text-white text-decoration-none text-uppercase">
+      Più notizie <span>➜</span>
+    </a>`;
+
+        function showViewAll() {
+            // evita doppioni
+            if (!row.contains(viewAll)) row.appendChild(viewAll);
+        }
+
         /* ---------- sentinel right after the list ---------- */
         const row = document.querySelector('.post-group__content .row');
         const sentinel = document.createElement('div');
@@ -938,7 +952,7 @@
             loading.style.display = 'block';
             setTimeout(() => {
                 loadNextBatch();
-            }, 800); // ≈0.8 s feel-good pause
+            }, 800);
         }, {
             rootMargin: '200px'
         });
@@ -950,25 +964,36 @@
             showUpTo(visible);
             loading.style.display = 'none';
 
-            if (visible >= MAX) { // done – stop observing
+            if (visible >= MAX) {
+                // tutto visibile: stop observing e mostra il bottone finale
                 io.disconnect();
+                sentinel.remove(); // pulizia opzionale
+                showViewAll();
             }
         }
 
-        /* ---------- optional manual button still works ---------- */
+        /* ---------- se già tutto visibile al primo colpo ---------- */
+        if (visible >= MAX) {
+            io.disconnect();
+            sentinel.remove();
+            showViewAll();
+        }
+
+        /* ---------- opzionale: supporto ad un bottone manuale esistente (#load-more) ---------- */
         const btn = document.getElementById('load-more');
         if (btn) {
             btn.addEventListener('click', loadNextBatch);
-            // hide the button once everything is visible
             const mo = new MutationObserver(() => {
-                if (visible >= MAX) btn.style.display = 'none';
+                if (visible >= MAX) {
+                    btn.style.display = 'none';
+                    showViewAll();
+                }
             });
             mo.observe(loading, {
                 attributes: true,
                 attributeFilter: ['style']
             });
         }
-
     });
 </script>
 <script>
