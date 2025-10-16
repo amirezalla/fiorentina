@@ -1,5 +1,7 @@
 {{-- ======= Formazione più votata (layout driven by $data['topFormation']) ======= --}}
 @php
+    use Illuminate\Support\Str;
+
     // Parse the winning formation and compute how many per role
     $parts = array_map('intval', explode('-', $data['topFormation'] ?? ''));
     // supports both 3-part (D-M-F) and 4-part (D-M1-M2-F)
@@ -36,6 +38,26 @@
     $isSelected = function ($role, $info) use ($selected) {
         $pid = optional($info['player'])->id;
         return $selected[$role]->contains(fn($s) => optional($s['player'])->id === $pid);
+    };
+
+    $imgUrl = function ($p) {
+        if (!$p) {
+            return null;
+        }
+        $img = $p->image ?? '';
+        if (!$img) {
+            return null;
+        }
+
+        if (Str::startsWith($img, ['http://', 'https://'])) {
+            return $img;
+        }
+
+        try {
+            return \Storage::disk('wasabi')->temporaryUrl($img, now()->addMinutes(20));
+        } catch (\Throwable $e) {
+            return null;
+        }
     };
 @endphp
 
