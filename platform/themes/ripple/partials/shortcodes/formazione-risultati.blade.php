@@ -2,8 +2,8 @@
     use Illuminate\Support\Arr;
     use Carbon\Carbon;
 
-    $fmtDate = function ($dt) {
-        return Carbon::parse($dt)->locale('it')->timezone('Europe/Rome')->isoFormat('ddd D MMM [ore] H:mm');
+    $fmtDate = function ($ts) {
+        return \Carbon\Carbon::parse($ts)->locale('it')->timezone('Europe/Rome')->isoFormat('ddd D MMM HH:mm'); // ← niente “ore”
     };
 
     $teamLogo = function ($json) {
