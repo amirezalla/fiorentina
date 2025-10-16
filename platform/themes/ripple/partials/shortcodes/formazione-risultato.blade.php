@@ -62,6 +62,24 @@
 @endphp
 
 <div class="card mb-3">
+    <div class="mb-3" style="background:#8424e3;color:#fff;border-radius:.5rem;padding:.8rem 1rem;">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                @if ($home['logo'])
+                    <img src="{{ $home['logo'] }}" style="height:28px" class="mr-2">
+                @endif
+                <strong class="mr-2">{{ $home['name'] }}</strong>
+                <span class="mx-1">vs</span>
+                @if ($away['logo'])
+                    <img src="{{ $away['logo'] }}" style="height:28px" class="mx-2">
+                @endif
+                <strong>{{ $away['name'] }}</strong>
+            </div>
+            @if ($match)
+                <div>{{ $fmtDate($match->match_date) }}</div>
+            @endif
+        </div>
+    </div>
     <div class="card-header">
         <strong>Formazione più votata</strong>
         <span class="ml-2 text-muted">Voti: {{ $data['totalVotes'] }}</span>
