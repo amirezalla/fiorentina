@@ -7,7 +7,7 @@
 
         @endphp
 
-        <div class="row justify-content-end mx-0">
+        <div class="row justify-content-first mx-0" style="padding-top:4px;">
             <div class="col-12 mx-auto">
                 {{-- Link through your trackClick route so that a click is counted --}}
                 <a href="{{ route('ads.click', ['id' => $ad->id]) }}" class="d-block">
@@ -18,7 +18,7 @@
         </div>
     @else
         {{-- For type=2 (Google Ad Manager or custom HTML), no impression is tracked here --}}
-        <div class="row justify-content-end  mx-0">
+        <div class="row justify-content-first  mx-0 " style="padding-top:4px;">
             {!! $ad->amp !!}
         </div>
     @endif
