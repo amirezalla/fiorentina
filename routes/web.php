@@ -539,7 +539,7 @@ Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
         })
         ->orderBy('username')
         ->limit(20)
-        ->get(['id', 'username', 'email'])
+        ->get(['id', 'username', 'email', 'first_name', 'last_name'])
 
         // 🔎 exclude the requester using Collection::reject()
         ->reject(fn ($u) => $me && (int) $u->id === (int) $me->id)
@@ -568,7 +568,7 @@ Route::get('/admin/author/search', function (\Illuminate\Http\Request $request) 
         })
         ->orderBy('username')
         ->limit(20)
-        ->get(['id', 'username', 'email'])
+        ->get(['id', 'username', 'email', 'first_name', 'last_name'])
 
         // 🔎 exclude the requester using Collection::reject()
         ->values(); // reindex 0..N so JSON encodes as an array
