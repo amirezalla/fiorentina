@@ -13,91 +13,97 @@
 
 @if ($post->author->name)
     <div class="row">
-<div class="col-lg-4" style="padding-top:6px">
+        <div class="col-lg-4" style="padding-top:6px">
 
-    {{-- Author --}}
-    @if ($post->author->avatar->url ?? null)
-        @php
-            $img = RvMedia::image(
-                $post->author->avatar->url,
-                $post->author->first_name,
-                'thumbnail',
-                true,
-                ['style' => 'border-radius:50%;width:33px;height:33px;']
-            );
-        @endphp
-        {!! $img !!}
-    @else
-        <span class="post-author" style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}</span>
-    @endif
+            {{-- Author --}}
+            @if ($post->author->avatar->url ?? null)
+                @php
+                    $img = RvMedia::image($post->author->avatar->url, $post->author->first_name, 'thumbnail', true, [
+                        'style' => 'border-radius:50%;width:33px;height:33px;',
+                    ]);
+                @endphp
+                {!! $img !!}
+            @else
+                <span class="post-author" style="color: gray;">{!! BaseHelper::renderIcon('ti ti-user-circle') !!}</span>
+            @endif
 
-    <span style="margin-left:5px">Di</span>
-    <span class="author-name">
-        <a style="font-size:medium;padding-left:2px;color:#8424e3;font-weight:700;"
-           href="/author/{{ $post->author->username }}">
-            {{ $post->author->first_name }} {{ $post->author->last_name }}
-        </a>
-    </span>
+            <span style="margin-left:5px">Di</span>
+            <span class="author-name">
+                <a style="font-size:medium;padding-left:2px;color:#8424e3;font-weight:700;"
+                    href="/author/{{ $post->author->username }}">
+                    {{ $post->author->first_name }} {{ $post->author->last_name }}
+                </a>
+            </span>
 
-    {{-- Collaborators --}}
-    @php
-        $collabs = $post->collaborators ?? collect();
-    @endphp
 
-    @if ($collabs->isNotEmpty())
-        <div class="collab-wrap mt-1">
-            <small class="text-muted d-block" style="line-height:1;">Con la collaborazione di:</small>
-            <div class="collab-avatars mt-1">
-                @foreach ($collabs as $c)
-                    @php
-                        $avatar = $c->avatar->url ?? null;
-                        $initial = mb_strtoupper(mb_substr($c->last_name ?: $c->first_name ?: $c->username, 0, 1));
-                        $label = e(trim(($c->first_name . ' ' . $c->last_name) ?: $c->username));
-                    @endphp
-
-                    <a href="/author/{{ $c->username }}"
-                       class="collab-link"
-                       data-toggle="tooltip"
-                       data-placement="top"
-                       title="{{ $label }}">
-                        @if ($avatar)
-                            {!! RvMedia::image($avatar, $label, 'thumb', true, ['class' => 'collab-avatar']) !!}
-                        @else
-                            <span class="collab-initial" aria-hidden="true">{{ $initial }}</span>
-                        @endif
-                    </a>
-                @endforeach
-            </div>
         </div>
-    @endif
-</div>
 
-{{-- Styles (can be moved to your CSS) --}}
-<style>
-    .collab-avatars{display:flex;align-items:center;gap:4px}
-    .collab-avatar{width:24px;height:24px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 1px #e7e7ec}
-    .collab-link{display:inline-flex;align-items:center;text-decoration:none}
-    .collab-link:hover .collab-avatar{box-shadow:0 0 0 1px #8424e3}
-    .collab-initial{
-        width:24px;height:24px;border-radius:50%;
-        display:inline-flex;align-items:center;justify-content:center;
-        background:#8424e3;color:#fff;font-weight:800;font-size:12px;
-        border:2px solid #fff;box-shadow:0 0 0 1px #e7e7ec
-    }
-</style>
+        {{-- Styles (can be moved to your CSS) --}}
+        <style>
+            .collab-avatars {
+                display: flex;
+                align-items: center;
+                gap: 4px
+            }
 
-{{-- Tooltip init (Bootstrap). Safe no-op if Bootstrap tooltip isn’t present. --}}
-<script>
-    (function () {
-        if (window.jQuery && typeof jQuery.fn.tooltip === 'function') {
-            jQuery(function ($) { $('[data-toggle="tooltip"]').tooltip(); });
-        } else if (window.bootstrap && bootstrap.Tooltip) {
-            document.querySelectorAll('[data-toggle="tooltip"]').forEach(function (el) {
-                new bootstrap.Tooltip(el);
-            });
-        }
-    })();
-</script>
+            .collab-avatar {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #fff;
+                box-shadow: 0 0 0 1px #e7e7ec
+            }
+
+            .collab-link {
+                display: inline-flex;
+                align-items: center;
+                text-decoration: none
+            }
+
+            .collab-link:hover .collab-avatar {
+                box-shadow: 0 0 0 1px #8424e3
+            }
+
+            .collab-initial {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: #8424e3;
+                color: #fff;
+                font-weight: 800;
+                font-size: 12px;
+                border: 2px solid #fff;
+                box-shadow: 0 0 0 1px #e7e7ec
+            }
+
+            .collab-wrap {
+                background: white;
+                position: absolute;
+                left: 0px;
+                padding: 1px 18px;
+                border: 2px solid #e2e2e2;
+                border-radius: 0px 0px 7px 0px;
+            }
+        </style>
+
+        {{-- Tooltip init (Bootstrap). Safe no-op if Bootstrap tooltip isn’t present. --}}
+        <script>
+            (function() {
+                if (window.jQuery && typeof jQuery.fn.tooltip === 'function') {
+                    jQuery(function($) {
+                        $('[data-toggle="tooltip"]').tooltip();
+                    });
+                } else if (window.bootstrap && bootstrap.Tooltip) {
+                    document.querySelectorAll('[data-toggle="tooltip"]').forEach(function(el) {
+                        new bootstrap.Tooltip(el);
+                    });
+                }
+            })();
+        </script>
 
         <div class="col-lg-3" style="padding-top: 10px">
             <span class="created_inner">{{ $formattedDate }}</span>
@@ -164,7 +170,37 @@
 
     {{-- Main featured image --}}
     <div class="row mx-0"> {{-- add a proper .row --}}
-        <div class="col-12 p-0 d-flex justify-content-center img-in-post mb-3 mt-3">
+        <div class="col-12 p-0 d-flex justify-content-center img-in-post mb-3 mt-3" style="position: relative">
+            {{-- Collaborators --}}
+            @php
+                $collabs = $post->collaborators ?? collect();
+            @endphp
+
+            @if ($collabs->isNotEmpty())
+                <div class="collab-wrap">
+                    <small class="text-muted d-block mr-1" style="line-height:1;">CON LA COLLABORAZIONE</small>
+                    <div class="collab-avatars mt-1">
+                        @foreach ($collabs as $c)
+                            @php
+                                $avatar = $c->avatar->url ?? null;
+                                $initial = mb_strtoupper(
+                                    mb_substr($c->last_name ?: $c->first_name ?: $c->username, 0, 1),
+                                );
+                                $label = e(trim($c->first_name . ' ' . $c->last_name ?: $c->username));
+                            @endphp
+
+                            <a href="/author/{{ $c->username }}" class="collab-link" data-toggle="tooltip"
+                                data-placement="top" title="{{ $label }}">
+                                @if ($avatar)
+                                    {!! RvMedia::image($avatar, $label, 'thumb', true, ['class' => 'collab-avatar']) !!}
+                                @else
+                                    <span class="collab-initial" aria-hidden="true">{{ $initial }}</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
             {{ RvMedia::image(
                 $post->image,
