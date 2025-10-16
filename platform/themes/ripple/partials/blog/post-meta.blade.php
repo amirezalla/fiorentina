@@ -175,9 +175,9 @@
             @php
                 $collabs = $post->collaborators ?? collect();
             @endphp
+            <div class="collab-wrap">
+                @if ($collabs->isNotEmpty())
 
-            @if ($collabs->isNotEmpty())
-                <div class="collab-wrap">
                     <small class="text-muted  mr-1" style="line-height:1; display:inline-flex;font-weight:600">CON LA
                         COLLABORAZIONE</small>
                     <div class="collab-avatars mt-1">
@@ -200,8 +200,30 @@
                             </a>
                         @endforeach
                     </div>
-                </div>
-            @endif
+
+
+                @endif
+                {{-- Inviati Speciali --}}
+                @if (!empty($post->inviati))
+                    <div style="margin-top:8px;">
+                        <small class="text-muted d-block">Inviati speciali:</small>
+                        <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
+                            @foreach ($post->inviati as $inv)
+                                @php $initial = strtoupper(mb_substr(trim($inv), 0, 1)); @endphp
+                                <span style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;">
+                                    <span
+                                        style="width:36px;height:36px;border-radius:50%;
+                                 background:#8424e3;color:#fff;font-weight:700;
+                                 display:inline-flex;align-items:center;justify-content:center;">
+                                        {{ $initial }}
+                                    </span>
+                                    <span style="font-weight:600;color:#333;">{{ $inv }}</span>
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
 
             {{ RvMedia::image(
                 $post->image,
