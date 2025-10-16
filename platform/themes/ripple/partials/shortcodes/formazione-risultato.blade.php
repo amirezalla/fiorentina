@@ -2,6 +2,7 @@
 @php
     use App\Support\FormationStats;
     use Illuminate\Support\Str;
+    use Illuminate\Support\Arr;
 
     $fmtDate = fn($d) => Str::of(
         \Carbon\Carbon::parse($d)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM H:mm'),
