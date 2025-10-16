@@ -125,10 +125,8 @@ class PostForm extends FormAbstract
             'data-ajax--cache'          => 'true',
             'data-placeholder'          => 'Cerca per nome, email o ID…',
             'data-allow-clear'          => 'true',
-            'data-minimum-input-length' => 1,
         ])
         ->choices(
-            ['' => '— Nessun autore selezionato —'] + // ✅ makes unselect possible
             (
                 $this->getModel()->getKey() && $this->getModel()->author
                     ? [
