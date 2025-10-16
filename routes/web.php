@@ -531,13 +531,12 @@ Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
                ->orWhere('email', 'like', "%$q%")
                ->orWhere('id', $q);
         })
-        ->when($user, function ($qq) use ($user) {
-            $qq->where('email', '!=', $user->email); // ⛔ escludi chi sta facendo la richiesta
-        })
         ->orderBy('username')
         ->limit(20)
         ->get(['id', 'username', 'email']);
-
+    if ($user) {
+        $users = $users->reject(fn($u) => $u->email === $user->email);
+    }
     return response()->json([
         'results' => $users->map(fn($u) => [
             'id'   => $u->id,
