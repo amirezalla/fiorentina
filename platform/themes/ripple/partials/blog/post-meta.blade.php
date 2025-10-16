@@ -41,7 +41,7 @@
         {{-- Styles (can be moved to your CSS) --}}
         <style>
             .collab-avatars {
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 gap: 4px
             }
@@ -73,7 +73,7 @@
                 align-items: center;
                 justify-content: center;
                 background: #8424e3;
-                color: #fff;
+                color: #fff !important;
                 font-weight: 800;
                 font-size: 12px;
                 border: 2px solid #fff;
@@ -178,7 +178,8 @@
 
             @if ($collabs->isNotEmpty())
                 <div class="collab-wrap">
-                    <small class="text-muted d-block mr-1" style="line-height:1;">CON LA COLLABORAZIONE</small>
+                    <small class="text-muted d-block mr-1"
+                        style="line-height:1; display:inline-flex;font-weight:600">CON LA COLLABORAZIONE</small>
                     <div class="collab-avatars mt-1">
                         @foreach ($collabs as $c)
                             @php
