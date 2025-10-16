@@ -12,7 +12,8 @@
         $needMF = ($m1 ?? 0) + ($m2 ?? 0);
     }
     $need = ['GK' => 1, 'DF' => $needDF ?? 0, 'MF' => $needMF ?? 0, 'FW' => $needFW ?? 0];
-
+    $home = $match ? FormationStats::teamInfo($match->home_team) : ['name' => '—', 'logo' => null];
+    $away = $match ? FormationStats::teamInfo($match->away_team) : ['name' => '—', 'logo' => null];
     // Build role rows from aggregated slots
     $slots = collect($data['slots'] ?? []);
     $rowsCol = [
