@@ -1,11 +1,14 @@
 @php
     use App\Support\FormationStats;
     use Illuminate\Support\Str;
-    $fmtDate = fn($d) => \Carbon\Carbon::parse($d)
-        ->locale('it')
-        ->timezone('Europe/Rome')
-        ->isoFormat('dddd D MMMM H:mm')
-        ->replace(' ore ', ' ');
+    use Illuminate\Support\Arr;
+
+    // FIXED: use Str::of(...)->replace(...) or plain str_replace(...)
+    $fmtDate = fn($d) => Str::of(
+        \Carbon\Carbon::parse($d)->locale('it')->timezone('Europe/Rome')->isoFormat('dddd D MMMM H:mm'),
+    )
+        ->replace(' ore ', ' ')
+        ->toString();
     $home = $match ? FormationStats::teamInfo($match->home_team) : ['name' => '—', 'logo' => null];
     $away = $match ? FormationStats::teamInfo($match->away_team) : ['name' => '—', 'logo' => null];
 
