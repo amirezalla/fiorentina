@@ -210,8 +210,8 @@
                         <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
                             @foreach ($post->inviati as $inv)
                                 @php
-                                    if (is_string($raw)) {
-                                        $decoded = json_decode($raw, true);
+                                    if (is_string($inv)) {
+                                        $decoded = json_decode($inv, true);
                                         if (is_array($decoded) && isset($decoded[0]['value'])) {
                                             $normalized = collect($decoded)->pluck('value')->filter()->values()->all();
                                         }
