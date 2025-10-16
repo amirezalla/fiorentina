@@ -209,15 +209,20 @@
                         <small class="text-muted d-block">Inviati speciali:</small>
                         <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
                             @foreach ($post->inviati as $inv)
-                                @php $initial = strtoupper(mb_substr(trim($inv), 0, 1)); @endphp
-                                <span style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;">
-                                    <span
-                                        style="width:36px;height:36px;border-radius:50%;
-                                 background:#8424e3;color:#fff;font-weight:700;
-                                 display:inline-flex;align-items:center;justify-content:center;">
+                                @php
+                                    if (is_string($raw)) {
+                                        $decoded = json_decode($raw, true);
+                                        if (is_array($decoded) && isset($decoded[0]['value'])) {
+                                            $normalized = collect($decoded)->pluck('value')->filter()->values()->all();
+                                        }
+                                    }
+                                @endphp
+                                @php $initial = strtoupper(mb_substr(trim($normalized), 0, 1)); @endphp
+                                <span class="collab-link" data-toggle="tooltip" data-placement="top"
+                                    title="{{ $normalized }}">
+                                    <span class="collab-initial" aria-hidden="true">
                                         {{ $initial }}
                                     </span>
-                                    <span style="font-weight:600;color:#333;">{{ $inv }}</span>
                                 </span>
                             @endforeach
                         </div>
