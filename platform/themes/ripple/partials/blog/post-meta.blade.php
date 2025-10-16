@@ -178,8 +178,8 @@
 
             @if ($collabs->isNotEmpty())
                 <div class="collab-wrap">
-                    <small class="text-muted d-block mr-1"
-                        style="line-height:1; display:inline-flex;font-weight:600">CON LA COLLABORAZIONE</small>
+                    <small class="text-muted  mr-1" style="line-height:1; display:inline-flex;font-weight:600">CON LA
+                        COLLABORAZIONE</small>
                     <div class="collab-avatars mt-1">
                         @foreach ($collabs as $c)
                             @php
