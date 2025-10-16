@@ -115,22 +115,22 @@ class PostForm extends FormAbstract
                     })
                     ->toArray()
             )
-            ->add(
+->add(
     'collaborators[]',
     SelectField::class,
     SelectFieldOption::make()
         ->label('Collaboratori')
         ->attributes([
-            'class'            => 'form-control select-search-ajax', // <-- AJAX
+            'class'            => 'form-control select-search-full', // o select-search-ajax
             'multiple'         => true,
-            'data-url'         => route('users.search'),             // <-- corretto
+            'data-ajax--url'   => route('users.search'), // <-- CORRETTO per Select2 AJAX
+            'data-ajax--cache' => 'true',
             'data-placeholder' => 'Cerca per nome, email o ID…',
             'data-allow-clear' => 'true',
         ])
-        // Precarica i selezionati in edit:
         ->choices($this->getModel()->getKey()
             ? $this->getModel()->collaborators
-                ->mapWithKeys(fn ($u) => [$u->id => $u->username . ' (' . $u->email . ')'])
+                ->mapWithKeys(fn($u) => [$u->id => "{$u->username} ({$u->email})"])
                 ->toArray()
             : []
         )
@@ -140,6 +140,7 @@ class PostForm extends FormAbstract
         )
         ->toArray()
 )
+
             ->add('image', MediaImageField::class)
             ->add(
                 'tag',
