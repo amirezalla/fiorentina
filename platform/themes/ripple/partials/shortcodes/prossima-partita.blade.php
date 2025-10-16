@@ -256,7 +256,6 @@ $playersForJs = collect($playersByRole)->map(function ($group) {
         const modalId = '#' + UID + '-modal';
         const modalRole = byId(UID + '-role');
         const playersGrid = byId(UID + '-grid');
-        const playerSearch = byId(UID + '-search');
 
         let currentSlot = null;
         let expectedSlots = {};
@@ -355,7 +354,6 @@ const s = selected[slot];
         function openModal(slot, role) {
             currentSlot = slot;
             modalRole.textContent = role;
-            playerSearch.value = '';
             renderPlayersGrid(playersByRole[role] || []);
             showModal(); // <-- instead of jQuery(...).modal('show')
         }
