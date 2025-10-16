@@ -4,25 +4,32 @@
     $uid = 'nxm-' . uniqid();
 
     // Build a JS-friendly structure and sign Wasabi URLs for ~20 minutes
-    $playersForJs = collect($playersByRole)->map(function ($group) {
-        return collect($group)
-            ->map(function ($p) {
-                $img = $p->image ?? '';
-                $abs = Str::startsWith($img, ['http://', 'https://']);
-                try {
-                    $resolved = $abs ? $img : \Storage::disk('wasabi')->temporaryUrl($img, now()->addMinutes(20));
-                } catch (\Throwable $e) {
-                    $resolved = $abs ? $img : '';
-                }
-                return [
-                    'id' => $p->id,
-                    'name' => $p->name,
-                    'jersey_number' => $p->jersey_number,
-                    '_resolved_image' => $resolved,
-                ];
-            })
-            ->values();
-    });
+$playersForJs = collect($playersByRole)->map(function ($group) {
+    return collect($group)->map(function ($p) {
+        // temporary Wasabi URL (20 min)
+        $img = $p->image ?? '';
+        $abs = Str::startsWith($img, ['http://','https://']);
+        try {
+            $resolved = $abs ? $img : (\Storage::disk('wasabi')->temporaryUrl($img, now()->addMinutes(20)));
+        } catch (\Throwable $e) {
+            $resolved = $abs ? $img : '';
+        }
+
+        // initial from LAST NAME
+        $name  = trim($p->name ?? '');
+        $parts = preg_split('/\s+/', $name);
+        $last  = $parts ? end($parts) : $name;
+        $initial = Str::upper(Str::substr($last, 0, 1) ?: '?');
+
+        return [
+            'id'              => $p->id,
+            'name'            => $p->name,
+            'jersey_number'   => $p->jersey_number,
+            '_resolved_image' => $resolved,
+            'initial'         => $initial,
+        ];
+    })->values();
+});
 @endphp
 
 
@@ -79,10 +86,9 @@
             </div>
 
 
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary" id="{{ $uid }}-submit" disabled>Salva la
-                    formazione</button>
-                <button type="button" class="btn btn-outline-secondary" id="{{ $uid }}-clear">Svuota</button>
+            <div class="d-flex gap-2 mt-1">
+                <button type="submit" class="lv-btn" id="{{ $uid }}-submit" disabled>Salva la formazione</button>
+  <button type="button" class="lv-btn-ghost" id="{{ $uid }}-clear">Svuota</button>
             </div>
 
             <div id="{{ $uid }}-hidden"></div>
@@ -101,11 +107,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <input type="text" id="{{ $uid }}-search" class="form-control mb-3"
-                            placeholder="Cerca...">
-                        <div id="{{ $uid }}-grid" class="row"></div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -113,6 +115,32 @@
 </div>
 
 <style>
+.lv-btn{
+  background:#8424e3; color:#fff; border:0; border-radius:0;
+  text-transform:uppercase; letter-spacing:.3px; font-weight:700;
+  padding:.55rem 1rem; display:inline-flex; align-items:center; gap:.35rem;
+}
+.lv-btn:hover{ background:#6d18c4; color:#fff; }
+
+.lv-btn-ghost{
+  background:transparent; color:#444; border:1px solid #cfcfd4; border-radius:0;
+  text-transform:uppercase; font-weight:600; padding:.55rem 1rem;
+}
+.lv-btn-ghost:hover{ background:#f6f6f9; }
+
+/* full-width CTA (e.g., “Più notizie”) */
+.lv-btn-block{ width:100%; justify-content:center; }
+
+/* ===== Fallback avatar (purple circle w/ initial) ===== */
+.avatar-initial{
+  width:64px; height:64px; border-radius:50%;
+  background:#8424e3; color:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:24px; border:2px solid #fff;
+}
+.avatar-initial.is-lg{
+  width:72px; height:72px; font-size:26px; border-color:#8424e3;   /* modal cards */
+}
+
     #{{ $uid }} .slot {
         width: 96px;
         height: 96px;
@@ -270,11 +298,19 @@
                 div.dataset.role = role;
 
                 if (selected[slot]) {
-                    const img = document.createElement('img');
-                    img.className = 'avatar';
-                    img.src = selected[slot].image || '';
-                    img.alt = selected[slot].name;
-                    div.appendChild(img);
+const s = selected[slot];
+  if (s.image) {
+    const img = document.createElement('img');
+    img.className = 'avatar';
+    img.src = s.image;
+    img.alt = s.name;
+    div.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'avatar-initial';
+    ph.textContent = (s.initial || '?');
+    div.appendChild(ph);
+  }
 
                     const name = document.createElement('div');
                     name.className = 'label';
@@ -333,8 +369,18 @@
                 card.className = 'player-card';
                 card.dataset.playerId = p.id;
 
-                const img = document.createElement('img');
-                img.src = p._resolved_image || p.image || '';
+const hasImg = !!p._resolved_image;
+if (hasImg) {
+  const img = document.createElement('img');
+  img.src = p._resolved_image;
+  card.appendChild(img);
+} else {
+  const ph = document.createElement('div');
+  ph.className = 'avatar-initial is-lg';
+  ph.textContent = (p.initial || '?');
+  card.appendChild(ph);
+}
+
 
                 const name = document.createElement('div');
                 name.className = 'name';
