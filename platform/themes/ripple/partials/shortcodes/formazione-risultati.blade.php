@@ -38,26 +38,29 @@
             $home = $teamLogo($nextMatch->home_team);
             $away = $teamLogo($nextMatch->away_team);
         @endphp
-        <div class="card mb-3" style="border:0; background:#8424e3; color:#fff;">
-            <div class="card-body d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                    @if ($home['logo'])
-                        <img src="{{ $home['logo'] }}" style="height:28px" class="mr-2">
-                    @endif
-                    <strong class="mr-2">{{ $home['name'] }}</strong>
-                    <span class="mx-1">vs</span>
-                    @if ($away['logo'])
-                        <img src="{{ $away['logo'] }}" style="height:28px" class="mx-2">
-                    @endif
-                    <strong>{{ $away['name'] }}</strong>
-                    <span class="ml-3" style="opacity:.9">{{ $fmtDate($nextMatch->match_date) }}</span>
-                </div>
-                <a href="/prossima-partita-formazione-dei-tifosi" class="btn btn-light btn-sm font-weight-bold">
+
+        <div class="lv-next-banner mb-3">
+            <div class="lv-next-left">
+                @if ($home['logo'])
+                    <img src="{{ $home['logo'] }}" class="lv-team-logo mr-2" alt="{{ $home['name'] }}">
+                @endif
+                <strong class="mr-2">{{ $home['name'] }}</strong>
+                <span class="mx-1">vs</span>
+                @if ($away['logo'])
+                    <img src="{{ $away['logo'] }}" class="lv-team-logo mx-2" alt="{{ $away['name'] }}">
+                @endif
+                <strong>{{ $away['name'] }}</strong>
+            </div>
+
+            <div class="lv-next-right">
+                <span class="lv-next-date mr-3">{{ $fmtDate($nextMatch->match_date) }}</span>
+                <a href="/prossima-partita-formazione-dei-tifosi" class="lv-btn-white-sm">
                     Vota formazione
                 </a>
             </div>
         </div>
     @endif
+
 
     {{-- LAST FINISHED RESULT --}}
     <div class="card mb-4">
@@ -223,6 +226,77 @@
 
             .archivio-date {
                 margin-top: .25rem;
+            }
+        }
+
+        .lv-team-logo {
+            height: 28px;
+            width: auto;
+        }
+
+        /* Purple banner */
+        .lv-next-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #8424e3;
+            color: #fff;
+            border: 0;
+            border-radius: 8px;
+            /* adjust if you want 0 */
+            padding: .75rem .9rem;
+        }
+
+        /* Left (teams) */
+        .lv-next-left {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Right (date + CTA) */
+        .lv-next-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .lv-next-date {
+            opacity: .95;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* White small CTA, sharp corners */
+        .lv-btn-white-sm {
+            background: #fff;
+            color: #4b2d7f;
+            border: 0;
+            border-radius: 0;
+            font-weight: 700;
+            padding: .45rem .75rem;
+            text-decoration: none;
+        }
+
+        .lv-btn-white-sm:hover {
+            background: #f7f7ff;
+            color: #3a1f68;
+        }
+
+        /* Mobile: stack and push date+button to next line */
+        @media (max-width: 576px) {
+            .lv-next-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: .4rem;
+            }
+
+            .lv-next-right {
+                padding-left: 0;
+            }
+
+            .lv-next-date {
+                white-space: normal;
+                margin-right: .5rem !important;
             }
         }
     </style>
