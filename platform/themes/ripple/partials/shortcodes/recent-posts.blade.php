@@ -3,6 +3,8 @@
     use Carbon\Carbon;
     use Botble\Blog\Models\Post;
     use Illuminate\Support\Facades\DB;
+    use App\Support\HeroSection;
+
     $poll = null;
 
     $since = Carbon::now()->subDays(600);
@@ -44,6 +46,18 @@
 
     // very small UA test – good enough for phone / tablet vs desktop
     $isMobile = preg_match('/android|iphone|ipod|ipad|blackberry|bb10|mini|windows\sce|palm/i', $ua);
+
+    $heroIds = collect(HeroSection::heroPosts())->pluck('id')->take(3)->all();
+
+    // Exclude those IDs from the recent list ($posts)
+    if ($posts instanceof \Illuminate\Support\Collection) {
+        // If $posts is already a collection
+        $posts = $posts->reject(fn($p) => in_array($p->id, $heroIds))->values();
+    } elseif ($posts instanceof \Illuminate\Database\Eloquent\Builder) {
+        // If $posts is still a query builder
+        $posts = $posts->whereNotIn('id', $heroIds)->get();
+    }
+
 @endphp
 
 
