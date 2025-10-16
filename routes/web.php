@@ -518,6 +518,3 @@ Route::get('/test-mailgun', function () {
 
     return 'Sent (check logs & Mailgun dashboard).';
 });
-
-Route::get('/formazione', [FormazioneController::class, 'index'])->name('formazione.index');
-Route::post('/formazione', [FormazioneController::class, 'store'])->name('formazione.store');

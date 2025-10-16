@@ -17,7 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Arr;
 use App\Models\Calendario;
-
+use App\Models\FormationVote;
+use App\Models\Player;
 
 app('events')->listen(RouteMatched::class, function () {
     ThemeSupport::registerGoogleMapsShortcode();
@@ -29,7 +30,117 @@ app('events')->listen(RouteMatched::class, function () {
     //     'diretta-link',
     //     Theme::asset()->url('images/ui-blocks/diretta-link.png')   // add any 300×200 png here
     // );
+Shortcode::register(
+    'formazione-risultati',
+    __('Formazione – Risultati & Archivio'),
+    __('Mostra: prossimo match (link al sondaggio), ultimo risultato votazione, e archivio.'),
+    function (ShortcodeCompiler $sc) {
 
+        $team = $sc->team ?: 'fiorentina';
+
+        // 1) Next upcoming match (SCHEDULED or LIVE)
+        $nextMatch = Calendario::whereIn('status', ['SCHEDULED','LIVE'])
+            ->orderBy('match_date', 'asc')
+            ->first();
+
+        // 2) Last finished match
+        $lastFinished = Calendario::where('status', 'FINISHED')
+            ->orderBy('match_date', 'desc')
+            ->first();
+
+        // 3) Aggregate votes for last finished (if any)
+        $aggregate = [
+            'totalVotes'   => 0,
+            'topFormation' => null,
+            'slots'        => [], // slot => ['player'=>Player, 'votes'=>int, 'perc'=>float]
+        ];
+
+        if ($lastFinished) {
+            $votes = FormationVote::where('match_id', $lastFinished->match_id)
+                ->where('team', $team)
+                ->get();
+
+            $aggregate['totalVotes'] = $votes->count();
+
+            // formation popularity
+            $formationCounts = $votes->groupBy('formation')->map->count()->sortDesc();
+            $aggregate['topFormation'] = $formationCounts->keys()->first();
+
+            // per-slot tallies
+            $slotTallies = [];
+            foreach ($votes as $v) {
+                foreach ((array) $v->positions as $slot => $playerId) {
+                    $slotTallies[$slot][$playerId] = ($slotTallies[$slot][$playerId] ?? 0) + 1;
+                }
+            }
+
+            // pick top per slot and resolve players
+            $topBySlot = [];
+            $playerIds = [];
+            foreach ($slotTallies as $slot => $m) {
+                arsort($m);
+                $topId = array_key_first($m);
+                $topBySlot[$slot] = ['player_id' => $topId, 'votes' => $m[$topId]];
+                $playerIds[] = $topId;
+            }
+
+            $players = Player::whereIn('id', $playerIds)->get()->keyBy('id');
+
+            foreach ($topBySlot as $slot => $info) {
+                $p = $players->get($info['player_id']);
+                $perc = $aggregate['totalVotes'] > 0
+                    ? round(($info['votes'] / $aggregate['totalVotes']) * 100)
+                    : 0;
+                $aggregate['slots'][$slot] = [
+                    'player' => $p,
+                    'votes'  => $info['votes'],
+                    'perc'   => $perc,
+                ];
+            }
+        }
+
+        // 4) Archive list (recent finished matches)
+        $archive = Calendario::where('status', 'FINISHED')
+            ->orderBy('match_date', 'desc')
+            ->limit(12)
+            ->get()
+            ->map(function ($m) use ($team) {
+                $home = Arr::get(json_decode($m->home_team, true), 'name', '—');
+                $away = Arr::get(json_decode($m->away_team, true), 'name', '—');
+                $votes = FormationVote::where('match_id', $m->match_id)->where('team', $team)->count();
+                return [
+                    'match_id'   => $m->match_id,
+                    'date'       => $m->match_date,
+                    'home'       => $home,
+                    'away'       => $away,
+                    'votes'      => $votes,
+                ];
+            });
+
+        return Theme::partial('shortcodes.formazione-risultati', [
+            'team'         => $team,
+            'nextMatch'    => $nextMatch,
+            'lastFinished' => $lastFinished,
+            'aggregate'    => $aggregate,
+            'archive'      => $archive,
+        ]);
+    }
+);
+
+// (optional) Admin config: choose team
+Shortcode::setAdminConfig('formazione-risultati', function (array $attrs) {
+    return ShortcodeForm::createFromArray($attrs)
+        ->withLazyLoading()
+        ->add(
+            'team',
+            SelectField::class,
+            SelectFieldOption::make()
+                ->label(__('Squadra'))
+                ->choices(['fiorentina' => 'Fiorentina', 'another' => 'Altro'])
+                ->defaultValue('fiorentina')
+                ->toArray()
+        );
+});
     
 
     // 2️⃣  Register the frontend renderer
