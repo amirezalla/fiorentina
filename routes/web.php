@@ -21,6 +21,8 @@ use App\Http\Controllers\AdLabelController;
 use App\Http\Controllers\AdGroupController;
 use App\Http\Controllers\AdGroupImageController;
 use App\Http\Controllers\FormazioneController;
+use Illuminate\Http\Request;
+
 
 
 use App\Http\Controllers\Admin\UserSearchController;
@@ -552,6 +554,7 @@ Route::get('/admin/users/search', function (\Illuminate\Http\Request $request) {
 
     return response()->json(['results' => $results]);
 })->name('users.search')->middleware(['web', 'auth']);
+
 Route::get('/admin/author/search', function (Request $request) {
     $q = trim((string) $request->get('q', ''));
 
