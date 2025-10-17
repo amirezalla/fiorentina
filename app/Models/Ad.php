@@ -10,6 +10,8 @@ use Illuminate\Support\Str;
 use DOMDocument;
 use DOMXPath;
 use DOMNode;
+use App\Support\AdDisplayPool;
+
 
 
 class Ad extends BaseModel
@@ -373,57 +375,107 @@ $blocks = collect($m[0]);
  * ───────────────────────────────────────────────────────────*/
 $paraIndex = 0;
 $out       = [];
+// 1) Desktop slots we care about (your constants)
+$desktopSlots = [
+    \App\Models\Ad::GROUP_DBLOG_P1,
+    \App\Models\Ad::GROUP_DBLOG_P2,
+    \App\Models\Ad::GROUP_DBLOG_P3,
+    \App\Models\Ad::GROUP_DBLOG_P4,
+    \App\Models\Ad::GROUP_DBLOG_P5,
+];
+
+// 2) From your existing $ads map (groupConst => Ad), extract ad_group_ids
+$adGroupIds = [];
+foreach ($desktopSlots as $slotConst) {
+    $ad = $ads[$slotConst] ?? null;
+    if ($ad && $ad->ad_group_id) {
+        $adGroupIds[] = (int) $ad->ad_group_id;
+    }
+}
+$adGroupIds = array_values(array_unique($adGroupIds));
+
+// 3) Allocate unique images (weight-aware) once per request
+$pool = app(AdDisplayPool::class);
+$pool->allocateUnique($adGroupIds);
+
+// 4) Helper to render the allocated image for a slot
+$renderDesktopAd = function (int $slotConst) use ($ads, $pool) {
+    $ad  = $ads[$slotConst] ?? null;
+    $gid = $ad->ad_group_id ?? null;
+    if (!$gid) return '';
+
+    $img = $pool->getAllocated($gid);        // App\Models\AdGroupImage|null
+    if (!$img) return '';
+
+    $src = preg_match('~^https?://~i', $img->image_url)
+        ? $img->image_url
+        : \Storage::disk('wasabi')->url(ltrim($img->image_url, '/'));
+
+    $href = $img->target_url ?: '#';
+
+    return '<div class="ads-slot" style="text-align:center;margin:12px 0;">'
+         .   '<a href="' . e($href) . '" target="_blank" rel="nofollow sponsored noopener">'
+         .     '<img src="' . e($src) . '" alt="sponsored" style="max-width:100%;height:auto;">'
+         .   '</a>'
+         . '</div>';
+};
 
 foreach ($blocks as $block) {
     $out[] = $block;
 
-    // count only real paragraphs
     if (preg_match('/^<p/i', $block)) {
         $paraIndex++;
 
         switch ($paraIndex) {
             case 1:
-                if ($ads->has(self::GROUP_DBLOG_P1)) {
-                    $out[] = view('ads.includes.dblog-p1',
-                                  ['ad' => $ads[self::GROUP_DBLOG_P1]])->render();
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_1',
-                                  ['ad' => $ads[self::MOBILE_POSIZIONE_1]])->render();
+                // DESKTOP P1 (unique, weighted)
+                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P1);
+
+                // MOBILE as before
+                if ($ads->has(self::MOBILE_POSIZIONE_1)) {
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_1', [
+                        'ad' => $ads[self::MOBILE_POSIZIONE_1]
+                    ])->render();
                 }
                 break;
 
             case 2:
-                if ($ads->has(self::GROUP_DBLOG_P2)) {
-                    $out[] = view('ads.includes.dblog-p2',
-                                  ['ad' => $ads[self::GROUP_DBLOG_P2]])->render();
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_2',
-                                  ['ad' => $ads[self::MOBILE_POSIZIONE_2]])->render();
+                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P2);
+
+                if ($ads->has(self::MOBILE_POSIZIONE_2)) {
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_2', [
+                        'ad' => $ads[self::MOBILE_POSIZIONE_2]
+                    ])->render();
                 }
                 break;
 
             case 3:
-                if ($ads->has(self::GROUP_DBLOG_P3)) {
-                    $out[] = view('ads.includes.dblog-p3',
-                                  ['ad' => $ads[self::GROUP_DBLOG_P3]])->render();
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_3',
-                                  ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
+                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P3);
+
+                if ($ads->has(self::MOBILE_POSIZIONE_5)) {
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_3', [
+                        'ad' => $ads[self::MOBILE_POSIZIONE_5]
+                    ])->render();
                 }
                 break;
 
             case 4:
-                if ($ads->has(self::GROUP_DBLOG_P4)) {
-                    $out[] = view('ads.includes.dblog-p4',
-                                  ['ad' => $ads[self::GROUP_DBLOG_P4]])->render();
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_4',
-                                  ['ad' => $ads[self::MOBILE_POSIZIONE_4]])->render();
+                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P4);
+
+                if ($ads->has(self::MOBILE_POSIZIONE_4)) {
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_4', [
+                        'ad' => $ads[self::MOBILE_POSIZIONE_4]
+                    ])->render();
                 }
                 break;
 
-            default:        // paragraph 5+
-                if ($ads->has(self::GROUP_DBLOG_P5)) {
-                    $out[] = view('ads.includes.dblog-p5',
-                                  ['ad' => $ads[self::GROUP_DBLOG_P5]])->render();
-                                                      $out[] = view('ads.includes.MOBILE_POSIZIONE_3',
-                                  ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
+            default: // paragraph 5+
+                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P5);
+
+                if ($ads->has(self::MOBILE_POSIZIONE_5)) {
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_3', [
+                        'ad' => $ads[self::MOBILE_POSIZIONE_5]
+                    ])->render();
                 }
         }
     }
