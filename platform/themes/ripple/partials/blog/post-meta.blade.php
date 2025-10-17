@@ -88,6 +88,11 @@
                 border: 2px solid #e2e2e2;
                 border-radius: 0px 0px 7px 0px;
             }
+
+            .collab-link img {
+                width: 24px !important;
+                height: 24px !important;
+            }
         </style>
 
         {{-- Tooltip init (Bootstrap). Safe no-op if Bootstrap tooltip isn’t present. --}}
@@ -175,61 +180,7 @@
             @php
                 $collabs = $post->collaborators ?? collect();
             @endphp
-            <div class="collab-wrap">
-                @if ($collabs->isNotEmpty())
 
-                    <small class="text-muted  mr-1" style="line-height:1; display:inline-flex;font-weight:600">CON LA
-                        COLLABORAZIONE</small>
-                    <div class="collab-avatars mt-1">
-                        @foreach ($collabs as $c)
-                            @php
-                                $avatar = $c->avatar->url ?? null;
-                                $initial = mb_strtoupper(
-                                    mb_substr($c->last_name ?: $c->first_name ?: $c->username, 0, 1),
-                                );
-                                $label = e(trim($c->first_name . ' ' . $c->last_name ?: $c->username));
-                            @endphp
-
-                            <a href="/author/{{ $c->username }}" class="collab-link" data-toggle="tooltip"
-                                data-placement="top" title="{{ $label }}">
-                                @if ($avatar)
-                                    {!! RvMedia::image($avatar, $label, 'thumb', true, ['class' => 'collab-avatar']) !!}
-                                @else
-                                    <span class="collab-initial" aria-hidden="true">{{ $initial }}</span>
-                                @endif
-                            </a>
-                        @endforeach
-                    </div>
-
-
-                @endif
-                {{-- Inviati Speciali --}}
-                @if (!empty($post->inviati))
-                    <div style="margin-top:2px;">
-                        <small class="text-muted" style="font-wieght:600;display:inline-flex!important">INVIATI
-                            SPECIALI</small>
-                        <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
-                            @foreach ($post->inviati as $inv)
-                                @php
-                                    if (is_string($inv)) {
-                                        $decoded = json_decode($inv, true);
-                                        if (is_array($decoded) && isset($decoded[0]['value'])) {
-                                            $normalized = collect($decoded)->pluck('value')->filter()->values()->all();
-                                        }
-                                    }
-                                @endphp
-                                @php $initial = strtoupper(mb_substr(trim($normalized[0]), 0, 1)); @endphp
-                                <span class="collab-link" data-toggle="tooltip" data-placement="top"
-                                    title="{{ $normalized[0] }}">
-                                    <span class="collab-initial" aria-hidden="true">
-                                        {{ $initial }}
-                                    </span>
-                                </span>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            </div>
 
             {{ RvMedia::image(
                 $post->image,
@@ -260,6 +211,59 @@
     margin-top: -16px !important;
     border-radius: 0px 0px 10px 10px;">
                 <i class="fa fa-info-circle" style="margin-right:5px"></i> {{ $media->alt }}</span>
+        @endif
+    </div>
+    <div class="collab-wrap">
+        @if ($collabs->isNotEmpty())
+
+            <small class="text-muted  mr-1" style="line-height:1; display:inline-flex;font-weight:600">CON LA
+                COLLABORAZIONE</small>
+            <div class="collab-avatars mt-1">
+                @foreach ($collabs as $c)
+                    @php
+                        $avatar = $c->avatar->url ?? null;
+                        $initial = mb_strtoupper(mb_substr($c->last_name ?: $c->first_name ?: $c->username, 0, 1));
+                        $label = e(trim($c->first_name . ' ' . $c->last_name ?: $c->username));
+                    @endphp
+
+                    <a href="/author/{{ $c->username }}" class="collab-link" data-toggle="tooltip"
+                        data-placement="top" title="{{ $label }}">
+                        @if ($avatar)
+                            {!! RvMedia::image($avatar, $label, 'thumb', true, ['class' => 'collab-avatar']) !!}
+                        @else
+                            <span class="collab-initial" aria-hidden="true">{{ $initial }}</span>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+
+
+        @endif
+        {{-- Inviati Speciali --}}
+        @if (!empty($post->inviati))
+            <div style="margin-top:2px;">
+                <small class="text-muted" style="font-wieght:600;display:inline-flex!important">INVIATI
+                    SPECIALI</small>
+                <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
+                    @foreach ($post->inviati as $inv)
+                        @php
+                            if (is_string($inv)) {
+                                $decoded = json_decode($inv, true);
+                                if (is_array($decoded) && isset($decoded[0]['value'])) {
+                                    $normalized = collect($decoded)->pluck('value')->filter()->values()->all();
+                                }
+                            }
+                        @endphp
+                        @php $initial = strtoupper(mb_substr(trim($normalized[0]), 0, 1)); @endphp
+                        <span class="collab-link" data-toggle="tooltip" data-placement="top"
+                            title="{{ $normalized[0] }}">
+                            <span class="collab-initial" aria-hidden="true">
+                                {{ $initial }}
+                            </span>
+                        </span>
+                    @endforeach
+                </div>
+            </div>
         @endif
     </div>
 
