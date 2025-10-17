@@ -168,6 +168,7 @@ class AppServiceProvider extends ServiceProvider
         $gid = $map[$slot] ?? null;
 
         $imgModel = $gid ? $pool->getAllocated($gid) : null; // App\Models\AdGroupImage|null
+        dd($imgModel,$pool, $gid, $map, $slot);
 
         // Build URLs safely
         $img = $imgModel && $imgModel->image_url
