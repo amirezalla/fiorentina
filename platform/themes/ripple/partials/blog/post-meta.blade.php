@@ -238,24 +238,44 @@
                     SPECIALI</small>
                 <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
                     @php
-                        $inviati = is_string($post->inviati)
-                            ? json_decode($post->inviati, true)
-                            : (is_array($post->inviati)
-                                ? $post->inviati
-                                : []);
+                        $raw = $post->inviati;
 
-                        // Normalize structure: each item may be ['value' => 'Name'] or just a string
-                        $inviati = collect($inviati)
-                            ->map(fn($inv) => is_array($inv) ? $inv['value'] ?? '' : (string) $inv)
+                        // Normalize: sometimes it's JSON, sometimes an array, sometimes malformed
+if (is_string($raw)) {
+    // Try to fix missing commas between objects
+    $fixed = preg_replace('/}(\s*){/', '},{', $raw);
+
+    $decoded = json_decode($fixed, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        // fallback: extract names via regex
+        preg_match_all('/"value"\s*:\s*"([^"]+)"/', $raw, $matches);
+        $decoded = collect($matches[1])->map(fn($n) => ['value' => $n])->all();
+    }
+} elseif (is_array($raw)) {
+    $decoded = $raw;
+} else {
+    $decoded = [];
+}
+
+// Normalize to simple list of names
+$inviati = collect($decoded)
+    ->map(fn($i) => is_array($i) ? $i['value'] ?? '' : (string) $i)
                             ->filter()
                             ->values();
                     @endphp
 
-                    @foreach ($inviati as $name)
-                        <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
-                            {{ $name }}
-                        </span>
-                    @endforeach
+                    @if ($inviati->isNotEmpty())
+                        <div class="inviati mt-2">
+                            <small class="text-muted d-block mb-1">Inviati speciali:</small>
+                            @foreach ($inviati as $name)
+                                <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
+                                    {{ $name }}
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
+
                 </div>
             </div>
         @endif
