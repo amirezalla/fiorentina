@@ -6,7 +6,7 @@ use App\Models\Ad;
 use App\Models\Video;
 use Botble\Blog\Models\Category;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -104,7 +104,7 @@ class AppServiceProvider extends ServiceProvider
 
 
     // 1) Prime the pool ONCE for the article view (whatever blade renders your article)
-    View::composer([
+    \Illuminate\Support\Facades\View::composer([
         'theme::views.post',
         'theme::views.blog.post',
         // add your concrete post blade if different, e.g. 'posts.show'
@@ -126,7 +126,7 @@ class AppServiceProvider extends ServiceProvider
     });
 
     // 2) Bind each include to the already-allocated image from the pool
-    View::composer([
+    \Illuminate\Support\Facades\View::composer([
         'ads.includes.dblog-p1',
         'ads.includes.dblog-p2',
         'ads.includes.dblog-p3',
