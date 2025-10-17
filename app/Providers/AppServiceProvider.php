@@ -160,24 +160,24 @@ $registerArticleAd('ads.includes.dblog-p5', Ad::GROUP_DBLOG_P5);
         view()->composer('ads.includes.MOBILE_DOPO_FOTO_26', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_DOPO_FOTO_26)->inRandomOrderByWeight()->first());
         });
-        view()->composer('ads.includes.MOBILE_POSIZIONE_1', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_1)->inRandomOrderByWeight()->first());
-        });
-        view()->composer('ads.includes.MOBILE_POSIZIONE_2', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_2)->inRandomOrderByWeight()->first());
-        });
-        view()->composer('ads.includes.MOBILE_POSIZIONE_3', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_3)->inRandomOrderByWeight()->first());
-        });
-        view()->composer('ads.includes.MOBILE_POSIZIONE_4', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_4)->inRandomOrderByWeight()->first());
-        });
-        view()->composer('ads.includes.MOBILE_POSIZIONE_5', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_5)->inRandomOrderByWeight()->first());
-        });
-                view()->composer('ads.includes.MOBILE_POSIZIONE_6', function (View $view) {
-            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_6)->inRandomOrderByWeight()->first());
-        });
+        // view()->composer('ads.includes.MOBILE_POSIZIONE_1', function (View $view) {
+        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_1)->inRandomOrderByWeight()->first());
+        // });
+        // view()->composer('ads.includes.MOBILE_POSIZIONE_2', function (View $view) {
+        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_2)->inRandomOrderByWeight()->first());
+        // });
+        // view()->composer('ads.includes.MOBILE_POSIZIONE_3', function (View $view) {
+        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_3)->inRandomOrderByWeight()->first());
+        // });
+        // view()->composer('ads.includes.MOBILE_POSIZIONE_4', function (View $view) {
+        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_4)->inRandomOrderByWeight()->first());
+        // });
+        // view()->composer('ads.includes.MOBILE_POSIZIONE_5', function (View $view) {
+        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_5)->inRandomOrderByWeight()->first());
+        // });
+        //         view()->composer('ads.includes.MOBILE_POSIZIONE_6', function (View $view) {
+        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_6)->inRandomOrderByWeight()->first());
+        // });
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
             $is_home = request()->route()->getName() == "public.index";
