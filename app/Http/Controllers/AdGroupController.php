@@ -31,8 +31,9 @@ class AdGroupController extends Controller
             'width'     => 'nullable|integer|min:0',
             'height'    => 'nullable|integer|min:0',
             'placement' => 'nullable|in:homepage,article,both',
-            'status'    => 'required|boolean',
+    'status' => ['required', Rule::in(['0', '1'])],
         ]);
+$data['status'] = (int) $data['status'];
 
     $group = AdGroup::create($data);
 
@@ -54,8 +55,9 @@ class AdGroupController extends Controller
             'width'     => 'nullable|integer|min:0',
             'height'    => 'nullable|integer|min:0',
             'placement' => 'nullable|in:homepage,article,both',
-            'status'    => 'required|boolean',
+    'status' => ['required', Rule::in(['0', '1'])],
         ]);
+$data['status'] = (int) $data['status'];
 
         $group->update($data);
 
