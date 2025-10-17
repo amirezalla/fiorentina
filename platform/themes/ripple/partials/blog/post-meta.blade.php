@@ -234,13 +234,10 @@
         {{-- Inviati Speciali --}}
         @if (!empty($post->inviati))
             <div style="margin-top:2px;">
-                <small class="text-muted" style="font-wieght:600;display:inline-flex!important">INVIATI
-                    SPECIALI</small>
-                <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
-                    @php
-                        $raw = $post->inviati;
+                @php
+                    $raw = $post->inviati;
 
-                        // Normalize: sometimes it's JSON, sometimes an array, sometimes malformed
+                    // Normalize: sometimes it's JSON, sometimes an array, sometimes malformed
 if (is_string($raw)) {
     // Try to fix missing commas between objects
     $fixed = preg_replace('/}(\s*){/', '},{', $raw);
@@ -261,31 +258,31 @@ if (is_string($raw)) {
 // Normalize to simple list of names
 $inviati = collect($decoded)
     ->map(fn($i) => is_array($i) ? $i['value'] ?? '' : (string) $i)
-                            ->filter()
-                            ->values();
-                    @endphp
+                        ->filter()
+                        ->values();
+                @endphp
 
-                    @if ($inviati->isNotEmpty())
-                        <div class="inviati mt-2">
-                            <small class="text-muted d-block mb-1">Inviati speciali:</small>
-                            @foreach ($inviati as $name)
-                                <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
-                                    {{ $name }}
-                                </span>
-                            @endforeach
-                        </div>
-                    @endif
+                @if ($inviati->isNotEmpty())
+                    <div class="inviati mt-2">
+                        <small class="text-muted d-block mb-1">Inviati speciali:</small>
+                        @foreach ($inviati as $name)
+                            <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
+                                {{ $name }}
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
 
-                </div>
             </div>
-        @endif
     </div>
-
-    @if (!$isMobile)
-        @include('ads.includes.dblog-title')
-    @else
-        @include('ads.includes.MOBILE_DOPO_FOTO_26')
     @endif
+</div>
+
+@if (!$isMobile)
+    @include('ads.includes.dblog-title')
+@else
+    @include('ads.includes.MOBILE_DOPO_FOTO_26')
+@endif
 
 
 </div>
