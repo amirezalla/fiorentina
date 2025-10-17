@@ -6,7 +6,7 @@ use App\Models\Ad;
 use App\Models\Video;
 use Botble\Blog\Models\Category;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
@@ -101,7 +101,7 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-        
+
 
 
 View::composer([
