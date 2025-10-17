@@ -419,6 +419,7 @@ $renderDesktopAd = function (int $slotConst) use ($ads, $pool) {
          .   '</a>'
          . '</div>';
 };
+dd($renderDesktopAd);
 
 foreach ($blocks as $block) {
     $out[] = $block;
