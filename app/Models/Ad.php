@@ -430,6 +430,7 @@ foreach ($blocks as $block) {
         switch ($paraIndex) {
             case 1:
                 if ($ads->has(self::GROUP_DBLOG_P1)) {
+                    dd($ads[self::GROUP_DBLOG_P1], $ads[self::GROUP_DBLOG_P2]);
                     $out[] = view('ads.includes.dblog-p1',
                                   ['ad' => $ads[self::GROUP_DBLOG_P1]])->render();
                     $out[] = view('ads.includes.MOBILE_POSIZIONE_1',
