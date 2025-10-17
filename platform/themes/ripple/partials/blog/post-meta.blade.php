@@ -205,9 +205,10 @@
                 @endif
                 {{-- Inviati Speciali --}}
                 @if (!empty($post->inviati))
-                    <div style="margin-top:8px;">
-                        <small class="text-muted d-block">Inviati speciali:</small>
-                        <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
+                    <div style="margin-top:2px;">
+                        <small class="text-muted" style="font-wieght:600;display:inline-flex!important">INVIATI
+                            SPECIALI</small>
+                        <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
                             @foreach ($post->inviati as $inv)
                                 @php
                                     if (is_string($inv)) {
