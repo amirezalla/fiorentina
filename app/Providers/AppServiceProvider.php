@@ -104,7 +104,7 @@ class AppServiceProvider extends ServiceProvider
 
 
 // Allocate ONCE per article request
-    View::composer([
+    \Illuminate\Support\Facades\View::composer([
         'theme::views.post',
         'theme::views.blog.post',
         // add your real article blade(s) here if different
@@ -145,7 +145,7 @@ class AppServiceProvider extends ServiceProvider
     });
 
     // Bind each include to its allocated image
-    View::composer([
+    \Illuminate\Support\Facades\View::composer([
         'ads.includes.dblog-p1',
         'ads.includes.dblog-p2',
         'ads.includes.dblog-p3',
