@@ -219,7 +219,7 @@
                                 @endphp
                                 @php $initial = strtoupper(mb_substr(trim($normalized[0]), 0, 1)); @endphp
                                 <span class="collab-link" data-toggle="tooltip" data-placement="top"
-                                    title="{{ $normalized }}">
+                                    title="{{ $normalized[0] }}">
                                     <span class="collab-initial" aria-hidden="true">
                                         {{ $initial }}
                                     </span>
