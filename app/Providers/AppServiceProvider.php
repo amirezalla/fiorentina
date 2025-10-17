@@ -21,6 +21,8 @@ use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Mail\Events\MessageFailed;
 use App\Support\AdDisplayPool;
+use App\Support\AdRequestContext;
+
 
 
 
@@ -32,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
             $this->app->scoped(AdDisplayPool::class, fn() => new AdDisplayPool());
+                $this->app->scoped(AdRequestContext::class, fn () => new AdRequestContext());
+
 
 // Force HTMLPurifier cache to a writable path (works even if config is cached)
         $purifierPath = env('PURIFIER_CACHE_PATH', storage_path('app/purifier'));
@@ -89,35 +93,49 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-view()->composer(['theme::views.post', 'theme::views.blog.post'], function ($view) {
-        /** @var AdDisplayPool $pool */
-        $pool = app(AdDisplayPool::class);
 
-        // desktop slots used inside the article
-        $slots = [
-            Ad::GROUP_DBLOG_P1,
-            Ad::GROUP_DBLOG_P2,
-            Ad::GROUP_DBLOG_P3,
-            Ad::GROUP_DBLOG_P4,
-            Ad::GROUP_DBLOG_P5,
-        ];
 
-        // load the ads for those slots and collect the ad_group_ids
-        $adGroupIds = Ad::query()
-            ->typeAnnuncioImmagine()
-            ->whereIn('group', $slots)
-            ->pluck('ad_group_id')      // column on ads table
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
 
-        // do the weighted, no-duplicate allocation ONCE for this request
-        $pool->allocateUnique($adGroupIds);
 
-        // (optional) share something to the view if you want
-        $view->with('allocatedGroupIds', $adGroupIds);
+
+
+
+
+        
+
+
+View::composer([
+        'ads.includes.dblog-p1',
+        'ads.includes.dblog-p2',
+        'ads.includes.dblog-p3',
+        'ads.includes.dblog-p4',
+        'ads.includes.dblog-p5',
+    ], function ($view) {
+        // Pull from your per-request context/helpers
+        $slot = match ($view->getName()) {
+            'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
+            'ads.includes.dblog-p2' => Ad::GROUP_DBLOG_P2,
+            'ads.includes.dblog-p3' => Ad::GROUP_DBLOG_P3,
+            'ads.includes.dblog-p4' => Ad::GROUP_DBLOG_P4,
+            'ads.includes.dblog-p5' => Ad::GROUP_DBLOG_P5,
+        };
+
+        $view->with([
+            'img'  => ad_img($slot),
+            'href' => ad_href($slot),
+        ]);
     });
+
+
+
+
+
+
+
+
+
+
+
 
         view()->composer('ads.includes.background-page', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrderByWeight()->first());

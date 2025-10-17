@@ -1,5 +1,6 @@
 <?php
 // app/Support/helpers.php
+use App\Support\AdRequestContext;
 
 if (! function_exists('request_is_mobile')) {
     /**
@@ -19,6 +20,27 @@ if (! function_exists('request_is_mobile')) {
 {
     preg_match('%(?:youtu\\.be/|v=|embed/)([\\w-]{11})%i', $url, $m);
     return $m[1] ?? $url;     // accept plain IDs too
+}
+
+if (! function_exists('ad_ctx')) {
+    function ad_ctx(): AdRequestContext
+    {
+        return app(AdRequestContext::class);
+    }
+}
+
+if (! function_exists('ad_img')) {
+    function ad_img(int $slotConst): ?string
+    {
+        return ad_ctx()->img($slotConst);
+    }
+}
+
+if (! function_exists('ad_href')) {
+    function ad_href(int $slotConst): ?string
+    {
+        return ad_ctx()->href($slotConst);
+    }
 }
 
 }
