@@ -238,11 +238,22 @@
                     SPECIALI</small>
                 <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
                     @php
-                        $post->inviati = json_decode($post->inviati);
+                        $inviati = is_string($post->inviati)
+                            ? json_decode($post->inviati, true)
+                            : (is_array($post->inviati)
+                                ? $post->inviati
+                                : []);
+
+                        // Normalize structure: each item may be ['value' => 'Name'] or just a string
+                        $inviati = collect($inviati)
+                            ->map(fn($inv) => is_array($inv) ? $inv['value'] ?? '' : (string) $inv)
+                            ->filter()
+                            ->values();
                     @endphp
-                    @foreach ($post->inviati as $inv)
+
+                    @foreach ($inviati as $name)
                         <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
-                            {{ $inv->value }}
+                            {{ $name }}
                         </span>
                     @endforeach
                 </div>
