@@ -116,7 +116,7 @@ view()->composer(['theme::views.post', 'theme::views.blog.post'], function ($vie
         $pool->allocateUnique($adGroupIds);
 
         // (optional) share something to the view if you want
-        // $view->with('allocatedGroupIds', $adGroupIds);
+        $view->with('allocatedGroupIds', $adGroupIds);
     });
 
         view()->composer('ads.includes.background-page', function (View $view) {
