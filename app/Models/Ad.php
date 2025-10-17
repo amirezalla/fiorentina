@@ -375,50 +375,6 @@ $blocks = collect($m[0]);
  * ───────────────────────────────────────────────────────────*/
 $paraIndex = 0;
 $out       = [];
-// 1) Desktop slots we care about (your constants)
-$desktopSlots = [
-    \App\Models\Ad::GROUP_DBLOG_P1,
-    \App\Models\Ad::GROUP_DBLOG_P2,
-    \App\Models\Ad::GROUP_DBLOG_P3,
-    \App\Models\Ad::GROUP_DBLOG_P4,
-    \App\Models\Ad::GROUP_DBLOG_P5,
-];
-
-// 2) From your existing $ads map (groupConst => Ad), extract ad_group_ids
-$adGroupIds = [];
-foreach ($desktopSlots as $slotConst) {
-    $ad = $ads[$slotConst] ?? null;
-    if ($ad && $ad->ad_group_id) {
-        $adGroupIds[] = (int) $ad->ad_group_id;
-    }
-}
-$adGroupIds = array_values(array_unique($adGroupIds));
-
-// 3) Allocate unique images (weight-aware) once per request
-$pool = app(AdDisplayPool::class);
-$pool->allocateUnique($adGroupIds);
-
-// 4) Helper to render the allocated image for a slot
-$renderDesktopAd = function (int $slotConst) use ($ads, $pool) {
-    $ad  = $ads[$slotConst] ?? null;
-    $gid = $ad->ad_group_id ?? null;
-    if (!$gid) return '';
-
-    $img = $pool->getAllocated($gid);        // App\Models\AdGroupImage|null
-    if (!$img) return '';
-
-    $src = preg_match('~^https?://~i', $img->image_url)
-        ? $img->image_url
-        : \Storage::disk('wasabi')->url(ltrim($img->image_url, '/'));
-
-    $href = $img->target_url ?: '#';
-
-    return '<div class="ads-slot" style="text-align:center;margin:12px 0;">'
-         .   '<a href="' . e($href) . '" target="_blank" rel="nofollow sponsored noopener">'
-         .     '<img src="' . e($src) . '" alt="sponsored" style="max-width:100%;height:auto;">'
-         .   '</a>'
-         . '</div>';
-};
 
 foreach ($blocks as $block) {
     $out[] = $block;
@@ -791,33 +747,80 @@ public function images()
     return $this->hasMany(\App\Models\AdImage::class);
 }
 
+public function getAllocatedGroupImage(): ?\App\Models\AdGroupImage
+{
+    // needs an ad_group_id to select from
+    $gid = (int) ($this->ad_group_id ?? 0);
+    if ($gid <= 0) {
+        return null;
+    }
+
+    /** @var \App\Support\AdDisplayPool $pool */
+    $pool = app(AdDisplayPool::class);
+
+    // lazy allocation: if not allocated yet for this request, do it now
+    $img = $pool->getAllocated($gid);
+    if (!$img) {
+        $pool->allocateUnique([$gid]);
+        $img = $pool->getAllocated($gid);
+    }
+
+    return $img;
+}
+
+/** Image URL from the allocated group creative (pool), or null */
+public function getAllocatedDisplayImageUrl(): ?string
+{
+    $img = $this->getAllocatedGroupImage();
+    if (!$img || !$img->image_url) {
+        return null;
+    }
+
+    return preg_match('~^https?://~i', $img->image_url)
+        ? $img->image_url
+        : Storage::disk('wasabi')->url(ltrim($img->image_url, '/'));
+}
+
+/** Click target from the allocated group creative (pool), or null */
+public function getAllocatedTargetUrl(): ?string
+{
+    $img = $this->getAllocatedGroupImage();
+    return $img && $img->target_url ? $img->target_url : null;
+}
+
+/**
+ * Legacy name kept: now prefers pool allocation.
+ * Falls back to your previous logic if pool/ group has nothing.
+ */
 public function getDisplayImageUrl(): ?string
 {
-    // 1) Prefer images from the assigned group
+    // 0) Try the pool-backed creative first
+    if ($url = $this->getAllocatedDisplayImageUrl()) {
+        return $url;
+    }
+
+    // 1) Old group rotation (display_count % images)
     $group = $this->groupRef()->with('images')->first();
     if ($group && $group->images->count() > 0) {
         $count = $group->images->count();
         $idx   = ((int) ($this->display_count ?? 0)) % $count;
-
-        $key = $group->images[$idx]->image_url ?? null;
+        $key   = $group->images[$idx]->image_url ?? null;
 
         if (is_string($key) && $key !== '') {
-            // Absolute URL? return as-is. Otherwise build Wasabi URL.
             return preg_match('~^https?://~i', $key)
                 ? $key
-                : \Storage::disk('wasabi')->url(ltrim($key, '/'));
+                : Storage::disk('wasabi')->url(ltrim($key, '/'));
         }
     }
 
-    // 2) Legacy fallback: single image stored on ads.image
+    // 2) Legacy single image on the ad
     $legacy = $this->getAttribute('image');
     if (is_string($legacy) && $legacy !== '') {
         return preg_match('~^https?://~i', $legacy)
             ? $legacy
-            : \Storage::disk('wasabi')->url(ltrim($legacy, '/'));
+            : Storage::disk('wasabi')->url(ltrim($legacy, '/'));
     }
 
-    // 3) Nothing to show
     return null;
 }
 
