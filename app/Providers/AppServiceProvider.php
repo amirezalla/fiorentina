@@ -158,7 +158,7 @@ class AppServiceProvider extends ServiceProvider
 
         $view->with(compact('img', 'href'));
     });
-}
+
 
 
 
