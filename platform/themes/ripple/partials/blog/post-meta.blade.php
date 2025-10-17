@@ -278,6 +278,7 @@
                         <small class="text-muted d-block mb-1">Inviati speciali:</small>
                         @foreach ($inviati as $name)
                             <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
+                                @dd($name)
                                 {{ $name }}
                             </span>
                         @endforeach
