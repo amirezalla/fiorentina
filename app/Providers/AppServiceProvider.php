@@ -31,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+            $this->app->scoped(AdDisplayPool::class, fn() => new AdDisplayPool());
+
 // Force HTMLPurifier cache to a writable path (works even if config is cached)
         $purifierPath = env('PURIFIER_CACHE_PATH', storage_path('app/purifier'));
 
@@ -58,10 +60,6 @@ class AppServiceProvider extends ServiceProvider
 
         set_time_limit(900); // Sets the maximum execution time to 15 minutes
 
-            $this->app->scoped(AdDisplayPool::class, function () {
-        // Pass TRUE if you also want to avoid the same image_url in a group within the same page
-        return new AdDisplayPool(/* dedupeByImageUrl: */ true);
-    });
 
         view()->composer('ads.includes.main-page', function (View $view) {
             $view->with('ads', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_MAIN_PAGE)->get());
@@ -91,21 +89,30 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-// helper to register one include => one group
-$registerArticleAd = function (string $include, int|string $group) {
-    view()->composer($include, function (View $view) use ($group) {
-        $pool = app(AdDisplayPool::class);
-        $ad   = $pool->pickOne($group);
-        $view->with('ad', $ad);
-    });
-};
+view()->composer('ads.includes.dblog-p1', function ($view) {
+    $pool = app(AdDisplayPool::class);
+    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P1));
+});
 
-// Only on articles:
-$registerArticleAd('ads.includes.dblog-p1', Ad::GROUP_DBLOG_P1);
-$registerArticleAd('ads.includes.dblog-p2', Ad::GROUP_DBLOG_P2);
-$registerArticleAd('ads.includes.dblog-p3', Ad::GROUP_DBLOG_P3);
-$registerArticleAd('ads.includes.dblog-p4', Ad::GROUP_DBLOG_P4);
-$registerArticleAd('ads.includes.dblog-p5', Ad::GROUP_DBLOG_P5);
+view()->composer('ads.includes.dblog-p2', function ($view) {
+    $pool = app(AdDisplayPool::class);
+    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P2));
+});
+
+view()->composer('ads.includes.dblog-p3', function ($view) {
+    $pool = app(AdDisplayPool::class);
+    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P3));
+});
+
+view()->composer('ads.includes.dblog-p4', function ($view) {
+    $pool = app(AdDisplayPool::class);
+    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P4));
+});
+
+view()->composer('ads.includes.dblog-p5', function ($view) {
+    $pool = app(AdDisplayPool::class);
+    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P5));
+});
 
         view()->composer('ads.includes.background-page', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrderByWeight()->first());
@@ -160,24 +167,24 @@ $registerArticleAd('ads.includes.dblog-p5', Ad::GROUP_DBLOG_P5);
         view()->composer('ads.includes.MOBILE_DOPO_FOTO_26', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_DOPO_FOTO_26)->inRandomOrderByWeight()->first());
         });
-        // view()->composer('ads.includes.MOBILE_POSIZIONE_1', function (View $view) {
-        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_1)->inRandomOrderByWeight()->first());
-        // });
-        // view()->composer('ads.includes.MOBILE_POSIZIONE_2', function (View $view) {
-        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_2)->inRandomOrderByWeight()->first());
-        // });
-        // view()->composer('ads.includes.MOBILE_POSIZIONE_3', function (View $view) {
-        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_3)->inRandomOrderByWeight()->first());
-        // });
-        // view()->composer('ads.includes.MOBILE_POSIZIONE_4', function (View $view) {
-        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_4)->inRandomOrderByWeight()->first());
-        // });
-        // view()->composer('ads.includes.MOBILE_POSIZIONE_5', function (View $view) {
-        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_5)->inRandomOrderByWeight()->first());
-        // });
-        //         view()->composer('ads.includes.MOBILE_POSIZIONE_6', function (View $view) {
-        //     $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_6)->inRandomOrderByWeight()->first());
-        // });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_1', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_1)->inRandomOrderByWeight()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_2', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_2)->inRandomOrderByWeight()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_3', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_3)->inRandomOrderByWeight()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_4', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_4)->inRandomOrderByWeight()->first());
+        });
+        view()->composer('ads.includes.MOBILE_POSIZIONE_5', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_5)->inRandomOrderByWeight()->first());
+        });
+                view()->composer('ads.includes.MOBILE_POSIZIONE_6', function (View $view) {
+            $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::MOBILE_POSIZIONE_6)->inRandomOrderByWeight()->first());
+        });
 
         view()->composer('videos.includes.adsvideo', function (View $view) {
             $is_home = request()->route()->getName() == "public.index";

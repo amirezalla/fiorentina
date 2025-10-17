@@ -1,128 +1,81 @@
 <?php
+// app/Support/AdDisplayPool.php
 
 namespace App\Support;
 
-use App\Models\Ad; // adjust namespace to your Ad model
+use App\Models\AdGroupImage;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class AdDisplayPool
 {
-    /** @var array<string, array<int>> group => [ad_ids already shown this request] */
-    protected array $seenByGroup = [];
+    /** Cache per richiesta: groupId => Collection<AdGroupImage> */
+    protected array $pool = [];
 
-    /** @var array<string, \Illuminate\Support\Collection> Cached ads per group this request */
-    protected array $cacheByGroup = [];
-
-    /** If TRUE, also prevent duplicates by image_url across same group */
-    protected bool $dedupeByImageUrl = false;
-
-    public function __construct(bool $dedupeByImageUrl = false)
-    {
-        $this->dedupeByImageUrl = $dedupeByImageUrl;
-    }
+    /** Usati per richiesta: groupId => int[] (ad_group_image.id) */
+    protected array $used = [];
 
     /**
-     * Return ONE ad for a group, weighted and not repeated within this request.
+     * Prende una creatività dal gruppo, rispettando weight
+     * e senza ripetere nella stessa richiesta.
      */
-    public function pickOne(string|int $group): ?Ad
+    public function pick(int|string $groupId): ?AdGroupImage
     {
-        $ads = $this->adsForGroup($group);
+        $groupId = (string) $groupId;
 
-        if ($ads->isEmpty()) {
+        // carica pool una sola volta per gruppo
+        if (! isset($this->pool[$groupId])) {
+            $this->pool[$groupId] = $this->loadGroupImages($groupId);
+        }
+
+        /** @var Collection $images */
+        $images = $this->pool[$groupId];
+        if ($images->isEmpty()) {
             return null;
         }
 
-        // Exclude those already shown this request (by ID)
-        $shownIds = $this->seenByGroup[$group] ?? [];
-        $candidates = $ads->whereNotIn('id', $shownIds);
+        // escludi già usati, se esaurito resetta
+        $usedIds = $this->used[$groupId] ?? [];
+        $available = $images->reject(fn ($img) => in_array($img->id, $usedIds, true));
+        if ($available->isEmpty()) {
+            $this->used[$groupId] = [];
+            $available = $images;
+        }
 
-        if ($this->dedupeByImageUrl && !empty($shownIds)) {
-            $shownImages = $ads->whereIn('id', $shownIds)->pluck('image')->filter()->all();
-            if ($shownImages) {
-                $candidates = $candidates->reject(function ($ad) use ($shownImages) {
-                    return $ad->image && in_array($ad->image, $shownImages, true);
-                });
+        // estrazione pesata
+        $chosen = $this->weightedPick($available);
+
+        // marca come usato
+        $this->used[$groupId][] = $chosen->id;
+
+        return $chosen;
+    }
+
+    protected function loadGroupImages(string $groupId): Collection
+    {
+        return AdGroupImage::query()
+            ->where('group_id', $groupId)
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->orderBy('sort_order')
+            ->get(['id','group_id','image_url','target_url','weight']);
+    }
+
+    protected function weightedPick(Collection $images): AdGroupImage
+    {
+        $bag = [];
+        foreach ($images as $img) {
+            $w = max(1, (int) $img->weight);
+            for ($i = 0; $i < $w; $i++) {
+                $bag[] = $img->id;
             }
         }
-
-        // If we exhausted all, reset (so rotation can continue)
-        if ($candidates->isEmpty()) {
-            $this->seenByGroup[$group] = [];
-            $candidates = $ads;
+        if (empty($bag)) {
+            return $images->first();
         }
+        $pickedId = Arr::random($bag);
 
-        $picked = $this->weightedPick($candidates);
-        if ($picked) {
-            $this->seenByGroup[$group][] = (int) $picked->id;
-        }
-
-        return $picked;
-    }
-
-    /**
-     * Return up to $count unique ads for a group (useful for blocks that show many slots).
-     */
-    public function pickMany(string|int $group, int $count): Collection
-    {
-        $out = collect();
-        for ($i = 0; $i < $count; $i++) {
-            $ad = $this->pickOne($group);
-            if (!$ad) break;
-            $out->push($ad);
-        }
-        return $out;
-    }
-
-    /**
-     * Cache ads list per request for the group (DB hit only once per request).
-     */
-    protected function adsForGroup(string|int $group): Collection
-    {
-        if (!array_key_exists($group, $this->cacheByGroup)) {
-            $this->cacheByGroup[$group] = Ad::query()
-                ->typeAnnuncioImmagine()
-                ->where('group', $group)
-                // Optionally pre-filter by status/dates if you have them:
-                // ->where('status', 1)
-                // ->where(function($q){
-                //     $q->whereNull('start_date')->orWhere('start_date', '<=', now());
-                // })->where(function($q){
-                //     $q->whereNull('expiry_date')->orWhere('expiry_date', '>=', now());
-                // })
-                ->get();
-        }
-
-        return $this->cacheByGroup[$group];
-    }
-
-    /**
-     * Weighted random pick (default weight = 1 when null/0).
-     */
-    protected function weightedPick(Collection $ads): ?Ad
-    {
-        if ($ads->isEmpty()) return null;
-
-        $total = 0;
-        foreach ($ads as $ad) {
-            $w = (int) ($ad->weight ?? 1);
-            if ($w < 1) $w = 1; // enforce minimum
-            $total += $w;
-        }
-
-        if ($total <= 0) return $ads->first();
-
-        $r = random_int(1, $total);
-        $acc = 0;
-
-        foreach ($ads as $ad) {
-            $w = (int) ($ad->weight ?? 1);
-            if ($w < 1) $w = 1;
-            $acc += $w;
-            if ($r <= $acc) {
-                return $ad;
-            }
-        }
-
-        return $ads->first();
+        return $images->firstWhere('id', $pickedId) ?? $images->first();
     }
 }
