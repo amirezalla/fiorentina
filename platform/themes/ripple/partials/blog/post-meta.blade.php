@@ -222,8 +222,9 @@
                         $label = e(trim($c->first_name . ' ' . $c->last_name ?: $c->username));
                     @endphp
 
-                    <a href="/author/{{ $c->username }}" class="text-dark collab-link mr-2" data-toggle="tooltip"
-                        data-placement="top" title="{{ $label }}">
+                    <a href="/author/{{ $c->username }}" class="text-muted collab-link mr-2"
+                        style="font-size:small;text-transform:uppercase" data-toggle="tooltip" data-placement="top"
+                        title="{{ $label }}">
                         {{ $c->first_name }} {{ $c->last_name }}
                     </a>
                 @endforeach
@@ -283,9 +284,11 @@ $inviati = collect($decoded)
 
                 @if ($inviati->isNotEmpty())
                     <div class="inviati mt-2">
-                        <small class="text-muted d-block mb-1">Inviati speciali:</small>
+                        <small class="text-muted mb-1" style="font-weight: 600;text-transform:uppercase">Inviati
+                            speciali:</small>
                         @foreach ($inviati as $name)
-                            <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
+                            <span class="text-muted collab-link mr-2" style="font-size: small;text-transform:uppercase"
+                                data-toggle="tooltip" data-placement="top">
                                 {{ $name }}
                             </span>
                         @endforeach
