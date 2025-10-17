@@ -89,29 +89,23 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-view()->composer('ads.includes.dblog-p1', function ($view) {
-    $pool = app(AdDisplayPool::class);
-    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P1));
-});
+$articleSlots = [
+    'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
+    'ads.includes.dblog-p2' => Ad::GROUP_DBLOG_P2,
+    'ads.includes.dblog-p3' => Ad::GROUP_DBLOG_P3,
+    'ads.includes.dblog-p4' => Ad::GROUP_DBLOG_P4,
+    'ads.includes.dblog-p5' => Ad::GROUP_DBLOG_P5,
+];
 
-view()->composer('ads.includes.dblog-p2', function ($view) {
+view()->composer(array_keys($articleSlots), function ($view) use ($articleSlots) {
+    /** @var AdDisplayPool $pool */
     $pool = app(AdDisplayPool::class);
-    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P2));
-});
 
-view()->composer('ads.includes.dblog-p3', function ($view) {
-    $pool = app(AdDisplayPool::class);
-    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P3));
-});
+    // Allocate for ALL article groups once so they don’t collide
+    $pool->allocateUnique(array_values($articleSlots));
 
-view()->composer('ads.includes.dblog-p4', function ($view) {
-    $pool = app(AdDisplayPool::class);
-    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P4));
-});
-
-view()->composer('ads.includes.dblog-p5', function ($view) {
-    $pool = app(AdDisplayPool::class);
-    $view->with('adImage', $pool->pick(Ad::GROUP_DBLOG_P5));
+    $groupId = $articleSlots[$view->getName()];
+    $view->with('adImage', $pool->getAllocated($groupId));
 });
 
         view()->composer('ads.includes.background-page', function (View $view) {
