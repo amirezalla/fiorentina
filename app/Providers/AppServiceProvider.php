@@ -102,7 +102,46 @@ class AppServiceProvider extends ServiceProvider
 
 
 
+// 2.1) Prime once for the article blade (add your real blade(s) here)
+\Illuminate\Support\Facades\View::composer([
+    'theme::views.post',
+    'theme::views.blog.post',
+    // e.g. 'public.post', 'posts.show', etc. if those are your actual article blades
+], function ($view) {
+    /** @var AdDisplayPool $pool */
+    $pool = app(AdDisplayPool::class);
 
+    // Which desktop slots we want on the article
+    $slotConst = [
+        'p1' => Ad::GROUP_DBLOG_P1,
+        'p2' => Ad::GROUP_DBLOG_P2,
+        'p3' => Ad::GROUP_DBLOG_P3,
+        'p4' => Ad::GROUP_DBLOG_P4,
+        'p5' => Ad::GROUP_DBLOG_P5,
+    ];
+
+    // Load the Ad rows for those slots (to get each ad_group_id)
+    $ads = Ad::query()
+        ->where('type', Ad::TYPE_ANNUNCIO_IMMAGINE)
+        ->where('status', 1)
+        ->whereIn('group', array_values($slotConst))
+        ->get()
+        ->keyBy('group');
+
+    // slotKey => ad_group_id (or null)
+    $map = [];
+    foreach ($slotConst as $key => $const) {
+        $map[$key] = optional($ads->get($const))->ad_group_id;
+    }
+
+    // Allocate creatives per slot (weighted, non-repeating when possible)
+    $pool->allocateForSlots($map);
+
+    // Share map for the include composers (optional, but handy)
+    app()->instance('ads.slot.map', $map);
+});
+
+// 2.2) Each include pulls its slot’s allocated creative
 \Illuminate\Support\Facades\View::composer([
     'ads.includes.dblog-p1',
     'ads.includes.dblog-p2',
@@ -110,66 +149,34 @@ class AppServiceProvider extends ServiceProvider
     'ads.includes.dblog-p4',
     'ads.includes.dblog-p5',
 ], function ($view) {
-    // Which slot am I rendering?
-    $slot = match ($view->getName()) {
-        'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
-
+    $slotKey = match ($view->getName()) {
+        'ads.includes.dblog-p1' => 'p1',
+        'ads.includes.dblog-p2' => 'p2',
+        'ads.includes.dblog-p3' => 'p3',
+        'ads.includes.dblog-p4' => 'p4',
+        'ads.includes.dblog-p5' => 'p5',
     };
 
     /** @var AdDisplayPool $pool */
     $pool = app(AdDisplayPool::class);
 
-    // Bootstrap ONCE per request (first include that fires)
-    if (! app()->has('ad.slot.map')) {
-        $slots = [
-            Ad::GROUP_DBLOG_P1,
-            Ad::GROUP_DBLOG_P2,
-            Ad::GROUP_DBLOG_P3,
-            Ad::GROUP_DBLOG_P4,
-            Ad::GROUP_DBLOG_P5,
-        ];
-
-        // Load the Ad rows for those slots to read each ad_group_id
-        $ads = Ad::query()
-            ->where('type', Ad::TYPE_ANNUNCIO_IMMAGINE) // image ads only
-            ->where('status', 1)                        // active
-            ->whereIn('group', $slots)
-            ->get()
-            ->keyBy('group');
-
-        // Build slot => ad_group_id map
-        $map = [];
-        foreach ($slots as $s) {
-            $map[$s] = optional($ads->get($s))->ad_group_id;
-        }
-
-        // Allocate (weight-aware) once across unique, non-null group_ids
-        $ids = array_values(array_unique(array_filter($map)));
-        $pool->allocateUnique($ids);
-
-        // Keep the map for subsequent includes in this request
-        app()->instance('ad.slot.map', $map);
-    } else {
-        // Make sure allocation exists (idempotent)
-        $ids = array_values(array_unique(array_filter(app('ad.slot.map'))));
-        $pool->allocateUnique($ids);
+    // make sure we’re primed (idempotent)
+    if (app()->has('ads.slot.map')) {
+        $pool->allocateForSlots(app('ads.slot.map'));
     }
 
-    $map = app('ad.slot.map');
-    $gid = $map[$slot] ?? null;
+    $imgModel = $pool->getAllocatedForSlot($slotKey); // AdGroupImage|null
 
-    $imgModel = $gid ? $pool->getAllocated($gid) : null;
     $img = $imgModel && $imgModel->image_url
         ? (preg_match('~^https?://~i', $imgModel->image_url)
             ? $imgModel->image_url
-            : \Storage::disk('wasabi')->url(ltrim($imgModel->image_url, '/')))
+            : Storage::disk('wasabi')->url(ltrim($imgModel->image_url, '/')))
         : null;
 
     $href = $imgModel && $imgModel->target_url ? $imgModel->target_url : '#';
 
     $view->with(compact('img', 'href'));
 });
-
 
 
 
