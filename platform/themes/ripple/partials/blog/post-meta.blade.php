@@ -222,7 +222,7 @@
                         $label = e(trim($c->first_name . ' ' . $c->last_name ?: $c->username));
                     @endphp
 
-                    <a href="/author/{{ $c->username }}" class="collab-link mr-2" data-toggle="tooltip"
+                    <a href="/author/{{ $c->username }}" class="text-dark collab-link mr-2" data-toggle="tooltip"
                         data-placement="top" title="{{ $label }}">
                         {{ $c->first_name }} {{ $c->last_name }}
                     </a>
