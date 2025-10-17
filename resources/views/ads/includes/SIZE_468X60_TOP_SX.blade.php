@@ -18,7 +18,7 @@
         </div>
     @else
         {{-- For type=2 (Google Ad Manager or custom HTML), no impression is tracked here --}}
-        <div class="row justify-content-end mx-0">
+        <div class="row justify-content-center mx-0">
             {!! $ad->amp !!}
         </div>
     @endif

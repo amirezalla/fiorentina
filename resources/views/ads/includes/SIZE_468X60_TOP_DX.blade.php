@@ -18,7 +18,7 @@
         </div>
     @else
         {{-- For type=2 (Google Ad Manager or custom HTML), no impression is tracked here --}}
-        <div class="row justify-content-first  mx-0 " style="padding-top:4px;">
+        <div class="row justify-content-center  mx-0 " style="padding-top:4px;">
             {!! $ad->amp !!}
         </div>
     @endif
