@@ -10,7 +10,9 @@
             @php
                 $imgUrl = $ad->getAllocatedDisplayImageUrl();
                 $target = $ad->getAllocatedTargetUrl() ?: '#';
+                dd($imgUrl, $target);
             @endphp
+
             <div class="row justify-content-center mx-0 mb-2" id="p3-{{ $ad->id }}">
                 <div class="col-12 mx-auto p-0">
                     {{-- Link through your trackClick route so that a click is counted --}}
