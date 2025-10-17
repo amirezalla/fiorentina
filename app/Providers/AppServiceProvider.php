@@ -103,16 +103,27 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-// Allocate ONCE per article request
-    \Illuminate\Support\Facades\View::composer([
-        'theme::views.post',
-        'theme::views.blog.post',
-        // add your real article blade(s) here if different
-    ], function ($view) {
-        /** @var AdDisplayPool $pool */
-        $pool = app(AdDisplayPool::class);
+View::composer([
+    'ads.includes.dblog-p1',
+    'ads.includes.dblog-p2',
+    'ads.includes.dblog-p3',
+    'ads.includes.dblog-p4',
+    'ads.includes.dblog-p5',
+], function ($view) {
+    // Which slot am I rendering?
+    $slot = match ($view->getName()) {
+        'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
+        'ads.includes.dblog-p2' => Ad::GROUP_DBLOG_P2,
+        'ads.includes.dblog-p3' => Ad::GROUP_DBLOG_P3,
+        'ads.includes.dblog-p4' => Ad::GROUP_DBLOG_P4,
+        'ads.includes.dblog-p5' => Ad::GROUP_DBLOG_P5,
+    };
 
-        // The desktop "slots" on the article
+    /** @var AdDisplayPool $pool */
+    $pool = app(AdDisplayPool::class);
+
+    // Bootstrap ONCE per request (first include that fires)
+    if (! app()->has('ad.slot.map')) {
         $slots = [
             Ad::GROUP_DBLOG_P1,
             Ad::GROUP_DBLOG_P2,
@@ -121,66 +132,47 @@ class AppServiceProvider extends ServiceProvider
             Ad::GROUP_DBLOG_P5,
         ];
 
-        // Load the Ad rows for those slots so we can read their ad_group_id
+        // Load the Ad rows for those slots to read each ad_group_id
         $ads = Ad::query()
-            ->typeAnnuncioImmagine()
+            ->where('type', Ad::TYPE_ANNUNCIO_IMMAGINE) // image ads only
+            ->where('status', 1)                        // active
             ->whereIn('group', $slots)
             ->get()
             ->keyBy('group');
 
-        // slotConst => ad_group_id (or null if not configured)
-        $slotToGroupId = [];
-        foreach ($slots as $slotConst) {
-            $slotToGroupId[$slotConst] = optional($ads->get($slotConst))->ad_group_id;
+        // Build slot => ad_group_id map
+        $map = [];
+        foreach ($slots as $s) {
+            $map[$s] = optional($ads->get($s))->ad_group_id;
         }
 
-        // Unique, non-null ad_group_ids for allocation
-        $adGroupIds = array_values(array_unique(array_filter($slotToGroupId)));
+        // Allocate (weight-aware) once across unique, non-null group_ids
+        $ids = array_values(array_unique(array_filter($map)));
+        $pool->allocateUnique($ids);
 
-        // Allocate unique images (weight-aware) across those group_ids
-        $pool->allocateUnique($adGroupIds);
+        // Keep the map for subsequent includes in this request
+        app()->instance('ad.slot.map', $map);
+    } else {
+        // Make sure allocation exists (idempotent)
+        $ids = array_values(array_unique(array_filter(app('ad.slot.map'))));
+        $pool->allocateUnique($ids);
+    }
 
-        // Share slot→group map so the includes can pick the correct pool item
-        app()->instance('ad.slot.map', $slotToGroupId);
-    });
+    $map = app('ad.slot.map');
+    $gid = $map[$slot] ?? null;
 
-    // Bind each include to its allocated image
-    \Illuminate\Support\Facades\View::composer([
-        'ads.includes.dblog-p1',
-        'ads.includes.dblog-p2',
-        'ads.includes.dblog-p3',
-        'ads.includes.dblog-p4',
-        'ads.includes.dblog-p5',
-    ], function ($view) {
-        $slot = match ($view->getName()) {
-            'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
-            'ads.includes.dblog-p2' => Ad::GROUP_DBLOG_P2,
-            'ads.includes.dblog-p3' => Ad::GROUP_DBLOG_P3,
-            'ads.includes.dblog-p4' => Ad::GROUP_DBLOG_P4,
-            'ads.includes.dblog-p5' => Ad::GROUP_DBLOG_P5,
-        };
+    $imgModel = $gid ? $pool->getAllocated($gid) : null;
 
-        /** @var AdDisplayPool $pool */
-        $pool = app(AdDisplayPool::class);
+    $img = $imgModel && $imgModel->image_url
+        ? (preg_match('~^https?://~i', $imgModel->image_url)
+            ? $imgModel->image_url
+            : \Storage::disk('wasabi')->url(ltrim($imgModel->image_url, '/')))
+        : null;
 
-        // Read the slot→ad_group_id mapping prepared at article level
-        $map = app()->has('ad.slot.map') ? app('ad.slot.map') : [];
-        $gid = $map[$slot] ?? null;
+    $href = $imgModel && $imgModel->target_url ? $imgModel->target_url : '#';
 
-        $imgModel = $gid ? $pool->getAllocated($gid) : null; // App\Models\AdGroupImage|null
-        dd($imgModel,$pool, $gid, $map, $slot);
-
-        // Build URLs safely
-        $img = $imgModel && $imgModel->image_url
-            ? (preg_match('~^https?://~i', $imgModel->image_url)
-                ? $imgModel->image_url
-                : \Storage::disk('wasabi')->url(ltrim($imgModel->image_url, '/')))
-            : null;
-
-        $href = $imgModel && $imgModel->target_url ? $imgModel->target_url : '#';
-
-        $view->with(compact('img', 'href'));
-    });
+    $view->with(compact('img', 'href'));
+});
 
 
 
