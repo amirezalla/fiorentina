@@ -103,17 +103,17 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-    // 1) Prime the pool ONCE for the article view (whatever blade renders your article)
-    \Illuminate\Support\Facades\View::composer([
+// Allocate ONCE per article request
+    View::composer([
         'theme::views.post',
         'theme::views.blog.post',
-        // add your concrete post blade if different, e.g. 'posts.show'
+        // add your real article blade(s) here if different
     ], function ($view) {
         /** @var AdDisplayPool $pool */
         $pool = app(AdDisplayPool::class);
 
-        // All desktop paragraph groups you want unique for this request:
-        $groups = [
+        // The desktop "slots" on the article
+        $slots = [
             Ad::GROUP_DBLOG_P1,
             Ad::GROUP_DBLOG_P2,
             Ad::GROUP_DBLOG_P3,
@@ -121,12 +121,31 @@ class AppServiceProvider extends ServiceProvider
             Ad::GROUP_DBLOG_P5,
         ];
 
-        // Allocate unique images across those groups (weight-aware)
-        $pool->allocateUnique($groups);
+        // Load the Ad rows for those slots so we can read their ad_group_id
+        $ads = Ad::query()
+            ->typeAnnuncioImmagine()
+            ->whereIn('group', $slots)
+            ->get()
+            ->keyBy('group');
+
+        // slotConst => ad_group_id (or null if not configured)
+        $slotToGroupId = [];
+        foreach ($slots as $slotConst) {
+            $slotToGroupId[$slotConst] = optional($ads->get($slotConst))->ad_group_id;
+        }
+
+        // Unique, non-null ad_group_ids for allocation
+        $adGroupIds = array_values(array_unique(array_filter($slotToGroupId)));
+
+        // Allocate unique images (weight-aware) across those group_ids
+        $pool->allocateUnique($adGroupIds);
+
+        // Share slot→group map so the includes can pick the correct pool item
+        app()->instance('ad.slot.map', $slotToGroupId);
     });
 
-    // 2) Bind each include to the already-allocated image from the pool
-    \Illuminate\Support\Facades\View::composer([
+    // Bind each include to its allocated image
+    View::composer([
         'ads.includes.dblog-p1',
         'ads.includes.dblog-p2',
         'ads.includes.dblog-p3',
@@ -144,11 +163,14 @@ class AppServiceProvider extends ServiceProvider
         /** @var AdDisplayPool $pool */
         $pool = app(AdDisplayPool::class);
 
-        // Read the chosen creative for this group
-        $imgModel = $pool->getAllocated($slot); // App\Models\AdGroupImage|null
+        // Read the slot→ad_group_id mapping prepared at article level
+        $map = app()->has('ad.slot.map') ? app('ad.slot.map') : [];
+        $gid = $map[$slot] ?? null;
 
-        // Build URL + href safely
-        $img = $imgModel
+        $imgModel = $gid ? $pool->getAllocated($gid) : null; // App\Models\AdGroupImage|null
+
+        // Build URLs safely
+        $img = $imgModel && $imgModel->image_url
             ? (preg_match('~^https?://~i', $imgModel->image_url)
                 ? $imgModel->image_url
                 : \Storage::disk('wasabi')->url(ltrim($imgModel->image_url, '/')))
