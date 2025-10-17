@@ -295,17 +295,16 @@ $inviati = collect($decoded)
                     </div>
                 @endif
 
-            </div>
-    </div>
-</div>
-@endif
-</div>
 
-@if (!$isMobile)
-    @include('ads.includes.dblog-title')
-@else
-    @include('ads.includes.MOBILE_DOPO_FOTO_26')
-@endif
+            </div>
+        @endif
+    </div>
+
+    @if (!$isMobile)
+        @include('ads.includes.dblog-title')
+    @else
+        @include('ads.includes.MOBILE_DOPO_FOTO_26')
+    @endif
 
 
 </div>
