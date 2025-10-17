@@ -236,28 +236,39 @@
             <div style="margin-top:2px;">
                 @php
                     $raw = $post->inviati;
+                    $decoded = [];
 
-                    // Normalize: sometimes it's JSON, sometimes an array, sometimes malformed
-if (is_string($raw)) {
-    // Try to fix missing commas between objects
-    $fixed = preg_replace('/}(\s*){/', '},{', $raw);
+                    if (is_string($raw)) {
+                        // First decode main layer
+                        $step1 = json_decode($raw, true);
 
-    $decoded = json_decode($fixed, true);
+                        if (is_array($step1)) {
+                            foreach ($step1 as $item) {
+                                $val = $item['value'] ?? '';
 
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        // fallback: extract names via regex
-        preg_match_all('/"value"\s*:\s*"([^"]+)"/', $raw, $matches);
-        $decoded = collect($matches[1])->map(fn($n) => ['value' => $n])->all();
-    }
-} elseif (is_array($raw)) {
-    $decoded = $raw;
-} else {
-    $decoded = [];
-}
+                                // Try to decode inner escaped JSON if present
+                                $inner = json_decode($val, true);
 
-// Normalize to simple list of names
-$inviati = collect($decoded)
-    ->map(fn($i) => is_array($i) ? $i['value'] ?? '' : (string) $i)
+                                if (is_array($inner)) {
+                                    // Extract nested 'value' if it exists
+                                    foreach ($inner as $sub) {
+                                        if (isset($sub['value'])) {
+                                            $decoded[] = ['value' => $sub['value']];
+                                        }
+                                    }
+                                } else {
+                                    // Otherwise clean quotes and push as plain text
+                                    $decoded[] = ['value' => trim($val, '"{}[]')];
+                                }
+                            }
+                        }
+                    } elseif (is_array($raw)) {
+                        $decoded = $raw;
+                    }
+
+                    // Normalize to simple list of names
+                    $inviati = collect($decoded)
+                        ->map(fn($i) => is_array($i) ? $i['value'] ?? '' : (string) $i)
                         ->filter()
                         ->values();
                 @endphp
@@ -272,6 +283,7 @@ $inviati = collect($decoded)
                         @endforeach
                     </div>
                 @endif
+
 
             </div>
     </div>
