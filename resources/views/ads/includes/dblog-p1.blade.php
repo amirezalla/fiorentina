@@ -11,12 +11,14 @@
             <div class="row justify-content-center mx-0 mb-2" id="p1-{{ $ad->id }}">
                 <div class="col-12 mx-auto p-0">
                     {{-- Link through your trackClick route so that a click is counted --}}
-                    @if ($img)
-                        <a href="{{ $href }}" class="d-block" rel="nofollow sponsored noopener" target="_blank">
-                            <img src="{{ $img }}" alt="{{ $ad->title }}" class="img-fluid"
-                                style="width:100%;height:auto;">
-                        </a>
-                    @endif
+                    @php $src = ad_slot_img('p1'); @endphp
+                    @if ($src)
+                        <div class="ads-slot" style="text-align:center;margin:12px 0;">
+                            <a href="{{ ad_slot_href('p1') }}" target="_blank" rel="nofollow sponsored noopener">
+                                <img src="{{ $src }}" alt="sponsored" class="img-fluid"
+                                    style="max-width:100%;height:auto;">
+                            </a>
+                        </div>
                 </div>
             </div>
         @else

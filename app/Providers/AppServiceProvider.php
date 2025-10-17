@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     {
             $this->app->scoped(AdDisplayPool::class, fn() => new AdDisplayPool());
                 $this->app->scoped(AdRequestContext::class, fn () => new AdRequestContext());
+    require_once app_path('helpers/ads.php');
 
 
 // Force HTMLPurifier cache to a writable path (works even if config is cached)
