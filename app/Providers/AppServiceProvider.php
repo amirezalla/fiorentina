@@ -88,7 +88,51 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
+\Illuminate\Support\Facades\View::composer(['theme::views.post', 'theme::views.blog.post'], function ($view) {
+            $pool = app(AdDisplayPool::class);
 
+            // 1) Trova gli ads per slot (gruppo “logico” sugli ADS)
+            $bySlot = [
+                'p1' => Ad::GROUP_DBLOG_P1,
+                'p2' => Ad::GROUP_DBLOG_P2,
+                'p3' => Ad::GROUP_DBLOG_P3,
+                'p4' => Ad::GROUP_DBLOG_P4,
+                'p5' => Ad::GROUP_DBLOG_P5,
+            ];
+
+            $ads = [];
+            $adGroupIds = [];
+
+            foreach ($bySlot as $slot => $adsGroupConst) {
+                $ad = Ad::query()
+                    ->typeAnnuncioImmagine()
+                    ->where('group', $adsGroupConst)
+                    ->where('status', 1)
+                    ->inRandomOrderByWeight()
+                    ->first();
+
+                $ads[$slot] = $ad;
+
+                if ($ad && $ad->ad_group_id) {
+                    $adGroupIds[] = (int) $ad->ad_group_id;
+                }
+            }
+
+            // 2) Alloca immagini una volta sola per gli ad_group_id trovati
+            $adGroupIds = array_values(array_unique($adGroupIds));
+            $pool->allocateUnique($adGroupIds);
+
+            // 3) Costruisci il pacchetto slot => AdGroupImage|null
+            $articleAdSlots = [];
+            foreach ($bySlot as $slot => $adsGroupConst) {
+                $ad = $ads[$slot] ?? null;
+                $img = $ad && $ad->ad_group_id ? $pool->getAllocated($ad->ad_group_id) : null;
+                $articleAdSlots[$slot] = $img;
+            }
+            
+            // 4) Passa alle view figlie
+            $view->with('articleAdSlots', $articleAdSlots);
+        });
         view()->composer('ads.includes.background-page', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrderByWeight()->first());
         });
