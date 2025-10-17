@@ -1,5 +1,4 @@
 <?php
-// app/Support/AdDisplayPool.php
 
 namespace App\Support;
 
@@ -9,63 +8,85 @@ use Illuminate\Support\Collection;
 
 class AdDisplayPool
 {
-    /** cache of images per group: gid => Collection<AdGroupImage> */
+    /** cache: groupId => Collection<AdGroupImage> */
     protected array $groupCache = [];
 
-    /** final allocation per slot key (e.g. 'p1','p2'...): slot => AdGroupImage|null */
-    protected array $slotAlloc = [];
+    /** allocations keyed by group id */
+    protected array $allocatedByGroup = []; // gid => AdGroupImage|null
 
-    /** creatives already used in this request (avoid duplicates globally) */
-    protected array $usedKeys = [];
+    /** allocations keyed by slot (e.g. 'p1','p2',...) */
+    protected array $allocatedBySlot  = []; // slot => AdGroupImage|null
 
-    /**
-     * Allocate creatives per slot from each slot's group (weight-aware, non-repeating when possible).
-     * Example $slotToGroupId: ['p1' => 4, 'p2' => 4, 'p3' => 6, 'p4' => null, 'p5' => 7]
-     */
-    public function allocateForSlots(array $slotToGroupId): void
+    /** set of already-used creatives (avoid dupes within a request) */
+    protected array $usedKeys = [];         // uniqKey => true
+
+    /* -------------------------------------------------------------
+     |  A) GROUP-based API  (what your model uses)
+     * ------------------------------------------------------------*/
+    public function allocateUnique(array $groupIds): void
     {
-        foreach ($slotToGroupId as $slot => $gid) {
-            if (!$gid) { $this->slotAlloc[$slot] = null; continue; }
-            if (array_key_exists($slot, $this->slotAlloc)) continue;
+        foreach ($groupIds as $gid) {
+            $gid = (int) $gid;
+            if ($gid <= 0) continue;
 
-            $images = $this->groupCache[$gid] ??= $this->loadGroupImages((int)$gid);
+            if (array_key_exists($gid, $this->allocatedByGroup)) {
+                continue; // already allocated
+            }
 
-            // try to pick an unused creative respecting weight
+            $images = $this->groupCache[$gid] ??= $this->loadGroupImages($gid);
+
+            // try weight-aware pick avoiding used creatives
             $choice = $this->weightedPickAvoidingUsed($images);
+            if (!$choice) {
+                // fallback: any (still weighted)
+                $choice = $this->weightedPick($images);
+            }
 
-            // fallback: pick any (still weighted) if all have been used
-            if (!$choice) $choice = $this->weightedPick($images);
-
-            $this->slotAlloc[$slot] = $choice;
-            if ($choice) $this->usedKeys[$this->uniqKey($choice)] = true;
-        }
-    }
-
-    /** Getter used by your views/includes */
-    public function getAllocatedForSlot(string $slot): ?AdGroupImage
-    {
-        return $this->slotAlloc[$slot] ?? null;
-    }
-
-    /** Optional alias if you ever need to read by group id directly */
-    public function getAllocatedByGroupId(int $groupId): ?AdGroupImage
-    {
-        // find first slot that used this group
-        foreach ($this->slotAlloc as $slot => $img) {
-            if ($img && (int)$img->group_id === (int)$groupId) {
-                return $img;
+            $this->allocatedByGroup[$gid] = $choice;
+            if ($choice) {
+                $this->usedKeys[$this->uniqKey($choice)] = true;
             }
         }
-        return null;
     }
 
-    // ---------- internals ----------
+    public function getAllocated(int $groupId): ?AdGroupImage
+    {
+        if (!array_key_exists($groupId, $this->allocatedByGroup)) {
+            $this->allocateUnique([$groupId]); // lazy allocate
+        }
+        return $this->allocatedByGroup[$groupId] ?? null;
+    }
 
+    /* -------------------------------------------------------------
+     |  B) SLOT-based API  (what your view composers may use)
+     * ------------------------------------------------------------*/
+    public function allocateForSlots(array $slotToGroupId): void
+    {
+        // ensure group allocations exist first (weight-aware & unique)
+        $gids = array_values(array_unique(array_filter(array_map('intval', $slotToGroupId))));
+        $this->allocateUnique($gids);
+
+        foreach ($slotToGroupId as $slot => $gid) {
+            $gid = (int) $gid;
+            if (!$gid) { $this->allocatedBySlot[$slot] = null; continue; }
+            if (array_key_exists($slot, $this->allocatedBySlot)) continue;
+
+            $this->allocatedBySlot[$slot] = $this->allocatedByGroup[$gid] ?? null;
+        }
+    }
+
+    public function getAllocatedForSlot(string $slot): ?AdGroupImage
+    {
+        return $this->allocatedBySlot[$slot] ?? null;
+    }
+
+    /* -------------------------------------------------------------
+     |  Internals
+     * ------------------------------------------------------------*/
     protected function loadGroupImages(int $groupId): Collection
     {
         return AdGroupImage::query()
             ->where('group_id', $groupId)
-            // include NULL, empty string, or future expiry
             ->where(function ($q) {
                 $q->whereNull('expires_at')
                   ->orWhere('expires_at', '')
@@ -86,7 +107,7 @@ class AdDisplayPool
 
         $bag = [];
         foreach ($images as $img) {
-            $w = max(1, (int)($img->weight ?? 1));
+            $w = max(1, (int) ($img->weight ?? 1));
             for ($i = 0; $i < $w; $i++) $bag[] = $img->id;
         }
         if (!$bag) return $images->first();
@@ -102,7 +123,7 @@ class AdDisplayPool
             $k = $this->uniqKey($img);
             if (isset($this->usedKeys[$k])) continue;
 
-            $w = max(1, (int)($img->weight ?? 1));
+            $w = max(1, (int) ($img->weight ?? 1));
             for ($i = 0; $i < $w; $i++) $bag[] = $img->id;
         }
         if (!$bag) return null;
