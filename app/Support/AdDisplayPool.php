@@ -78,18 +78,19 @@ class AdDisplayPool
     }
 
     /* ---------------- internals ---------------- */
-    protected function loadGroupImages(int $groupId): Collection
-    {
-        return AdGroupImage::query()
-            ->where('group_id', $groupId)
-            ->where(function ($q) {
-                $q->whereNull('expires_at')
-                  ->orWhere('expires_at', '')
-                  ->orWhere('expires_at', '>', now());
-            })
-            ->orderBy('sort_order')
-            ->get(['id','group_id','image_url','target_url','weight']);
-    }
+protected function loadGroupImages(int $groupId): Collection
+{
+    return AdGroupImage::query()
+        ->where('group_id', $groupId)
+        ->where(function ($q) {
+            $q->whereNull('expires_at')
+              ->orWhereRaw("CAST(expires_at AS CHAR) = ''")
+              ->orWhere('expires_at', '>', now());
+        })
+        ->orderBy('sort_order')
+        ->get(['id', 'group_id', 'image_url', 'target_url', 'weight']);
+}
+
 
     protected function uniqKey(AdGroupImage $img): string
     {
