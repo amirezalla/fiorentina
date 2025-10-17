@@ -237,10 +237,10 @@
                 <small class="text-muted" style="font-wieght:600;display:inline-flex!important">INVIATI
                     SPECIALI</small>
                 <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
+                    @php
+                        $post->inviati = json_decode($post->inviati);
+                    @endphp
                     @foreach ($post->inviati as $inv)
-                        @php
-                            $inv = json_decode($inv);
-                        @endphp
                         <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
                             {{ $inv->value }}
                         </span>
