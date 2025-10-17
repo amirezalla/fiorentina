@@ -239,26 +239,25 @@
                     $decoded = [];
 
                     if (is_string($raw)) {
-                        // First decode main layer
+                        // Decode first layer
                         $step1 = json_decode($raw, true);
 
                         if (is_array($step1)) {
                             foreach ($step1 as $item) {
                                 $val = $item['value'] ?? '';
 
-                                // Try to decode inner escaped JSON if present
+                                // Try decoding inner JSON
                                 $inner = json_decode($val, true);
 
                                 if (is_array($inner)) {
-                                    // Extract nested 'value' if it exists
                                     foreach ($inner as $sub) {
                                         if (isset($sub['value'])) {
                                             $decoded[] = ['value' => $sub['value']];
                                         }
                                     }
                                 } else {
-                                    // Otherwise clean quotes and push as plain text
-                                    $decoded[] = ['value' => trim($val, '"{}[]')];
+                                    // fallback — just store raw text
+                                    $decoded[] = ['value' => $val];
                                 }
                             }
                         }
@@ -266,9 +265,18 @@
                         $decoded = $raw;
                     }
 
-                    // Normalize to simple list of names
-                    $inviati = collect($decoded)
-                        ->map(fn($i) => is_array($i) ? $i['value'] ?? '' : (string) $i)
+                    // Normalize and clean up any extra "value":" fragments
+$inviati = collect($decoded)
+    ->map(function ($i) {
+        $val = is_array($i) ? $i['value'] ?? '' : (string) $i;
+
+        // 🔧 cleanup: remove unwanted characters and prefixes
+        $val = preg_replace('/"?value"?\s*:\s*"?/i', '', $val); // remove value":
+        $val = str_replace(['{', '}', '"', '\\'], '', $val); // remove quotes/braces/backslashes
+                            $val = trim($val);
+
+                            return $val;
+                        })
                         ->filter()
                         ->values();
                 @endphp
@@ -278,12 +286,12 @@
                         <small class="text-muted d-block mb-1">Inviati speciali:</small>
                         @foreach ($inviati as $name)
                             <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
-                                @dd($name)
                                 {{ $name }}
                             </span>
                         @endforeach
                     </div>
                 @endif
+
 
 
             </div>
