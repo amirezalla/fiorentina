@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Mail\Events\MessageFailed;
+use App\Support\AdDisplayPool;
 
 
 
@@ -57,6 +58,11 @@ class AppServiceProvider extends ServiceProvider
 
         set_time_limit(900); // Sets the maximum execution time to 15 minutes
 
+            $this->app->scoped(AdDisplayPool::class, function () {
+        // Pass TRUE if you also want to avoid the same image_url in a group within the same page
+        return new AdDisplayPool(/* dedupeByImageUrl: */ true);
+    });
+
         view()->composer('ads.includes.main-page', function (View $view) {
             $view->with('ads', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_MAIN_PAGE)->get());
         });
@@ -85,55 +91,21 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-        view()->composer('ads.includes.dblog-p1', function ($view) {
-            $ad = Ad::query()
-                ->typeAnnuncioImmagine()
-                ->where('group', Ad::GROUP_DBLOG_P1)
-                ->inRandomOrderByWeight()
-                ->first();
-    
-            $view->with('ad', $ad);
-        });
+// helper to register one include => one group
+$registerArticleAd = function (string $include, int|string $group) {
+    view()->composer($include, function (View $view) use ($group) {
+        $pool = app(AdDisplayPool::class);
+        $ad   = $pool->pickOne($group);
+        $view->with('ad', $ad);
+    });
+};
 
-        view()->composer('ads.includes.dblog-p2', function ($view) {
-            $ad = Ad::query()
-                ->typeAnnuncioImmagine()
-                ->where('group', Ad::GROUP_DBLOG_P2)
-                ->inRandomOrderByWeight()
-                ->first();
-    
-            $view->with('ad', $ad);
-        });
-
-        view()->composer('ads.includes.dblog-p3', function ($view) {
-            $ad = Ad::query()
-                ->typeAnnuncioImmagine()
-                ->where('group', Ad::GROUP_DBLOG_P3)
-                ->inRandomOrderByWeight()
-                ->first();
-    
-            $view->with('ad', $ad);
-        });
-
-        view()->composer('ads.includes.dblog-p4', function ($view) {
-            $ad = Ad::query()
-                ->typeAnnuncioImmagine()
-                ->where('group', Ad::GROUP_DBLOG_P4)
-                ->inRandomOrderByWeight()
-                ->first();
-    
-            $view->with('ad', $ad);
-        });
-
-        view()->composer('ads.includes.dblog-p5', function ($view) {
-            $ad = Ad::query()
-                ->typeAnnuncioImmagine()
-                ->where('group', Ad::GROUP_DBLOG_P5)
-                ->inRandomOrderByWeight()
-                ->first();
-    
-            $view->with('ad', $ad);
-        });
+// Only on articles:
+$registerArticleAd('ads.includes.dblog-p1', Ad::GROUP_DBLOG_P1);
+$registerArticleAd('ads.includes.dblog-p2', Ad::GROUP_DBLOG_P2);
+$registerArticleAd('ads.includes.dblog-p3', Ad::GROUP_DBLOG_P3);
+$registerArticleAd('ads.includes.dblog-p4', Ad::GROUP_DBLOG_P4);
+$registerArticleAd('ads.includes.dblog-p5', Ad::GROUP_DBLOG_P5);
 
         view()->composer('ads.includes.background-page', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrderByWeight()->first());
@@ -244,73 +216,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('last_post',$last_post);
         });
 
-// // 1) Read secret (and domain/region) from DB settings
-//         $secret = (string) DB::table('settings')
-//             ->where('key', 'email_mail_gun_secret')
-//             ->value('value');
 
-//         // Optional helpers & sane defaults
-//         $secret = trim($secret);
-
-//         $domain = (string) DB::table('settings')
-//             ->where('key', 'email_mail_gun_domain')
-//             ->value('value');
-
-//         $domain = trim($domain ?: '');
-
-//         // Region/endpoint: US default; use EU if you store a flag or endpoint
-//         $endpoint = (string) DB::table('settings')
-//             ->where('key', 'email_mail_gun_endpoint') // e.g. https://api.eu.mailgun.net
-//             ->value('value');
-
-//         $endpoint = $endpoint ? trim($endpoint) : 'https://api.mailgun.net';
-
-//         if ($secret === '' || $domain === '') {
-//             // Fail fast with a clear error so you notice misconfigurations early
-//             throw new \RuntimeException('MailgunTransport: missing DB settings. Please set "email_mail_gun_secret" and "email_mail_gun_domain".');
-//         }
-
-//         // 2) Register a custom mailer driver "mailgun-api"
-//         $manager->extend('mailgun-api', function () use ($secret, $domain, $endpoint) {
-//             $client = HttpClient::create(); // or inject via container
-//             return new MailgunTransport($secret, $domain, $client, dispatcher: null, endpoint: $endpoint);
-//         });
-
-//         // 3) Make it the default mailer
-//         Config::set('mail.default', 'mailgun-api');
-
-//         // (Optional) keep from address centralized (fallback)
-//         // You can also keep using config/mail.php 'from' if you prefer
-//         if (!config('mail.from.address')) {
-//             // Pull a default 'from' from DB if you store one
-//             $fromAddress = (string) DB::table('settings')->where('key', 'email_from_address')->value('value');
-//             $fromName    = (string) DB::table('settings')->where('key', 'email_from_name')->value('value');
-
-//             if ($fromAddress) {
-//                 Config::set('mail.from.address', trim($fromAddress));
-//                 if ($fromName) {
-//                     Config::set('mail.from.name', trim($fromName));
-//                 }
-//             }
-//         }
-    //     // Retrieve the SendGrid API key from the database
-    //     $sendgridApiKey = env("MAIL_PASSWORD");
-
-    // // Override the mail configuration for SMTP
-    // Config::set('mail.mailers.smtp.username', 'apikey');  
-    // Config::set('mail.mailers.smtp.password', $sendgridApiKey);
-    // putenv("MAIL_PASSWORD=".$sendgridApiKey);
-
-    // $manager->extend('sendgrid', function () {
-    //     // Retrieve your API key from config or DB
-    //     $apiKey = config('mail.mailers.smtp.password'); // Make sure this is set
-    //     // Create an HTTP client instance (or inject one via the service container)
-    //     $client = HttpClient::create();
-    //     return new SendGridTransport($apiKey, $client);
-    // });
-    // $this->app->booted(function () {
-    //     config()->set('mail.default', "sendgrid");
-    // });
 Event::listen(MessageSending::class, function (MessageSending $event) {
         Log::debug('Mail: sending', [
             'to'      => array_map(fn($a) => $a->getAddress(), $event->message->getTo() ?? []),
