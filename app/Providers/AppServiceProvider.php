@@ -129,7 +129,7 @@ class AppServiceProvider extends ServiceProvider
                 $img = $ad && $ad->ad_group_id ? $pool->getAllocated($ad->ad_group_id) : null;
                 $articleAdSlots[$slot] = $img;
             }
-
+            dd($articleAdSlots);
             // 4) Passa alle view figlie
             $view->with('articleAdSlots', $articleAdSlots);
         });
