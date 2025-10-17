@@ -295,11 +295,10 @@ $inviati = collect($decoded)
                     </div>
                 @endif
 
-
-
             </div>
     </div>
-    @endif
+</div>
+@endif
 </div>
 
 @if (!$isMobile)
