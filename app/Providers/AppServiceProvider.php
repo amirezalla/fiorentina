@@ -103,7 +103,7 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-View::composer([
+\Illuminate\Support\Facades\View::composer([
     'ads.includes.dblog-p1',
     'ads.includes.dblog-p2',
     'ads.includes.dblog-p3',
