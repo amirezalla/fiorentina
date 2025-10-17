@@ -88,7 +88,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
-View::composer(['theme::views.post', 'theme::views.blog.post'], function ($view) {
+\Illuminate\Support\Facades\View::composer(['theme::views.post', 'theme::views.blog.post'], function ($view) {
             $pool = app(AdDisplayPool::class);
 
             // 1) Trova gli ads per slot (gruppo “logico” sugli ADS)
