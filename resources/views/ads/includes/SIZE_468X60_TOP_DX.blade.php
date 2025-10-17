@@ -7,7 +7,7 @@
 
         @endphp
 
-        <div class="row justify-content-first mx-0" style="padding-top:4px;">
+        <div class="row justify-content-center mx-0" style="padding-top:4px;">
             <div class="col-12 mx-auto">
                 {{-- Link through your trackClick route so that a click is counted --}}
                 <a href="{{ route('ads.click', ['id' => $ad->id]) }}" class="d-block">
