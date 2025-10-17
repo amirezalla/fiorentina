@@ -93,8 +93,6 @@ $articleSlots = [
     'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
     'ads.includes.dblog-p2' => Ad::GROUP_DBLOG_P2,
     'ads.includes.dblog-p3' => Ad::GROUP_DBLOG_P3,
-    'ads.includes.dblog-p4' => Ad::GROUP_DBLOG_P4,
-    'ads.includes.dblog-p5' => Ad::GROUP_DBLOG_P5,
 ];
 
 view()->composer(array_keys($articleSlots), function ($view) use ($articleSlots) {
