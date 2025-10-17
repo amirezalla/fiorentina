@@ -162,7 +162,7 @@ class AppServiceProvider extends ServiceProvider
     $gid = $map[$slot] ?? null;
 
     $imgModel = $gid ? $pool->getAllocated($gid) : null;
-
+        dd($imgModel,$pool, $gid, $map, $slot);
     $img = $imgModel && $imgModel->image_url
         ? (preg_match('~^https?://~i', $imgModel->image_url)
             ? $imgModel->image_url
