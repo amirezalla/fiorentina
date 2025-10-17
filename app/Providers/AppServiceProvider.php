@@ -105,10 +105,7 @@ class AppServiceProvider extends ServiceProvider
 
 \Illuminate\Support\Facades\View::composer([
     'ads.includes.dblog-p1',
-    'ads.includes.dblog-p2',
-    'ads.includes.dblog-p3',
-    'ads.includes.dblog-p4',
-    'ads.includes.dblog-p5',
+
 ], function ($view) {
     // Which slot am I rendering?
     $slot = match ($view->getName()) {
