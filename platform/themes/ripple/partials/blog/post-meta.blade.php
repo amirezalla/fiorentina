@@ -239,7 +239,7 @@
                 <div class="align-items-center gap-1 mt-1" style="display: inline-flex">
                     @foreach ($post->inviati as $inv)
                         <span class="collab-link mr-2" data-toggle="tooltip" data-placement="top">
-                            {{ $inv }}
+                            {{ $inv->value }}
                         </span>
                     @endforeach
                 </div>
