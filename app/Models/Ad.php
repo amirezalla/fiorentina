@@ -419,64 +419,57 @@ $renderDesktopAd = function (int $slotConst) use ($ads, $pool) {
          .   '</a>'
          . '</div>';
 };
-dd($renderDesktopAd);
 
 foreach ($blocks as $block) {
     $out[] = $block;
 
+    // count only real paragraphs
     if (preg_match('/^<p/i', $block)) {
         $paraIndex++;
 
         switch ($paraIndex) {
             case 1:
-                // DESKTOP P1 (unique, weighted)
-                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P1);
-
-                // MOBILE as before
-                if ($ads->has(self::MOBILE_POSIZIONE_1)) {
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_1', [
-                        'ad' => $ads[self::MOBILE_POSIZIONE_1]
-                    ])->render();
+                if ($ads->has(self::GROUP_DBLOG_P1)) {
+                    $out[] = view('ads.includes.dblog-p1',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P1]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_1',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_1]])->render();
                 }
                 break;
 
             case 2:
-                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P2);
-
-                if ($ads->has(self::MOBILE_POSIZIONE_2)) {
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_2', [
-                        'ad' => $ads[self::MOBILE_POSIZIONE_2]
-                    ])->render();
+                if ($ads->has(self::GROUP_DBLOG_P2)) {
+                    $out[] = view('ads.includes.dblog-p2',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P2]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_2',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_2]])->render();
                 }
                 break;
 
             case 3:
-                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P3);
-
-                if ($ads->has(self::MOBILE_POSIZIONE_5)) {
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_3', [
-                        'ad' => $ads[self::MOBILE_POSIZIONE_5]
-                    ])->render();
+                if ($ads->has(self::GROUP_DBLOG_P3)) {
+                    $out[] = view('ads.includes.dblog-p3',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P3]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_3',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
                 }
                 break;
 
             case 4:
-                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P4);
-
-                if ($ads->has(self::MOBILE_POSIZIONE_4)) {
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_4', [
-                        'ad' => $ads[self::MOBILE_POSIZIONE_4]
-                    ])->render();
+                if ($ads->has(self::GROUP_DBLOG_P4)) {
+                    $out[] = view('ads.includes.dblog-p4',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P4]])->render();
+                    $out[] = view('ads.includes.MOBILE_POSIZIONE_4',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_4]])->render();
                 }
                 break;
 
-            default: // paragraph 5+
-                $out[] = $renderDesktopAd(\App\Models\Ad::GROUP_DBLOG_P5);
-
-                if ($ads->has(self::MOBILE_POSIZIONE_5)) {
-                    $out[] = view('ads.includes.MOBILE_POSIZIONE_3', [
-                        'ad' => $ads[self::MOBILE_POSIZIONE_5]
-                    ])->render();
+            default:        // paragraph 5+
+                if ($ads->has(self::GROUP_DBLOG_P5)) {
+                    $out[] = view('ads.includes.dblog-p5',
+                                  ['ad' => $ads[self::GROUP_DBLOG_P5]])->render();
+                                                      $out[] = view('ads.includes.MOBILE_POSIZIONE_3',
+                                  ['ad' => $ads[self::MOBILE_POSIZIONE_5]])->render();
                 }
         }
     }
