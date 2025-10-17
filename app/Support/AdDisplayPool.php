@@ -1,5 +1,4 @@
 <?php
-// app/Support/AdDisplayPool.php
 
 namespace App\Support;
 
@@ -9,18 +8,20 @@ use Illuminate\Support\Collection;
 
 class AdDisplayPool
 {
-    /** groupId => Collection<AdGroupImage> */
+    /** groupId(int|string) => Collection<AdGroupImage> */
     protected array $pool = [];
 
-    /** groupId => AdGroupImage|null (final allocation for this request) */
+    /** groupId(int|string) => AdGroupImage|null (final allocation for this request) */
     protected array $allocated = [];
 
     /** creatives already used in this request (by a global unique key) */
     protected array $usedKeys = [];
 
     /**
-     * Allocate unique creatives across the given groups (once per request).
+     * Allocate unique creatives across the given ad_group_ids (once per request).
      * Safe to call multiple times; it won’t re-allocate already filled groups.
+     *
+     * @param array<int|string> $groupIds  ad_groups.id list
      */
     public function allocateUnique(array $groupIds): void
     {
@@ -30,11 +31,13 @@ class AdDisplayPool
             if (array_key_exists($gid, $this->allocated)) {
                 continue; // already allocated for this request
             }
-            if (! isset($this->pool[$gid])) {
+
+            if (!isset($this->pool[$gid])) {
                 $this->pool[$gid] = $this->loadGroupImages($gid);
             }
 
             $images = $this->pool[$gid];
+
             if ($images->isEmpty()) {
                 $this->allocated[$gid] = null;
                 continue;
@@ -43,30 +46,29 @@ class AdDisplayPool
             // try to pick a creative (respecting weight) that isn’t used yet
             $choice = $this->weightedPickAvoidingUsed($images);
 
-            // mark used (by a unique key; here: image_url if present, fallback id)
             if ($choice) {
                 $this->allocated[$gid] = $choice;
                 $this->usedKeys[$this->uniqKey($choice)] = true;
             } else {
-                // fallback: just pick something
+                // fallback: pick something
                 $this->allocated[$gid] = $this->weightedPick($images);
             }
         }
     }
 
-    /** Get allocation for one group; allocate lazily if not done. */
+    /** Get allocation for one ad_group_id; allocate lazily if not done. */
     public function getAllocated(int|string $groupId): ?AdGroupImage
     {
         $groupId = (string) $groupId;
 
-        if (! array_key_exists($groupId, $this->allocated)) {
+        if (!array_key_exists($groupId, $this->allocated)) {
             $this->allocateUnique([$groupId]);
         }
 
         return $this->allocated[$groupId] ?? null;
     }
 
-    /** ---------- internals ---------- */
+    // ---------------------- internals ----------------------
 
     protected function loadGroupImages(string $groupId): Collection
     {
@@ -81,11 +83,33 @@ class AdDisplayPool
 
     protected function uniqKey(AdGroupImage $img): string
     {
-        // avoid duplicates by file; if missing, fallback to id
+        // avoid duplicates by file; fallback id
         return $img->image_url ? ('url:' . $img->image_url) : ('id:' . $img->id);
     }
 
-    /** Returns an image weighted by "weight". */
+    /** Weighted pick, ignoring “used” ones if possible. */
+    protected function weightedPickAvoidingUsed(Collection $images): ?AdGroupImage
+    {
+        $bag = [];
+        foreach ($images as $img) {
+            $k = $this->uniqKey($img);
+            if (isset($this->usedKeys[$k])) continue;
+
+            $w = max(1, (int) $img->weight);
+            for ($i = 0; $i < $w; $i++) {
+                $bag[] = $img->id;
+            }
+        }
+
+        if (!$bag) {
+            return null; // all used already
+        }
+
+        $pickedId = Arr::random($bag);
+        return $images->firstWhere('id', $pickedId) ?? null;
+    }
+
+    /** Simple weighted pick. */
     protected function weightedPick(Collection $images): ?AdGroupImage
     {
         if ($images->isEmpty()) return null;
@@ -101,29 +125,5 @@ class AdDisplayPool
 
         $pickedId = Arr::random($bag);
         return $images->firstWhere('id', $pickedId) ?? $images->first();
-    }
-
-    /** Weighted pick that tries to avoid already used creatives. */
-    protected function weightedPickAvoidingUsed(Collection $images): ?AdGroupImage
-    {
-        // Build a weighted bag but skip already used uniq-keys
-        $bag = [];
-        foreach ($images as $img) {
-            $k = $this->uniqKey($img);
-            if (isset($this->usedKeys[$k])) continue;
-
-            $w = max(1, (int) $img->weight);
-            for ($i = 0; $i < $w; $i++) {
-                $bag[] = $img->id;
-            }
-        }
-
-        if (! $bag) {
-            // all were used; signal caller to fallback
-            return null;
-        }
-
-        $pickedId = Arr::random($bag);
-        return $images->firstWhere('id', $pickedId) ?? null;
     }
 }

@@ -88,32 +88,51 @@ class AppServiceProvider extends ServiceProvider
             $view->with('ad', $ad);
         });
 
+View::composer(['theme::views.post', 'theme::views.blog.post'], function ($view) {
+            $pool = app(AdDisplayPool::class);
 
-// questo è il layout o la view *contenitore* dell’articolo (adatta il nome!)
-view()->composer(['theme::views.post', 'theme::views.blog.post'], function ($view) {
-    $pool = app(\App\Support\AdDisplayPool::class);
+            // 1) Trova gli ads per slot (gruppo “logico” sugli ADS)
+            $bySlot = [
+                'p1' => Ad::GROUP_DBLOG_P1,
+                'p2' => Ad::GROUP_DBLOG_P2,
+                'p3' => Ad::GROUP_DBLOG_P3,
+                'p4' => Ad::GROUP_DBLOG_P4,
+                'p5' => Ad::GROUP_DBLOG_P5,
+            ];
 
-    // Mappa slot => groupId (QUI devono essere gli ID degli *ad_group_images.group_id*!)
-    $groups = [
-        'p1' => Ad::GROUP_DBLOG_P1,
-        'p2' => Ad::GROUP_DBLOG_P2,
-        'p3' => Ad::GROUP_DBLOG_P3,
-        'p4' => Ad::GROUP_DBLOG_P4,
-        'p5' => Ad::GROUP_DBLOG_P5,
-    ];
+            $ads = [];
+            $adGroupIds = [];
 
-    // Alloco UNA VOLTA per tutti i gruppi (evita collisioni/duplicati nello stesso request)
-    $pool->allocateUnique(array_values($groups));
+            foreach ($bySlot as $slot => $adsGroupConst) {
+                $ad = Ad::query()
+                    ->typeAnnuncioImmagine()
+                    ->where('group', $adsGroupConst)
+                    ->where('status', 1)
+                    ->inRandomOrderByWeight()
+                    ->first();
 
-    // Prelevo le 5 creatività finali
-    $adsForArticle = [];
-    foreach ($groups as $key => $gid) {
-        $adsForArticle[$key] = $pool->getAllocated($gid);  // AdGroupImage|null
-    }
+                $ads[$slot] = $ad;
 
-    // Rendo disponibili alle view figlie
-    $view->with('articleAdSlots', $adsForArticle);
-});
+                if ($ad && $ad->ad_group_id) {
+                    $adGroupIds[] = (int) $ad->ad_group_id;
+                }
+            }
+
+            // 2) Alloca immagini una volta sola per gli ad_group_id trovati
+            $adGroupIds = array_values(array_unique($adGroupIds));
+            $pool->allocateUnique($adGroupIds);
+
+            // 3) Costruisci il pacchetto slot => AdGroupImage|null
+            $articleAdSlots = [];
+            foreach ($bySlot as $slot => $adsGroupConst) {
+                $ad = $ads[$slot] ?? null;
+                $img = $ad && $ad->ad_group_id ? $pool->getAllocated($ad->ad_group_id) : null;
+                $articleAdSlots[$slot] = $img;
+            }
+
+            // 4) Passa alle view figlie
+            $view->with('articleAdSlots', $articleAdSlots);
+        });
         view()->composer('ads.includes.background-page', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrderByWeight()->first());
         });
