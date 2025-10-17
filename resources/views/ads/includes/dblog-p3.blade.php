@@ -7,10 +7,6 @@
                 $ad->increment('display_count');
 
             @endphp
-            @php
-
-                dd($img, $href);
-            @endphp
 
             <div class="row justify-content-center mx-0 mb-2" id="p3-{{ $ad->id }}">
                 <div class="col-12 mx-auto p-0">

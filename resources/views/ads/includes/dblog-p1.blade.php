@@ -8,8 +8,7 @@
 
             @endphp
             @php
-                $imgUrl = $ad->getAllocatedDisplayImageUrl();
-                $target = $ad->getAllocatedTargetUrl() ?: '#';
+                dd($img, $href);
             @endphp
 
             <div class="row justify-content-center mx-0 mb-2" id="p1-{{ $ad->id }}">
