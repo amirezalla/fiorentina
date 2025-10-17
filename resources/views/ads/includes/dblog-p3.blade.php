@@ -11,9 +11,9 @@
             <div class="row justify-content-center mx-0 mb-2" id="p3-{{ $ad->id }}">
                 <div class="col-12 mx-auto p-0">
                     {{-- Link through your trackClick route so that a click is counted --}}
-                    @if ($imgUrl)
-                        <a href="{{ $target }}" class="d-block" rel="nofollow sponsored noopener" target="_blank">
-                            <img src="{{ $imgUrl }}" alt="{{ $ad->title }}" class="img-fluid"
+                    @if ($img)
+                        <a href="{{ $href }}" class="d-block" rel="nofollow sponsored noopener" target="_blank">
+                            <img src="{{ $img }}" alt="{{ $ad->title }}" class="img-fluid"
                                 style="width:100%;height:auto;">
                         </a>
                     @endif
