@@ -103,15 +103,36 @@ class AppServiceProvider extends ServiceProvider
 
 
 
+    // 1) Prime the pool ONCE for the article view (whatever blade renders your article)
+    View::composer([
+        'theme::views.post',
+        'theme::views.blog.post',
+        // add your concrete post blade if different, e.g. 'posts.show'
+    ], function ($view) {
+        /** @var AdDisplayPool $pool */
+        $pool = app(AdDisplayPool::class);
 
-View::composer([
+        // All desktop paragraph groups you want unique for this request:
+        $groups = [
+            Ad::GROUP_DBLOG_P1,
+            Ad::GROUP_DBLOG_P2,
+            Ad::GROUP_DBLOG_P3,
+            Ad::GROUP_DBLOG_P4,
+            Ad::GROUP_DBLOG_P5,
+        ];
+
+        // Allocate unique images across those groups (weight-aware)
+        $pool->allocateUnique($groups);
+    });
+
+    // 2) Bind each include to the already-allocated image from the pool
+    View::composer([
         'ads.includes.dblog-p1',
         'ads.includes.dblog-p2',
         'ads.includes.dblog-p3',
         'ads.includes.dblog-p4',
         'ads.includes.dblog-p5',
     ], function ($view) {
-        // Pull from your per-request context/helpers
         $slot = match ($view->getName()) {
             'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
             'ads.includes.dblog-p2' => Ad::GROUP_DBLOG_P2,
@@ -120,11 +141,24 @@ View::composer([
             'ads.includes.dblog-p5' => Ad::GROUP_DBLOG_P5,
         };
 
-        $view->with([
-            'img'  => ad_img($slot),
-            'href' => ad_href($slot),
-        ]);
+        /** @var AdDisplayPool $pool */
+        $pool = app(AdDisplayPool::class);
+
+        // Read the chosen creative for this group
+        $imgModel = $pool->getAllocated($slot); // App\Models\AdGroupImage|null
+
+        // Build URL + href safely
+        $img = $imgModel
+            ? (preg_match('~^https?://~i', $imgModel->image_url)
+                ? $imgModel->image_url
+                : \Storage::disk('wasabi')->url(ltrim($imgModel->image_url, '/')))
+            : null;
+
+        $href = $imgModel && $imgModel->target_url ? $imgModel->target_url : '#';
+
+        $view->with(compact('img', 'href'));
     });
+}
 
 
 
