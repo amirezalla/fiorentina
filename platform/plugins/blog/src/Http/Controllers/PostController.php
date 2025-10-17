@@ -137,13 +137,13 @@ $post->inviati = collect(explode(',', (string) $request->input('inviati', '')))
                 
                 $post->fill($request->input());
                 $post->author_id = (int) $request->input('author_id', auth()->id());
-
-                $post->inviati = collect(explode(',', (string) $request->input('inviati', '')))
-    ->map(fn($n) => trim($n))
-    ->filter()
-    ->unique()
-    ->values()
-    ->all();
+$post->inviati = json_encode(
+    collect(explode(',', (string) $request->input('inviati', '')))
+        ->map(fn($name) => ['value' => trim($name)])
+        ->filter()
+        ->values()
+        ->all()
+);
                 $post->save();
                        $ids = collect(\Illuminate\Support\Arr::wrap($request->input('collaborators', [])))
             ->filter()
