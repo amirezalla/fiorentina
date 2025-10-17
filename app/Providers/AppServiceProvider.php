@@ -89,23 +89,31 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-$articleSlots = [
-    'ads.includes.dblog-p1' => Ad::GROUP_DBLOG_P1,
-    'ads.includes.dblog-p2' => Ad::GROUP_DBLOG_P2,
-    'ads.includes.dblog-p3' => Ad::GROUP_DBLOG_P3,
-];
+// questo è il layout o la view *contenitore* dell’articolo (adatta il nome!)
+view()->composer(['theme::views.post', 'theme::views.blog.post'], function ($view) {
+    $pool = app(\App\Support\AdDisplayPool::class);
 
-view()->composer(array_keys($articleSlots), function ($view) use ($articleSlots) {
-    /** @var AdDisplayPool $pool */
-    $pool = app(AdDisplayPool::class);
+    // Mappa slot => groupId (QUI devono essere gli ID degli *ad_group_images.group_id*!)
+    $groups = [
+        'p1' => Ad::GROUP_DBLOG_P1,
+        'p2' => Ad::GROUP_DBLOG_P2,
+        'p3' => Ad::GROUP_DBLOG_P3,
+        'p4' => Ad::GROUP_DBLOG_P4,
+        'p5' => Ad::GROUP_DBLOG_P5,
+    ];
 
-    // Allocate for ALL article groups once so they don’t collide
-    $pool->allocateUnique(array_values($articleSlots));
+    // Alloco UNA VOLTA per tutti i gruppi (evita collisioni/duplicati nello stesso request)
+    $pool->allocateUnique(array_values($groups));
 
-    $groupId = $articleSlots[$view->getName()];
-    $view->with('adImage', $pool->getAllocated($groupId));
+    // Prelevo le 5 creatività finali
+    $adsForArticle = [];
+    foreach ($groups as $key => $gid) {
+        $adsForArticle[$key] = $pool->getAllocated($gid);  // AdGroupImage|null
+    }
+
+    // Rendo disponibili alle view figlie
+    $view->with('articleAdSlots', $adsForArticle);
 });
-
         view()->composer('ads.includes.background-page', function (View $view) {
             $view->with('ad', Ad::query()->typeAnnuncioImmagine()->whereGroup(Ad::GROUP_BACKGROUND_PAGE)->inRandomOrderByWeight()->first());
         });
